@@ -19,3 +19,6 @@ __pycache__/
 *.sw[a-z]
 migrations/
 db.sqlite3
+
+
+aenir_img
