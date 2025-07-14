@@ -32,7 +32,8 @@ load_dotenv(find_dotenv())
 SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+# TODO: Set this to False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -98,7 +99,13 @@ WSGI_APPLICATION = "server.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 DATABASES = {
-    "default": dj_database_url.config(default="postgres:///database"),
+    # Default
+    #"default": dj_database_url.config(default="postgres:///database"),
+    # NOTE: For testing purposes only
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 
@@ -126,7 +133,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "US/Pacific"
 
 USE_I18N = True
 
@@ -146,3 +153,51 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 STATICFILES_DIRS = (BASE_DIR / "static/",)
 
 STATIC_ROOT = BASE_DIR / "collected/"
+
+main_logging_file = ".aenir_web.log"
+html_logging_file = ".html-aenir_web.log"
+main_datefmt = "%B %d, %Y @ %I:%M:%S %p"
+LOGGING = {
+    "version": 1,
+    "formatters": {
+        "timed": {
+            "datefmt": main_datefmt,
+            "format": "\n** %(asctime)s **\n" + "=" * 32,
+        },
+        "simple": {
+            "format":
+            "%(levelname)s:%(name)s.%(module)s.%(funcName)s: %(message)s",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+        },
+        "file": {
+            "class": "logging.FileHandler",
+            "filename": main_logging_file,
+            "formatter": "simple",
+        },
+        "timekeeping": {
+            "class": "logging.FileHandler",
+            "filename": main_logging_file,
+            "formatter": "timed",
+        },
+    },
+    "loggers": {
+        "dracogate": {
+            "level": "DEBUG",
+            "handlers": [
+                "file",
+                "console",
+            ],
+        },
+        "timer": {
+            "level": "DEBUG",
+            "handlers": [
+                "timekeeping",
+            ],
+        },
+    },
+}
