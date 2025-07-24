@@ -1,15 +1,3 @@
-node_modules
-
-# venv already has a .gitignore in it, but prettier does not respect it using
-# the --ignore-path option since it points to this file.
-.venv
-*.pyc
-.DS_Store
-.mypy_cache
-.pytest_cache
-static/dist
-
-# ported over from old version of project
 .vim/
 .env
 .venv-*/
@@ -19,6 +7,3 @@ __pycache__/
 *.sw[a-z]
 migrations/
 db.sqlite3
-
-
-aenir_img
