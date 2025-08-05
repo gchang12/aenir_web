@@ -35,7 +35,7 @@ function App() {
           <input type="checkbox" name="hard-mode" />
           <label>Chapter</label>
           <input type="checkbox" name="chapter" />
-          <img src={`./static/${game.name}/${unit.name}.png`} alt={`Portrait of ${unit.name} from FE${game.no}`} />
+          <img src={`/static/${game.name}/characters/${unit.name}.png`} alt={`Portrait of ${unit.name} from FE${game.no}`} />
         </div>
         <button type="button" disabled>Create!</button> </form>
       <table>
