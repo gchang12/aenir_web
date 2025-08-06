@@ -1,17 +1,82 @@
 import "./App.css";
 
-const game = {
-  "name": "binding-blade",
-  "title": "Sword of Seals",
-  "no": 6,
-};
 const unit = {
+  "game": {
+    "name": "binding-blade",
+    "title": "Sword of Seals",
+    "no": 6,
+  },
   "name": "Roy",
+  {/* TODO: Define class for this, possibly. */}
+  "stats": [
+    {
+      "stat": "HP",
+      "value": "18",
+    },
+    {
+      "stat": "Pow",
+      "value": "5",
+    },
+    {
+      "stat": "Skl",
+      "value": "5",
+    },
+    {
+      "stat": "Spd",
+      "value": "7",
+    },
+    {
+      "stat": "Lck",
+      "value": "6",
+    },
+    {
+      "stat": "Def",
+      "value": "5",
+    },
+    {
+      "stat": "Res",
+      "value": "2",
+    },
+  ]
 };
 
-function App() {
+function StatTable( { rawStats } ) {
   return (
-    <div id="init">
+    <>
+      {rawStats.map(
+        fieldValuePair => {
+          const stat = fieldValuePair.stat;
+          const value = fieldValuePair.value;
+          return (
+            <tr>
+              <th>{stat}</th>
+              <td>{value}</td>
+            </tr>
+          );
+        }
+      )}
+    </>
+  );
+}
+
+function StatProfile( { profileBlock, detailsBlock, rawStats } ) {
+  return (
+    <>
+      <div className="personal">
+        {profileBlock}
+        {detailsBlock}
+      </div>
+      <table>
+        <StatArray rawStats={rawStats} />
+      </table>
+    </>
+  );
+}
+
+function App() {
+  const game = unit.game;
+  return (
+    <>
       <h1>Choose Your Character!</h1>
       <img src={`static/${game.name}/cover-art.png`} alt={`Cover art of FE${game.no}: ${game.title}`} />
       <form>
@@ -29,7 +94,7 @@ function App() {
           <option value="Roy">Roy</option>
           <option value="Marth">Marth</option>
         </select>
-    {/* NOTE: These may or may not exist. Space will be allotted for them regardless. */}
+        {/* NOTE: These may or may not exist. Space will be allotted for them regardless. */}
         <div id="options">
           <label>Hard Mode</label>
           <input type="checkbox" name="hard-mode" />
@@ -39,45 +104,9 @@ function App() {
         </div>
         <button type="button" disabled>Create!</button> </form>
       <table>
-      {/* TODO: Loop over the thing and display. values in unit, fields in game */}
-        <tr>
-          <th>HP</th>
-          <td>18</td>
-        </tr>
-        <tr>
-          <th>Pow</th>
-          <td>5</td>
-        </tr>
-        <tr>
-          <th>Skl</th>
-          <td>5</td>
-        </tr>
-        <tr>
-          <th>Spd</th>
-          <td>7</td>
-        </tr>
-        <tr>
-          <th>Lck</th>
-          <td>8</td>
-        </tr>
-        <tr>
-          <th>Def</th>
-          <td>6</td>
-        </tr>
-        <tr>
-          <th>Res</th>
-          <td>3</td>
-        </tr>
-        <tr>
-          <th>Con</th>
-          <td>7</td>
-        </tr>
-        <tr>
-          <th>Mov</th>
-          <td>5</td>
-        </tr>
+        <StatTable rawStats={unit.stats} />
       </table>
-    </div>
+    </>
   );
 }
 
