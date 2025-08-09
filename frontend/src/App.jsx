@@ -1,5 +1,9 @@
+import { useState } from 'react'; 
+import axios from 'axios';
 import "./App.css";
 
+{/* TODO: Define class for this, possibly. */}
+{/* TODO: Use state for this. */}
 const unit = {
   "game": {
     "name": "binding-blade",
@@ -7,7 +11,6 @@ const unit = {
     "no": 6,
   },
   "name": "Roy",
-  {/* TODO: Define class for this, possibly. */}
   "stats": [
     {
       "stat": "HP",
@@ -40,13 +43,23 @@ const unit = {
   ]
 };
 
+function Portrait() {
+  return (
+    <figure>
+    <img />
+    <figcaption>
+    </figcaption>
+    </figure>
+  );
+}
+
 function StatTable( { rawStats } ) {
+  console.log("Hello from 'StatTable'!");
   return (
     <>
       {rawStats.map(
         fieldValuePair => {
-          const stat = fieldValuePair.stat;
-          const value = fieldValuePair.value;
+          const [stat, value] = fieldValuePair;
           return (
             <tr>
               <th>{stat}</th>
@@ -67,14 +80,46 @@ function StatProfile( { profileBlock, detailsBlock, rawStats } ) {
         {detailsBlock}
       </div>
       <table>
-        <StatArray rawStats={rawStats} />
+        <StatTable rawStats={rawStats} />
       </table>
     </>
   );
 }
 
 function App() {
-  const game = unit.game;
+  const [game, setGame] = useState("4");
+  {/* const game = unit.game; */}
+  const gameName = "genealogy-of-the-holy-war";
+  const [unitList, setUnitList] = useState([]);
+  const [unit, setUnit] = useState("");
+  const [unitStats, setUnitStats] = useState([]);
+  const [unitOptions, setUnitOptions] = useState({});
+  function tryCreateMorph(e) {
+    const selectedUnit = e.currentTarget.id;
+    setUnit(selectedUnit);
+    console.log("game: " + game);
+    console.log("name: " + selectedUnit);
+    axios
+      .post("http://127.0.0.1:8000/dracogate/api/initialization_view/",
+        {data: {game: game, name: selectedUnit}},
+      )
+      .then(res => setUnitStats(res.data))
+      .catch(err => console.log(err));
+  }
+  function refreshUnitList(e) {
+    {/* Set game, then load unit list */}
+    const selectedGame = e.currentTarget.value;
+    setGame(selectedGame);
+    axios
+      .get("http://127.0.0.1:8000/dracogate/api/initialization_view/",
+        {params: {game: selectedGame}},
+      )
+      .then(res => setUnitList(res.data))
+      .catch(err => console.log(err));
+  }
+  {/* console.log("game: " + game); */}
+  {/* console.log("unit: " + unit); */}
+  {/* console.log(unitList.length); */}
   return (
     <>
       <h1>Choose Your Character!</h1>
@@ -82,20 +127,30 @@ function App() {
       <form>
         <label>Game</label>
         <select id="game-selector">
-          <option value="4">Genealogy of the Holy War</option>
-          <option value="5">Thracia 776</option>
-          <option value="6">Sword of Seals</option>
-          <option value="7">Blazing Sword</option>
-          <option value="8">The Sacred Stones</option>
-          <option value="9">Path of Radiance</option>
+          <option value="4" onClick={refreshUnitList}>Genealogy of the Holy War</option>
+          <option value="5" onClick={refreshUnitList}>Thracia 776</option>
+          <option value="6" onClick={refreshUnitList}>Sword of Seals</option>
+          <option value="7" onClick={refreshUnitList}>Blazing Sword</option>
+          <option value="8" onClick={refreshUnitList}>The Sacred Stones</option>
+          <option value="9" onClick={refreshUnitList}>Path of Radiance</option>
         </select>
         <label>Unit</label>
-        <select id="unit-selector" disabled>
-          <option value="Roy">Roy</option>
-          <option value="Marth">Marth</option>
-        </select>
+        <menu id="unit-selector">
+          {/* TODO: Gotta retrieve from Django. */}
+          {unitList.map(unit => {
+            return (
+              <li>
+                <button type="button" id={unit} onClick={tryCreateMorph}>
+                  {unit}
+                </button>
+              </li>
+            );
+          })
+          }
+        </menu>
         {/* NOTE: These may or may not exist. Space will be allotted for them regardless. */}
         <div id="options">
+          {/* TODO: Something to do with 'unitParams' */}
           <label>Hard Mode</label>
           <input type="checkbox" name="hard-mode" />
           <label>Chapter</label>
@@ -104,7 +159,7 @@ function App() {
         </div>
         <button type="button" disabled>Create!</button> </form>
       <table>
-        <StatTable rawStats={unit.stats} />
+        <StatTable rawStats={unitStats} />
       </table>
     </>
   );

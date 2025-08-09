@@ -6,6 +6,7 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.response import Response
 
+from aenir import get_morph
 from aenir.morph import (
     Morph4,
     Morph5,
@@ -37,6 +38,17 @@ class InitializationViewset(viewsets.ViewSet):
     def create(self, request):
         """
         """
+        data = request.data['data']
+        game = int(data.get("game"))
+        name = data.get("name")
+        print(data)
+        try:
+            morph = get_morph(game, name)
+            print(morph.current_stats.as_list())
+            return Response(morph.current_stats.as_list())
+        except:
+            print("request failed")
+            return Response([])
 
     def update(self, request):
         """
