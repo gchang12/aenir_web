@@ -15,6 +15,7 @@ from aenir.morph import (
     Morph8,
     Morph9,
 )
+from aenir._exceptions import InitError
 
 class InitializationViewset(viewsets.ViewSet):
     """
@@ -46,9 +47,9 @@ class InitializationViewset(viewsets.ViewSet):
             morph = get_morph(game, name)
             print(morph.current_stats.as_list())
             return Response(morph.current_stats.as_list())
-        except:
+        except InitError as err:
             print("request failed")
-            return Response([])
+            return Response(err.init_params)
 
     def update(self, request):
         """

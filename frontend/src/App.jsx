@@ -87,6 +87,8 @@ function StatProfile( { profileBlock, detailsBlock, rawStats } ) {
 }
 
 function App() {
+  const [initParams, setInitParams] = useState({});
+  const [missingParams, setMissingParams] = useState({});
   const [game, setGame] = useState("4");
   {/* const game = unit.game; */}
   const gameName = "genealogy-of-the-holy-war";
@@ -103,7 +105,17 @@ function App() {
       .post("http://127.0.0.1:8000/dracogate/api/initialization_view/",
         {data: {game: game, name: selectedUnit}},
       )
-      .then(res => setUnitStats(res.data))
+      .then(res => {
+        const data = res.data;
+        if (typeof data === "object") {
+          setMissingParams(data);
+        } else if (typeof data === "array") {
+          setUnitStats(data);
+        } else {
+          console.log(`data is of type: ${typeof data}`);
+        }
+      }
+      )
       .catch(err => console.log(err));
   }
   function refreshUnitList(e) {
