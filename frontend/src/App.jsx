@@ -1,4 +1,4 @@
-import { useState } from 'react'; 
+import { useState, Fragment } from 'react'; 
 import axios from 'axios';
 import "./App.css";
 
@@ -35,11 +35,137 @@ const fireEmblemGames = {
   },
 };
 const options = {
-  father: ["Father", "select"],
-  hard_mode: ["Hard Mode", "checkbox"],
-  lyn_mode: ["Lyn Mode", "checkbox"],
-  route: ["Route", "radio"],
-  number_of_declines: ["Number of Declines", "number"],
+  father: ["Father", "select", "Arden"],
+  hard_mode: ["Hard Mode", "checkbox", false],
+  lyn_mode: ["Lyn Mode", "checkbox", true],
+  route: ["Route", "radio", "Lalum"],
+  number_of_declines: ["Number of Declines", "number", 0],
+};
+const fe4Units = [
+  'Sigurd',
+  'Noish',
+  'Alec',
+  'Arden',
+  'Cuan',
+  'Ethlin',
+  'Fin',
+  'Lex',
+  'Azel',
+  'Midayle',
+  'Adean',
+  'Dew',
+  'Ira',
+  'Diadora',
+  'Jamka',
+  'Holyn',
+  'Lachesis',
+  'Levin',
+  'Sylvia',
+  'Fury',
+  'Beowolf',
+  'Briggid',
+  'Claude',
+  'Tiltyu',
+  'Mana',
+  'Radney',
+  'Roddlevan',
+  'Oifey',
+  'Tristan',
+  'Dimna',
+  'Yuria',
+  'Femina',
+  'Amid',
+  'Johan',
+  'Johalva',
+  'Shanan',
+  'Daisy',
+  'Janne',
+  'Aless',
+  'Laylea',
+  'Linda',
+  'Asaello',
+  'Hawk',
+  'Hannibal',
+  'Sharlow',
+  'Celice',
+  'Leaf',
+  'Altenna',
+  'Rana',
+  'Lakche',
+  'Skasaher',
+  'Delmud',
+  'Lester',
+  'Fee',
+  'Arthur',
+  'Patty',
+  'Nanna',
+  'Leen',
+  'Tinny',
+  'Faval',
+  'Sety',
+  'Corpul',
+];
+
+function ShowOptions({optionalParams, options, onClick}) {
+  const optionsToBeShown = [];
+  let key = 0;
+  {/* alert("optionalParams: " + optionalParams); */}
+  {/* alert("options: " + options); */}
+  {/* alert("onClick: " + onClick); */}
+  Object.entries(optionalParams).forEach(params => {
+    const [field, choices] = params;
+    const [title, inputType, _] = options[field];
+    let inputWidget;
+    {/* alert(choices[0]); */}
+    switch (inputType) {
+      case "select":
+        inputWidget = (
+          <select id={field}>
+            {choices.map(choice => {
+              return (
+                <option key={choice} data-fieldname={field} value={choice} onClick={onClick}>{choice}</option>
+              );}
+            )
+            }
+          </select>
+        );
+        break;
+      case "radio":
+        inputWidget = choices.map(choice => {
+          return (
+            <>
+              <label htmlFor={field}>{choice}</label>
+              <input type={inputType} id={choice} value={choice} name={field} data-fieldname={field} onClick={onClick} />
+            </>
+          );
+          }
+        )
+        ;
+        break;
+      case "number":
+        inputWidget = (
+          <input type={inputType} id={field} name={field} min="0" max={choices.length - 1} data-fieldname={field} onClick={onClick} />
+        );
+        break;
+      case "checkbox":
+        inputWidget = (
+          <input type={inputType} id={field} name={field} data-fieldname={field} onClick={onClick} />
+        );
+        break;
+      default:
+        console.log("???");
+        {/* alert("???"); */}
+        break;
+    }
+    optionsToBeShown.push(
+      <Fragment key={key}>
+        <label htmlFor={field}>{title}</label>
+        {inputWidget}
+      </Fragment>
+    );
+    key += 1;
+  });
+  return optionsToBeShown;
 };
 
 function Portrait() {
@@ -54,19 +180,20 @@ function Portrait() {
 
 function StatTable( { rawStats } ) {
   console.log("Hello from 'StatTable'!");
+  {/* alert(rawStats); */}
   return (
     <>
-      {rawStats.map(
-        fieldValuePair => {
-          const [stat, value] = fieldValuePair;
-          return (
-            <tr>
-              <th>{stat}</th>
-              <td>{value}</td>
-            </tr>
-          );
-        }
-      )}
+    {Object.values(rawStats).map(
+      fieldValuePair => {
+        const [stat, value] = fieldValuePair;
+        return (
+          <tr key={stat}>
+            <th>{stat}</th>
+            <td>{value}</td>
+          </tr>
+        );
+      })
+    }
     </>
   );
 }
@@ -79,36 +206,30 @@ function StatProfile( { profileBlock, detailsBlock, rawStats } ) {
         {detailsBlock}
       </div>
       <table>
-        <StatTable rawStats={rawStats} />
+        <tbody>
+          <StatTable rawStats={rawStats} />
+        </tbody>
       </table>
     </>
   );
 }
 
 function App() {
-  const [unitList, setUnitList] = useState([]);
+  const [unitList, setUnitList] = useState(fe4Units);
   const [initParams, setInitParams] = useState(
     {
-      game: null,
+      game: 4,
       name: null,
-    }
-  );
-  const [missingParams, setMissingParams] = useState(
-    {
-      game: null,
-      name: null,
-      father: null,
-      hard_mode: null,
-      lyn_mode: null,
-      route: null,
-      number_of_declines: null,
     }
   );
   const [morph, setMorph] = useState(
     {
       game: null,
       name: null,
+      currentCls: null,
+      currentLv: null,
       currentStats: null,
+      missingParams: null,
     }
   );
   function refreshUnitList(e) {
@@ -121,6 +242,7 @@ function App() {
       )
       .then(res => setUnitList(res.data))
       .catch(err => console.log(err));
+    setMorph({...morph, missingParams: null, currentStats: null});
   };
   function tryCreateMorph(e) {
     const selectedUnit = e.currentTarget.id;
@@ -131,17 +253,75 @@ function App() {
       )
       .then(res => {
         const data = res.data;
-        const [success, value] = data;
+        const [success, clsLv, value] = data;
         if (success) {
-          setMorph({ ...initParams, currentStats: value, });
-          setMissingParams(null);
+          const [currentCls, currentLv] = clsLv;
+          setMorph({ ...initParams, currentCls: currentCls, currentLv: currentLv, currentStats: value, missingParams: null});
         } else {
-          setMissingParams(value);
-        };
+          const missingParams = value;
+          const tempInitParams = { ...initParams, name: selectedUnit};
+          for (const field of Object.keys(missingParams)) {
+            const [_, __, defaultVal] = options[field];
+            tempInitParams[field] = defaultVal;
+          };
+          axios
+            .post("http://127.0.0.1:8000/dracogate/api/initialization_view/",
+              {data: tempInitParams},
+            )
+            .then(res => {
+              const data = res.data;
+              const [_, clsLv, value] = data;
+              const [currentCls, currentLv] = clsLv;
+              setMorph({ ...tempInitParams, currentStats: value, currentCls: currentCls, currentLv: currentLv, missingParams: missingParams});
+            })
+            .catch(err => console.log(err));
+        }
       }
       )
       .catch(err => console.log(err));
   };
+  function retryCreateMorph(e) {
+    const inputWidget = e.currentTarget;
+    const field = inputWidget.dataset.fieldname;
+    let value = inputWidget.value;
+    {/* alert(inputWidget.type); */}
+    {/* alert(value); */}
+    if (inputWidget.type === "checkbox") {
+      value = inputWidget.checked;
+    };
+    {/* alert(field); */}
+    {/* alert(value); */}
+    const currentInitParams = {};
+    Object.entries(initParams).forEach(
+      entry => {
+        const [key, value] = entry;
+        currentInitParams[key] = value;
+      }
+    );
+    currentInitParams[field] = value;
+    {/* alert("aftetr copying"); */}
+    if (currentInitParams.name === "Gonzales") {
+      if (!Object.keys(currentInitParams).includes("hard_mode")) {
+        currentInitParams["hard_mode"] = false;
+      } else if (!Object.keys(currentInitParams).includes("route")) {
+        currentInitParams["route"] = "Lalum";
+      } else {
+        console.log("Unknown error.");
+      }
+    }
+    {/* alert("after gonzy exceptions"); */}
+    axios
+      .post("http://127.0.0.1:8000/dracogate/api/initialization_view/",
+        {data: currentInitParams},
+      )
+      .then(res => {
+        const data = res.data;
+        const [success, clsLv, value] = data;
+        const [currentCls, currentLv] = clsLv;
+        setMorph({ ...currentInitParams, currentCls: currentCls, currentLv: currentLv, currentStats: value, missingParams: morph.missingParams});
+      });
+    {/* alert("after data retrieval"); */}
+  }
   const selectedGame = fireEmblemGames[initParams.game];
   return (
     <>
@@ -161,8 +341,9 @@ function App() {
           {Object.entries(fireEmblemGames).map(fireEmblemGame => {
             const [gameNo, game] = fireEmblemGame;
             const title = game.title;
+            const name = game.name;
             return (
-              <option value={gameNo} onClick={refreshUnitList}>{title}</option>
+              <option key={name} value={gameNo} onClick={refreshUnitList}>{title}</option>
             );
           })
           }
@@ -171,7 +352,7 @@ function App() {
         <menu id="unit-selector">
           {unitList.map(unit => {
             return (
-              <li>
+              <li key={unit}>
                 <button type="button" id={unit} onClick={tryCreateMorph}>
                   {unit}
                 </button>
@@ -180,56 +361,22 @@ function App() {
           })
           }
         </menu>
-      {morph.currentStats === null ? (
+      {morph.missingParams !== null && (
         <div id="options">
-        {Object.entries(missingParams).map(params => {
-          const [field, choices] = params;
-          const [title, inputType] = options[field];
-          let inputWidget;
-          switch (inputType) {
-            case "select":
-              inputWidget = (
-                <select id={field}>
-                  {choices.map(choice => {
-                    <option value={choice}>choice</option>
-                  })
-                  }
-                </select>
-              );
-            case "radio":
-              console.log("something");
-              inputWidget = {choices.map(choice => {
-                  <input type={inputType} id={choice} value={choice} name={field} />
-                })
-              }
-            case "number":
-              inputWidget = (
-                <input type={inputType} id={field} name={field} min="0" max={choices.length - 1} />
-              );
-            case "checkbox":
-              inputWidget = (
-                <input type={inputType} id={field} name={field} />
-              );
-            default:
-              console.log("???");
-          }
-          return (
-            <>
-              {inputWidget}
-              <label htmlFor={field}>{title}</label>
-            </>
-          );
-        })
-        }
+          <ShowOptions optionalParams={morph.missingParams} options={options} onClick={retryCreateMorph} />
         </div>
-        ) : (
-        <table>
-          <StatTable rawStats={morph.currentStats} />
-        </table>
         )
       }
       <button type="button" disabled>Create!</button>
       </form>
+      {morph.currentStats !== null && (
+        <table>
+          <tbody>
+            <StatTable rawStats={[["Class", morph.currentCls], ["Lv", morph.currentLv]].concat(morph.currentStats)} />
+          </tbody>
+        </table>
+        )
+      }
     </>
   );
 };
