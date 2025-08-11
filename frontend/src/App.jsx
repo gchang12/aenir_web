@@ -351,9 +351,19 @@ function App() {
         <label>Unit</label>
         <menu id="unit-selector">
           {unitList.map(unit => {
+            const imgSuffix = selectedGame.no === 8 ? "gif" : "png";
+            let filename;
+            if (unit === "L'Arachel") {
+              {/* const filename = `LArachel.${imgSuffix}`; */}
+              filename = `LArachel.${imgSuffix}`;
+              filename = `${unit}.${imgSuffix}`;
+            } else {
+              filename = `${unit}.${imgSuffix}`;
+            };
             return (
               <li key={unit}>
                 <button type="button" id={unit} onClick={tryCreateMorph}>
+                  <img src={`static/${selectedGame.name}/characters/${filename}`} />
                   {unit}
                 </button>
               </li>
