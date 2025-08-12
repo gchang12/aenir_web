@@ -35,11 +35,11 @@ const fireEmblemGames = {
   },
 };
 const options = {
-  father: ["Father", "select", "Arden"],
-  hard_mode: ["Hard Mode", "checkbox", false],
-  lyn_mode: ["Lyn Mode", "checkbox", true],
-  route: ["Route", "radio", "Lalum"],
-  number_of_declines: ["Number of Declines", "number", 0],
+  father: ["Father", "select"],
+  hard_mode: ["Hard Mode", "checkbox"],
+  lyn_mode: ["Lyn Mode", "checkbox"],
+  route: ["Route", "radio"],
+  number_of_declines: ["Number of Declines", "number"],
 };
 const fe4Units = [
   'Sigurd',
@@ -109,17 +109,14 @@ const fe4Units = [
 function ShowOptions({optionalParams, options, onClick}) {
   const optionsToBeShown = [];
   let key = 0;
-  {/* alert("optionalParams: " + optionalParams); */}
-  {/* alert("options: " + options); */}
-  {/* alert("onClick: " + onClick); */}
   Object.entries(optionalParams).forEach(params => {
     const [field, choices] = params;
-    const [title, inputType, _] = options[field];
+    const [title, inputType] = options[field];
     let inputWidget;
-    {/* alert(choices[0]); */}
     switch (inputType) {
       case "select":
         inputWidget = (
+          <label htmlFor={field}>{title}</label>
           <select id={field}>
             {choices.map(choice => {
               return (
@@ -131,7 +128,10 @@ function ShowOptions({optionalParams, options, onClick}) {
         );
         break;
       case "radio":
-        inputWidget = choices.map(choice => {
+        inputWidget = (
+          <fieldset>
+          <legend>Route</legend>
+          choices.map(choice => {
           return (
             <>
               <label htmlFor={field}>{choice}</label>
@@ -140,26 +140,27 @@ function ShowOptions({optionalParams, options, onClick}) {
           );
           }
         )
-        ;
+        </fieldset>
+        );
         break;
       case "number":
         inputWidget = (
+          <label htmlFor={field}>{title}</label>
           <input type={inputType} id={field} name={field} min="0" max={choices.length - 1} data-fieldname={field} onClick={onClick} />
         );
         break;
       case "checkbox":
         inputWidget = (
+          <label htmlFor={field}>{title}</label>
           <input type={inputType} id={field} name={field} data-fieldname={field} onClick={onClick} />
         );
         break;
       default:
         console.log("???");
-        {/* alert("???"); */}
         break;
     }
     optionsToBeShown.push(
       <Fragment key={key}>
-        <label htmlFor={field}>{title}</label>
         {inputWidget}
       </Fragment>
     );
@@ -180,7 +181,6 @@ function Portrait() {
 
 function StatTable( { rawStats } ) {
   console.log("Hello from 'StatTable'!");
-  {/* alert(rawStats); */}
   return (
     <>
     {Object.values(rawStats).map(
@@ -260,8 +260,9 @@ function App() {
         } else {
           const missingParams = value;
           const tempInitParams = { ...initParams, name: selectedUnit};
-          for (const field of Object.keys(missingParams)) {
-            const [_, __, defaultVal] = options[field];
+          for (const item of Object.entries(missingParams)) {
+            const [field, choices] = item;
+            const defaultVal = choices[0];
             tempInitParams[field] = defaultVal;
           };
           axios
@@ -284,13 +285,9 @@ function App() {
     const inputWidget = e.currentTarget;
     const field = inputWidget.dataset.fieldname;
     let value = inputWidget.value;
-    {/* alert(inputWidget.type); */}
-    {/* alert(value); */}
     if (inputWidget.type === "checkbox") {
       value = inputWidget.checked;
     };
-    {/* alert(field); */}
-    {/* alert(value); */}
     const currentInitParams = {};
     Object.entries(initParams).forEach(
       entry => {
@@ -299,7 +296,6 @@ function App() {
       }
     );
     currentInitParams[field] = value;
-    {/* alert("aftetr copying"); */}
     if (currentInitParams.name === "Gonzales") {
       if (!Object.keys(currentInitParams).includes("hard_mode")) {
         currentInitParams["hard_mode"] = false;
@@ -309,7 +305,6 @@ function App() {
         console.log("Unknown error.");
       }
     }
-    {/* alert("after gonzy exceptions"); */}
     axios
       .post("http://127.0.0.1:8000/dracogate/api/initialization_view/",
         {data: currentInitParams},
@@ -320,7 +315,6 @@ function App() {
         const [currentCls, currentLv] = clsLv;
         setMorph({ ...currentInitParams, currentCls: currentCls, currentLv: currentLv, currentStats: value, missingParams: morph.missingParams});
       });
-    {/* alert("after data retrieval"); */}
   }
   const selectedGame = fireEmblemGames[initParams.game];
   return (
