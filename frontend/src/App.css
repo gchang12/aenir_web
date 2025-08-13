@@ -4,3 +4,7 @@
   scrollbar-width: auto;
   scrollbar-color: green;
 }
+
+article {
+  display: flex;
+}

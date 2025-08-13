@@ -311,7 +311,7 @@ function App() {
   const selectedGame = fireEmblemGames[initParams.game];
   return (
     <>
-      <h1>Choose Your Character!</h1>
+      <h1>Initialization</h1>
         {selectedGame && (
           <figure>
           <img src={`static/${selectedGame.name}/cover-art.png`} alt={`Cover art of FE${selectedGame.no}: ${selectedGame.title}`} />
@@ -321,6 +321,7 @@ function App() {
         </figure>
         )
         }
+      <article>
       <form>
         <label>Game</label>
         <select id="game-selector">
@@ -366,6 +367,7 @@ function App() {
         </table>
         )
       }
+    </article>
     </>
   );
 };
