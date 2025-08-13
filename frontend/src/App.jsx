@@ -226,7 +226,6 @@ function App() {
     }
   );
   function refreshUnitList(e) {
-    {/* Set game, then load unit list */}
     const selectedGame = e.currentTarget.value;
     setInitParams( { ...initParams, game: selectedGame, });
     axios
@@ -304,7 +303,7 @@ function App() {
       )
       .then(res => {
         const data = res.data;
-        const [success, clsLv, value] = data;
+        const [_, clsLv, value] = data;
         const [currentCls, currentLv] = clsLv;
         setMorph({ ...currentInitParams, currentCls: currentCls, currentLv: currentLv, currentStats: value, missingParams: morph.missingParams});
       });
@@ -339,18 +338,11 @@ function App() {
         <menu id="unit-selector">
           {unitList.map(unit => {
             const imgSuffix = selectedGame.no === 8 ? "gif" : "png";
-            let filename;
-            if (unit === "L'Arachel") {
-              {/* const filename = `LArachel.${imgSuffix}`; */}
-              filename = `LArachel.${imgSuffix}`;
-              filename = `${unit}.${imgSuffix}`;
-            } else {
-              filename = `${unit}.${imgSuffix}`;
-            };
+            const filename = `${unit}.${imgSuffix}`;
             return (
               <li key={unit}>
                 <button type="button" id={unit} onClick={tryCreateMorph}>
-                  <img src={`static/${selectedGame.name}/characters/${filename}`} />
+                  <img src={`static/${selectedGame.name}/characters/${filename}`} alt={`Portrait of ${unit}`} />
                   {unit}
                 </button>
               </li>
