@@ -112,11 +112,9 @@ function ShowOptions({optionalParams, options, onClick}) {
   Object.entries(optionalParams).forEach(params => {
     const [field, choices] = params;
     const [title, inputType] = options[field];
-    let inputWidget;
-    switch (inputType) {
-      case "select":
-        inputWidget = (
-          <>
+    const inputWidget = {
+      "select": (
+        <>
           <label htmlFor={field}>{title}</label>
           <select id={field}>
             {choices.map(choice => {
@@ -126,11 +124,9 @@ function ShowOptions({optionalParams, options, onClick}) {
             )
             }
           </select>
-          </>
-        );
-        break;
-      case "radio":
-        inputWidget = (
+        </>
+      ),
+      "radio": (
           <fieldset>
           <legend>Route</legend>
           {choices.map(choice => {
@@ -142,28 +138,20 @@ function ShowOptions({optionalParams, options, onClick}) {
             );
           })}
         </fieldset>
-        );
-        break;
-      case "number":
-        inputWidget = (
-          <>
-            <label htmlFor={field}>{title}</label>
-            <input type={inputType} id={field} name={field} min="0" max={choices.length - 1} data-fieldname={field} onClick={onClick} />
-          </>
-        );
-        break;
-      case "checkbox":
-        inputWidget = (
-          <>
-            <label htmlFor={field}>{title}</label>
-            <input type={inputType} id={field} name={field} data-fieldname={field} onClick={onClick} />
-          </>
-        );
-        break;
-      default:
-        console.log("???");
-        break;
-    }
+      ),
+      "number": (
+        <>
+          <label htmlFor={field}>{title}</label>
+          <input type={inputType} id={field} name={field} min="0" max={choices.length - 1} data-fieldname={field} onClick={onClick} />
+        </>
+      ),
+      "checkbox": (
+        <>
+          <label htmlFor={field}>{title}</label>
+          <input type={inputType} id={field} name={field} data-fieldname={field} onClick={onClick} />
+        </>
+      ),
+    }[inputType]
     optionsToBeShown.push(
       <Fragment key={key}>
         {inputWidget}
