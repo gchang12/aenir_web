@@ -116,6 +116,7 @@ function ShowOptions({optionalParams, options, onClick}) {
     switch (inputType) {
       case "select":
         inputWidget = (
+          <>
           <label htmlFor={field}>{title}</label>
           <select id={field}>
             {choices.map(choice => {
@@ -125,34 +126,38 @@ function ShowOptions({optionalParams, options, onClick}) {
             )
             }
           </select>
+          </>
         );
         break;
       case "radio":
         inputWidget = (
           <fieldset>
           <legend>Route</legend>
-          choices.map(choice => {
-          return (
-            <>
-              <label htmlFor={field}>{choice}</label>
-              <input type={inputType} id={choice} value={choice} name={field} data-fieldname={field} onClick={onClick} />
-            </>
-          );
-          }
-        )
+          {choices.map(choice => {
+            return (
+              <>
+                <label htmlFor={field}>{choice}</label>
+                <input type={inputType} id={choice} value={choice} name={field} data-fieldname={field} onClick={onClick} />
+              </>
+            );
+          })}
         </fieldset>
         );
         break;
       case "number":
         inputWidget = (
-          <label htmlFor={field}>{title}</label>
-          <input type={inputType} id={field} name={field} min="0" max={choices.length - 1} data-fieldname={field} onClick={onClick} />
+          <>
+            <label htmlFor={field}>{title}</label>
+            <input type={inputType} id={field} name={field} min="0" max={choices.length - 1} data-fieldname={field} onClick={onClick} />
+          </>
         );
         break;
       case "checkbox":
         inputWidget = (
-          <label htmlFor={field}>{title}</label>
-          <input type={inputType} id={field} name={field} data-fieldname={field} onClick={onClick} />
+          <>
+            <label htmlFor={field}>{title}</label>
+            <input type={inputType} id={field} name={field} data-fieldname={field} onClick={onClick} />
+          </>
         );
         break;
       default:
