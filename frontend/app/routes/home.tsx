@@ -1,6 +1,17 @@
 import { useState, Fragment } from 'react'; 
 import axios from 'axios';
-import "./App.css";
+import "../app.css";
+
+import type { Route } from "./+types/home";
+{/* import { Welcome } from "../welcome/welcome"; */}
+
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "Aenir: A Fire Emblem stat calculator" },
+    { name: "description", content: "Calculate Fire Emblem stats here!" },
+  ];
+}
+
 
 const fireEmblemGames = {
   4: {
@@ -207,7 +218,7 @@ function StatProfile( { profileBlock, detailsBlock, rawStats } ) {
   );
 }
 
-function App() {
+function Home() {
   const [unitList, setUnitList] = useState(fe4Units);
   const [initParams, setInitParams] = useState(
     {
@@ -372,4 +383,4 @@ function App() {
   );
 };
 
-export default App;
+export default Home;
