@@ -36,6 +36,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {children}
         <ScrollRestoration />
         <Scripts />
+        <footer>
+          <ul>
+            <li><a href="https://serenesforest.net/">Source</a></li>
+          </ul>
+        </footer>
       </body>
     </html>
   );

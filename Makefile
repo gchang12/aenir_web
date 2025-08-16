@@ -10,7 +10,9 @@ _:
 .backend:
 	make terminal_ &
 	# backend
-	printf '\033]0;%s\007' "django-server"; "django-server" 2>/dev/null; . .venv-aenir_web/bin/activate; ./backend/manage.py runserver;
+	printf '\033]0;%s\007' "django-server";
+	. .venv-aenir_web/bin/activate;
+	./backend/manage.py runserver;
 
 .browser:
 	# open browser for backend
