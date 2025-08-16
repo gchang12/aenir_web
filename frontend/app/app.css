@@ -13,14 +13,3 @@ body {
     color-scheme: dark;
   }
 }
-
-#unit-selector {
-  height: 400px;
-  overflow-y: scroll;
-  scrollbar-width: auto;
-  scrollbar-color: green;
-}
-
-article {
-  display: flex;
-}
