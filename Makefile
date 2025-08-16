@@ -4,6 +4,7 @@ _:
 .frontend:
 	make terminal_ &
 	# frontend
+	printf '\033]0;%s\007' "react-server";
 	cd frontend/ && npm run dev -- --port 3000;
 
 .backend:
