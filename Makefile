@@ -1,20 +1,20 @@
 _:
-	echo -ne "make .frontend\nmake .backend\nmake .browser\n";
+	echo -ne "make _frontend\nmake _backend\nmake _browser\n";
 
-.frontend:
+_frontend:
 	make terminal_ &
 	# frontend
 	printf '\033]0;%s\007' "react-server";
 	cd frontend/ && npm run dev -- --port 3000;
 
-.backend:
+_backend:
 	make terminal_ &
 	# backend
 	printf '\033]0;%s\007' "django-server";
 	. .venv-aenir_web/bin/activate;
 	./backend/manage.py runserver;
 
-.browser:
+_browser:
 	# open browser for backend
 	firefox http://127.0.0.1:8000/ http://localhost:3000 &
 
