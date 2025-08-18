@@ -34,7 +34,8 @@ class InitializationViewset(viewsets.ViewSet):
             9: Morph9,
         }[int(game)]
         character_list = list(morph_class.get_true_character_list())
-        return Response(character_list)
+        print(character_list)
+        return Response(character_list, content_type="text/json")
 
     def create(self, request):
         """
@@ -42,9 +43,10 @@ class InitializationViewset(viewsets.ViewSet):
         data = request.data['data']
         data['game_no'] = int(data.pop("game"))
         name = data.get("name")
-        print(data)
+        #print(data)
         try:
             morph = get_morph(**data)
+            print("success")
             print(morph.current_stats.as_list())
             return Response([True, (morph.current_cls, morph.current_lv), morph.current_stats.as_list()])
         except InitError as err:
