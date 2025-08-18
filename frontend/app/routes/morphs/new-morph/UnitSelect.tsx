@@ -1,12 +1,12 @@
 import { useState, Fragment } from 'react'; 
-import { unitListLoader } from './game.tsx';
+import { unitListLoader } from './GameSelect.tsx';
 import axios from 'axios';
 import "../../../app.css";
 
 import type { Route } from "./+types/home";
 {/* import { Welcome } from "../welcome/welcome"; */}
 
-import UnitSelectMenu from './game.tsx';
+import UnitSelectMenu from './GameSelect.tsx';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -15,128 +15,6 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-function StatTable( { rawStats } ) {
-  console.log("Hello from 'StatTable'!");
-  return (
-    <>
-    {Object.values(rawStats).map(fieldValuePair => {
-      const [stat, value] = fieldValuePair;
-      return (
-        <tr key={stat}>
-          <th>{stat}</th>
-          <td>{value}</td>
-        </tr>
-      );
-    })
-    }
-    </>
-  );
-}
-
-const options = {
-  father: ["Father", "select"],
-  hard_mode: ["Hard Mode", "checkbox"],
-  lyn_mode: ["Lyn Mode", "checkbox"],
-  route: ["Route", "radio"],
-  number_of_declines: ["Number of Declines", "number"],
-};
-
-export async function statLoader( {initParams} ) {
-  let missingParams = null;
-  const tempInitParams = { ...initParams};
-  let currentCls, currentLv;
-  let currentStats;
-  await axios
-    .post("http://127.0.0.1:8000/dracogate/api/initialization_view/",
-      {data: initParams},
-    )
-    .then(res => {
-      const data = res.data;
-      const [success, clsLv, value] = data;
-      if (success) {
-        currentStats = value;
-        [currentCls, currentLv] = clsLv;
-      } else {
-        missingParams = value;
-      }
-    })
-    .catch(err => console.log(err));
-  if (missingParams !== null) {
-    for (const item of Object.entries(missingParams)) {
-      const [field, choices] = item;
-      const defaultVal = choices[0];
-      tempInitParams[field] = defaultVal;
-    };
-    await axios
-      .post("http://127.0.0.1:8000/dracogate/api/initialization_view/",
-        {data: tempInitParams},
-      )
-      .then(res => {
-        const data = res.data;
-        const [_, clsLv, value] = data;
-        [currentCls, currentLv] = clsLv;
-        currentStats = value;
-      })
-      .catch(err => console.log(err));
-  }
-  return [tempInitParams, missingParams, currentCls, currentLv, currentStats];
-}
-
-function ShowOptions({optionalParams, options, onClick}) {
-  const optionsToBeShown = [];
-  let key = 0;
-  Object.entries(optionalParams).forEach(params => {
-    const [field, choices] = params;
-    const [title, inputType] = options[field];
-    const inputWidget = {
-      "select": (
-        <>
-          <label htmlFor={field}>{title}</label>
-          <select id={field}>
-            {choices.map(choice => {
-              return (
-                <option key={choice} data-fieldname={field} value={choice} onClick={onClick}>{choice}</option>
-              );}
-            )
-            }
-          </select>
-        </>
-      ),
-      "radio": (
-          <fieldset>
-          <legend>Route</legend>
-          {choices.map(choice => {
-            return (
-              <>
-                <label htmlFor={field}>{choice}</label>
-                <input type={inputType} id={choice} value={choice} name={field} data-fieldname={field} onClick={onClick} />
-              </>
-            );
-          })}
-        </fieldset>
-      ),
-      "number": (
-        <>
-          <label htmlFor={field}>{title}</label>
-          <input type={inputType} id={field} name={field} min="0" max={choices.length - 1} data-fieldname={field} onClick={onClick} />
-        </>
-      ),
-      "checkbox": (
-        <>
-          <label htmlFor={field}>{title}</label>
-          <input type={inputType} id={field} name={field} data-fieldname={field} onClick={onClick} />
-        </>
-      ),
-    }[inputType]
-    optionsToBeShown.push(
-      <Fragment key={key}>
-        {inputWidget}
-      </Fragment>
-    );
-    key += 1;
-  });
-  return optionsToBeShown;
-};
 
 export async function loader( { params }: Route.LoaderArgs) {
   const rawGame = params.game;
@@ -285,3 +163,34 @@ function UnitConfirmMenu(
 };
 
 export default UnitConfirmMenu;
+
+  const sourceUrl = "http://127.0.0.1:8000/dracogate/api/initialization_view/";
+  await function retryCreateMorph(e) {
+    const inputWidget = e.currentTarget;
+    const field = inputWidget.dataset.fieldname;
+    let value = inputWidget.value;
+    if (inputWidget.type === "checkbox") {
+      value = inputWidget.checked;
+    };
+    initParams[field] = value;
+    if (currentInitParams.name === "Gonzales") {
+      if (!Object.keys(currentInitParams).includes("hard_mode")) {
+        currentInitParams["hard_mode"] = false;
+      } else if (!Object.keys(currentInitParams).includes("route")) {
+        currentInitParams["route"] = "Lalum";
+      } else {
+        console.log("Unknown error.");
+      }
+    };
+    const [metaStats, currentStats, missingParams] = unitStatsLoader({initParams});
+    await axios
+      .post(sourceUrl,
+        {data: initParams},
+      )
+      .then(res => {
+        const data = res.data;
+        const [_, clsLv, value] = data;
+        const [currentCls, currentLv] = clsLv;
+      })
+      .catch(err => console.log(err));
+  }

@@ -12,8 +12,8 @@ export default [
     ...prefix("new-morph", [
       index("./routes/morphs/new-morph/index.tsx"),
       ...prefix(":game/", [
-        index("./routes/morphs/new-morph/game.tsx"),
-        route(":unit/", "./routes/morphs/new-morph/unit.tsx"),
+        index("./routes/morphs/new-morph/GameSelect.tsx"),
+        route(":unit/", "./routes/morphs/new-morph/UnitSelect.tsx"),
     ]),
   ]),
 ])
