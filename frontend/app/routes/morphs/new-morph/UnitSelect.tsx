@@ -8,6 +8,7 @@ import axios from 'axios';
 import "../../../app.css";
 import {
   unitListLoader,
+  unitListLoader2,
 } from '../../../dataLoaders/morphs/new-morph.tsx';
 import {
   GameUrlList,
@@ -26,9 +27,10 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export async function loader( { params }: Route.LoaderArgs) {
+export {/* async */} function loader( { params }: Route.LoaderArgs) {
   const game = findFireEmblemGame({params});
-  const unitList = await unitListLoader({game});
+  {/* const unitList = await unitListLoader({game}); */}
+  const unitList = unitListLoader2({game});
   return [game, unitList];
 }
 

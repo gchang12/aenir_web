@@ -1,4 +1,7 @@
 import axios from 'axios';
+import {
+  getUnitList,
+} from '../../constants/morphs/new-morph.tsx';
 
 export async function unitListLoader( {game} ) {
   const sourceUrl = "http://127.0.0.1:8000/dracogate/api/initialization_view/"
@@ -12,6 +15,10 @@ export async function unitListLoader( {game} ) {
       unitList = null;
     });
   return unitList;
+}
+
+function unitListLoader2( {game} ) {
+  return getUnitList({game.no});
 }
 
 export async function unitStatsLoader( {initParams} ) {
