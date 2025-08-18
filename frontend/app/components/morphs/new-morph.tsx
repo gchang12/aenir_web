@@ -48,7 +48,7 @@ function CheckboxWidget({field, title, onClick}) {
   );
 }
 
-function compileOptionList({paramList, onClick}) {
+export function compileOptionList({paramList, onClick}) {
   const possibleOptions = {
     father: ["Father", "select"],
     hard_mode: ["Hard Mode", "checkbox"],
@@ -85,7 +85,7 @@ function compileOptionList({paramList, onClick}) {
   return optionsToBeShown;
 };
 
-function GameProfile({game}) {
+export function GameProfile({game}) {
   return (
     <figure>
       <img src={`/static/${game.name}/cover-art.png`} alt={`Cover art of FE${game.no}: ${game.title}`} />
@@ -96,7 +96,7 @@ function GameProfile({game}) {
   );
 }
 
-function UnitProfile({game, unit}) {
+export function UnitProfile({game, unit}) {
   const imgSuffix = game.no === 8 ? "gif" : "png";
   const imgFile = `${initParams.name}.${imgSuffix}`;
   return (
@@ -106,5 +106,18 @@ function UnitProfile({game, unit}) {
         {unit}
       </figcaption>
     </figure>
+  );
+}
+
+export function GameUrlList() {
+  return (
+    <>
+      <li><a href="/morphs/new-morph/fe4/">Genealogy of the Holy War</a></li>
+      <li><a href="/morphs/new-morph/fe5/">Thracia 776</a></li>
+      <li><a href="/morphs/new-morph/fe6/">Sword of Seals</a></li>
+      <li><a href="/morphs/new-morph/fe7/">The Blazing Sword</a></li>
+      <li><a href="/morphs/new-morph/fe8/">The Sacred Stones</a></li>
+      <li><a href="/morphs/new-morph/fe9/">Path of Radiance</a></li>
+    </>
   );
 }

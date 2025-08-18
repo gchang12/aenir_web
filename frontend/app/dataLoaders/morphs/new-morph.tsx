@@ -43,7 +43,7 @@ export async function unitStatsLoader( {initParams} ) {
       initParams[field] = defaultVal;
     };
     await axios
-      .post(sourceUrl
+      .post(sourceUrl,
         {data: initParams},
       )
       .then(res => {
