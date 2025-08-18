@@ -40,6 +40,7 @@ class InitializationViewset(viewsets.ViewSet):
     def create(self, request):
         """
         """
+        print("data", request.data)
         data = request.data['data']
         data['game_no'] = int(data.pop("game"))
         name = data.get("name")

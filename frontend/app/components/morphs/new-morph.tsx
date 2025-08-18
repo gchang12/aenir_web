@@ -48,7 +48,7 @@ function CheckboxWidget({field, title, onClick}) {
   );
 }
 
-export function compileOptionList({paramList, onClick}) {
+export function getOptionList({paramList, onClick}) {
   const possibleOptions = {
     father: ["Father", "select"],
     hard_mode: ["Hard Mode", "checkbox"],
@@ -90,15 +90,24 @@ export function GameProfile({game}) {
     <figure>
       <img src={`/static/${game.name}/cover-art.png`} alt={`Cover art of FE${game.no}: ${game.title}`} />
       <figcaption>
-        {`FE${game.no}: ${game.title}`}
+        {game.title}
       </figcaption>
     </figure>
   );
 }
 
+function GameUrl({feGame}) {
+  return (
+    <a href={`/morphs/new-morph/fe${feGame.no}/`}>
+      {feGame.title}
+    {/* <GameProfile game={feGame} /> */}
+    </a>
+  );
+}
+
 export function UnitProfile({game, unit}) {
   const imgSuffix = game.no === 8 ? "gif" : "png";
-  const imgFile = `${initParams.name}.${imgSuffix}`;
+  const imgFile = `${unit}.${imgSuffix}`;
   return (
     <figure>
       <img src={`/static/${game.name}/characters/${imgFile}`} alt={`Portrait of ${unit}, ${imgFile}`} />
@@ -109,15 +118,58 @@ export function UnitProfile({game, unit}) {
   );
 }
 
-export function GameUrlList() {
+export function GameUrlList({gameList}) {
   return (
     <>
-      <li><a href="/morphs/new-morph/fe4/">Genealogy of the Holy War</a></li>
-      <li><a href="/morphs/new-morph/fe5/">Thracia 776</a></li>
-      <li><a href="/morphs/new-morph/fe6/">Sword of Seals</a></li>
-      <li><a href="/morphs/new-morph/fe7/">The Blazing Sword</a></li>
-      <li><a href="/morphs/new-morph/fe8/">The Sacred Stones</a></li>
-      <li><a href="/morphs/new-morph/fe9/">Path of Radiance</a></li>
+      {gameList.map(feGame => {
+        return (
+          <li key={feGame.no}>
+            <GameUrl feGame={feGame} />
+          </li>
+        ); 
+        })
+      }
     </>
+  );
+}
+
+function UnitUrl({game, unit}) {
+  const gameRank = `fe${game.no}`;
+  return (
+    <a href={`/morphs/new-morph/${gameRank}/${unit}`}>
+      <UnitProfile game={game} unit={unit} />
+    </a>
+  );
+};
+
+export function UnitUrlList({game, unitList}) {
+  return (
+    <>
+      {unitList.map(unit => {
+        return (
+          <li key={unit}>
+            <UnitUrl game={game} unit={unit} />
+          </li>
+        );
+      })
+      }
+    </>
+  );
+}
+
+export function StatTable({stats}) {
+  return (
+    <table>
+      {stats.map(labelValue => {
+          const [field, value] = labelValue;
+          return (
+            <tr>
+              <th>{field}</th>
+              <td>{value}</td>
+            </tr>
+          )
+      })
+      }
+    </table>
   );
 }

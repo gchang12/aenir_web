@@ -1,7 +1,7 @@
-function Home() {
+function Main() {
   return (
     <h1>Welcome to the Morphs Home Page!</h1>
   );
 }
 
-export default Home;
+export default Main;

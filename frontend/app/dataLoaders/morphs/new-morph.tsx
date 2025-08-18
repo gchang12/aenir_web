@@ -1,9 +1,11 @@
+import axios from 'axios';
+
 export async function unitListLoader( {game} ) {
   const sourceUrl = "http://127.0.0.1:8000/dracogate/api/initialization_view/"
   let unitList = [];
   await axios
     .get(sourceUrl,
-      {params: {game: game}},
+      {params: {game: game.no}},
     )
     .then(res => unitList.push(...res.data))
     .catch(err => {
