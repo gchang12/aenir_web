@@ -5,6 +5,8 @@ import "../../../app.css";
 
 import type { Route } from "./+types/home";
 
+import GameSelectMenu from './index.tsx';
+
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Aenir: A Fire Emblem stat calculator" },
@@ -69,6 +71,7 @@ function UnitSelectMenu(
   const gameUrlName = game.urlName;
   return (
     <>
+      <GameSelectMenu />
       <h1>Unit Select</h1>
       <h2>{game.title}</h2>
       <menu>

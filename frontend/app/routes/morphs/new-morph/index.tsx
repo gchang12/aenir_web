@@ -1,4 +1,4 @@
-function Home() {
+function GameSelectMenu() {
   return (
     <>
       <article>
@@ -17,4 +17,4 @@ function Home() {
   );
 };
 
-export default Home;
+export default GameSelectMenu;

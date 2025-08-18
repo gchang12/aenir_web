@@ -6,6 +6,8 @@ import "../../../app.css";
 import type { Route } from "./+types/home";
 {/* import { Welcome } from "../welcome/welcome"; */}
 
+import UnitSelectMenu from './game.tsx';
+
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Aenir: A Fire Emblem stat calculator" },
@@ -245,6 +247,7 @@ function UnitConfirmMenu(
   const imgFile = `${morph.name}.${imgSuffix}`;
   return (
     <>
+    {/* <UnitSelectMenu /> */}
       <h1>Initialization</h1>
         {selectedGame && (
           <figure>
