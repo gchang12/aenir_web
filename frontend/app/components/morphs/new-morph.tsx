@@ -53,7 +53,6 @@ export function getOptionList({paramList, onClick}) {
     father: ["Father", "select"],
     hard_mode: ["Hard Mode", "checkbox"],
     lyn_mode: ["Lyn Mode", "checkbox"],
-    route: ["Route", "radio"],
     number_of_declines: ["Number of Declines", "number"],
   };
   const compiledOptions = [];

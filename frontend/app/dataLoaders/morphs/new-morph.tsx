@@ -25,7 +25,7 @@ export async function unitStatsLoader( {initParams} ) {
   let missingParams = null;
   await axios
     .post(sourceUrl,
-      {data: initParams},
+      initParams,
     )
     .then(res => {
       const data = res.data;
