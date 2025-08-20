@@ -1,9 +1,9 @@
 import {
   GameUrlList,
-} from '../../../components/morphs/new-morph.tsx';
+} from '../../../_components/morphs/new-morph.tsx';
 import {
   getFireEmblemGames
-} from '../../../constants/morphs/new-morph.tsx';
+} from '../../../_constants/morphs/new-morph.tsx';
 
 function Main() {
   const fireEmblemGames = getFireEmblemGames();

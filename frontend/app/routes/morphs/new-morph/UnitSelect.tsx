@@ -9,16 +9,16 @@ import "../../../app.css";
 import {
   unitListLoader,
   unitListLoader2,
-} from '../../../dataLoaders/morphs/new-morph.tsx';
+} from '../../../_dataLoaders/morphs/new-morph.tsx';
 import {
   GameUrlList,
   GameProfile,
   UnitUrlList,
-} from '../../../components/morphs/new-morph.tsx';
+} from '../../../_components/morphs/new-morph.tsx';
 import {
   getFireEmblemGames,
   findFireEmblemGame,
-} from '../../../constants/morphs/new-morph.tsx';
+} from '../../../_constants/morphs/new-morph.tsx';
 
 export function meta({}: Route.MetaArgs) {
   return [

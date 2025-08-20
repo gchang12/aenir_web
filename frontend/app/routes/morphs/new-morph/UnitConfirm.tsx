@@ -7,7 +7,7 @@ import axios from 'axios';
 import "../../../app.css";
 import {
   unitStatsLoader,
-} from '../../../dataLoaders/morphs/new-morph.tsx';
+} from '../../../_dataLoaders/morphs/new-morph.tsx';
 import {
   GameUrlList,
   GameProfile,
@@ -15,11 +15,11 @@ import {
   UnitUrlList,
   StatTable,
   OptionWidget,
-} from '../../../components/morphs/new-morph.tsx';
+} from '../../../_components/morphs/new-morph.tsx';
 import {
   getFireEmblemGames,
   findFireEmblemGame,
-} from '../../../constants/morphs/new-morph.tsx';
+} from '../../../_constants/morphs/new-morph.tsx';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -49,6 +49,7 @@ export async function loader( { params }: Route.LoaderArgs) {
 function Main(
   {loaderData,
 }: Route.ComponentProps) {
+  'use client';
   const [game, defaultInitParams, defaultMetaStats, defaultCurrentStats, missingParams] = loaderData;
   const [initParams, setInitParams] = useState(defaultInitParams);
   const [metaStats, setMetaStats] = useState(defaultMetaStats);
@@ -61,14 +62,15 @@ function Main(
       value = inputWidget.checked;
     };
     let tempInitParams = {...initParams};
-    alert(tempInitParams.game);
-    alert(tempInitParams.name);
     tempInitParams[field] = value;
     let tempMetaStats;
     let tempCurrentStats;
+    alert(tempInitParams[field]);
+    [tempMetaStats, tempCurrentStats, _] = await unitStatsLoader({tempInitParams});
+    alert(tempMetaStats.currentLv);
+    setInitParams(tempInitParams);
     setMetaStats(tempMetaStats);
     setCurrentStats(tempCurrentStats);
-    setInitParams(tempInitParams);
   };
   const fireEmblemGames = getFireEmblemGames();
   return (
@@ -82,7 +84,7 @@ function Main(
       <StatTable stats={[["Class", metaStats.currentCls], ["Lv", metaStats.currentLv]].concat(currentStats)} />
       <form>
         {missingParams !== null && <OptionWidget params={missingParams} onClick={retryCreateMorph} />}
-        <button>
+        <button type="button">
           Create!
         </button>
       </form>
