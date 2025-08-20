@@ -1,27 +1,30 @@
 VENV := .venv-aenir_web
-
-_:
-	echo -ne "make _frontend\nmake _backend\nmake _browser\n";
+PROJECT_DIR := /home/eclair/Documents/coding/_web-dev/aenir_web/
 
 _frontend:
-	make terminal_ &
+	make b_terminal &
 	# frontend
 	printf '\033]0;%s\007' "react-server";
 	cd frontend/ && npm run dev -- --port 3000;
 
 _backend: $(VENV)
-	make terminal_ &
+	make _terminal &
 	# backend
 	printf '\033]0;%s\007' "django-server";
-	. ${VENV}/bin/activate;
+	. $(VENV)/bin/activate;
 	./backend/manage.py runserver;
 
 _browser:
-	# open browser for backend
 	firefox http://127.0.0.1:8000/ http://localhost:3000;
 
-terminal_:
-	xfce4-terminal --working-directory=/home/eclair/Documents/coding/_web-dev/aenir_web/ &
+b_terminal:
+	xfce4-terminal --tab --title=django-server --working-directory=${PROJECT_DIR} &
+
+_terminal:
+	xfce4-terminal --tab --working-directory=${PROJECT_DIR} &
 
 $(VENV):
 	python3 -m venv $(VENV)/;
+
+#f_terminal: xfce4-terminal --tab --title=react-server --working-directory=${PROJECT_DIR} &
+
