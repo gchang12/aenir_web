@@ -11,8 +11,7 @@ PROJECT_DIR := /home/eclair/Documents/coding/_web-dev/aenir_web/
 	make .main_terminal &
 	# backend
 	printf '\033]0;%s\007' "django-server";
-	. $(VENV)/bin/activate;
-	./backend/manage.py runserver;
+	. $(VENV)/bin/activate && ./backend/manage.py runserver;
 
 .browser:
 	firefox http://127.0.0.1:8000/ http://localhost:3000;
