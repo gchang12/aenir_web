@@ -1,3 +1,4 @@
+'use client';
 import { useState, Fragment } from 'react'; 
 import type { Route } from "./+types/home";
 
@@ -13,6 +14,7 @@ import {
   UnitProfile,
   UnitUrlList,
   StatTable,
+  OptionWidget,
 } from '../../../components/morphs/new-morph.tsx';
 import {
   getFireEmblemGames,
@@ -33,22 +35,24 @@ export async function loader( { params }: Route.LoaderArgs) {
     game: game.no,
     name: unit,
   };
-  let [metaStats, currentStats, missingParams] = await unitStatsLoader(initParams);
+  let [metaStats, currentStats, missingParams] = await unitStatsLoader({initParams});
   if (missingParams !== null) {
     const [field, choices] = missingParams;
     const defaultVal = choices[0];
     initParams[field] = defaultVal;
-    [metaStats, currentStats, missingParams] = await unitStatsLoader(initParams);
-  }
+    let _;
+    [metaStats, currentStats, _] = await unitStatsLoader({initParams});
+  };
   return [game, initParams, metaStats, currentStats, missingParams];
 };
 
 function Main(
   {loaderData,
 }: Route.ComponentProps) {
-  const [game, defaultInitParams, metaStats, currentStats, missingParams] = loaderData;
+  const [game, defaultInitParams, defaultMetaStats, defaultCurrentStats, missingParams] = loaderData;
   const [initParams, setInitParams] = useState(defaultInitParams);
-  const fireEmblemGames = getFireEmblemGames();
+  const [metaStats, setMetaStats] = useState(defaultMetaStats);
+  const [currentStats, setCurrentStats] = useState(defaultCurrentStats);
   async function retryCreateMorph(e) {
     const inputWidget = e.currentTarget;
     const field = inputWidget.dataset.fieldname;
@@ -56,10 +60,17 @@ function Main(
     if (inputWidget.type === "checkbox") {
       value = inputWidget.checked;
     };
-    const tempInitParams = {...initParams};
+    let tempInitParams = {...initParams};
+    alert(tempInitParams.game);
+    alert(tempInitParams.name);
     tempInitParams[field] = value;
+    let tempMetaStats;
+    let tempCurrentStats;
+    setMetaStats(tempMetaStats);
+    setCurrentStats(tempCurrentStats);
     setInitParams(tempInitParams);
-  }
+  };
+  const fireEmblemGames = getFireEmblemGames();
   return (
     <>
       <nav id="game-select">
@@ -70,9 +81,7 @@ function Main(
       <UnitProfile game={game} unit={initParams.name} />
       <StatTable stats={[["Class", metaStats.currentCls], ["Lv", metaStats.currentLv]].concat(currentStats)} />
       <form>
-        {missingParams && (
-          getOptionList({missingParams, retryCreateMorph}).map(option => option)
-        )}
+        {missingParams !== null && <OptionWidget params={missingParams} onClick={retryCreateMorph} />}
         <button>
           Create!
         </button>

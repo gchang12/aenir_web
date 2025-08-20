@@ -33,25 +33,23 @@ export async function unitStatsLoader( {initParams} ) {
   let missingParams = null;
   await axios
     .post(sourceUrl,
-      initParams,
+      {data: initParams},
     )
     .then(res => {
       const data = res.data;
       const [success, clsLv, value] = data;
       if (success) {
         currentStats = value;
-        metaStats.currentCls, metaStats.currentLv = clsLv
+        [metaStats.currentCls, metaStats.currentLv] = clsLv
       } else {
         missingParams = value;
       };
     })
     .catch(err => console.log(err));
   if (missingParams !== null) {
-    for (const item of Object.entries(missingParams)) {
-      const [field, choices] = item;
-      const defaultVal = choices[0];
-      initParams[field] = defaultVal;
-    };
+    const [field, choices] = missingParams;
+    const defaultVal = choices[0];
+    initParams[field] = defaultVal;
     await axios
       .post(sourceUrl,
         {data: initParams},
@@ -59,10 +57,10 @@ export async function unitStatsLoader( {initParams} ) {
       .then(res => {
         const data = res.data;
         const [_, clsLv, value] = data;
-        [currentCls, currentLv] = clsLv;
+        [metaStats.currentCls, metaStats.currentLv] = clsLv;
         currentStats = value;
       })
       .catch(err => console.log(err));
-  }
+  };
   return [metaStats, currentStats, missingParams];
 };

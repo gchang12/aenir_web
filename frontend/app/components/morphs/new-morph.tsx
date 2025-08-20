@@ -34,7 +34,7 @@ function NumberWidget({choices, field, title, onClick}) {
   return (
     <>
       <label htmlFor={field}>{title}</label>
-      <input type={inputType} id={field} name={field} min="0" max={choices.length - 1} data-fieldname={field} onClick={onClick} />
+      <input type="number" id={field} name={field} min="0" max={choices.length - 1} data-fieldname={field} onClick={onClick} />
     </>
   );
 }
@@ -43,45 +43,34 @@ function CheckboxWidget({field, title, onClick}) {
   return (
     <>
       <label htmlFor={field}>{title}</label>
-      <input type={inputType} id={field} name={field} data-fieldname={field} onClick={onClick} />
+      <input type="checkbox" id={field} name={field} data-fieldname={field} onClick={onClick} />
     </>
   );
 }
 
-export function getOptionList({paramList, onClick}) {
+export function OptionWidget({params, onClick}) {
   const possibleOptions = {
     father: ["Father", "select"],
     hard_mode: ["Hard Mode", "checkbox"],
     lyn_mode: ["Lyn Mode", "checkbox"],
     number_of_declines: ["Number of Declines", "number"],
   };
-  const compiledOptions = [];
-  let key = 0;
-  Object.entries(paramList).forEach(params => {
-    const [field, choices] = params;
-    const [title, inputType] = possibleOptions[field];
-    const inputWidget = {
-      "select": (
-        <SelectWidget choices={choices} field={field} title={title} onClick={onClick} />
-      ),
-      "radio": (
-        <RadioWidget choices={choices} field={field} onClick={onClick} />
-      ),
-      "number": (
-        <NumberWidget choices={choices} field={field} onClick={onClick} />
-      ),
-      "checkbox": (
-        <CheckboxWidget field={field} title={title} onClick={onClick} />
-      ),
-    }[inputType]
-    optionsToBeShown.push(
-      <Fragment key={key}>
-        {inputWidget}
-      </Fragment>
-    );
-    key += 1;
-  });
-  return optionsToBeShown;
+  const [field, choices] = params;
+  const [title, inputType] = possibleOptions[field];
+  return {
+    "select": (
+      <SelectWidget choices={choices} field={field} title={title} onClick={onClick} />
+    ),
+    "radio": (
+      <RadioWidget choices={choices} field={field} onClick={onClick} />
+    ),
+    "number": (
+      <NumberWidget choices={choices} field={field} onClick={onClick} />
+    ),
+    "checkbox": (
+      <CheckboxWidget field={field} title={title} onClick={onClick} />
+    ),
+  }[inputType];
 };
 
 export function GameProfile({game}) {
