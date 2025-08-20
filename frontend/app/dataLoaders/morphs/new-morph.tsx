@@ -17,8 +17,9 @@ export async function unitListLoader( {game} ) {
   return unitList;
 }
 
-function unitListLoader2( {game} ) {
-  return getUnitList({game.no});
+export function unitListLoader2( {game} ) {
+  const gameNo = game.no;
+  return getUnitList({gameNo});
 }
 
 export async function unitStatsLoader( {initParams} ) {
