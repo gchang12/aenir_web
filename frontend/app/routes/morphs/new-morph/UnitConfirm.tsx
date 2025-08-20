@@ -1,4 +1,3 @@
-'use client';
 import { useState, Fragment } from 'react'; 
 import type { Route } from "./+types/home";
 
@@ -49,7 +48,6 @@ export async function loader( { params }: Route.LoaderArgs) {
 function Main(
   {loaderData,
 }: Route.ComponentProps) {
-  'use client';
   const [game, defaultInitParams, defaultMetaStats, defaultCurrentStats, missingParams] = loaderData;
   const [initParams, setInitParams] = useState(defaultInitParams);
   const [metaStats, setMetaStats] = useState(defaultMetaStats);
@@ -65,12 +63,16 @@ function Main(
     tempInitParams[field] = value;
     let tempMetaStats;
     let tempCurrentStats;
-    alert(tempInitParams[field]);
-    [tempMetaStats, tempCurrentStats, _] = await unitStatsLoader({tempInitParams});
-    alert(tempMetaStats.currentLv);
-    setInitParams(tempInitParams);
-    setMetaStats(tempMetaStats);
-    setCurrentStats(tempCurrentStats);
+    let _;
+    unitStatsLoader({initParams: tempInitParams})
+      .then(res => {
+          [tempMetaStats, tempCurrentStats, _] = res;
+          setInitParams(tempInitParams);
+          setMetaStats(tempMetaStats);
+          setCurrentStats(tempCurrentStats);
+        }
+      )
+      .catch(err => console.log(err));
   };
   const fireEmblemGames = getFireEmblemGames();
   return (
@@ -84,6 +86,7 @@ function Main(
       <StatTable stats={[["Class", metaStats.currentCls], ["Lv", metaStats.currentLv]].concat(currentStats)} />
       <form>
         {missingParams !== null && <OptionWidget params={missingParams} onClick={retryCreateMorph} />}
+        <input type="text" />
         <button type="button">
           Create!
         </button>

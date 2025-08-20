@@ -23,7 +23,7 @@ export function unitListLoader2( {game} ) {
 }
 
 export async function unitStatsLoader( {initParams} ) {
-  const sourceUrl = "http://127.0.0.1:8000/dracogate/api/initialization_view/"
+  const sourceUrl = "http://127.0.0.1:8000/dracogate/api/initialization_view/";
   // containers for output
   let metaStats = {
     currentCls: null,
@@ -31,6 +31,7 @@ export async function unitStatsLoader( {initParams} ) {
   };
   let currentStats = null;
   let missingParams = null;
+  console.log("About to send POST request to URL.");
   await axios
     .post(sourceUrl,
       {data: initParams},
@@ -38,15 +39,20 @@ export async function unitStatsLoader( {initParams} ) {
     .then(res => {
       const data = res.data;
       const [success, clsLv, value] = data;
+      console.log("Data has been fetched.");
       if (success) {
         currentStats = value;
         [metaStats.currentCls, metaStats.currentLv] = clsLv
+        console.log("Unit has been found. Level: " + metaStats.currentLv);
       } else {
         missingParams = value;
+        console.log("Failure. missingParams: " + missingParams);
       };
     })
     .catch(err => console.log(err));
+  console.log("Checking if missingParams need to be populated.");
   if (missingParams !== null) {
+    console.log("missingParams not null: " + missingParams);
     const [field, choices] = missingParams;
     const defaultVal = choices[0];
     initParams[field] = defaultVal;
@@ -62,5 +68,6 @@ export async function unitStatsLoader( {initParams} ) {
       })
       .catch(err => console.log(err));
   };
+  console.log("End of unitStatsLoader");
   return [metaStats, currentStats, missingParams];
 };
