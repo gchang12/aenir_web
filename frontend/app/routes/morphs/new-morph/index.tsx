@@ -5,7 +5,7 @@ import {
   getFireEmblemGames
 } from '../../../_constants/morphs/new-morph.tsx';
 
-function Main() {
+function Main({ children }: { children: React.ReactNode }) {
   const fireEmblemGames = getFireEmblemGames();
   return (
     <>
@@ -16,6 +16,7 @@ function Main() {
             <GameUrlList gameList={fireEmblemGames} />
           </menu>
         </nav>
+        {children}
       </article>
     </>
   );

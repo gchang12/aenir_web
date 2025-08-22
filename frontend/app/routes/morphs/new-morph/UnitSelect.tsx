@@ -42,19 +42,21 @@ function Main(
   const fireEmblemGames = getFireEmblemGames();
   return (
     <>
-      <h1>Game Select</h1>
-      <nav>
-        <menu>
-          <GameUrlList gameList={fireEmblemGames} />
-        </menu>
-      </nav>
-      <nav>
-        <h2>{gameTitle}</h2>
-        <GameProfile game={game} />
-        <menu>
-          <UnitUrlList game={game} unitList={unitList} />
-        </menu>
-      </nav>
+      <article>
+        <h1>Game Select</h1>
+        <nav>
+          <menu>
+            <GameUrlList gameList={fireEmblemGames} />
+          </menu>
+        </nav>
+        <nav>
+          <h2>{gameTitle}</h2>
+          <GameProfile game={game} />
+          <menu>
+            <UnitUrlList game={game} unitList={unitList} />
+          </menu>
+        </nav>
+      </article>
     </>
   );
 }

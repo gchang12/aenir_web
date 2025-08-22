@@ -52,6 +52,7 @@ function Main(
   const [initParams, setInitParams] = useState(defaultInitParams);
   const [metaStats, setMetaStats] = useState(defaultMetaStats);
   const [currentStats, setCurrentStats] = useState(defaultCurrentStats);
+  {/* const [morphName, setMorphName] = useState(''); */}
   async function retryCreateMorph(e) {
     const inputWidget = e.currentTarget;
     const field = inputWidget.dataset.fieldname;
@@ -80,6 +81,12 @@ function Main(
       )
       .catch(err => console.log(err));
   };
+  function decideWhetherOrNotToActivateButton(e) {
+    const morphSubmitButton = document.getElementById("morph-submit-button");
+    const newMorphName = e.currentTarget.value;
+    morphSubmitButton.disabled = newMorphName === "";
+    {/* setMorphName(newMorphName); */}
+  };
   const fireEmblemGames = getFireEmblemGames();
   return (
     <>
@@ -90,10 +97,10 @@ function Main(
       </nav>
       <UnitProfile game={game} unit={initParams.name} />
       <StatTable stats={[["Class", metaStats.currentCls], ["Lv", metaStats.currentLv]].concat(currentStats)} />
-      <form>
+      <form action="/initialize-morph">
         {missingParams !== null && <OptionWidget params={missingParams} onClick={retryCreateMorph} />}
-        <input type="text" />
-        <button type="button">
+        <input id="morph-name-input" type="text" required onClick={decideWhetherOrNotToActivateButton} />
+        <button id="morph-submit-button" type="submit" disabled>
           Create!
         </button>
       </form>
