@@ -10,6 +10,12 @@ function SelectWidget({choices, field, title, onClick}) {
         )
         }
       </select>
+      <figure>
+        <img id="father-preview" src="/static/genealogy-of-the-holy-war/characters/Arden.png" alt="/static/genealogy-of-the-holy-war/characters/Arden.png" />
+        <figcaption>
+          Father
+        </figcaption>
+      </figure>
     </>
   );
 }

@@ -58,6 +58,12 @@ function Main(
     let value = inputWidget.value;
     if (inputWidget.type === "checkbox") {
       value = inputWidget.checked;
+    } else if (field === "father") {
+      const fatherName = inputWidget.value;
+      const fatherPreview = document.getElementById("father-preview");
+      const fatherImgSrc = `/static/genealogy-of-the-holy-war/characters/${fatherName}.png`;
+      fatherPreview.src = fatherImgSrc;
+      fatherPreview.alt = fatherImgSrc;
     };
     let tempInitParams = {...initParams};
     tempInitParams[field] = value;
