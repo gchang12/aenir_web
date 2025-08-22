@@ -157,7 +157,7 @@ export function StatTable({stats}) {
       {stats.map(labelValue => {
           const [field, value] = labelValue;
           return (
-            <tr>
+            <tr key={field}>
               <th>{field}</th>
               <td>{value}</td>
             </tr>

@@ -41,7 +41,7 @@ class InitializationViewset(viewsets.ViewSet):
         """
         """
         print("data", request.data)
-        data = request.data['data']
+        data = request.data.pop('data')
         data['game_no'] = int(data.pop("game"))
         name = data.get("name")
         #print(data)
@@ -49,11 +49,16 @@ class InitializationViewset(viewsets.ViewSet):
             morph = get_morph(**data)
             print("success")
             print(morph.current_stats.as_list())
+            print([morph.current_cls, morph.current_lv])
             return Response([True, (morph.current_cls, morph.current_lv), morph.current_stats.as_list()])
         except InitError as err:
             print("request failed")
-            print(data)
-            return Response([False, None, err.init_params])
+            #print(list(err.init_params.items()))
+            #for missing_params in err.init_params: pass
+            #missing_params = list(dict(err.init_params).items())
+            missing_params = err.init_params.popitem()
+            print("missing_params: " + str(missing_params))
+            return Response([False, None, missing_params])
 
     def update(self, request):
         """
