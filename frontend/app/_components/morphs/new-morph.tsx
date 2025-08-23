@@ -54,7 +54,7 @@ function CheckboxWidget({field, title, onClick}) {
   );
 }
 
-export function OptionWidget({params, onClick}) {
+export function MorphOption1({params, onClick}) {
   const possibleOptions = {
     father: ["Father", "select"],
     hard_mode: ["Hard Mode", "checkbox"],
@@ -151,7 +151,9 @@ export function UnitUrlList({game, unitList}) {
   );
 }
 
+{/* export function StatTable({stats, maxStats, thClassNames, tdClassNames}) { */}
 export function StatTable({stats}) {
+  {/* TODO: meter, progress, max-stats, class-names */}
   return (
     <table>
       {stats.map(labelValue => {

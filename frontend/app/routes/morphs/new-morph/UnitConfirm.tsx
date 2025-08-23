@@ -97,8 +97,9 @@ function Main(
       </nav>
       <UnitProfile game={game} unit={initParams.name} />
       <StatTable stats={[["Class", metaStats.currentCls], ["Lv", metaStats.currentLv]].concat(currentStats)} />
-      <form action="/initialize-morph">
-        {missingParams !== null && <OptionWidget params={missingParams} onClick={retryCreateMorph} />}
+      {/* NOTE: This form.action is just a placeholder. */}
+      <form action="http://localhost:8000/dracogate/api/initialize_morph/save????">
+        {missingParams !== null && <MorphOption1 params={missingParams} onClick={retryCreateMorph} />}
         <input id="morph-name-input" type="text" required onClick={decideWhetherOrNotToActivateButton} />
         <button id="morph-submit-button" type="submit" disabled>
           Create!

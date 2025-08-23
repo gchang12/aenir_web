@@ -2,7 +2,7 @@ import {
   GameUrlList,
 } from '../../../_components/morphs/new-morph.tsx';
 import {
-  getFireEmblemGames
+  getFireEmblemGames,
 } from '../../../_constants/morphs/new-morph.tsx';
 
 function Main({ children }: { children: React.ReactNode }) {

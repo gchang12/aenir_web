@@ -3,21 +3,7 @@ import {
   getUnitList,
 } from '../../_constants/morphs/new-morph.tsx';
 
-export async function unitListLoader( {game} ) {
-  const sourceUrl = "http://127.0.0.1:8000/dracogate/api/initialization_view/"
-  let unitList = [];
-  await axios
-    .get(sourceUrl,
-      {params: {game: game.no}},
-    )
-    .then(res => unitList.push(...res.data))
-    .catch(err => {
-      unitList = null;
-    });
-  return unitList;
-}
-
-export function unitListLoader2( {game} ) {
+export function unitListLoader( {game} ) {
   const gameNo = game.no;
   return getUnitList({gameNo});
 }
