@@ -33,21 +33,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <nav id="main-navibar">
-          <ul>
-            <li><a href="/morphs/">Morphs</a></li>
-            <li><a href="/morphs/new/">Create Morph</a></li>
-          </ul>
-        </nav>
         {children}
         <ScrollRestoration />
         <Scripts />
-        <footer>
-          <ul>
-            <li><a href="https://serenesforest.net/">Source</a></li>
-            <li><a href="https://github.com/gchang12/aenir_web">Wanna Contribute?</a></li>
-          </ul>
-        </footer>
       </body>
     </html>
   );
