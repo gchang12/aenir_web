@@ -61,8 +61,16 @@ export async function unitStatsLoader( {initParams} ) {
   return [metaStats, currentStats, missingParams];
 };
 
-export function newUnitSaver( {initParams, showError} ) {
+export async function newUnitSaver( {initParams, showError} ) {
   const sourceUrl = "http://127.0.0.1:8000/dracogate/api/initialization_view/";
-  console.log("About to send PUT request to URL.");
-  return axios.put(sourceUrl, {data: initParams});
+  alert("About to send PUT request to URL.");
+  await axios
+    .put(sourceUrl,
+      {data: initParams},
+    )
+    .then(res => {
+        return alert("PUT request successful");
+      })
+    .catch(err => console.log(err));
+  return null;
 };

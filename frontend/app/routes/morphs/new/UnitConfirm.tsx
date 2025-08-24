@@ -1,4 +1,10 @@
 import { useState, Fragment } from 'react'; 
+import {
+  redirect,
+} from 'react-router';
+{/* import { */}
+  {/* useNavigate, */}
+  {/* } from 'react-router-dom'; */}
 import type { Route } from "./+types/home";
 
 import axios from 'axios';
@@ -14,7 +20,7 @@ import {
   UnitProfile,
   UnitUrlList,
   StatTable,
-  OptionWidget,
+  MorphOption1,
 } from '../../../_components/morphs/new.tsx';
 import {
   getFireEmblemGames,
@@ -88,19 +94,17 @@ function Main(
     morphSubmitButton.disabled = newMorphName === "";
     {/* setMorphName(newMorphName); */}
   };
+  {/* const navigate = useNavigate(); */}
   async function saveMorph(e) {
     // send init-data to server
     {/* async function newUnitSaver( {initParams, showError} ) { */}
+    alert("saveMorph");
+    {/* navigate('/morph/'); */}
     function showError(e) {
       const initErrors = document.getElementById("init-errors");
       initErrors.textContent = e;
     };
-    await newUnitSaver({initParams})
-      .then(_ => {
-          throw redirect("/morph/");
-        }
-      )
-      .catch(err => showError(err));
+    return await newUnitSaver({initParams, showError});
   };
   return (
     <>
@@ -112,12 +116,15 @@ function Main(
       <UnitProfile game={game} unit={initParams.name} />
       <StatTable stats={[["Class", metaStats.currentCls], ["Lv", metaStats.currentLv]].concat(currentStats)} />
       {/* NOTE: This form.action is just a placeholder. */}
-      <form method="put" action="http://localhost:8000/dracogate/api/initialize_morph/save????Wait, do we even need the API for this?">
+      <form action="/morphs">
         {missingParams !== null && <MorphOption1 params={missingParams} onClick={retryCreateMorph} />}
         {/* <input id="morph-name-input" type="text" required onClick={decideWhetherOrNotToActivateButton} /> */}
         <button id="morph-submit-button" type="button" onClick={saveMorph}>
           Create!
         </button>
+        <a href="/morphs" onClick={saveMorph}>
+          Create via Link!
+        </a>
         <div id="init-errors">
         </div>
       </form>

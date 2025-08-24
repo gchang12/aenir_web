@@ -156,6 +156,7 @@ export function StatTable({stats}) {
   {/* TODO: meter, progress, max-stats, class-names */}
   return (
     <table>
+      <tbody>
       {stats.map(labelValue => {
           const [field, value] = labelValue;
           return (
@@ -166,6 +167,7 @@ export function StatTable({stats}) {
           )
       })
       }
+      </tbody>
     </table>
   );
 }
