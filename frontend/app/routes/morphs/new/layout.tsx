@@ -4,7 +4,7 @@ import {
 
 import {
   GameUrlList,
-} from '../../../_components/morphs/new-morph.tsx';
+} from '../../../_components/morphs/new.tsx';
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (

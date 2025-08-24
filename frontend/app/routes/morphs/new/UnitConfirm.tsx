@@ -7,7 +7,7 @@ import "../../../app.css";
 import {
   unitStatsLoader,
   newUnitSaver,
-} from '../../../_dataLoaders/morphs/new-morph.tsx';
+} from '../../../_dataLoaders/morphs/new.tsx';
 import {
   GameUrlList,
   GameProfile,
@@ -15,11 +15,11 @@ import {
   UnitUrlList,
   StatTable,
   OptionWidget,
-} from '../../../_components/morphs/new-morph.tsx';
+} from '../../../_components/morphs/new.tsx';
 import {
   getFireEmblemGames,
   findFireEmblemGame,
-} from '../../../_constants/morphs/new-morph.tsx';
+} from '../../../_constants/morphs/new.tsx';
 
 export function meta({}: Route.MetaArgs) {
   return [

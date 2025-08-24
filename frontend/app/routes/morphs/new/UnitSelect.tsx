@@ -8,16 +8,16 @@ import axios from 'axios';
 import "../../../app.css";
 import {
   unitListLoader,
-} from '../../../_dataLoaders/morphs/new-morph.tsx';
+} from '../../../_dataLoaders/morphs/new.tsx';
 import {
   GameUrlList,
   GameProfile,
   UnitUrlList,
-} from '../../../_components/morphs/new-morph.tsx';
+} from '../../../_components/morphs/new.tsx';
 import {
   getFireEmblemGames,
   findFireEmblemGame,
-} from '../../../_constants/morphs/new-morph.tsx';
+} from '../../../_constants/morphs/new.tsx';
 
 export function meta({}: Route.MetaArgs) {
   return [
