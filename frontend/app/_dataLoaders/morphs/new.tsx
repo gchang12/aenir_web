@@ -4,7 +4,7 @@ import {
 import axios from 'axios';
 import {
   getUnitList,
-} from '../../_constants/morphs/new-morph.tsx';
+} from '../../_constants/morphs/new.tsx';
 
 export function unitListLoader( {game} ) {
   const gameNo = game.no;

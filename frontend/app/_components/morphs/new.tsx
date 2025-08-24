@@ -92,7 +92,7 @@ export function GameProfile({game}) {
 
 function GameUrl({feGame}) {
   return (
-    <a href={`/morphs/new-morph/fe${feGame.no}/`}>
+    <a href={`/morphs/new/fe${feGame.no}/`}>
       {feGame.title}
     {/* <GameProfile game={feGame} /> */}
     </a>
@@ -130,7 +130,7 @@ export function GameUrlList({gameList}) {
 function UnitUrl({game, unit}) {
   const gameRank = `fe${game.no}`;
   return (
-    <a href={`/morphs/new-morph/${gameRank}/${unit}`}>
+    <a href={`/morphs/new/${gameRank}/${unit}`}>
       <UnitProfile game={game} unit={unit} />
     </a>
   );

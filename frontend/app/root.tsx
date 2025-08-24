@@ -36,7 +36,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <nav id="main-navibar">
           <ul>
             <li><a href="/morphs/">Morphs</a></li>
-            <li><a href="/morphs/new-morph/">Create Morph</a></li>
+            <li><a href="/morphs/new/">Create Morph</a></li>
           </ul>
         </nav>
         {children}

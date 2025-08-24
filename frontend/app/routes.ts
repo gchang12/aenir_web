@@ -11,11 +11,11 @@ export default [
   ...prefix("morphs", [
     index("./routes/morphs/index.tsx"),
     ...prefix("new", [
-      layout("./routes/morphs/new-morph/layout.tsx", [
-        index("./routes/morphs/new-morph/index.tsx"),
+      layout("./routes/morphs/new/layout.tsx", [
+        index("./routes/morphs/new/index.tsx"),
         ...prefix(":game/", [
-          index("./routes/morphs/new-morph/UnitSelect.tsx"),
-          route(":unit/", "./routes/morphs/new-morph/UnitConfirm.tsx"),
+          index("./routes/morphs/new/UnitSelect.tsx"),
+          route(":unit/", "./routes/morphs/new/UnitConfirm.tsx"),
       ]),
     ]),
   ]),

@@ -114,8 +114,8 @@ function Main(
       {/* NOTE: This form.action is just a placeholder. */}
       <form method="put" action="http://localhost:8000/dracogate/api/initialize_morph/save????Wait, do we even need the API for this?">
         {missingParams !== null && <MorphOption1 params={missingParams} onClick={retryCreateMorph} />}
-        <input id="morph-name-input" type="text" required onClick={decideWhetherOrNotToActivateButton} />
-        <button id="morph-submit-button" type="button" onClick={} disabled>
+        {/* <input id="morph-name-input" type="text" required onClick={decideWhetherOrNotToActivateButton} /> */}
+        <button id="morph-submit-button" type="button" onClick={saveMorph}>
           Create!
         </button>
         <div id="init-errors">
