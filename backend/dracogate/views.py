@@ -43,7 +43,7 @@ class InitializationViewset(viewsets.ViewSet):
         print("data", request.data)
         data = request.data.pop('data')
         data['game_no'] = int(data.pop("game"))
-        name = data.get("name")
+        #name = data.get("name")
         #print(data)
         try:
             morph = get_morph(**data)
@@ -63,3 +63,14 @@ class InitializationViewset(viewsets.ViewSet):
     def update(self, request):
         """
         """
+        data = request.data.pop('data')
+        morph_id = data.pop('morphId')
+        self.session.set("morphs", {})
+        morphs = self.session.get("morphs")
+        if morph_id in morphs:
+            return Response([False, ("morph_id", morph_id)])
+        data['game_no'] = int(data.pop("game"))
+        morphs[morph_id] = [("__init__", data)]
+        self.session.save()
+        return Response([True, morphs[morph_id]])
+        # REDIRECT TO HOME AFTERWARDS

@@ -6,6 +6,7 @@ import axios from 'axios';
 import "../../../app.css";
 import {
   unitStatsLoader,
+  newUnitSaver,
 } from '../../../_dataLoaders/morphs/new-morph.tsx';
 import {
   GameUrlList,
@@ -52,7 +53,7 @@ function Main(
   const [initParams, setInitParams] = useState(defaultInitParams);
   const [metaStats, setMetaStats] = useState(defaultMetaStats);
   const [currentStats, setCurrentStats] = useState(defaultCurrentStats);
-  {/* const [morphName, setMorphName] = useState(''); */}
+  const fireEmblemGames = getFireEmblemGames();
   async function retryCreateMorph(e) {
     const inputWidget = e.currentTarget;
     const field = inputWidget.dataset.fieldname;
@@ -82,12 +83,25 @@ function Main(
       .catch(err => console.log(err));
   };
   function decideWhetherOrNotToActivateButton(e) {
-    const morphSubmitButton = document.getElementById("morph-submit-button");
+    const morphSubmitButton = document.getElementById("morph-name-input");
     const newMorphName = e.currentTarget.value;
     morphSubmitButton.disabled = newMorphName === "";
     {/* setMorphName(newMorphName); */}
   };
-  const fireEmblemGames = getFireEmblemGames();
+  async function saveMorph(e) {
+    // send init-data to server
+    {/* async function newUnitSaver( {initParams, showError} ) { */}
+    function showError(e) {
+      const initErrors = document.getElementById("init-errors");
+      initErrors.textContent = e;
+    };
+    await newUnitSaver({initParams})
+      .then(_ => {
+          throw redirect("/morph/");
+        }
+      )
+      .catch(err => showError(err));
+  };
   return (
     <>
       <nav id="game-select">
@@ -98,12 +112,14 @@ function Main(
       <UnitProfile game={game} unit={initParams.name} />
       <StatTable stats={[["Class", metaStats.currentCls], ["Lv", metaStats.currentLv]].concat(currentStats)} />
       {/* NOTE: This form.action is just a placeholder. */}
-      <form action="http://localhost:8000/dracogate/api/initialize_morph/save????">
+      <form method="put" action="http://localhost:8000/dracogate/api/initialize_morph/save????Wait, do we even need the API for this?">
         {missingParams !== null && <MorphOption1 params={missingParams} onClick={retryCreateMorph} />}
         <input id="morph-name-input" type="text" required onClick={decideWhetherOrNotToActivateButton} />
-        <button id="morph-submit-button" type="submit" disabled>
+        <button id="morph-submit-button" type="button" onClick={} disabled>
           Create!
         </button>
+        <div id="init-errors">
+        </div>
       </form>
     </>
   );

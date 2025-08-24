@@ -1,3 +1,6 @@
+import {
+  redirect,
+} from 'react-router';
 import axios from 'axios';
 import {
   getUnitList,
@@ -56,4 +59,10 @@ export async function unitStatsLoader( {initParams} ) {
   };
   console.log("End of unitStatsLoader");
   return [metaStats, currentStats, missingParams];
+};
+
+export function newUnitSaver( {initParams, showError} ) {
+  const sourceUrl = "http://127.0.0.1:8000/dracogate/api/initialization_view/";
+  console.log("About to send PUT request to URL.");
+  return axios.put(sourceUrl, {data: initParams});
 };

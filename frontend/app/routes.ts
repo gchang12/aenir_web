@@ -10,7 +10,7 @@ export default [
   index("./routes/index.tsx"),
   ...prefix("morphs", [
     index("./routes/morphs/index.tsx"),
-    ...prefix("new-morph", [
+    ...prefix("new", [
       layout("./routes/morphs/new-morph/layout.tsx", [
         index("./routes/morphs/new-morph/index.tsx"),
         ...prefix(":game/", [
