@@ -133,3 +133,24 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ORIGIN_WHITELIST = ("http://localhost:3000",)
+
+LOGGING = {
+    "version": 1,
+    "formatters": {
+        "console": {
+            "format": "%(levelname)s:%(name)s.%(module)s.%(funcName)s:%(message)s",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "console",
+        },
+    },
+    "loggers": {
+        "dracogate": {
+            "level": "DEBUG",
+            "handlers": ["console"],
+        },
+    },
+}
