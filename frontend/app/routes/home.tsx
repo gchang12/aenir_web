@@ -505,18 +505,31 @@ export async function unitStatsLoader( {initParams} ) {
 
 function App() {
   {/* STATE VARIABLES */}
+  {/* For rendering */}
   const nullGame = {
     no: 0,
     name: '',
     title: '',
   };
   const [game, setGame] = useState(nullGame);
-  const [initParams, setInitParams] = useState(nullInitParams);
-  const nullMissingParams = ['', null];
-  const [missingParams, setMissingParams] = useState(nullMissingParams);
-  const nullMorph = {
+  {/* for submitting data to server */}
+  const nullInitParams = {
     game: null,
     name: null,
+  };
+  const [initParams, setInitParams] = useState(nullInitParams);
+  const nullMissingParams = null;
+  {/* for submitting extra data to server */}
+  const [missingParams, setMissingParams] = useState(nullMissingParams);
+  {/*
+    father: str,
+    hard_mode: bool,
+    lyn_mode: bool,
+    number_of_declines: int,
+  */}
+  {/* for editing morph */}
+  const nullMorph = {
+    ...nullInitParams,
     currentCls: null,
     currentLv: null,
     currentStats: null,
@@ -524,12 +537,6 @@ function App() {
     history: null,
   };
   const [morph, setMorph] = useState(nullMorph);
-  {/*
-    father: str,
-    hard_mode: bool,
-    lyn_mode: bool,
-    number_of_declines: int,
-  */}
   {/* OTHER STUFF */}
   {/* Instructions:
     1: Have user select a game whose units are to be compared.
@@ -545,42 +552,55 @@ function App() {
       game: game.no,
       name: unitName,
     };
-    await unitStatsLoader({initParams})
+    unitStatsLoader({initParams})
       .then(res => {
-        const [currentCls, currentLv, currentStats, missingParams] = res.data;
+        const [currentCls, currentLv, currentStats, currentMissingParams] = res.data;
+        setInitParams({...initParams});
+        setMissingParams(currentMissingParams);
         setMorph(
           {
             ...morph,
-            ...initParams,
             currentCls,
             currentLv,
             currentStats,
-            missingParams,
           }
-        )
+        );
       });
       .catch(err => console.log(err));
   };
   async function retryCreateMorph(e) {
-    const unitName = e.currentTarget.dataset.unit;
-    const initParams = {
-      game: game.no,
-      name: unitName,
+    const inputWidget = e.currentTarget;
+    const field = inputWidget.dataset.fieldname;
+    let value = inputWidget.value;
+    if (inputWidget.type === "checkbox") {
+      value = inputWidget.checked;
+    } else if (field === "father") {
+      const fatherName = inputWidget.value;
+      const fatherPreview = document.getElementById("father-preview");
+      const fatherImgSrc = `/static/genealogy-of-the-holy-war/characters/${fatherName}.png`;
+      fatherPreview.src = fatherImgSrc;
+      fatherPreview.alt = fatherImgSrc;
     };
-    await unitStatsLoader({initParams})
+    const tempInitParams = {...initParams};
+    tempInitParams[field] = value;
+    let _;
+    unitStatsLoader({initParams: tempInitParams})
       .then(res => {
-        const [currentCls, currentLv, currentStats, missingParams] = res.data;
+        const [currentCls, currentLv, currentStats, _] = res.data;
+        setInitParams({...tempInitParams}));
         setMorph(
           {
             ...morph,
-            ...initParams,
             currentCls,
             currentLv,
             currentStats,
           }
-        )
+        );
       });
       .catch(err => console.log(err));
+  };
+  async function submitMorph(e) {
+    alert("submitMorph");
   };
   return (
     <>
@@ -624,7 +644,10 @@ function App() {
         )
       }
       </menu>
-      {morph.missingParams !== null && <MorphOption1 missingParams={missingParams} onClick={retryCreateMorph} /> }
+      {missingParams !== null && <MorphOption1 missingParams={missingParams} onClick={retryCreateMorph} /> }
+      <button type="button" onClick={submitMorph}>
+        Create Morph!
+      </button>
     </form>
     <table id="stats-table">
       <tbody>
