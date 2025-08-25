@@ -464,10 +464,8 @@ export function getUnitList({gameNo}) {
 export async function unitStatsLoader( {initParams} ) {
   const sourceUrl = "http://127.0.0.1:8000/dracogate/api/initializate_morph/";
   // containers for output
-  let metaStats = {
-    currentCls: null,
-    currentLv: null,
-  };
+  let currentCls = null;
+  let currentLv = null;
   let currentStats = null;
   let missingParams = null;
   console.log("About to send POST request to URL.");
@@ -481,8 +479,8 @@ export async function unitStatsLoader( {initParams} ) {
       console.log("Data has been fetched.");
       if (success) {
         currentStats = value;
-        [metaStats.currentCls, metaStats.currentLv] = clsLv
-        console.log("Unit has been found. Level: " + metaStats.currentLv);
+        [currentCls, currentLv] = clsLv
+        console.log("Unit has been found. Level: " + currentLv);
       } else {
         missingParams = value;
         console.log("Failure. missingParams: " + missingParams);
@@ -502,13 +500,13 @@ export async function unitStatsLoader( {initParams} ) {
       .then(res => {
         const data = res.data;
         const [_, clsLv, value] = data;
-        [metaStats.currentCls, metaStats.currentLv] = clsLv;
+        [currentCls, currentLv] = clsLv;
         currentStats = value;
       })
       .catch(err => console.log(err));
   };
   console.log("End of unitStatsLoader");
-  return [metaStats, currentStats, missingParams];
+  return [currentCls, currentLv, currentStats, missingParams];
 };
 
 export async function newUnitSaver( {initParams, showError} ) {
@@ -526,33 +524,62 @@ export async function newUnitSaver( {initParams, showError} ) {
 };
 
 function App() {
+  {/* STATE VARIABLES */}
   const nullGame = {
     no: 0,
     name: '',
     title: '',
   };
   const [game, setGame] = useState(nullGame);
-  {/* const [unit, setUnit] = useState(''); */}
-  const [initParams, setInitParams] = useState(
-    {
-      game: 0,
-      name: '',
-    }
-  );
-  {/* 1: Have user select a game whose units are to be compared. */}
-  {/* 2: Have user select unit. */}
-  {/* 3: Have user specify options. */}
-  {/* 4: Create! */}
+  const [initParams, setInitParams] = useState(nullInitParams);
+  const nullMissingParams = ['', null];
+  const [missingParams, setMissingParams] = useState(nullMissingParams);
+  const nullMorph = {
+    game: null,
+    name: null,
+    currentCls: null,
+    currentLv: null,
+    currentStats: null,
+    maxStats: null,
+    history: null,
+  };
+  const [morph, setMorph] = useState(nullMorph);
+  {/*
+    father: str,
+    hard_mode: bool,
+    lyn_mode: bool,
+    number_of_declines: int,
+  */}
+  {/* OTHER STUFF */}
+  {/* Instructions:
+    1: Have user select a game whose units are to be compared.
+    2: Have user select unit.
+    3: Have user specify options.
+    4: Create!
+  */}
   const feGames = getFireEmblemGames();
   const unitList = getUnitList({gameNo: game.no});
   async function tryCreateMorph(e) {
     const unitName = e.currentTarget.dataset.unit;
-    setInitParams(
-      {
-        game: game.no,
-        name: unitName,
-      },
-    );
+    const initParams = {
+      game: game.no,
+      name: unitName,
+    };
+    await unitStatsLoader({initParams})
+      .then(res => {
+        const [currentCls, currentLv, currentStats, missingParams] = res.data;
+        setMorph(
+          {
+            ...morph,
+            ...initParams,
+            currentCls,
+            currentLv,
+            currentStats,
+            missingParams,
+          }
+        )
+      });
+      .catch(err => console.log(err));
   };
   return (
     <>
@@ -596,6 +623,32 @@ function App() {
         )
       }
       </menu>
+      <table id="stats-table">
+        <tbody>
+          {morph.currentStats !== null && morph.currentCls !== null && morph.currentLv !== null (
+            <>
+            <tr>
+              <th>Class</th>
+              <td>{morph.currentCls}</td>
+            </tr>
+            <tr>
+              <th>Lv</th>
+              <td>{morph.currentLv}</td>
+            </tr>
+            </>
+            morph.currentStats.map(statVal => {
+              const [stat, statVal] = statVal;
+              return (
+                <tr>
+                  <th>{stat}</th>
+                  <td>{statVal}</td>
+                </tr>
+              );
+            })
+            )
+          }
+        </tbody>
+      </table>
     </form>
     </>
   );
