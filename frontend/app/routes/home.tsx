@@ -74,14 +74,14 @@ function CheckboxWidget({field, title, onClick}) {
   );
 }
 
-export function MorphOption1({params, onClick}) {
+export function MorphOption1({missingParams, onClick}) {
   const possibleOptions = {
     father: ["Father", "select"],
     hard_mode: ["Hard Mode", "checkbox"],
     lyn_mode: ["Lyn Mode", "checkbox"],
     number_of_declines: ["Number of Declines", "number"],
   };
-  const [field, choices] = params;
+  const [field, choices] = missingParams;
   const [title, inputType] = possibleOptions[field];
   return {
     "select": (
@@ -561,6 +561,27 @@ function App() {
       });
       .catch(err => console.log(err));
   };
+  async function retryCreateMorph(e) {
+    const unitName = e.currentTarget.dataset.unit;
+    const initParams = {
+      game: game.no,
+      name: unitName,
+    };
+    await unitStatsLoader({initParams})
+      .then(res => {
+        const [currentCls, currentLv, currentStats, missingParams] = res.data;
+        setMorph(
+          {
+            ...morph,
+            ...initParams,
+            currentCls,
+            currentLv,
+            currentStats,
+          }
+        )
+      });
+      .catch(err => console.log(err));
+  };
   return (
     <>
     <figure id="game-cover">
@@ -603,33 +624,34 @@ function App() {
         )
       }
       </menu>
-      <table id="stats-table">
-        <tbody>
-          {morph.currentStats !== null && morph.currentCls !== null && morph.currentLv !== null (
-            <>
-            <tr>
-              <th>Class</th>
-              <td>{morph.currentCls}</td>
-            </tr>
-            <tr>
-              <th>Lv</th>
-              <td>{morph.currentLv}</td>
-            </tr>
-            </>
-            morph.currentStats.map(statVal => {
-              const [stat, statVal] = statVal;
-              return (
-                <tr>
-                  <th>{stat}</th>
-                  <td>{statVal}</td>
-                </tr>
-              );
-            })
-            )
-          }
-        </tbody>
-      </table>
+      {morph.missingParams !== null && <MorphOption1 missingParams={missingParams} onClick={retryCreateMorph} /> }
     </form>
+    <table id="stats-table">
+      <tbody>
+        {morph.currentStats !== null && morph.currentCls !== null && morph.currentLv !== null (
+          <>
+          <tr>
+            <th>Class</th>
+            <td>{morph.currentCls}</td>
+          </tr>
+          <tr>
+            <th>Lv</th>
+            <td>{morph.currentLv}</td>
+          </tr>
+          </>
+          morph.currentStats.map(statVal => {
+            const [stat, statVal] = statVal;
+            return (
+              <tr>
+                <th>{stat}</th>
+                <td>{statVal}</td>
+              </tr>
+            );
+          })
+          )
+        }
+      </tbody>
+    </table>
     </>
   );
 };
