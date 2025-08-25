@@ -462,6 +462,8 @@ export async function unitStatsLoader( {initParams} ) {
   let currentLv = null;
   let currentStats = null;
   let missingParams = null;
+  let currentMaxes = null;
+  let _;
   console.log("About to send POST request to URL.");
   await axios
     .post(sourceUrl,
@@ -469,11 +471,12 @@ export async function unitStatsLoader( {initParams} ) {
     )
     .then(res => {
       const data = res.data;
-      const [success, clsLv, value] = data;
+      const [success, fetchedCls, fetchedLv, value, fetchedMaxes] = data;
       console.log("Data has been fetched.");
       if (success) {
         currentStats = value;
-        [currentCls, currentLv] = clsLv
+        currentMaxes = fetchedMaxes;
+        [currentCls, currentLv] = [fetchedCls, fetchedLv];
         console.log("Unit has been found. Level: " + currentLv);
       } else {
         missingParams = value;
@@ -493,14 +496,15 @@ export async function unitStatsLoader( {initParams} ) {
       )
       .then(res => {
         const data = res.data;
-        const [_, clsLv, value] = data;
+        const [_, fetchedCls, fetchedLv, value, fetchedMaxes] = data;
         [currentCls, currentLv] = clsLv;
         currentStats = value;
+        currentMaxes = fetchedMaxes;
       })
       .catch(err => console.log(err));
   };
   console.log("End of unitStatsLoader");
-  return [currentCls, currentLv, currentStats, missingParams];
+  return [currentCls, currentLv, currentStats, currentMaxes, missingParams];
 };
 
 function App() {
@@ -533,6 +537,7 @@ function App() {
     currentCls: null,
     currentLv: null,
     currentStats: null,
+    currentMaxes: null,
     maxStats: null,
     history: null,
   };
@@ -548,21 +553,22 @@ function App() {
   const unitList = getUnitList({gameNo: game.no});
   async function tryCreateMorph(e) {
     const unitName = e.currentTarget.dataset.unit;
-    const initParams = {
+    const tempInitParams = {
       game: game.no,
       name: unitName,
     };
-    unitStatsLoader({initParams})
+    unitStatsLoader({initParams: tempInitParams})
       .then(res => {
-        const [currentCls, currentLv, currentStats, currentMissingParams] = res.data;
-        setInitParams({...initParams});
-        setMissingParams(currentMissingParams);
+        const [fetchedCls, fetchedLv, fetchedStats, fetchedMaxes, fetchedMissingParams] = res.data;
+        setInitParams(tempInitParams);
+        setMissingParams(fetchedMissingParams);
         setMorph(
           {
             ...morph,
-            currentCls,
-            currentLv,
-            currentStats,
+            currentMaxes: fetchedMaxes,
+            currentCls: fetchedCls,
+            currentLv: fetchedLv,
+            currentStats: fetchedStats,
           }
         );
       })
@@ -586,14 +592,15 @@ function App() {
     let _;
     unitStatsLoader({initParams: tempInitParams})
       .then(res => {
-        const [currentCls, currentLv, currentStats, _] = res.data;
+        const [fetchedCls, fetchedLv, fetchedStats, fetchedMaxes, _] = res.data;
         setInitParams(tempInitParams);
         setMorph(
           {
             ...morph,
-            currentCls,
-            currentLv,
-            currentStats,
+            currentCls: fetchedCls,
+            currentLv: fetchedLv,
+            currentStats: fetchedStats,
+            currentMaxes: fetchedMaxes,
           }
         );
       })
