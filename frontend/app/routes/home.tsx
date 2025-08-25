@@ -1,7 +1,24 @@
-import type { Route } from "./+types/home";
+import {
+  useState,
+} from 'react';
+import type {
+  Route,
+} from "./+types/home";
 
 import axios from 'axios';
-function SelectWidget({choices, field, title, onClick}) {
+
+{/* META */}
+
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "Aenir: A Fire Emblem stat calculator" },
+    { name: "description", content: "Calculate Fire Emblem stats here!" },
+  ];
+}
+
+{/* WIDGETS */}
+
+function FatherSelect({choices, field, title, onClick}) {
   return (
     <>
       <label htmlFor={field}>{title}</label>
@@ -68,7 +85,7 @@ export function MorphOption1({params, onClick}) {
   const [title, inputType] = possibleOptions[field];
   return {
     "select": (
-      <SelectWidget choices={choices} field={field} title={title} onClick={onClick} />
+      <FatherSelect choices={choices} field={field} title={title} onClick={onClick} />
     ),
     "radio": (
       <RadioWidget choices={choices} field={field} onClick={onClick} />
@@ -82,105 +99,7 @@ export function MorphOption1({params, onClick}) {
   }[inputType];
 };
 
-export function GameProfile({game}) {
-  return (
-    <figure>
-      <img src={`/static/${game.name}/cover-art.png`} alt={`Cover art of FE${game.no}: ${game.title}`} />
-      <figcaption>
-        {game.title}
-      </figcaption>
-    </figure>
-  );
-}
-
-function GameUrl({feGame}) {
-  return (
-    <a href={`/morphs/new/fe${feGame.no}/`}>
-      {feGame.title}
-    {/* <GameProfile game={feGame} /> */}
-    </a>
-  );
-}
-
-export function UnitProfile({game, unit}) {
-  const imgSuffix = game.no === 8 ? "gif" : "png";
-  const imgFile = `${unit}.${imgSuffix}`;
-  return (
-    <figure>
-      <img src={`/static/${game.name}/characters/${imgFile}`} alt={`Portrait of ${unit}, ${imgFile}`} />
-      <figcaption>
-        {unit}
-      </figcaption>
-    </figure>
-  );
-}
-
-export function GameUrlList({gameList}) {
-  return (
-    <>
-      {gameList.map(feGame => {
-        return (
-          <li key={feGame.no}>
-            <GameUrl feGame={feGame} />
-          </li>
-        ); 
-        })
-      }
-    </>
-  );
-}
-
-function UnitUrl({game, unit}) {
-  const gameRank = `fe${game.no}`;
-  return (
-    <a href={`/morphs/new/${gameRank}/${unit}`}>
-      <UnitProfile game={game} unit={unit} />
-    </a>
-  );
-};
-
-export function UnitUrlList({game, unitList}) {
-  return (
-    <>
-      {unitList.map(unit => {
-        return (
-          <li key={unit}>
-            <UnitUrl game={game} unit={unit} />
-          </li>
-        );
-      })
-      }
-    </>
-  );
-}
-
-{/* export function StatTable({stats, maxStats, thClassNames, tdClassNames}) { */}
-export function StatTable({stats}) {
-  {/* TODO: meter, progress, max-stats, class-names */}
-  return (
-    <table>
-      <tbody>
-      {stats.map(labelValue => {
-          const [field, value] = labelValue;
-          return (
-            <tr key={field}>
-              <th>{field}</th>
-              <td>{value}</td>
-            </tr>
-          )
-      })
-      }
-      </tbody>
-    </table>
-  );
-}
-
-export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "Aenir: A Fire Emblem stat calculator" },
-    { name: "description", content: "Calculate Fire Emblem stats here!" },
-  ];
-}
+{/* IMAGES */}
 
 export function getFireEmblemGames() {
   return [
@@ -542,13 +461,8 @@ export function getUnitList({gameNo}) {
   return unitListByGame[gameNo];
 }
 
-export function unitListLoader( {game} ) {
-  const gameNo = game.no;
-  return getUnitList({gameNo});
-}
-
 export async function unitStatsLoader( {initParams} ) {
-  const sourceUrl = "http://127.0.0.1:8000/dracogate/api/initialization_view/";
+  const sourceUrl = "http://127.0.0.1:8000/dracogate/api/initializate_morph/";
   // containers for output
   let metaStats = {
     currentCls: null,
@@ -610,3 +524,81 @@ export async function newUnitSaver( {initParams, showError} ) {
     .catch(err => console.log(err));
   return null;
 };
+
+function App() {
+  const nullGame = {
+    no: 0,
+    name: '',
+    title: '',
+  };
+  const [game, setGame] = useState(nullGame);
+  {/* const [unit, setUnit] = useState(''); */}
+  const [initParams, setInitParams] = useState(
+    {
+      game: 0,
+      name: '',
+    }
+  );
+  {/* 1: Have user select a game whose units are to be compared. */}
+  {/* 2: Have user select unit. */}
+  {/* 3: Have user specify options. */}
+  {/* 4: Create! */}
+  const feGames = getFireEmblemGames();
+  const unitList = getUnitList({gameNo: game.no});
+  async function tryCreateMorph(e) {
+    const unitName = e.currentTarget.dataset.unit;
+    setInitParams(
+      {
+        game: game.no,
+        name: unitName,
+      },
+    );
+  };
+  return (
+    <>
+    <figure id="game-cover">
+    {game.no !== 0 && (
+      <>
+      <img src={`/static/${game.name}/cover-art.png`} alt={`Cover art of FE${game.no}: ${game.title}`} />
+      <figcaption>
+        {game.title}
+      </figcaption>
+      </>
+      )
+    }
+    </figure>
+    <form id="morph-initializer">
+      <label for="game-select">Select FE Game (4-9)</label>
+      <select name="game" id="game-select">
+        <option value="" onClick={() => setGame(nullGame)}>{''}</option>;
+        {feGames.map(currentGame => {
+          const {no, title, name} = currentGame;
+          return <option onClick={() => setGame(currentGame)}>{title}</option>;
+        })
+        }
+      </select>
+      <menu id="unit-selector">
+      {unitList !== undefined && (
+          unitList.map(name => {
+            const imgSuffix = game.no === 8 ? "gif" : "png";
+            const imgFile = `${name}.${imgSuffix}`;
+            return (
+              <button data-unit={name} onClick={tryCreateMorph} type="button">
+                <figure>
+                  <img src={`/static/${game.name}/characters/${imgFile}`} alt={`Portrait of ${name}, ${imgFile}`} />
+                  <figcaption>
+                    {name}
+                  </figcaption>
+                </figure>
+              </button>
+            );
+          })
+        )
+      }
+      </menu>
+    </form>
+    </>
+  );
+};
+
+export default App;
