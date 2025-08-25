@@ -136,12 +136,6 @@ export function getFireEmblemGames() {
   ];
 };
 
-export function findFireEmblemGame({params}) {
-  const fireEmblemGames = getFireEmblemGames();
-  const game = fireEmblemGames.find(gameObj => `fe${gameObj.no}`=== params.game);
-  return game;
-}
-
 export function getUnitList({gameNo}) {
   const unitListByGame = {
     4: [
@@ -507,20 +501,6 @@ export async function unitStatsLoader( {initParams} ) {
   };
   console.log("End of unitStatsLoader");
   return [currentCls, currentLv, currentStats, missingParams];
-};
-
-export async function newUnitSaver( {initParams, showError} ) {
-  const sourceUrl = "http://127.0.0.1:8000/dracogate/api/initialization_view/";
-  alert("About to send PUT request to URL.");
-  await axios
-    .put(sourceUrl,
-      {data: initParams},
-    )
-    .then(res => {
-        return alert("PUT request successful");
-      })
-    .catch(err => console.log(err));
-  return null;
 };
 
 function App() {
