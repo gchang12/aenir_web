@@ -1,13 +1,10 @@
 import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
+{/* import { Welcome } from "../welcome/welcome"; */}
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "Aenir: A Fire Emblem stat calculator" },
+    { name: "description", content: "Calculate Fire Emblem stats here!" },
   ];
 }
 
-export default function Home() {
-  return <Welcome />;
-}
