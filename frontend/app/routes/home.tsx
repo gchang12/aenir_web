@@ -565,7 +565,7 @@ function App() {
             currentStats,
           }
         );
-      });
+      })
       .catch(err => console.log(err));
   };
   async function retryCreateMorph(e) {
@@ -587,7 +587,7 @@ function App() {
     unitStatsLoader({initParams: tempInitParams})
       .then(res => {
         const [currentCls, currentLv, currentStats, _] = res.data;
-        setInitParams({...tempInitParams}));
+        setInitParams(tempInitParams);
         setMorph(
           {
             ...morph,
@@ -596,7 +596,7 @@ function App() {
             currentStats,
           }
         );
-      });
+      })
       .catch(err => console.log(err));
   };
   async function submitMorph(e) {
@@ -616,7 +616,7 @@ function App() {
     }
     </figure>
     <form id="morph-initializer">
-      <label for="game-select">Select FE Game (4-9)</label>
+      <label htmlFor="game-select">Select FE Game (4-9)</label>
       <select name="game" id="game-select">
         <option value="" onClick={() => setGame(nullGame)}>{''}</option>;
         {feGames.map(currentGame => {
@@ -631,7 +631,7 @@ function App() {
             const imgSuffix = game.no === 8 ? "gif" : "png";
             const imgFile = `${name}.${imgSuffix}`;
             return (
-              <button data-unit={name} onClick={tryCreateMorph} type="button">
+              <button data-unit={name} onClick={tryCreateMorph} type="button" key={name}>
                 <figure>
                   <img src={`/static/${game.name}/characters/${imgFile}`} alt={`Portrait of ${name}, ${imgFile}`} />
                   <figcaption>
@@ -652,27 +652,30 @@ function App() {
     <table id="stats-table">
       <tbody>
         {morph.currentStats !== null && morph.currentCls !== null && morph.currentLv !== null (
-          <>
-          <tr>
-            <th>Class</th>
-            <td>{morph.currentCls}</td>
-          </tr>
-          <tr>
-            <th>Lv</th>
-            <td>{morph.currentLv}</td>
-          </tr>
-          </>
-          morph.currentStats.map(statVal => {
-            const [stat, statVal] = statVal;
-            return (
-              <tr>
-                <th>{stat}</th>
-                <td>{statVal}</td>
-              </tr>
-            );
-          })
+          (
+            <>
+            <tr>
+              <th>Class</th>
+              <td>{morph.currentCls}</td>
+            </tr>
+            <tr>
+              <th>Lv</th>
+              <td>{morph.currentLv}</td>
+            </tr>
+            </>
           )
-        }
+          (
+             morph.currentStats.map(statVal => {
+               const [stat, value] = statVal;
+               return (
+                 <tr>
+                   <th>{stat}</th>
+                   <td>{value}</td>
+                 </tr>
+               );
+             })
+          )
+        )}
       </tbody>
     </table>
     </>
