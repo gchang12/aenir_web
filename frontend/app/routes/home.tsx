@@ -472,17 +472,15 @@ export async function unitStatsLoader( {initParams} ) {
       {data: initParams},
     )
     .then(res => {
-      const data = res.data;
-      const [success, value, value2, fetchedCls, fetchedLv] = data;
+      const [success, data] = res.data;
       console.log("Data has been fetched.");
       if (success) {
-        currentStats = value;
-        currentMaxes = value2;
-        [currentCls, currentLv] = [fetchedCls, fetchedLv];
+        const { stats, maxes, cls, lv } = data;
+        [currentStats, currentMaxes, currentCls, currentLv] = [stats, maxes, cls, lv];
         console.log("Unit has been found. Level: " + currentLv);
       } else {
-        missingParams = value;
-        missingParams2 = value2;
+        const { params, params2 } = data;
+        [missingParams, missingParams2] = [params, params2];
         console.log("Failure. missingParams: " + missingParams);
       };
     })
@@ -503,15 +501,14 @@ export async function unitStatsLoader( {initParams} ) {
         {data: initParams},
       )
       .then(res => {
-        const data = res.data;
-        const [_, value, value2, fetchedCls, fetchedLv] = data;
-        currentStats = value;
-        currentMaxes = value2;
+        const [_, data] = res.data;
+        const { stats, maxes, cls, lv } = data;
+        [currentStats, currentMaxes, currentCls, currentLv] = [stats, maxes, cls, lv];
       })
       .catch(err => console.log(err));
   };
   console.log("End of unitStatsLoader");
-  return [currentCls, currentLv, currentStats, currentMaxes, missingParams, missingParams2];
+  return {cls, lv, stats, maxes, params, params2};
 };
 
 function App() {
@@ -552,20 +549,20 @@ function App() {
     };
     await unitStatsLoader({initParams: tempInitParams})
       .then(res => {
-        const [fetchedCls, fetchedLv, fetchedStats, fetchedMaxes, fetchedParams, fetchedParams2] = res;
         setInitParams(tempInitParams);
-        setMissingParams(fetchedParams);
-        setMissingParams2(fetchedParams2);
+        const {cls, lv, stats, maxes, params, params2} = res;
+        setMissingParams(params);
+        setMissingParams2(params2);
         setMorph(
           {
             ...morph,
-            currentMaxes: fetchedMaxes,
-            currentCls: fetchedCls,
-            currentLv: fetchedLv,
-            currentStats: fetchedStats,
+            currentMaxes: maxes,
+            currentCls: cls,
+            currentLv: lv,
+            currentStats: stats,
           }
         );
-        alert("fetchedCls: " + fetchedCls);
+        alert("cls: " + cls);
       })
       .catch(err => (err));
     return;
@@ -588,15 +585,15 @@ function App() {
     let _;
     unitStatsLoader({initParams: tempInitParams})
       .then(res => {
-        const [fetchedCls, fetchedLv, fetchedStats, fetchedMaxes, value1, value2] = res;
         setInitParams(tempInitParams);
+        const {cls, lv, stats, maxes} = res;
         setMorph(
           {
             ...morph,
-            currentCls: fetchedCls,
-            currentLv: fetchedLv,
-            currentStats: fetchedStats,
-            currentMaxes: fetchedMaxes,
+            currentCls: cls,
+            currentLv: lv,
+            currentStats: stats,
+            currentMaxes: maxes,
           }
         );
       })

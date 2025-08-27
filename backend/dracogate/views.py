@@ -32,26 +32,21 @@ class InitializationViewset(viewsets.ViewSet):
             morph = get_morph(**data)
             logger.debug("Got Morph%d instance of %s", game, name)
             return Response([
-                True,
-                morph.current_stats.as_list(),
-                morph.max_stats.as_list(),
-                morph.current_cls,
-                morph.current_lv])
+                True, {
+                    "stats": morph.current_stats.as_list(),
+                    "maxes": morph.max_stats.as_list(),
+                    "cls": morph.current_cls,
+                    "lv": morph.current_lv,
+                }
+            ])
         except InitError as err:
             logger.debug("Failed to fetch Morph%d!%s. Need extra data: %s", game, name, err.init_params)
-            if err.init_params2 is None:
-                return Response([
-                    False,
-                    err.init_params,
-                    None,
-                    None,
-                    None])
             return Response([
-                False,
-                err.init_params,
-                err.init_params2,
-                None,
-                None])
+                False, {
+                    "params": err.init_params,
+                    "params2": err.init_params2,
+                }
+            ])
 
     def update(self, request):
         """
