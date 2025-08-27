@@ -74,11 +74,12 @@ function CheckboxWidget({field, title, onClick}) {
   );
 }
 
-export function MorphOption1({missingParams, onClick}) {
+export function MorphOption({missingParams, onClick}) {
   const possibleOptions = {
     father: ["Father", "select"],
     hard_mode: ["Hard Mode", "checkbox"],
     lyn_mode: ["Lyn Mode", "checkbox"],
+    route: ["Route", "radio"],
     number_of_declines: ["Number of Declines", "number"],
   };
   const [field, choices] = missingParams;
@@ -462,6 +463,7 @@ export async function unitStatsLoader( {initParams} ) {
   let currentLv = null;
   let currentStats = null;
   let missingParams = null;
+  let missingParams2 = null;
   let currentMaxes = null;
   let _;
   console.log("About to send POST request to URL.");
@@ -471,15 +473,16 @@ export async function unitStatsLoader( {initParams} ) {
     )
     .then(res => {
       const data = res.data;
-      const [success, fetchedCls, fetchedLv, value, fetchedMaxes] = data;
+      const [success, value, value2, fetchedCls, fetchedLv] = data;
       console.log("Data has been fetched.");
       if (success) {
         currentStats = value;
-        currentMaxes = fetchedMaxes;
+        currentMaxes = value2;
         [currentCls, currentLv] = [fetchedCls, fetchedLv];
         console.log("Unit has been found. Level: " + currentLv);
       } else {
         missingParams = value;
+        missingParams2 = value2;
         console.log("Failure. missingParams: " + missingParams);
       };
     })
@@ -490,16 +493,20 @@ export async function unitStatsLoader( {initParams} ) {
     const [field, choices] = missingParams;
     const defaultVal = choices[0];
     initParams[field] = defaultVal;
+    if (missingParams2 !== null) {
+      const [field, choices] = missingParams;
+      const defaultVal = choices[0];
+      initParams[field] = defaultVal;
+    };
     await axios
       .post(sourceUrl,
         {data: initParams},
       )
       .then(res => {
         const data = res.data;
-        const [_, fetchedCls, fetchedLv, value, fetchedMaxes] = data;
-        [currentCls, currentLv] = clsLv;
+        const [_, value, value2, fetchedCls, fetchedLv] = data;
         currentStats = value;
-        currentMaxes = fetchedMaxes;
+        currentMaxes = value2;
       })
       .catch(err => console.log(err));
   };
@@ -529,6 +536,7 @@ function App() {
     father: str,
     hard_mode: bool,
     lyn_mode: bool,
+    route:
     number_of_declines: int,
   */}
   {/* for editing morph */}
@@ -592,7 +600,7 @@ function App() {
     let _;
     unitStatsLoader({initParams: tempInitParams})
       .then(res => {
-        const [fetchedCls, fetchedLv, fetchedStats, fetchedMaxes, _] = res.data;
+        const [_, fetchedStats, fetchedMaxes, fetchedCls, fetchedLv] = res.data;
         setInitParams(tempInitParams);
         setMorph(
           {
@@ -651,11 +659,11 @@ function App() {
         )
       }
       </menu>
-      {missingParams !== null && <MorphOption1 missingParams={missingParams} onClick={retryCreateMorph} /> }
+      {missingParams !== null && <MorphOption missingParams={missingParams} onClick={retryCreateMorph} /> }
+      {missingParams2 !== null && <MorphOption missingParams={missingParams2} onClick={retryCreateMorph} /> }
       <button type="button" onClick={submitMorph}>
         Create Morph!
-      </button>
-    </form>
+      </button> </form>
     <table id="stats-table">
       <tbody>
         {morph.currentStats !== null && morph.currentCls !== null && morph.currentLv !== null (
