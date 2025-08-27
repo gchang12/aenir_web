@@ -511,7 +511,7 @@ export async function unitStatsLoader( {initParams} ) {
       .catch(err => console.log(err));
   };
   console.log("End of unitStatsLoader");
-  return [currentCls, currentLv, currentStats, currentMaxes, missingParams];
+  return [currentCls, currentLv, currentStats, currentMaxes, missingParams, missingParams2];
 };
 
 function App() {
@@ -523,7 +523,6 @@ function App() {
     title: '',
   };
   const [game, setGame] = useState(nullGame);
-  {/* for submitting data to server */}
   const nullInitParams = {
     game: null,
     name: null,
@@ -532,14 +531,7 @@ function App() {
   const nullMissingParams = null;
   {/* for submitting extra data to server */}
   const [missingParams, setMissingParams] = useState(nullMissingParams);
-  {/*
-    father: str,
-    hard_mode: bool,
-    lyn_mode: bool,
-    route:
-    number_of_declines: int,
-  */}
-  {/* for editing morph */}
+  const [missingParams2, setMissingParams2] = useState(nullMissingParams);
   const nullMorph = {
     ...nullInitParams,
     currentCls: null,
@@ -550,13 +542,6 @@ function App() {
     history: null,
   };
   const [morph, setMorph] = useState(nullMorph);
-  {/* OTHER STUFF */}
-  {/* Instructions:
-    1: Have user select a game whose units are to be compared.
-    2: Have user select unit.
-    3: Have user specify options.
-    4: Create!
-  */}
   const feGames = getFireEmblemGames();
   const unitList = getUnitList({gameNo: game.no});
   async function tryCreateMorph(e) {
@@ -567,9 +552,10 @@ function App() {
     };
     unitStatsLoader({initParams: tempInitParams})
       .then(res => {
-        const [fetchedCls, fetchedLv, fetchedStats, fetchedMaxes, fetchedMissingParams] = res.data;
+        const [fetchedCls, fetchedLv, fetchedStats, fetchedMaxes, fetchedParams, fetchedParams2] = res;
         setInitParams(tempInitParams);
-        setMissingParams(fetchedMissingParams);
+        setMissingParams(fetchedParams);
+        setMissingParams2(fetchedParams2);
         setMorph(
           {
             ...morph,
@@ -633,10 +619,10 @@ function App() {
     <form id="morph-initializer">
       <label htmlFor="game-select">Select FE Game (4-9)</label>
       <select name="game" id="game-select">
-        <option value="" onClick={() => setGame(nullGame)}>{''}</option>;
+        <option key="" value="" onClick={() => setGame(nullGame)}>{''}</option>;
         {feGames.map(currentGame => {
           const {no, title, name} = currentGame;
-          return <option onClick={() => setGame(currentGame)}>{title}</option>;
+          return <option key={name} onClick={() => setGame(currentGame)}>{title}</option>;
         })
         }
       </select>
@@ -646,7 +632,8 @@ function App() {
             const imgSuffix = game.no === 8 ? "gif" : "png";
             const imgFile = `${name}.${imgSuffix}`;
             return (
-              <button data-unit={name} onClick={tryCreateMorph} type="button" key={name}>
+              <li key={name}>
+              <button data-unit={name} onClick={tryCreateMorph} type="button">
                 <figure>
                   <img src={`/static/${game.name}/characters/${imgFile}`} alt={`Portrait of ${name}, ${imgFile}`} />
                   <figcaption>
@@ -654,6 +641,7 @@ function App() {
                   </figcaption>
                 </figure>
               </button>
+              </li>
             );
           })
         )
@@ -663,7 +651,8 @@ function App() {
       {missingParams2 !== null && <MorphOption missingParams={missingParams2} onClick={retryCreateMorph} /> }
       <button type="button" onClick={submitMorph}>
         Create Morph!
-      </button> </form>
+      </button>
+      </form>
     <table id="stats-table">
       <tbody>
         {morph.currentStats !== null && morph.currentCls !== null && morph.currentLv !== null (
