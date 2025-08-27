@@ -457,7 +457,7 @@ export function getUnitList({gameNo}) {
 }
 
 export async function unitStatsLoader( {initParams} ) {
-  const sourceUrl = "http://127.0.0.1:8000/dracogate/api/initializate_morph/";
+  const sourceUrl = "http://127.0.0.1:8000/dracogate/api/initialize_morph/";
   // containers for output
   let currentCls = null;
   let currentLv = null;
@@ -550,7 +550,7 @@ function App() {
       game: game.no,
       name: unitName,
     };
-    unitStatsLoader({initParams: tempInitParams})
+    await unitStatsLoader({initParams: tempInitParams})
       .then(res => {
         const [fetchedCls, fetchedLv, fetchedStats, fetchedMaxes, fetchedParams, fetchedParams2] = res;
         setInitParams(tempInitParams);
@@ -565,8 +565,10 @@ function App() {
             currentStats: fetchedStats,
           }
         );
+        alert("fetchedCls: " + fetchedCls);
       })
-      .catch(err => console.log(err));
+      .catch(err => (err));
+    return;
   };
   async function retryCreateMorph(e) {
     const inputWidget = e.currentTarget;
@@ -586,7 +588,7 @@ function App() {
     let _;
     unitStatsLoader({initParams: tempInitParams})
       .then(res => {
-        const [_, fetchedStats, fetchedMaxes, fetchedCls, fetchedLv] = res.data;
+        const [fetchedCls, fetchedLv, fetchedStats, fetchedMaxes, value1, value2] = res;
         setInitParams(tempInitParams);
         setMorph(
           {
@@ -603,30 +605,32 @@ function App() {
   async function submitMorph(e) {
     alert("submitMorph");
   };
+  function selectGame(e) {
+    const gameButton = e.currentTarget;
+    const selectedGame = feGames.find((myGame) => myGame.no.toString() === gameButton.dataset.gameno);
+    setGame(selectedGame);
+  };
   return (
     <>
-    <figure id="game-cover">
-    {game.no !== 0 && (
-      <>
-      <img src={`/static/${game.name}/cover-art.png`} alt={`Cover art of FE${game.no}: ${game.title}`} />
-      <figcaption>
-        {game.title}
-      </figcaption>
-      </>
-      )
-    }
-    </figure>
+    <h2>Game Select</h2>
     <form id="morph-initializer">
-      <label htmlFor="game-select">Select FE Game (4-9)</label>
-      <select name="game" id="game-select">
-        <option key="" value="" onClick={() => setGame(nullGame)}>{''}</option>;
+      <menu id="game-select">
         {feGames.map(currentGame => {
           const {no, title, name} = currentGame;
-          return <option key={name} onClick={() => setGame(currentGame)}>{title}</option>;
-        })
+          return (
+            <li key={name}>
+              <button type="button" data-gameno={no} onClick={selectGame}>
+                <figure id="game-cover">
+                  <img src={`/static/${name}/cover-art.png`} alt={`Cover art of FE${no}: ${title}`} />
+                  <figcaption>{title}</figcaption>
+                </figure>
+              </button>
+            </li>
+          );
+          })
         }
-      </select>
-      <menu id="unit-selector">
+      </menu>
+      <menu id="unit-select">
       {unitList !== undefined && (
           unitList.map(name => {
             const imgSuffix = game.no === 8 ? "gif" : "png";
