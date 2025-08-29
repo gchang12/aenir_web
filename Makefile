@@ -13,7 +13,7 @@ PROJECT_DIR := /home/eclair/Documents/coding/_web-dev/aenir_web/
 	printf '\033]0;%s\007' "django-server";
 	. $(VENV)/bin/activate && ./backend/manage.py runserver;
 
-.browser:
+.requests:
 	firefox http://127.0.0.1:8000/ http://localhost:3000;
 
 .backend_terminal:
