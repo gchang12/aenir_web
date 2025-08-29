@@ -466,8 +466,7 @@ export async function unitStatsLoader( {initParams} ) {
   let params = null;
   let params2 = null;
   let _;
-  console.log("About to send POST request to URL.");
-  await axios
+  axios
     .post(sourceUrl,
       {data: initParams},
     )
@@ -476,29 +475,23 @@ export async function unitStatsLoader( {initParams} ) {
       if (success) {
         const {current_stats, current_maxes, current_cls, current_lv} = data;
         [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
-        console.log("Unit has been found. Level: " + lv);
       } else {
         const { missing_params, missing_params2 } = data;
         [params, params2] = [missing_params, missing_params2]
-        console.log(params);
       }
     })
     .catch(err => {
-      console.log(err);
     });
-  console.log("Checking if `params` need to be populated.");
   if (params !== null) {
-    console.log("params not null: " + Object.keys(params));
     const [field, choices] = params;
     const defaultVal = choices[0];
     initParams[field] = defaultVal;
     if (params2 !== null) {
-      console.log("params2 not null: " + Object.keys(params2));
       const [field, choices] = params;
       const defaultVal = choices[0];
       initParams[field] = defaultVal;
     };
-    await axios
+    axios
       .post(sourceUrl,
         {data: initParams},
       )
@@ -546,9 +539,8 @@ function App() {
       game: game.no,
       name: unitName,
     };
-    await unitStatsLoader({initParams: tempInitParams})
+    unitStatsLoader({initParams: tempInitParams})
       .then(res => {
-        console.log("tryCreateMorph: successfully loaded stats: " + Object.keys(res));
         setInitParams(tempInitParams);
         const {cls, lv, stats, maxes, params, params2} = res;
         setMissingParams(params);
@@ -562,8 +554,6 @@ function App() {
             currentStats: stats,
           }
         );
-        console.log("cls: " + cls);
-        console.log("params: " + params);
       })
       .catch(err => console.log(err));
     return;
@@ -584,9 +574,8 @@ function App() {
     const tempInitParams = {...initParams};
     tempInitParams[field] = value;
     let _;
-    await unitStatsLoader({initParams: tempInitParams})
+    unitStatsLoader({initParams: tempInitParams})
       .then(res => {
-        console.log("retryCreateMorph: successfully loaded stats");
         setInitParams(tempInitParams);
         const {cls, lv, stats, maxes, params, params2} = res;
         setMorph(
@@ -602,7 +591,6 @@ function App() {
       .catch(err => console.log(err));
   };
   async function submitMorph(e) {
-    console.log("submitMorph");
   };
   function selectGame(e) {
     const gameButton = e.currentTarget;
