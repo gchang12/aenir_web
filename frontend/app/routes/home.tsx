@@ -484,7 +484,7 @@ export async function unitStatsLoader( {initParams} ) {
       }
     })
     .catch(err => {
-      alert(err);
+      console.log(err);
     });
   console.log("Checking if `params` need to be populated.");
   if (params !== null) {
@@ -493,7 +493,7 @@ export async function unitStatsLoader( {initParams} ) {
     const defaultVal = choices[0];
     initParams[field] = defaultVal;
     if (params2 !== null) {
-      alert("params2 not null: " + Object.keys(params2));
+      console.log("params2 not null: " + Object.keys(params2));
       const [field, choices] = params;
       const defaultVal = choices[0];
       initParams[field] = defaultVal;
@@ -563,6 +563,7 @@ function App() {
           }
         );
         console.log("cls: " + cls);
+        console.log("params: " + params);
       })
       .catch(err => console.log(err));
     return;
@@ -601,7 +602,7 @@ function App() {
       .catch(err => console.log(err));
   };
   async function submitMorph(e) {
-    alert("submitMorph");
+    console.log("submitMorph");
   };
   function selectGame(e) {
     const gameButton = e.currentTarget;
