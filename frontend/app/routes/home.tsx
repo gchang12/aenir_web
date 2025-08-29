@@ -459,12 +459,12 @@ export function getUnitList({gameNo}) {
 export async function unitStatsLoader( {initParams} ) {
   const sourceUrl = "http://127.0.0.1:8000/dracogate/api/initialize_morph/";
   // containers for output
-  let currentCls = null;
-  let currentLv = null;
-  let currentStats = null;
-  let missingParams = null;
-  let missingParams2 = null;
-  let currentMaxes = null;
+  let cls = null;
+  let lv = null;
+  let stats = null;
+  let maxes = null;
+  let params = null;
+  let params2 = null;
   let _;
   console.log("About to send POST request to URL.");
   await axios
@@ -473,26 +473,28 @@ export async function unitStatsLoader( {initParams} ) {
     )
     .then(res => {
       const [success, data] = res.data;
-      console.log("Data has been fetched.");
       if (success) {
-        const { stats, maxes, cls, lv } = data;
-        [currentStats, currentMaxes, currentCls, currentLv] = [stats, maxes, cls, lv];
-        console.log("Unit has been found. Level: " + currentLv);
+        const {current_stats, current_maxes, current_cls, current_lv} = data;
+        [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
+        console.log("Unit has been found. Level: " + lv);
       } else {
-        const { params, params2 } = data;
-        [missingParams, missingParams2] = [params, params2];
-        console.log("Failure. missingParams: " + missingParams);
-      };
+        const { missing_params, missing_params2 } = data;
+        [params, params2] = [missing_params, missing_params2]
+        console.log(params);
+      }
     })
-    .catch(err => console.log(err));
-  console.log("Checking if missingParams need to be populated.");
-  if (missingParams !== null) {
-    console.log("missingParams not null: " + missingParams);
-    const [field, choices] = missingParams;
+    .catch(err => {
+      alert(err);
+    });
+  console.log("Checking if `params` need to be populated.");
+  if (params !== null) {
+    console.log("params not null: " + Object.keys(params));
+    const [field, choices] = params;
     const defaultVal = choices[0];
     initParams[field] = defaultVal;
-    if (missingParams2 !== null) {
-      const [field, choices] = missingParams;
+    if (params2 !== null) {
+      alert("params2 not null: " + Object.keys(params2));
+      const [field, choices] = params;
       const defaultVal = choices[0];
       initParams[field] = defaultVal;
     };
@@ -501,13 +503,10 @@ export async function unitStatsLoader( {initParams} ) {
         {data: initParams},
       )
       .then(res => {
-        const [_, data] = res.data;
-        const { stats, maxes, cls, lv } = data;
-        [currentStats, currentMaxes, currentCls, currentLv] = [stats, maxes, cls, lv];
-      })
-      .catch(err => console.log(err));
+        const { current_stats, current_maxes, current_cls, current_lv } = res.data;
+        [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
+      });
   };
-  console.log("End of unitStatsLoader");
   return {cls, lv, stats, maxes, params, params2};
 };
 
@@ -549,6 +548,7 @@ function App() {
     };
     await unitStatsLoader({initParams: tempInitParams})
       .then(res => {
+        console.log("tryCreateMorph: successfully loaded stats: " + Object.keys(res));
         setInitParams(tempInitParams);
         const {cls, lv, stats, maxes, params, params2} = res;
         setMissingParams(params);
@@ -562,9 +562,9 @@ function App() {
             currentStats: stats,
           }
         );
-        alert("cls: " + cls);
+        console.log("cls: " + cls);
       })
-      .catch(err => (err));
+      .catch(err => console.log(err));
     return;
   };
   async function retryCreateMorph(e) {
@@ -583,10 +583,11 @@ function App() {
     const tempInitParams = {...initParams};
     tempInitParams[field] = value;
     let _;
-    unitStatsLoader({initParams: tempInitParams})
+    await unitStatsLoader({initParams: tempInitParams})
       .then(res => {
+        console.log("retryCreateMorph: successfully loaded stats");
         setInitParams(tempInitParams);
-        const {cls, lv, stats, maxes} = res;
+        const {cls, lv, stats, maxes, params, params2} = res;
         setMorph(
           {
             ...morph,
@@ -611,22 +612,23 @@ function App() {
     <>
     <h2>Game Select</h2>
     <form id="morph-initializer">
-      <menu id="game-select">
+    {game.no !== 0 && (
+        <figure id="game-cover">
+        <img src={`/static/${game.name}/cover-art.png`} alt={`Cover art of FE${game.no}: ${game.title}`} />
+        <figcaption>{game.title}</figcaption>
+      </figure>
+        ) }
+      <select id="game-select">
         {feGames.map(currentGame => {
           const {no, title, name} = currentGame;
           return (
-            <li key={name}>
-              <button type="button" data-gameno={no} onClick={selectGame}>
-                <figure id="game-cover">
-                  <img src={`/static/${name}/cover-art.png`} alt={`Cover art of FE${no}: ${title}`} />
-                  <figcaption>{title}</figcaption>
-                </figure>
-              </button>
-            </li>
+            <option type="button" data-gameno={no} onClick={selectGame}>
+              {title}
+            </option>
           );
           })
         }
-      </menu>
+      </select>
       <menu id="unit-select">
       {unitList !== undefined && (
           unitList.map(name => {
@@ -656,19 +658,21 @@ function App() {
       </form>
     <table id="stats-table">
       <tbody>
-        {morph.currentStats !== null && morph.currentCls !== null && morph.currentLv !== null (
-          (
-            <>
+        {morph.currentCls !== null && (
             <tr>
               <th>Class</th>
               <td>{morph.currentCls}</td>
             </tr>
+          )
+        }
+        {morph.currentLv !== null && (
             <tr>
               <th>Lv</th>
               <td>{morph.currentLv}</td>
             </tr>
-            </>
           )
+        }
+        {morph.currentStats !== null && (
           (
              morph.currentStats.map(statVal => {
                const [stat, value] = statVal;

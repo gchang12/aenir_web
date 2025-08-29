@@ -33,18 +33,20 @@ class InitializationViewset(viewsets.ViewSet):
             logger.debug("Got Morph%d instance of %s", game, name)
             return Response([
                 True, {
-                    "stats": morph.current_stats.as_list(),
-                    "maxes": morph.max_stats.as_list(),
-                    "cls": morph.current_cls,
-                    "lv": morph.current_lv,
+                    "current_stats": morph.current_stats.as_list(),
+                    "current_maxes": morph.max_stats.as_list(),
+                    "current_cls": morph.current_cls,
+                    "current_lv": morph.current_lv,
                 }
             ])
         except InitError as err:
             logger.debug("Failed to fetch Morph%d!%s. Need extra data: %s", game, name, err.init_params)
+            missing_params = err.init_params.popitem()
+            missing_params2 = err.init_params2.popitem()
             return Response([
                 False, {
-                    "params": err.init_params,
-                    "params2": err.init_params2,
+                    "missing_params": missing_params,
+                    "missing_params2": missing_params2,
                 }
             ])
 
