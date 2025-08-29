@@ -1,4 +1,4 @@
-aenir==0.42.post1.dev650
+aenir==0.42.post1.dev652
 asgiref==3.9.1
 Django==5.2.4
 django-cors-headers==4.7.0

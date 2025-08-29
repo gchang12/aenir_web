@@ -48,7 +48,7 @@ function RadioWidget({choices, field, onClick}) {
         return (
           <>
             <label key={field + "-label"} htmlFor={field}>{choice}</label>
-            <input key={field + "-input"} defaultValue="Lalum" type="radio" id={choice} name={field} data-fieldname={field} onClick={onClick} />
+            <input key={field + "-input"} type="radio" id={choice} name={field} data-fieldname={field} onClick={onClick} />
           </>
         );
       })}
@@ -466,6 +466,7 @@ async function unitStatsLoader( {tempInitParams} ) {
   let params = null;
   let params2 = null;
   const initParams = {...tempInitParams};
+  console.log("First POST with data: " + Object.entries(initParams));
   await axios
     .post(sourceUrl,
       {data: initParams},
@@ -485,15 +486,18 @@ async function unitStatsLoader( {tempInitParams} ) {
       const { missing_params, missing_params2 } = data;
       [params, params2] = [missing_params, missing_params2]
     });
-  if (params !== null) {
-    const [field, choices] = Array.from(Object.entries(params)).pop();
-    const defaultVal = choices[0];
-    initParams[field] = defaultVal;
+  if (params !== null || params2 !== null) {
+    if (params !== null) {
+      const [field, choices] = Array.from(Object.entries(params)).pop();
+      const defaultVal = choices[0];
+      initParams[field] = defaultVal;
+    };
     if (params2 !== null) {
       const [field, choices] = Array.from(Object.entries(params2)).pop();
       const defaultVal = choices[0];
       initParams[field] = defaultVal;
     };
+    console.log("Second POST with data: " + Object.entries(initParams));
     await axios
       .post(sourceUrl,
         {data: initParams},
@@ -502,6 +506,7 @@ async function unitStatsLoader( {tempInitParams} ) {
         const [_, data] = res.data;
         const { current_stats, current_maxes, current_cls, current_lv } = data;
         [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
+        console.log("Class: " + cls + ", Lv: " + lv);
       })
       .catch(err => {
         alert(err);
@@ -570,7 +575,7 @@ function App() {
     const inputWidget = e.currentTarget;
     const field = inputWidget.dataset.fieldname;
     let value = inputWidget.value;
-    if (inputWidget.type === "checkbox") {
+    if (field === "hard_mode") {
       value = inputWidget.checked;
     } else if (field === "father") {
       const fatherName = inputWidget.value;
@@ -580,6 +585,8 @@ function App() {
       fatherPreview.alt = fatherImgSrc;
     } else if (field === "number_of_declines") {
       value = Number(value);
+    } else if (field === "route") {
+      value = inputWidget.id;
     };
     const tempInitParams = {...initParams};
     tempInitParams[field] = value;
@@ -587,6 +594,7 @@ function App() {
       .then(res => {
         setInitParams(tempInitParams);
         const {cls, lv, stats, maxes, p, p2} = res;
+        console.log("Lv: " + lv);
         setMorph(
           {
             ...morph,
@@ -613,13 +621,13 @@ function App() {
   return (
     <>
     <h2>Game Select</h2>
+    {game.no !== 0 && (
+        <figure id="game-cover">
+        <img src={`/static/${game.name}/cover-art.png`} alt={`Cover art of FE${game.no}: ${game.title}`} />
+        <figcaption>FE{game.no}</figcaption>
+      </figure>
+    )}
     <form id="morph-initializer">
-      {game.no !== 0 && (
-          <figure id="game-cover">
-          <img src={`/static/${game.name}/cover-art.png`} alt={`Cover art of FE${game.no}: ${game.title}`} />
-          <figcaption>{game.title}</figcaption>
-        </figure>
-      )}
       <select id="game-select">
         {feGames.map(currentGame => {
           const {no, title, name} = currentGame;
@@ -653,7 +661,7 @@ function App() {
       }
       </menu>
       {missingParams !== null && <MorphOption missingParams={missingParams} onClick={retryCreateMorph} /> }
-      {/* {missingParams2 !== null && <MorphOption missingParams={missingParams2} onClick={retryCreateMorph} /> } */}
+      {missingParams2 !== null && <MorphOption missingParams={missingParams2} onClick={retryCreateMorph} /> }
       <button type="button" onClick={submitMorph}>
         Create Morph!
       </button>

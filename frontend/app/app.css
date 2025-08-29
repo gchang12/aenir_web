@@ -13,3 +13,10 @@ body {
     color-scheme: dark;
   }
 }
+
+/* MY STUFF */
+
+#unit-select {
+  height: 35em;
+  overflow-y: scroll;
+}
