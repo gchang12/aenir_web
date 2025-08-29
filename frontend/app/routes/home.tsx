@@ -43,12 +43,12 @@ function FatherSelect({choices, field, title, onClick}) {
 function RadioWidget({choices, field, onClick}) {
   return (
     <fieldset>
-      <legend>Route</legend>
+      <legend key={field + "-legend"}>Route</legend>
       {choices.map(choice => {
         return (
           <>
-            <label htmlFor={field}>{choice}</label>
-            <input type="radio" id={choice} value={choice} name={field} data-fieldname={field} onClick={onClick} />
+            <label key={field + "-label"} htmlFor={field}>{choice}</label>
+            <input key={field + "-input"} defaultValue="Lalum" type="radio" id={choice} name={field} data-fieldname={field} onClick={onClick} />
           </>
         );
       })}
@@ -60,7 +60,7 @@ function NumberWidget({choices, field, title, onClick}) {
   return (
     <>
       <label htmlFor={field}>{title}</label>
-      <input type="number" id={field} name={field} min="0" max={choices.length - 1} data-fieldname={field} onClick={onClick} />
+      <input type="number" id={field} name={field} defaultValue="0" min="0" max={choices.length - 1} data-fieldname={field} onClick={onClick} />
     </>
   );
 }
@@ -82,7 +82,7 @@ export function MorphOption({missingParams, onClick}) {
     route: ["Route", "radio"],
     number_of_declines: ["Number of Declines", "number"],
   };
-  const [field, choices] = missingParams;
+  const [field, choices] = Array.from(Object.entries(missingParams)).pop();
   const [title, inputType] = possibleOptions[field];
   return {
     "select": (
@@ -456,7 +456,7 @@ export function getUnitList({gameNo}) {
   return unitListByGame[gameNo];
 }
 
-export async function unitStatsLoader( {initParams} ) {
+async function unitStatsLoader( {tempInitParams} ) {
   const sourceUrl = "http://127.0.0.1:8000/dracogate/api/initialize_morph/";
   // containers for output
   let cls = null;
@@ -465,41 +465,63 @@ export async function unitStatsLoader( {initParams} ) {
   let maxes = null;
   let params = null;
   let params2 = null;
-  let _;
-  axios
+  const initParams = {...tempInitParams};
+  console.log("START: unitStatsLoader")
+  console.log("Sending first POST request.");
+  await axios
     .post(sourceUrl,
       {data: initParams},
     )
     .then(res => {
+      console.log("Success.");
       const [success, data] = res.data;
       if (success) {
+        console.log("Morph initialization complete. Returned: " + Object.keys(data));
         const {current_stats, current_maxes, current_cls, current_lv} = data;
         [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
       } else {
+        console.log("Morph initialization incomplete. Returned: " + Object.keys(data));
         const { missing_params, missing_params2 } = data;
         [params, params2] = [missing_params, missing_params2]
       }
     })
     .catch(err => {
+      console.log(err);
+      const [success, data] = err.response.data;
+      console.log("Morph initialization incomplete. Returned: " + Object.keys(data));
+      const { missing_params, missing_params2 } = data;
+      [params, params2] = [missing_params, missing_params2]
     });
   if (params !== null) {
-    const [field, choices] = params;
+    console.log("Extra parameters needed: " + Object.keys(params));
+    const [field, choices] = Array.from(Object.entries(params)).pop();
     const defaultVal = choices[0];
     initParams[field] = defaultVal;
     if (params2 !== null) {
-      const [field, choices] = params;
+      console.log("More extra parameters needed: " + Object.keys(params2));
+      const [field, choices] = Array.from(Object.entries(params2)).pop();
       const defaultVal = choices[0];
       initParams[field] = defaultVal;
     };
-    axios
+    console.log("Sending second POST request with initParams: " + Object.keys(initParams));
+    await axios
       .post(sourceUrl,
         {data: initParams},
       )
       .then(res => {
-        const { current_stats, current_maxes, current_cls, current_lv } = res.data;
+        const [_, data] = res.data;
+        console.log("Got object: " + Object.keys(data));
+        const { current_stats, current_maxes, current_cls, current_lv } = data;
+        console.log("current_cls: " + current_cls + ", current_lv: " + current_lv);
         [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
+      })
+      .catch(err => {
+        console.log(err);
       });
   };
+  console.log("cls: " + cls + ", params: " + params);
+  console.log("stats: " + stats + ", maxes: " + maxes);
+  console.log("END: unitStatsLoader")
   return {cls, lv, stats, maxes, params, params2};
 };
 
@@ -511,16 +533,12 @@ function App() {
     name: '',
     title: '',
   };
-  const [game, setGame] = useState(nullGame);
   const nullInitParams = {
     game: null,
     name: null,
   };
-  const [initParams, setInitParams] = useState(nullInitParams);
   const nullMissingParams = null;
   {/* for submitting extra data to server */}
-  const [missingParams, setMissingParams] = useState(nullMissingParams);
-  const [missingParams2, setMissingParams2] = useState(nullMissingParams);
   const nullMorph = {
     ...nullInitParams,
     currentCls: null,
@@ -530,21 +548,28 @@ function App() {
     maxStats: null,
     history: null,
   };
+  const [game, setGame] = useState(nullGame);
+  const [initParams, setInitParams] = useState(nullInitParams);
+  const [missingParams, setMissingParams] = useState(nullMissingParams);
+  const [missingParams2, setMissingParams2] = useState(nullMissingParams);
   const [morph, setMorph] = useState(nullMorph);
+  {/* The rest */}
   const feGames = getFireEmblemGames();
   const unitList = getUnitList({gameNo: game.no});
-  async function tryCreateMorph(e) {
+  function tryCreateMorph(e) {
     const unitName = e.currentTarget.dataset.unit;
     const tempInitParams = {
       game: game.no,
       name: unitName,
     };
-    unitStatsLoader({initParams: tempInitParams})
+    unitStatsLoader({tempInitParams})
       .then(res => {
+        console.log("Stats have been loaded. Setting initParams to: " + Object.keys(tempInitParams))
         setInitParams(tempInitParams);
         const {cls, lv, stats, maxes, params, params2} = res;
         setMissingParams(params);
         setMissingParams2(params2);
+        console.log("cls: " + cls + ", params: " + params);
         setMorph(
           {
             ...morph,
@@ -558,7 +583,7 @@ function App() {
       .catch(err => console.log(err));
     return;
   };
-  async function retryCreateMorph(e) {
+  function retryCreateMorph(e) {
     const inputWidget = e.currentTarget;
     const field = inputWidget.dataset.fieldname;
     let value = inputWidget.value;
@@ -570,14 +595,16 @@ function App() {
       const fatherImgSrc = `/static/genealogy-of-the-holy-war/characters/${fatherName}.png`;
       fatherPreview.src = fatherImgSrc;
       fatherPreview.alt = fatherImgSrc;
+    } else if (field === "number_of_declines") {
+      value = Number(value);
     };
     const tempInitParams = {...initParams};
     tempInitParams[field] = value;
-    let _;
-    unitStatsLoader({initParams: tempInitParams})
+    console.log("retryCreateMorph: initParams: " + Object.keys(tempInitParams));
+    unitStatsLoader({tempInitParams})
       .then(res => {
         setInitParams(tempInitParams);
-        const {cls, lv, stats, maxes, params, params2} = res;
+        const {cls, lv, stats, maxes, p, p2} = res;
         setMorph(
           {
             ...morph,
@@ -596,26 +623,30 @@ function App() {
     const gameButton = e.currentTarget;
     const selectedGame = feGames.find((myGame) => myGame.no.toString() === gameButton.dataset.gameno);
     setGame(selectedGame);
+    setInitParams(nullInitParams);
+    setMissingParams(nullMissingParams);
+    setMissingParams2(nullMissingParams);
+    setMorph(nullMorph);
   };
   return (
     <>
     <h2>Game Select</h2>
     <form id="morph-initializer">
-    {game.no !== 0 && (
-        <figure id="game-cover">
-        <img src={`/static/${game.name}/cover-art.png`} alt={`Cover art of FE${game.no}: ${game.title}`} />
-        <figcaption>{game.title}</figcaption>
-      </figure>
-        ) }
+      {game.no !== 0 && (
+          <figure id="game-cover">
+          <img src={`/static/${game.name}/cover-art.png`} alt={`Cover art of FE${game.no}: ${game.title}`} />
+          <figcaption>{game.title}</figcaption>
+        </figure>
+      )}
       <select id="game-select">
         {feGames.map(currentGame => {
           const {no, title, name} = currentGame;
           return (
-            <option type="button" data-gameno={no} onClick={selectGame}>
+            <option key={name} type="button" data-gameno={no} onClick={selectGame}>
               {title}
             </option>
           );
-          })
+        })
         }
       </select>
       <menu id="unit-select">
@@ -648,14 +679,14 @@ function App() {
     <table id="stats-table">
       <tbody>
         {morph.currentCls !== null && (
-            <tr>
+            <tr key="Class">
               <th>Class</th>
               <td>{morph.currentCls}</td>
             </tr>
           )
         }
         {morph.currentLv !== null && (
-            <tr>
+            <tr key="Lv">
               <th>Lv</th>
               <td>{morph.currentLv}</td>
             </tr>
@@ -666,7 +697,7 @@ function App() {
              morph.currentStats.map(statVal => {
                const [stat, value] = statVal;
                return (
-                 <tr>
+                 <tr key={stat}>
                    <th>{stat}</th>
                    <td>{value}</td>
                  </tr>
