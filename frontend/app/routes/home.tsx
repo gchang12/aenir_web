@@ -466,62 +466,47 @@ async function unitStatsLoader( {tempInitParams} ) {
   let params = null;
   let params2 = null;
   const initParams = {...tempInitParams};
-  console.log("START: unitStatsLoader")
-  console.log("Sending first POST request.");
   await axios
     .post(sourceUrl,
       {data: initParams},
     )
     .then(res => {
-      console.log("Success.");
       const [success, data] = res.data;
       if (success) {
-        console.log("Morph initialization complete. Returned: " + Object.keys(data));
         const {current_stats, current_maxes, current_cls, current_lv} = data;
         [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
       } else {
-        console.log("Morph initialization incomplete. Returned: " + Object.keys(data));
         const { missing_params, missing_params2 } = data;
         [params, params2] = [missing_params, missing_params2]
       }
     })
     .catch(err => {
-      console.log(err);
       const [success, data] = err.response.data;
-      console.log("Morph initialization incomplete. Returned: " + Object.keys(data));
       const { missing_params, missing_params2 } = data;
       [params, params2] = [missing_params, missing_params2]
     });
   if (params !== null) {
-    console.log("Extra parameters needed: " + Object.keys(params));
     const [field, choices] = Array.from(Object.entries(params)).pop();
     const defaultVal = choices[0];
     initParams[field] = defaultVal;
     if (params2 !== null) {
-      console.log("More extra parameters needed: " + Object.keys(params2));
       const [field, choices] = Array.from(Object.entries(params2)).pop();
       const defaultVal = choices[0];
       initParams[field] = defaultVal;
     };
-    console.log("Sending second POST request with initParams: " + Object.keys(initParams));
     await axios
       .post(sourceUrl,
         {data: initParams},
       )
       .then(res => {
         const [_, data] = res.data;
-        console.log("Got object: " + Object.keys(data));
         const { current_stats, current_maxes, current_cls, current_lv } = data;
-        console.log("current_cls: " + current_cls + ", current_lv: " + current_lv);
         [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
       })
       .catch(err => {
-        console.log(err);
+        alert(err);
       });
   };
-  console.log("cls: " + cls + ", params: " + params);
-  console.log("stats: " + stats + ", maxes: " + maxes);
-  console.log("END: unitStatsLoader")
   return {cls, lv, stats, maxes, params, params2};
 };
 
@@ -564,12 +549,10 @@ function App() {
     };
     unitStatsLoader({tempInitParams})
       .then(res => {
-        console.log("Stats have been loaded. Setting initParams to: " + Object.keys(tempInitParams))
         setInitParams(tempInitParams);
         const {cls, lv, stats, maxes, params, params2} = res;
         setMissingParams(params);
         setMissingParams2(params2);
-        console.log("cls: " + cls + ", params: " + params);
         setMorph(
           {
             ...morph,
@@ -580,7 +563,7 @@ function App() {
           }
         );
       })
-      .catch(err => console.log(err));
+      .catch(err => alert(err));
     return;
   };
   function retryCreateMorph(e) {
@@ -600,7 +583,6 @@ function App() {
     };
     const tempInitParams = {...initParams};
     tempInitParams[field] = value;
-    console.log("retryCreateMorph: initParams: " + Object.keys(tempInitParams));
     unitStatsLoader({tempInitParams})
       .then(res => {
         setInitParams(tempInitParams);
@@ -615,7 +597,7 @@ function App() {
           }
         );
       })
-      .catch(err => console.log(err));
+      .catch(err => alert(err));
   };
   async function submitMorph(e) {
   };
@@ -671,7 +653,7 @@ function App() {
       }
       </menu>
       {missingParams !== null && <MorphOption missingParams={missingParams} onClick={retryCreateMorph} /> }
-      {missingParams2 !== null && <MorphOption missingParams={missingParams2} onClick={retryCreateMorph} /> }
+      {/* {missingParams2 !== null && <MorphOption missingParams={missingParams2} onClick={retryCreateMorph} /> } */}
       <button type="button" onClick={submitMorph}>
         Create Morph!
       </button>
