@@ -82,7 +82,7 @@ export function MorphOption({missingParams, onClick}) {
     route: ["Route", "radio"],
     number_of_declines: ["Number of Declines", "number"],
   };
-  const [field, choices] = Array.from(Object.entries(missingParams)).pop();
+  const [field, choices] = missingParams;
   const [title, inputType] = possibleOptions[field];
   return {
     "select": (
@@ -488,12 +488,12 @@ async function unitStatsLoader( {tempInitParams} ) {
     });
   if (params !== null || params2 !== null) {
     if (params !== null) {
-      const [field, choices] = Array.from(Object.entries(params)).pop();
+      const [field, choices] = params;
       const defaultVal = choices[0];
       initParams[field] = defaultVal;
     };
     if (params2 !== null) {
-      const [field, choices] = Array.from(Object.entries(params2)).pop();
+      const [field, choices] = params2;
       const defaultVal = choices[0];
       initParams[field] = defaultVal;
     };
@@ -608,6 +608,7 @@ function App() {
       .catch(err => alert(err));
   };
   async function submitMorph(e) {
+    alert("submitMorph");
   };
   function selectGame(e) {
     const gameButton = e.currentTarget;
@@ -621,12 +622,14 @@ function App() {
   return (
     <>
     <h2>Game Select</h2>
-    {game.no !== 0 && (
-        <figure id="game-cover">
+      <figure id="game-cover" width="300" height="145">
+        {game.no !== 0 && (
+        <>
         <img src={`/static/${game.name}/cover-art.png`} alt={`Cover art of FE${game.no}: ${game.title}`} />
         <figcaption>FE{game.no}</figcaption>
+        </>
+        )}
       </figure>
-    )}
     <form id="morph-initializer">
       <select id="game-select">
         {feGames.map(currentGame => {

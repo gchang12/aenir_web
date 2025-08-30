@@ -41,8 +41,15 @@ class InitializationViewset(viewsets.ViewSet):
             ])
         except InitError as err:
             logger.debug("Failed to fetch Morph%d!%s. Need extra data: %s", game, name, err.init_params)
-            missing_params = err.init_params
-            missing_params2 = err.init_params2
+            # implicit: bind first item of err-initparams to `missing_params`
+            for missing_params in err.init_params.items():
+                break
+            # implicit: bind first item of err-initparams2 to `missing_params2` if applicable
+            if err.init_params2 is None:
+                missing_params2 = None
+            else:
+                for missing_params2 in err.init_params2.items():
+                    break
             return Response([
                 False, {
                     "missing_params": missing_params,
