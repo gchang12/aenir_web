@@ -97,7 +97,7 @@ function MorphOption({missingParams, onClick}) {
   }[inputType];
 };
 
-function unitStatsLoader( {tempInitParams} ) {
+async function unitStatsLoader( {tempInitParams} ) {
   const sourceUrl = "http://127.0.0.1:8000/dracogate/api/initialize_morph/";
   // containers for output
   let cls = null;
@@ -108,7 +108,7 @@ function unitStatsLoader( {tempInitParams} ) {
   let params2 = null;
   const initParams = {...tempInitParams};
   console.log("First POST with data: " + Object.entries(initParams));
-  axios
+  await axios
     .post(sourceUrl,
       {data: initParams},
     )
@@ -139,7 +139,7 @@ function unitStatsLoader( {tempInitParams} ) {
       initParams[field] = defaultVal;
     };
     console.log("Second POST with data: " + Object.entries(initParams));
-    axios
+    await axios
       .post(sourceUrl,
         {data: initParams},
       )
