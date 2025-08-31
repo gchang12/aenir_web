@@ -716,10 +716,6 @@ function App() {
         )}
       </tbody>
     </table>
-    {isInitialized && (
-      <input type="number" min={morph.currentLv + 1} max="20" onClick={toggleLevel} />
-    )
-    }
     </>
   );
 };

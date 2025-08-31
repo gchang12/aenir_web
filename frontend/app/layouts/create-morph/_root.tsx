@@ -3,7 +3,7 @@ import {
   NavLink,
 } from 'react-router';
 
-function getFireEmblemGames() {
+export function getFireEmblemGames() {
   return [
     {
       no: 4,
@@ -41,15 +41,16 @@ function getFireEmblemGames() {
 function GameSelectMenu() {
   const feGames = getFireEmblemGames();
   return (
+    <>
     <menu id="game-select">
       {feGames.map(currentGame => {
-        const {gameNo, gameTitle, gameName} = currentGame;
+        const {no, title, name} = currentGame;
         return (
           <li>
-            <NavLink to={`/create/${gameName}/`}>
+            <NavLink to={`/create/fe${no}/`}>
               <figure className="cover-art" width="300" height="145">
-                <img src={`/static/${gameName}/cover-art.png`} alt={`Official cover for FE${gameNo}: ${gameTitle}`} />
-                <figcaption>FE{gameNo}: {gameTitle}</figcaption>
+                <img src={`/static/${name}/cover-art.png`} alt={`Official cover for FE${no}: ${title}`} />
+                <figcaption>FE{no}: {title}</figcaption>
               </figure>
             </NavLink>
           </li>
@@ -58,6 +59,7 @@ function GameSelectMenu() {
       }
     </menu>
     <Outlet />
+    </>
   );
 };
 

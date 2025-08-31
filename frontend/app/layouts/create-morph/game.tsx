@@ -1,7 +1,11 @@
 import {
   Outlet,
   NavLink,
+  useParams,
 } from 'react-router';
+import {
+  getFireEmblemGames,
+} from './_root';
 
 export function getUnitList({gameNo}) {
   const unitListByGame = {
@@ -322,29 +326,28 @@ export function getUnitList({gameNo}) {
   return unitListByGame[gameNo];
 }
 
-function UnitSelectMenu({gameNo}) {
-  const unitList = getUnitList({gameNo});
+function UnitSelectMenu() {
+  const {feGame} = useParams();
+  const game = getFireEmblemGames().find(obj => obj.no === Number(feGame.replace("fe", "")));
+  const unitList = getUnitList({gameNo: game.no});
   return (
     <>
     <menu id="unit-select">
-      {unitList !== undefined && (
-        unitList.map(name => {
-          const imgSuffix = game.no === 8 ? "gif" : "png";
-          const imgFile = `${name}.${imgSuffix}`;
-          return (
-            <li key={name}>
-              <NavLink to>
-                <figure>
-                  <img src={`/static/${game.name}/characters/${imgFile}`} alt={`Portrait of ${name}, ${imgFile}`} />
-                  <figcaption>
-                    {name}
-                  </figcaption>
-                </figure>
-              </NavLink>
-            </li>
-          );
-        })
-      )}
+    {unitList.map(name => {
+      const imgSuffix = game.no === 8 ? "gif" : "png";
+      const imgFile = `${name}.${imgSuffix}`;
+      return (
+        <li key={name}>
+          <NavLink to={`create/${feGame}/${name}/`}>
+            <figure>
+              <img src={`/static/${game.name}/characters/${imgFile}`} alt={`Portrait of ${name}, ${imgFile}`} />
+              <figcaption>{name}</figcaption>
+            </figure>
+          </NavLink>
+        </li>
+      );
+    })
+    }
     </menu>
     <Outlet />
     </>

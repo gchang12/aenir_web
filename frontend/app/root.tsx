@@ -35,15 +35,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <nav>
-          <Link to="/create/">
-            Create
-          </Link>
-          <Link to="/edit/">
-            Edit
-          </Link>
-          <Link to="/compare/">
-            Compare
-          </Link>
+          <Link to="/create/">Create</Link>
+          {/* <Link to="/edit/">Edit</Link> */}
+          {/* <Link to="/compare/">Compare</Link> */}
         </nav>
         {children}
         <ScrollRestoration />

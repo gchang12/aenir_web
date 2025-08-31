@@ -1,22 +1,198 @@
 import {
   Form,
+  useParams,
 } from 'react-router';
+import {
+  getFireEmblemGames,
+} from '../../layouts/create-morph/_root.tsx';
+import {
+  getUnitList,
+} from '../../layouts/create-morph/game.tsx';
 
-function UnitConfirmMenu() {
+function FatherSelect({choices, field, title, onClick}) {
+  return (
+    <>
+      <label htmlFor={field}>{title}</label>
+      <select id={field}>
+        {choices.map(choice => {
+          return (
+            <option key={choice} data-fieldname={field} value={choice} onClick={onClick}>{choice}</option>
+          );}
+        )
+        }
+      </select>
+      <figure>
+        <img id="father-preview" src="/static/genealogy-of-the-holy-war/characters/Arden.png" alt="/static/genealogy-of-the-holy-war/characters/Arden.png" />
+        <figcaption>
+          Father
+        </figcaption>
+      </figure>
+    </>
+  );
+}
+
+function RadioWidget({choices, field, onClick}) {
+  return (
+    <fieldset>
+      <legend key={field + "-legend"}>Route</legend>
+      {choices.map(choice => {
+        return (
+          <>
+            <label key={field + "-label"} htmlFor={field}>{choice}</label>
+            <input key={field + "-input"} type="radio" id={choice} name={field} data-fieldname={field} onClick={onClick} />
+          </>
+        );
+      })}
+    </fieldset>
+  );
+};
+
+function NumberWidget({choices, field, title, onClick}) {
+  return (
+    <>
+      <label htmlFor={field}>{title}</label>
+      <input type="number" id={field} name={field} defaultValue="0" min="0" max={choices.length - 1} data-fieldname={field} onClick={onClick} />
+    </>
+  );
+}
+
+function CheckboxWidget({field, title, onClick}) {
+  return (
+    <>
+      <label htmlFor={field}>{title}</label>
+      <input type="checkbox" id={field} name={field} data-fieldname={field} onClick={onClick} />
+    </>
+  );
+}
+
+function MorphOption({missingParams, onClick}) {
+  const possibleOptions = {
+    father: ["Father", "select"],
+    hard_mode: ["Hard Mode", "checkbox"],
+    lyn_mode: ["Lyn Mode", "checkbox"],
+    route: ["Route", "radio"],
+    number_of_declines: ["Number of Declines", "number"],
+  };
+  const [field, choices] = missingParams;
+  const [title, inputType] = possibleOptions[field];
+  return {
+    "select": (
+      <FatherSelect choices={choices} field={field} title={title} onClick={onClick} />
+    ),
+    "radio": (
+      <RadioWidget choices={choices} field={field} onClick={onClick} />
+    ),
+    "number": (
+      <NumberWidget choices={choices} field={field} onClick={onClick} />
+    ),
+    "checkbox": (
+      <CheckboxWidget field={field} title={title} onClick={onClick} />
+    ),
+  }[inputType];
+};
+
+async function unitStatsLoader( {tempInitParams} ) {
+  const sourceUrl = "http://127.0.0.1:8000/dracogate/api/initialize_morph/";
+  // containers for output
+  let cls = null;
+  let lv = null;
+  let stats = null;
+  let maxes = null;
+  let params1 = null;
+  let params2 = null;
+  const initParams = {...tempInitParams};
+  console.log("First POST with data: " + Object.entries(initParams));
+  await axios
+    .post(sourceUrl,
+      {data: initParams},
+    )
+    .then(res => {
+      const [success, data] = res.data;
+      if (success) {
+        const {current_stats, current_maxes, current_cls, current_lv} = data;
+        [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
+      } else {
+        const { missing_params, missing_params2 } = data;
+        [params1, params2] = [missing_params, missing_params2]
+      }
+    })
+    .catch(err => {
+      const [success, data] = err.response.data;
+      const { missing_params, missing_params2 } = data;
+      [params1, params2] = [missing_params, missing_params2]
+    });
+  if (params1 !== null || params2 !== null) {
+    if (params1 !== null) {
+      const [field, choices] = params1;
+      const defaultVal = choices[0];
+      initParams[field] = defaultVal;
+    };
+    if (params2 !== null) {
+      const [field, choices] = params2;
+      const defaultVal = choices[0];
+      initParams[field] = defaultVal;
+    };
+    console.log("Second POST with data: " + Object.entries(initParams));
+    await axios
+      .post(sourceUrl,
+        {data: initParams},
+      )
+      .then(res => {
+        const [_, data] = res.data;
+        const { current_stats, current_maxes, current_cls, current_lv } = data;
+        [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
+        console.log("Class: " + cls + ", Lv: " + lv);
+      })
+      .catch(err => {
+        alert(err);
+      });
+  };
+  return {cls, lv, stats, maxes, params1, params2};
+};
+
+export async function clientLoader() {
+  const { feGame, feUnit } = useParams();
+  const params0 = {
+    game: Number(feGame.replace('fe', '')),
+    name: feUnit,
+  };
+  const {
+    cls,
+    lv,
+    stats,
+    maxes,
+    params1,
+    params2,
+  } = await unitStatsLoader({tempInitParams: params0});
+  const morph0 = {
+    ...params0,
+    currentCls: cls,
+    currentLv: lv,
+    currentStats: stats,
+    currentMaxes: maxes,
+  };
+  return {morph0, params0, params1, params2};
+};
+
+function UnitConfirmMenu({loaderData}) {
+  const {morph0, params0, params1, params2} = loaderData;
+  const [morph, setMorph] = useState(morph0);
+  const [initParams, setInitParams] = useState(params0);
+  const [missingParams, setMissingParams] = useState(params1);
+  const [missingParams2, setMissingParams2] = useState(params2);
   return (
     <Form>
-                <figure>
-                  <img src={`/static/${game.name}/characters/${imgFile}`} alt={`Portrait of ${name}, ${imgFile}`} />
-                  <figcaption>
-                    {name}
-                  </figcaption>
-                </figure>
+      <figure>
+        <img src={`/static/${game.name}/characters/${imgFile}`} alt={`Portrait of ${name}, ${imgFile}`} />
+        <figcaption>
+          {name}
+        </figcaption>
+      </figure>
       {missingParams !== null && <MorphOption missingParams={missingParams} onClick={retryCreateMorph} /> }
       {missingParams2 !== null && <MorphOption missingParams={missingParams2} onClick={retryCreateMorph} /> }
       <button type="button" onClick={submitMorph}>
         Create Morph!
       </button>
-      </form>
     <table id="stats-table">
       <tbody>
         {morph.currentCls !== null && (
@@ -51,3 +227,5 @@ function UnitConfirmMenu() {
     </Form>
   );
 };
+
+export default UnitConfirmMenu;

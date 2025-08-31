@@ -1,5 +1,5 @@
 function GameSelect() {
-  return  <h1>GameSelect</h1>;
-}
+  return <></>;
+};
 
 export default GameSelect;
