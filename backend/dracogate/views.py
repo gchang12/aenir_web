@@ -29,6 +29,7 @@ class InitializationViewset(viewsets.ViewSet):
         game = data.get('game_no')
         logger.debug("Getting character: %s from FE%d", name, game)
         try:
+            print("Success! data:", data)
             morph = get_morph(**data)
             logger.debug("Got Morph%d instance of %s", game, name)
             return Response([
@@ -50,6 +51,7 @@ class InitializationViewset(viewsets.ViewSet):
             else:
                 for missing_params2 in err.init_params2.items():
                     break
+            print("Failed. data:", data, "missing_data:", missing_params, missing_params2)
             return Response([
                 False, {
                     "missing_params": missing_params,

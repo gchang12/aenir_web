@@ -158,8 +158,9 @@ async function unitStatsLoader( {tempInitParams} ) {
 
 async function UnitConfirmMenu() {
   const { feGame, feUnit } = useParams();
+  const game = getFireEmblemGames().find(obj => obj.no === Number(feGame.replace("fe", "")));
   const params0 = {
-    game: Number(feGame.replace('fe', '')),
+    game: game.no,
     name: feUnit,
   };
   const {
@@ -181,48 +182,41 @@ async function UnitConfirmMenu() {
   const [initParams, setInitParams] = useState(params0);
   const [missingParams, setMissingParams] = useState(params1);
   const [missingParams2, setMissingParams2] = useState(params2);
+  const imgSuffix = game.no === 8 ? "gif" : "png";
+  const imgFile = `${feUnit}.${imgSuffix}`;
   return (
     <Form>
       <figure>
-        <img src={`/static/${game.name}/characters/${imgFile}`} alt={`Portrait of ${name}, ${imgFile}`} />
+        <img src={`/static/${game.name}/characters/${imgFile}`} alt={`Portrait of ${feUnit}, ${imgFile}`} />
         <figcaption>
-          {name}
+          {feUnit}
         </figcaption>
       </figure>
-      {missingParams !== null && <MorphOption missingParams={missingParams} onClick={retryCreateMorph} /> }
-      {missingParams2 !== null && <MorphOption missingParams={missingParams2} onClick={retryCreateMorph} /> }
-      <button type="button" onClick={submitMorph}>
+      {missingParams !== null && <MorphOption missingParams={missingParams} /> }
+      {missingParams2 !== null && <MorphOption missingParams={missingParams2} /> }
+      <button type="button">
         Create Morph!
       </button>
     <table id="stats-table">
       <tbody>
-        {morph.currentCls !== null && (
-            <tr key="Class">
-              <th>Class</th>
-              <td>{morph.currentCls}</td>
+        <tr key="Class">
+          <th>Class</th>
+          <td>{morph.currentCls}</td>
+        </tr>
+        <tr key="Lv">
+          <th>Lv</th>
+          <td>{morph.currentLv}</td>
+        </tr>
+        {morph.currentStats.map(statVal => {
+          const [stat, value] = statVal;
+          return (
+            <tr key={stat}>
+              <th>{stat}</th>
+              <td>{value}</td>
             </tr>
-          )
+          );
+        })
         }
-        {morph.currentLv !== null && (
-            <tr key="Lv">
-              <th>Lv</th>
-              <td>{morph.currentLv}</td>
-            </tr>
-          )
-        }
-        {morph.currentStats !== null && (
-          (
-             morph.currentStats.map(statVal => {
-               const [stat, value] = statVal;
-               return (
-                 <tr key={stat}>
-                   <th>{stat}</th>
-                   <td>{value}</td>
-                 </tr>
-               );
-             })
-          )
-        )}
       </tbody>
     </table>
     </Form>
