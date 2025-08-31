@@ -97,7 +97,7 @@ function MorphOption({missingParams, onClick}) {
   }[inputType];
 };
 
-async function unitStatsLoader( {tempInitParams} ) {
+function unitStatsLoader( {tempInitParams} ) {
   const sourceUrl = "http://127.0.0.1:8000/dracogate/api/initialize_morph/";
   // containers for output
   let cls = null;
@@ -108,7 +108,7 @@ async function unitStatsLoader( {tempInitParams} ) {
   let params2 = null;
   const initParams = {...tempInitParams};
   console.log("First POST with data: " + Object.entries(initParams));
-  await axios
+  axios
     .post(sourceUrl,
       {data: initParams},
     )
@@ -139,7 +139,7 @@ async function unitStatsLoader( {tempInitParams} ) {
       initParams[field] = defaultVal;
     };
     console.log("Second POST with data: " + Object.entries(initParams));
-    await axios
+    axios
       .post(sourceUrl,
         {data: initParams},
       )
@@ -156,7 +156,7 @@ async function unitStatsLoader( {tempInitParams} ) {
   return {cls, lv, stats, maxes, params1, params2};
 };
 
-async function UnitConfirmMenu() {
+function UnitConfirmMenu() {
   const { feGame, feUnit } = useParams();
   const game = getFireEmblemGames().find(obj => obj.no === Number(feGame.replace("fe", "")));
   const params0 = {
@@ -170,7 +170,7 @@ async function UnitConfirmMenu() {
     maxes,
     params1,
     params2,
-  } = await unitStatsLoader({tempInitParams: params0});
+  } = unitStatsLoader({tempInitParams: params0});
   const morph0 = {
     ...params0,
     currentCls: cls,
