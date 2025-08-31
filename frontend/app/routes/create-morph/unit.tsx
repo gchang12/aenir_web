@@ -1,7 +1,13 @@
 import {
+  useState,
+} from 'react';
+import {
   Form,
   useParams,
 } from 'react-router';
+
+import axios from 'axios';
+
 import {
   getFireEmblemGames,
 } from '../../layouts/create-morph/_root.tsx';
@@ -150,7 +156,7 @@ async function unitStatsLoader( {tempInitParams} ) {
   return {cls, lv, stats, maxes, params1, params2};
 };
 
-export async function clientLoader() {
+async function UnitConfirmMenu() {
   const { feGame, feUnit } = useParams();
   const params0 = {
     game: Number(feGame.replace('fe', '')),
@@ -171,11 +177,6 @@ export async function clientLoader() {
     currentStats: stats,
     currentMaxes: maxes,
   };
-  return {morph0, params0, params1, params2};
-};
-
-function UnitConfirmMenu({loaderData}) {
-  const {morph0, params0, params1, params2} = loaderData;
   const [morph, setMorph] = useState(morph0);
   const [initParams, setInitParams] = useState(params0);
   const [missingParams, setMissingParams] = useState(params1);
