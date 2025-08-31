@@ -543,6 +543,7 @@ function App() {
   const [missingParams, setMissingParams] = useState(nullMissingParams);
   const [missingParams2, setMissingParams2] = useState(nullMissingParams);
   const [morph, setMorph] = useState(nullMorph);
+  const [isInitialized, setIsInitialized] = useState(false);
   {/* The rest */}
   const feGames = getFireEmblemGames();
   const unitList = getUnitList({gameNo: game.no});
@@ -608,7 +609,7 @@ function App() {
       .catch(err => alert(err));
   };
   async function submitMorph(e) {
-    alert("submitMorph");
+    setIsInitialized(true);
   };
   function selectGame(e) {
     const gameButton = e.currentTarget;
@@ -619,6 +620,21 @@ function App() {
     setMissingParams2(nullMissingParams);
     setMorph(nullMorph);
   };
+  async function toggleLevel(e) {
+    const numberWidget = e.currentTarget;
+    const targetLv = numberWidget.value;
+    await axios
+      .post(sourceUrl,
+        {data: {num_levels: (targetLv - morph.currentLv)}},
+      )
+      .then(res => {
+        const newStats = res.data;
+        setMorph({...morph, currentStats: newStats});
+      })
+      .catch(err => {
+        alert(err);
+      });
+  }
   return (
     <>
     <h2>Game Select</h2>
@@ -700,6 +716,10 @@ function App() {
         )}
       </tbody>
     </table>
+    {isInitialized && (
+      <input type="number" min={morph.currentLv + 1} max="20" onClick={toggleLevel} />
+    )
+    }
     </>
   );
 };
