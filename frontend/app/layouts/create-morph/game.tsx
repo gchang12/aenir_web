@@ -339,14 +339,14 @@ function UnitSelectMenu() {
       const href = `/create/${feGame}/${name}/`;
       return (
         <li key={name}>
-          <NavLink to={href}>
-        {/* <a href={href}> */}
+        {/* <NavLink to={href}> */}
+          <a href={href}>
             <figure>
               <img src={`/static/${game.name}/characters/${imgFile}`} alt={`Portrait of ${name}, ${imgFile}`} />
               <figcaption>{name}</figcaption>
             </figure>
-            {/* </a> */}
-          </NavLink>
+          </a>
+            {/* </NavLink> */}
         </li>
       );
     })

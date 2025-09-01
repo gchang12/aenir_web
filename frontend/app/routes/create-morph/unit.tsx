@@ -6,6 +6,7 @@ import {
   Form,
   useParams,
   useNavigate,
+  redirect,
 } from 'react-router';
 
 import axios from 'axios';
@@ -179,7 +180,6 @@ export async function clientLoader({params}: Route.LoaderArgs) {
     })
     .catch(err => console.log(err));
   const morph0 = {
-    ...params0,
     currentCls,
     currentLv,
     currentStats,
@@ -187,21 +187,54 @@ export async function clientLoader({params}: Route.LoaderArgs) {
   };
   const [params1, params2] = paramList;
   console.log(`clientLoader: game='${game.title}', unit='${feUnit}'`);
-  return {game, feUnit, morph0, params1, params2};
+  return {game, feUnit, morph0, params0, params1, params2};
 };
 
 function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
-  const {game, feUnit, morph0, params1, params2} = loaderData;
-  const morph = morph0;
-  const missingParams = params1;
-  const missingParams2 = params2;
+  const {game, feUnit, morph0, params0, params1, params2} = loaderData;
   console.log(`UnitConfirmMenu: game='${game.title}', unit='${feUnit}'`);
-  {/* const [morph, setMorph] = useState(morph0); */}
-  {/* const [initParams, setInitParams] = useState(params0); */}
-  {/* const [missingParams, setMissingParams] = useState(params1); */}
-  {/* const [missingParams2, setMissingParams2] = useState(params2); */}
+  const [morph, setMorph] = useState(morph0);
+  const [initParams, setInitParams] = useState(params0);
+  const [missingParams, setMissingParams] = useState(params1);
+  const [missingParams2, setMissingParams2] = useState(params2);
   const imgSuffix = game.no === 8 ? "gif" : "png";
   const imgFile = `${feUnit}.${imgSuffix}`;
+  function retryCreateMorph(e) {
+    const inputWidget = e.currentTarget;
+    const field = inputWidget.dataset.fieldname;
+    let value = inputWidget.value;
+    if (field === "hard_mode") {
+      value = inputWidget.checked;
+    } else if (field === "father") {
+      const fatherName = inputWidget.value;
+      const fatherPreview = document.getElementById("father-preview");
+      const fatherImgSrc = `/static/genealogy-of-the-holy-war/characters/${fatherName}.png`;
+      fatherPreview.src = fatherImgSrc;
+      fatherPreview.alt = fatherImgSrc;
+    } else if (field === "number_of_declines") {
+      value = Number(value);
+    } else if (field === "route") {
+      value = inputWidget.id;
+    };
+    const tempInitParams = {...initParams};
+    tempInitParams[field] = value;
+    unitStatsLoader({tempInitParams})
+      .then(res => {
+        setInitParams(tempInitParams);
+        const {cls, lv, stats, maxes, p, p2} = res;
+        console.log("Lv: " + lv);
+        setMorph(
+          {
+            ...morph,
+            currentCls: cls,
+            currentLv: lv,
+            currentStats: stats,
+            currentMaxes: maxes,
+          }
+        );
+      })
+      .catch(err => alert(err));
+  };
   return (
     <div>
     <Form>
@@ -211,8 +244,8 @@ function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
           {feUnit}
         </figcaption>
       </figure>
-      {missingParams !== null && <MorphOption missingParams={missingParams} /> }
-      {missingParams2 !== null && <MorphOption missingParams={missingParams2} /> }
+      {missingParams !== null && <MorphOption missingParams={missingParams} onClick={retryCreateMorph} /> }
+      {missingParams2 !== null && <MorphOption missingParams={missingParams2} onClick={retryCreateMorph} /> }
       <button type="button">Create Morph!</button>
     </Form>
     <table id="stats-table">
