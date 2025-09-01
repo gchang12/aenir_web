@@ -5,6 +5,7 @@ import {
 import {
   Form,
   useParams,
+  useNavigate,
 } from 'react-router';
 
 import axios from 'axios';
@@ -108,7 +109,7 @@ async function unitStatsLoader( {tempInitParams} ) {
   let params1 = null;
   let params2 = null;
   const initParams = {...tempInitParams};
-  console.log("First POST with data: " + Object.entries(initParams));
+  {/* console.log("First POST with data: " + Object.entries(initParams)); */}
   await axios
     .post(sourceUrl,
       {data: initParams},
@@ -139,7 +140,7 @@ async function unitStatsLoader( {tempInitParams} ) {
       const defaultVal = choices[0];
       initParams[field] = defaultVal;
     };
-    console.log("Second POST with data: " + Object.entries(initParams));
+    {/* console.log("Second POST with data: " + Object.entries(initParams)); */}
     await axios
       .post(sourceUrl,
         {data: initParams},
@@ -148,7 +149,7 @@ async function unitStatsLoader( {tempInitParams} ) {
         const [_, data] = res.data;
         const { current_stats, current_maxes, current_cls, current_lv } = data;
         [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
-        console.log("Class: " + cls + ", Lv: " + lv);
+        {/* console.log("Class: " + cls + ", Lv: " + lv); */}
       })
       .catch(err => {
         alert(err);
@@ -178,24 +179,31 @@ export async function clientLoader({params}: Route.LoaderArgs) {
     })
     .catch(err => console.log(err));
   const morph0 = {
-    currentCls: currentCls,
-    currentLv: currentLv,
-    currentStats: currentStats,
-    currentMaxes: currentMaxes,
+    ...params0,
+    currentCls,
+    currentLv,
+    currentStats,
+    currentMaxes,
   };
   const [params1, params2] = paramList;
-  return {game, feUnit, morph0, params0, params1, params2};
+  console.log(`clientLoader: game='${game.title}', unit='${feUnit}'`);
+  return {game, feUnit, morph0, params1, params2};
 };
 
 function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
-  const {game, feUnit, morph0, params0, params1, params2} = loaderData;
-  const [morph, setMorph] = useState(morph0);
-  const [initParams, setInitParams] = useState(params0);
-  const [missingParams, setMissingParams] = useState(params1);
-  const [missingParams2, setMissingParams2] = useState(params2);
+  const {game, feUnit, morph0, params1, params2} = loaderData;
+  const morph = morph0;
+  const missingParams = params1;
+  const missingParams2 = params2;
+  console.log(`UnitConfirmMenu: game='${game.title}', unit='${feUnit}'`);
+  {/* const [morph, setMorph] = useState(morph0); */}
+  {/* const [initParams, setInitParams] = useState(params0); */}
+  {/* const [missingParams, setMissingParams] = useState(params1); */}
+  {/* const [missingParams2, setMissingParams2] = useState(params2); */}
   const imgSuffix = game.no === 8 ? "gif" : "png";
   const imgFile = `${feUnit}.${imgSuffix}`;
   return (
+    <div>
     <Form>
       <figure>
         <img src={`/static/${game.name}/characters/${imgFile}`} alt={`Portrait of ${feUnit}, ${imgFile}`} />
@@ -205,9 +213,8 @@ function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
       </figure>
       {missingParams !== null && <MorphOption missingParams={missingParams} /> }
       {missingParams2 !== null && <MorphOption missingParams={missingParams2} /> }
-      <button type="button">
-        Create Morph!
-      </button>
+      <button type="button">Create Morph!</button>
+    </Form>
     <table id="stats-table">
       <tbody>
         <tr key="Class">
@@ -230,7 +237,7 @@ function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
         }
       </tbody>
     </table>
-    </Form>
+    </div>
   );
 };
 
