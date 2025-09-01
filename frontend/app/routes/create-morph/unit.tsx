@@ -237,39 +237,39 @@ function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
   };
   return (
     <div>
-    <Form>
       <figure>
         <img src={`/static/${game.name}/characters/${imgFile}`} alt={`Portrait of ${feUnit}, ${imgFile}`} />
         <figcaption>
           {feUnit}
         </figcaption>
       </figure>
-      {missingParams !== null && <MorphOption missingParams={missingParams} onClick={retryCreateMorph} /> }
-      {missingParams2 !== null && <MorphOption missingParams={missingParams2} onClick={retryCreateMorph} /> }
-      <button type="button">Create Morph!</button>
-    </Form>
-    <table id="stats-table">
-      <tbody>
-        <tr key="Class">
-          <th>Class</th>
-          <td>{morph.currentCls}</td>
-        </tr>
-        <tr key="Lv">
-          <th>Lv</th>
-          <td>{morph.currentLv}</td>
-        </tr>
-        {morph.currentStats.map(statVal => {
-          const [stat, value] = statVal;
-          return (
-            <tr key={stat}>
-              <th>{stat}</th>
-              <td>{value}</td>
-            </tr>
-          );
-        })
-        }
-      </tbody>
-    </table>
+      <table id="stats-table">
+        <tbody>
+          <tr key="Class">
+            <th>Class</th>
+            <td>{morph.currentCls}</td>
+          </tr>
+          <tr key="Lv">
+            <th>Lv</th>
+            <td>{morph.currentLv}</td>
+          </tr>
+          {morph.currentStats.map(statVal => {
+            const [stat, value] = statVal;
+            return (
+              <tr key={stat}>
+                <th>{stat}</th>
+                <td>{value}</td>
+              </tr>
+            );
+          })
+          }
+        </tbody>
+      </table>
+      <Form>
+        {missingParams !== null && <MorphOption missingParams={missingParams} onClick={retryCreateMorph} /> }
+        {missingParams2 !== null && <MorphOption missingParams={missingParams2} onClick={retryCreateMorph} /> }
+        <button type="button">Create Morph!</button>
+      </Form>
     </div>
   );
 };
