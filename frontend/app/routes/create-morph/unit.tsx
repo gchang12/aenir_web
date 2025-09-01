@@ -156,28 +156,38 @@ async function unitStatsLoader( {tempInitParams} ) {
   return {cls, lv, stats, maxes, params1, params2};
 };
 
-function UnitConfirmMenu() {
-  const { feGame, feUnit } = useParams();
+export async function clientLoader({params}) {
+  const { feGame, feUnit } = params;
   const game = getFireEmblemGames().find(obj => obj.no === Number(feGame.replace("fe", "")));
   const params0 = {
     game: game.no,
     name: feUnit,
   };
-  const {
-    cls,
-    lv,
-    stats,
-    maxes,
-    params1,
-    params2,
-  } = unitStatsLoader({tempInitParams: params0});
+  let currentCls = null;
+  let currentLv = null;
+  let currentStats = null;
+  let currentMaxes = null;
+  const paramList = [];
+  await unitStatsLoader({tempInitParams: params0})
+    .then(res => {
+      const { cls, lv, stats, maxes, params1, params2, } = res;
+      [currentCls, currentLv, currentStats, currentMaxes] = [cls, lv, stats, maxes];
+      paramList.push(params1);
+      paramList.push(params2);
+    })
+    .catch(err => console.log(err));
   const morph0 = {
-    ...params0,
-    currentCls: cls,
-    currentLv: lv,
-    currentStats: stats,
-    currentMaxes: maxes,
+    currentCls: currentCls,
+    currentLv: currentLv,
+    currentStats: currentStats,
+    currentMaxes: currentMaxes,
   };
+  const [params1, params2] = paramList;
+  return {game, feUnit, morph0, params0, params1, params2};
+};
+
+function UnitConfirmMenu({loaderData}) {
+  const {game, feUnit, morph0, params0, params1, params2} = loaderData;
   const [morph, setMorph] = useState(morph0);
   const [initParams, setInitParams] = useState(params0);
   const [missingParams, setMissingParams] = useState(params1);
