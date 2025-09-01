@@ -161,7 +161,7 @@ async function unitStatsLoader( {tempInitParams} ) {
 
 export async function clientLoader({params}: Route.LoaderArgs) {
   const { feGame, feUnit } = params;
-  const game = getFireEmblemGames().find(obj => obj.no === Number(feGame.replace("fe", "")));
+  const game = getFireEmblemGames().find(obj => "fe" + obj.no === feGame);
   const params0 = {
     game: game.no,
     name: feUnit,

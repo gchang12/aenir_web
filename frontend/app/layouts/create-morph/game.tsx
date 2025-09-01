@@ -328,7 +328,7 @@ export function getUnitList({gameNo}) {
 
 function UnitSelectMenu() {
   const {feGame} = useParams();
-  const game = getFireEmblemGames().find(obj => obj.no === Number(feGame.replace("fe", "")));
+  const game = getFireEmblemGames().find(obj => "fe" + obj.no === feGame);
   const unitList = getUnitList({gameNo: game.no});
   return (
     <>
