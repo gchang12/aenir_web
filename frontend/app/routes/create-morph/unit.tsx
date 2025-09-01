@@ -12,11 +12,8 @@ import {
 import axios from 'axios';
 
 import {
-  getFireEmblemGames,
-} from '../../layouts/create-morph/_root.tsx';
-import {
-  getUnitList,
-} from '../../layouts/create-morph/game.tsx';
+  findFireEmblemGame,
+} from '../../utility/functions';
 
 function FatherSelect({choices, field, title, onClick}) {
   return (
@@ -161,7 +158,7 @@ async function unitStatsLoader( {tempInitParams} ) {
 
 export async function clientLoader({params}: Route.LoaderArgs) {
   const { feGame, feUnit } = params;
-  const game = getFireEmblemGames().find(obj => "fe" + obj.no === feGame);
+  const game = findFireEmblemGame({feGame});
   const params0 = {
     game: game.no,
     name: feUnit,
