@@ -1,5 +1,6 @@
 import {
   useState,
+  useEffect,
 } from 'react';
 import {
   Form,
@@ -156,7 +157,7 @@ async function unitStatsLoader( {tempInitParams} ) {
   return {cls, lv, stats, maxes, params1, params2};
 };
 
-export async function clientLoader({params}) {
+export async function clientLoader({params}: Route.LoaderArgs) {
   const { feGame, feUnit } = params;
   const game = getFireEmblemGames().find(obj => obj.no === Number(feGame.replace("fe", "")));
   const params0 = {
@@ -186,7 +187,7 @@ export async function clientLoader({params}) {
   return {game, feUnit, morph0, params0, params1, params2};
 };
 
-function UnitConfirmMenu({loaderData}) {
+function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
   const {game, feUnit, morph0, params0, params1, params2} = loaderData;
   const [morph, setMorph] = useState(morph0);
   const [initParams, setInitParams] = useState(params0);

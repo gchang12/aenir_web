@@ -336,13 +336,16 @@ function UnitSelectMenu() {
     {unitList.map(name => {
       const imgSuffix = game.no === 8 ? "gif" : "png";
       const imgFile = `${name}.${imgSuffix}`;
+      const href = `/create/${feGame}/${name}/`;
       return (
         <li key={name}>
-          <NavLink to={`create/${feGame}/${name}/`}>
+          <NavLink to={href}>
+        {/* <a href={href}> */}
             <figure>
               <img src={`/static/${game.name}/characters/${imgFile}`} alt={`Portrait of ${name}, ${imgFile}`} />
               <figcaption>{name}</figcaption>
             </figure>
+            {/* </a> */}
           </NavLink>
         </li>
       );
