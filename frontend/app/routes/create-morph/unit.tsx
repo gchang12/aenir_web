@@ -97,7 +97,7 @@ function MorphOption({missingParams, onClick}) {
   }[inputType];
 };
 
-async function unitStatsLoader( {tempInitParams} ) {
+async function initializeUnit( {tempInitParams} ) {
   const sourceUrl = "http://127.0.0.1:8000/dracogate/api/initialize_morph/";
   // containers for output
   let cls = null;
@@ -168,7 +168,7 @@ export async function clientLoader({params}: Route.LoaderArgs) {
   let currentStats = null;
   let currentMaxes = null;
   const paramList = [];
-  await unitStatsLoader({tempInitParams: params0})
+  await initializeUnit({tempInitParams: params0})
     .then(res => {
       const { cls, lv, stats, maxes, params1, params2, } = res;
       [currentCls, currentLv, currentStats, currentMaxes] = [cls, lv, stats, maxes];
@@ -215,7 +215,7 @@ function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
     };
     const tempInitParams = {...initParams};
     tempInitParams[field] = value;
-    unitStatsLoader({tempInitParams})
+    initializeUnit({tempInitParams})
       .then(res => {
         setInitParams(tempInitParams);
         const {cls, lv, stats, maxes, p, p2} = res;
@@ -262,10 +262,10 @@ function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
           }
         </tbody>
       </table>
-      <Form>
+      <Form action="/create/">
         {missingParams !== null && <MorphOption missingParams={missingParams} onClick={retryCreateMorph} /> }
         {missingParams2 !== null && <MorphOption missingParams={missingParams2} onClick={retryCreateMorph} /> }
-        <button type="button">Create Morph!</button>
+        <button>Create Morph!</button>
       </Form>
     </div>
   );

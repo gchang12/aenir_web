@@ -6,7 +6,7 @@ import {
 } from "@react-router/dev/routes";
 
 export default [
-  index("routes/home.tsx"),
+  route("/", "routes/home.tsx"),
   layout("./layouts/create-morph/_root.tsx", [
     route("create/", "./routes/create-morph/_root.tsx"),
     layout("./layouts/create-morph/game.tsx", [
