@@ -147,26 +147,13 @@ export async function clientLoader({params}: Route.LoaderArgs) {
     game: game.no,
     name: feUnit,
   };
-  let currentCls = null;
-  let currentLv = null;
-  let currentStats = null;
-  let currentMaxes = null;
-  const paramList = [];
-  await initializeUnit({tempInitParams: params0})
-    .then(res => {
-      const { cls, lv, stats, maxes, params1, params2, } = res;
-      [currentCls, currentLv, currentStats, currentMaxes] = [cls, lv, stats, maxes];
-      paramList.push(params1);
-      paramList.push(params2);
-    })
-    .catch(err => console.log(err));
+  const { cls, lv, stats, maxes, params1, params2, } = await initializeUnit({tempInitParams: params0});
   const morph0 = {
-    currentCls,
-    currentLv,
-    currentStats,
-    currentMaxes,
+    currentCls: cls,
+    currentLv: lv,
+    currentStats: stats,
+    currentMaxes: maxes,
   };
-  const [params1, params2] = paramList;
   console.log(`clientLoader: game='${game.title}', unit='${feUnit}'`);
   return {game, feUnit, morph0, params0, params1, params2};
 };
