@@ -262,13 +262,17 @@ function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
           }
         </tbody>
       </table>
-      <Form action="/create/">
+      <Form action="/create/" method="POST">
         {missingParams !== null && <MorphOption missingParams={missingParams} onClick={retryCreateMorph} /> }
         {missingParams2 !== null && <MorphOption missingParams={missingParams2} onClick={retryCreateMorph} /> }
         <button>Create Morph!</button>
       </Form>
     </div>
   );
+};
+
+export async function action({params, request}) {
+  return redirect('/');
 };
 
 export default UnitConfirmMenu;
