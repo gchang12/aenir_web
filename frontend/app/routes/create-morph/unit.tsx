@@ -134,19 +134,8 @@ async function initializeUnit( {tempInitParams} ) {
       initParams[field] = defaultVal;
     };
     {/* console.log("Second POST with data: " + Object.entries(initParams)); */}
-    await axios
-      .post(sourceUrl,
-        {data: initParams},
-      )
-      .then(res => {
-        const data = res.data;
-        const { current_stats, current_maxes, current_cls, current_lv } = data;
-        [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
-        {/* console.log("Class: " + cls + ", Lv: " + lv); */}
-      })
-      .catch(err => {
-        alert(err);
-      });
+    const { current_stats, current_maxes, current_cls, current_lv } = await axios.post(sourceUrl, {data: initParams}).data;
+    [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
   };
   return {cls, lv, stats, maxes, params1, params2};
 };
