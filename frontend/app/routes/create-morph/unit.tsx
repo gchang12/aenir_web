@@ -113,17 +113,12 @@ async function initializeUnit( {tempInitParams} ) {
       {data: initParams},
     )
     .then(res => {
-      const [success, data] = res.data;
-      if (success) {
-        const {current_stats, current_maxes, current_cls, current_lv} = data;
-        [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
-      } else {
-        const { missing_params, missing_params2 } = data;
-        [params1, params2] = [missing_params, missing_params2]
-      }
+      const data = res.data;
+      const {current_stats, current_maxes, current_cls, current_lv} = data;
+      [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
     })
     .catch(err => {
-      const [success, data] = err.response.data;
+      const data = err.response.data;
       const { missing_params, missing_params2 } = data;
       [params1, params2] = [missing_params, missing_params2]
     });
@@ -144,7 +139,7 @@ async function initializeUnit( {tempInitParams} ) {
         {data: initParams},
       )
       .then(res => {
-        const [_, data] = res.data;
+        const data = res.data;
         const { current_stats, current_maxes, current_cls, current_lv } = data;
         [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
         {/* console.log("Class: " + cls + ", Lv: " + lv); */}
