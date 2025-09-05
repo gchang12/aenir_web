@@ -19,7 +19,7 @@ function FatherSelect({choices, field, title, onClick}) {
   return (
     <>
       <label htmlFor={field}>{title}</label>
-      <select id={field}>
+      <select name="father" id={field}>
         {choices.map(choice => {
           return (
             <option key={choice} data-fieldname={field} value={choice} onClick={onClick}>{choice}</option>
@@ -224,6 +224,8 @@ function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
         </tbody>
       </table>
       <Form action="/create-morph/" method="POST">
+        <input value={game.no} name="game" type="hidden" readonly />
+        <input value={feUnit} name="unit" type="hidden" readonly />
         {missingParams !== null && <MorphOption missingParams={missingParams} onClick={recreateMorph} /> }
         {missingParams2 !== null && <MorphOption missingParams={missingParams2} onClick={retryCreateMorph} /> }
         <button>Create Morph!</button>

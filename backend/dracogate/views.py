@@ -57,7 +57,10 @@ class InitializationViewset(viewsets.ViewSet):
                 }
             ])
 
-    def update(self, request):
+    def list(self, request):
         """
         """
         # TODO: Use this for, like, saving the morph.
+        # save to session or whatever
+        print(request.data)
+        return Response()
