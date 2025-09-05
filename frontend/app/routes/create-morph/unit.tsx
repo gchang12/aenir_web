@@ -108,20 +108,15 @@ async function initializeUnit( {tempInitParams} ) {
   let params2 = null;
   const initParams = {...tempInitParams};
   {/* console.log("First POST with data: " + Object.entries(initParams)); */}
-  await axios
-    .post(sourceUrl,
-      {data: initParams},
-    )
-    .then(res => {
-      const [success, data] = res.data;
-      if (success) {
-        const {current_stats, current_maxes, current_cls, current_lv} = data;
-        [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
-      } else {
-        const { missing_params, missing_params2 } = data;
-        [params1, params2] = [missing_params, missing_params2];
-      };
-    })
+  const response = await axios.post(sourceUrl, {data: initParams});
+  const [success, data] = response.data;
+  if (success) {
+    const {current_stats, current_maxes, current_cls, current_lv} = data;
+    [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
+  } else {
+    const { missing_params, missing_params2 } = data;
+    [params1, params2] = [missing_params, missing_params2];
+  };
   if (params1 !== null || params2 !== null) {
     if (params1 !== null) {
       const [field, choices] = params1;
@@ -134,15 +129,10 @@ async function initializeUnit( {tempInitParams} ) {
       initParams[field] = defaultVal;
     };
     {/* console.log("Second POST with data: " + Object.entries(initParams)); */}
-    await axios
-      .post(sourceUrl,
-        {data: initParams},
-      )
-      .then(res => {
-        const [_, data] = res.data;
-        const { current_stats, current_maxes, current_cls, current_lv } = data;
-        [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
-      })
+    const response = await axios.post(sourceUrl, {data: initParams},);
+    const [_, data] = response.data;
+    const { current_stats, current_maxes, current_cls, current_lv } = data;
+    [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
   };
   return {cls, lv, stats, maxes, params1, params2};
 };
@@ -193,21 +183,17 @@ function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
     };
     const tempInitParams = {...initParams};
     tempInitParams[field] = value;
-    await initializeUnit({tempInitParams})
-      .then(res => {
-        setInitParams(tempInitParams);
-        const {cls, lv, stats, maxes, p, p2} = res;
-        console.log("Lv: " + lv);
-        setMorph(
-          {
-            ...morph,
-            currentCls: cls,
-            currentLv: lv,
-            currentStats: stats,
-            currentMaxes: maxes,
-          }
-        );
-      })
+    const {cls, lv, stats, maxes, params1, params2} = await initializeUnit({tempInitParams});
+    setInitParams(tempInitParams);
+    setMorph(
+      {
+        ...morph,
+        currentCls: cls,
+        currentLv: lv,
+        currentStats: stats,
+        currentMaxes: maxes,
+      }
+    );
   };
   return (
     <div>
