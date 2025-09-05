@@ -39,33 +39,79 @@ export function findFireEmblemGame({feGame}) {
   return myGame;
 };
 
-export function getGlobalMax({gameNo}) {
-  return {
+export function getGlobalMaxes({gameNo}) {
+  const globalMaxes = {
     4: {
       HP: 80,
-      _: 30,
+      Str: 30,
+      Mag: 30,
+      Skl: 30,
+      Spd: 30,
+      Lck: 30,
+      Def: 30,
+      Res: 30,
     },
     5: {
       HP: 80,
-      _: 20,
+      Str: 20,
+      Mag: 20,
+      Skl: 20,
+      Spd: 20,
+      Lck: 20,
+      Def: 20,
+      Con: 20,
+      Mov: 20,
+      Lead: 5,
+      MS: 5,
+      PC: 5,
     },
     6: {
       HP: 60,
-      _: 30,
+      Pow: 30,
+      Skl: 30,
+      Spd: 30,
+      Lck: 30,
+      Def: 30,
+      Res: 30,
+      Con: null, // 25
+      Mov: null, // 15
     },
     7: {
       HP: 60,
-      _: 30,
+      Pow: 30,
+      Skl: 30,
+      Spd: 30,
+      Lck: 30,
+      Def: 30,
+      Res: 30,
+      Con: null, // 25
+      Mov: null, // 15
     },
     8: {
       HP: 60,
-      _: 30,
+      Pow: 30,
+      Skl: 30,
+      Spd: 30,
+      Lck: 30,
+      Def: 30,
+      Res: 30,
+      Con: null, // 25
+      Mov: null, // 15
     },
     9: {
       HP: 80,
-      _: 40,
+      Str: 30,
+      Mag: 30,
+      Skl: 30,
+      Spd: 30,
+      Lck: 30,
+      Def: 30,
+      Res: 30,
+      Con: null,
+      Wt: null,
     },
   };
+  return globalMaxes[gameNo];
 };
 
 export function getUnitList({gameNo}) {

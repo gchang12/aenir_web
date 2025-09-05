@@ -24,6 +24,8 @@ class InitializationViewset(viewsets.ViewSet):
         """
         """
         def convert_js_boolean_to_python_boolean(value):
+            """
+            """
             try:
                 return {
                     'true': True,
@@ -31,9 +33,20 @@ class InitializationViewset(viewsets.ViewSet):
                 }[value]
             except KeyError:
                 return value
+        def convert_str_to_int(value):
+            """
+            """
+            if not isinstance(value, str):
+                return value
+            try:
+                return int(value)
+            except ValueError:
+                return value
         data = {}
         for key, value in request.query_params.items():
-            data[key] = convert_js_boolean_to_python_boolean(value)
+            value = convert_str_to_int(value)
+            value = convert_js_boolean_to_python_boolean(value)
+            data[key] = value
         data['game_no'] = int(data.pop("game"))
         name = data.get("name")
         game = data.get('game_no')

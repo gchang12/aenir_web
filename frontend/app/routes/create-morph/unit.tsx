@@ -13,6 +13,7 @@ import axios from 'axios';
 
 import {
   findFireEmblemGame,
+  getGlobalMaxes,
 } from '../../utility/functions';
 
 function FatherSelect({choices, field, title, onClick}) {
@@ -193,6 +194,7 @@ function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
       }
     );
   };
+  const globalMaxes = getGlobalMaxes({gameNo: game.no});
   return (
     <div>
       <figure>
@@ -213,10 +215,13 @@ function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
           </tr>
           {morph.currentStats.map(statVal => {
             const [stat, value] = statVal;
+            const globalMax = globalMaxes[stat];
+            const classMax = globalMax === null ? null : morph.currentMaxes.find(someStat => someStat[0] === stat)[1];
             return (
               <tr key={stat}>
                 <th>{stat}</th>
                 <td>{value}</td>
+                <td><meter min="0" max={classMax} value={value}></meter></td>
               </tr>
             );
           })
@@ -235,3 +240,4 @@ function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
 };
 
 export default UnitConfirmMenu;
+
