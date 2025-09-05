@@ -154,6 +154,9 @@ export async function clientLoader({params}: Route.LoaderArgs) {
   return {game, feUnit, morph0, params0, params1, params2};
 };
 
+
+{/* Hey developer . You can provide a way better UX than this when your app is loading JS modules and/or running `clientLoader` functions. Check out https://reactrouter.com/start/framework/route-module#hydratefallback for more information. */}
+
 function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
   const {game, feUnit, morph0, params0, params1, params2} = loaderData;
   console.log(`UnitConfirmMenu: game='${game.title}', unit='${feUnit}'`);
@@ -221,7 +224,7 @@ function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
               <tr key={stat}>
                 <th>{stat}</th>
                 <td>{value}</td>
-                <td><meter min="0" max={classMax} value={value}></meter></td>
+                <td><meter min="0" max={globalMax} high={classMax} value={value}></meter></td>
               </tr>
             );
           })
