@@ -108,8 +108,7 @@ async function initializeUnit( {tempInitParams} ) {
   let params2 = null;
   const initParams = {...tempInitParams};
   {/* console.log("First POST with data: " + Object.entries(initParams)); */}
-  const response = await axios.post(sourceUrl, {data: initParams});
-  const [success, data] = response.data;
+  const [success, data] = (await axios.post(sourceUrl, {data: initParams})).data;
   if (success) {
     const {current_stats, current_maxes, current_cls, current_lv} = data;
     [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
@@ -129,8 +128,7 @@ async function initializeUnit( {tempInitParams} ) {
       initParams[field] = defaultVal;
     };
     {/* console.log("Second POST with data: " + Object.entries(initParams)); */}
-    const response = await axios.post(sourceUrl, {data: initParams},);
-    const [_, data] = response.data;
+    const [_, data] = (await axios.post(sourceUrl, {data: initParams},)).data;
     const { current_stats, current_maxes, current_cls, current_lv } = data;
     [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
   };
