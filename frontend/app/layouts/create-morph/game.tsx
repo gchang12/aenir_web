@@ -18,7 +18,7 @@ function UnitSelectMenu() {
     {unitList.map(name => {
       const imgSuffix = game.no === 8 ? "gif" : "png";
       const imgFile = `${name}.${imgSuffix}`;
-      const href = `/create/${feGame}/${name}/`;
+      const href = `/create-morph/${feGame}/${name}/`;
       return (
         <li key={name}>
         {/* <NavLink to={href}> */}

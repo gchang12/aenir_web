@@ -15,7 +15,7 @@ function GameSelectMenu() {
         const {no, title, name} = currentGame;
         return (
           <li>
-            <NavLink to={`/create/fe${no}/`}>
+            <NavLink to={`/create-morph/fe${no}/`}>
               <figure className="cover-art" width="300" height="145">
                 <img src={`/static/${name}/cover-art.png`} alt={`Official cover for FE${no}: ${title}`} />
                 <figcaption>FE{no}: {title}</figcaption>

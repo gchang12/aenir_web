@@ -29,19 +29,18 @@ class InitializationViewset(viewsets.ViewSet):
         game = data.get('game_no')
         logger.debug("Getting character: %s from FE%d", name, game)
         try:
-            print("Success! data:", data)
             morph = get_morph(**data)
             logger.debug("Got Morph%d instance of %s", game, name)
-            return Response(
-                {
+            return Response([
+                True, {
                     "current_stats": morph.current_stats.as_list(),
                     "current_maxes": morph.max_stats.as_list(),
                     "current_cls": morph.current_cls,
                     "current_lv": morph.current_lv,
                 }
-            )
+            ])
         except InitError as err:
-            logger.debug("Failed to fetch Morph%d!%s. Need extra data: %s", game, name, err.init_params)
+            logger.debug("Failed to fetch Morph%d!%s. Need extra data: %s, %s", game, name, err.init_params, err.init_params2)
             # implicit: bind first item of err-initparams to `missing_params`
             for missing_params in err.init_params.items():
                 break
@@ -51,13 +50,12 @@ class InitializationViewset(viewsets.ViewSet):
             else:
                 for missing_params2 in err.init_params2.items():
                     break
-            print("Failed. data:", data, "missing_data:", missing_params, missing_params2)
-            return Response(
-                {
+            return Response([
+                False, {
                     "missing_params": missing_params,
                     "missing_params2": missing_params2,
                 }
-            )
+            ])
 
     def update(self, request):
         """

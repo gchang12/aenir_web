@@ -7,6 +7,9 @@ function CreateMorph() {
 };
 
 export async function action({params, request}) {
+  // send parameters to server
+  // server saves morph to session
+  // server loads session morphs into root
   return redirect('/');
 };
 

@@ -113,14 +113,17 @@ async function initializeUnit( {tempInitParams} ) {
       {data: initParams},
     )
     .then(res => {
-      const data = res.data;
-      const {current_stats, current_maxes, current_cls, current_lv} = data;
-      [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
+      const [success, data] = res.data;
+      if (success) {
+        const {current_stats, current_maxes, current_cls, current_lv} = data;
+        [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
+      } else {
+        const { missing_params, missing_params2 } = data;
+        [params1, params2] = [missing_params, missing_params2];
+      };
     })
     .catch(err => {
-      const data = err.response.data;
-      const { missing_params, missing_params2 } = data;
-      [params1, params2] = [missing_params, missing_params2]
+      console.log(err);
     });
   if (params1 !== null || params2 !== null) {
     if (params1 !== null) {
@@ -134,8 +137,15 @@ async function initializeUnit( {tempInitParams} ) {
       initParams[field] = defaultVal;
     };
     {/* console.log("Second POST with data: " + Object.entries(initParams)); */}
-    const { current_stats, current_maxes, current_cls, current_lv } = await axios.post(sourceUrl, {data: initParams}).data;
-    [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
+    await axios
+      .post(sourceUrl,
+        {data: initParams},
+      )
+      .then(res => {
+        const [_, data] = res.data;
+        const { current_stats, current_maxes, current_cls, current_lv } = data;
+        [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
+      })
   };
   return {cls, lv, stats, maxes, params1, params2};
 };
@@ -154,7 +164,7 @@ export async function clientLoader({params}: Route.LoaderArgs) {
     currentStats: stats,
     currentMaxes: maxes,
   };
-  console.log(`clientLoader: game='${game.title}', unit='${feUnit}'`);
+  console.log(`clientLoader: game='${game.title}', unit='${feUnit}', stats[HP]='${morph0.currentStats}`);
   return {game, feUnit, morph0, params0, params1, params2};
 };
 
@@ -233,7 +243,7 @@ function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
           }
         </tbody>
       </table>
-      <Form action="/create/" method="POST">
+      <Form action="/create-morph/" method="POST">
         {missingParams !== null && <MorphOption missingParams={missingParams} onClick={retryCreateMorph} /> }
         {missingParams2 !== null && <MorphOption missingParams={missingParams2} onClick={retryCreateMorph} /> }
         <button>Create Morph!</button>
