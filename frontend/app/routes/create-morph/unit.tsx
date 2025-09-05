@@ -122,9 +122,6 @@ async function initializeUnit( {tempInitParams} ) {
         [params1, params2] = [missing_params, missing_params2];
       };
     })
-    .catch(err => {
-      console.log(err);
-    });
   if (params1 !== null || params2 !== null) {
     if (params1 !== null) {
       const [field, choices] = params1;
@@ -177,7 +174,7 @@ function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
   const [missingParams2, setMissingParams2] = useState(params2);
   const imgSuffix = game.no === 8 ? "gif" : "png";
   const imgFile = `${feUnit}.${imgSuffix}`;
-  function retryCreateMorph(e) {
+  async function recreateMorph(e) {
     const inputWidget = e.currentTarget;
     const field = inputWidget.dataset.fieldname;
     let value = inputWidget.value;
@@ -196,7 +193,7 @@ function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
     };
     const tempInitParams = {...initParams};
     tempInitParams[field] = value;
-    initializeUnit({tempInitParams})
+    await initializeUnit({tempInitParams})
       .then(res => {
         setInitParams(tempInitParams);
         const {cls, lv, stats, maxes, p, p2} = res;
@@ -211,7 +208,6 @@ function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
           }
         );
       })
-      .catch(err => alert(err));
   };
   return (
     <div>
@@ -244,7 +240,7 @@ function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
         </tbody>
       </table>
       <Form action="/create-morph/" method="POST">
-        {missingParams !== null && <MorphOption missingParams={missingParams} onClick={retryCreateMorph} /> }
+        {missingParams !== null && <MorphOption missingParams={missingParams} onClick={recreateMorph} /> }
         {missingParams2 !== null && <MorphOption missingParams={missingParams2} onClick={retryCreateMorph} /> }
         <button>Create Morph!</button>
       </Form>
