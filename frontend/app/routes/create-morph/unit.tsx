@@ -132,7 +132,7 @@ async function initializeUnit( {tempInitParams} ) {
     const { current_stats, current_maxes, current_cls, current_lv } = data;
     [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
   };
-  return {cls, lv, stats, maxes, params1, params2};
+  return {data: {cls, lv, stats, maxes, params1, params2}};
 };
 
 export async function clientLoader({params}: Route.LoaderArgs) {
@@ -142,7 +142,7 @@ export async function clientLoader({params}: Route.LoaderArgs) {
     game: game.no,
     name: feUnit,
   };
-  const { cls, lv, stats, maxes, params1, params2, } = await initializeUnit({tempInitParams: params0});
+  const { cls, lv, stats, maxes, params1, params2, } = (await initializeUnit({tempInitParams: params0})).data;
   const morph0 = {
     currentCls: cls,
     currentLv: lv,
@@ -181,7 +181,7 @@ function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
     };
     const tempInitParams = {...initParams};
     tempInitParams[field] = value;
-    const {cls, lv, stats, maxes, params1, params2} = await initializeUnit({tempInitParams});
+    const {cls, lv, stats, maxes, params1, params2} = (await initializeUnit({tempInitParams})).data;
     setInitParams(tempInitParams);
     setMorph(
       {
