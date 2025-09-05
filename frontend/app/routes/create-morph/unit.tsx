@@ -40,13 +40,13 @@ function FatherSelect({choices, field, title, onClick}) {
 function RadioWidget({choices, field, onClick}) {
   return (
     <fieldset>
-      <legend key={field + "-legend"}>Route</legend>
+      <legend>Route</legend>
       {choices.map(choice => {
         return (
-          <>
-            <label key={field + "-label"} htmlFor={field}>{choice}</label>
-            <input key={field + "-input"} type="radio" id={choice} name={field} data-fieldname={field} onClick={onClick} />
-          </>
+          <div className="route" key={choice}>
+            <label htmlFor={field}>{choice}</label>
+            <input type="radio" id={choice} name={field} data-fieldname={field} onClick={onClick} />
+          </div>
         );
       })}
     </fieldset>
@@ -108,7 +108,7 @@ async function initializeUnit( {tempInitParams} ) {
   let params2 = null;
   const initParams = {...tempInitParams};
   {/* console.log("First POST with data: " + Object.entries(initParams)); */}
-  const [success, data] = (await axios.post(sourceUrl, {data: initParams})).data;
+  const [success, data] = (await axios.get(sourceUrl, {params: initParams})).data;
   if (success) {
     const {current_stats, current_maxes, current_cls, current_lv} = data;
     [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
@@ -128,7 +128,7 @@ async function initializeUnit( {tempInitParams} ) {
       initParams[field] = defaultVal;
     };
     {/* console.log("Second POST with data: " + Object.entries(initParams)); */}
-    const [_, data] = (await axios.post(sourceUrl, {data: initParams},)).data;
+    const [_, data] = (await axios.get(sourceUrl, {params: initParams},)).data;
     const { current_stats, current_maxes, current_cls, current_lv } = data;
     [stats, maxes, cls, lv] = [current_stats, current_maxes, current_cls, current_lv];
   };
@@ -224,10 +224,10 @@ function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
         </tbody>
       </table>
       <Form action="/create-morph/" method="POST">
-        <input value={game.no} name="game" type="hidden" readonly />
-        <input value={feUnit} name="unit" type="hidden" readonly />
+        <input value={game.no} name="game" type="hidden" readOnly />
+        <input value={feUnit} name="unit" type="hidden" readOnly />
         {missingParams !== null && <MorphOption missingParams={missingParams} onClick={recreateMorph} /> }
-        {missingParams2 !== null && <MorphOption missingParams={missingParams2} onClick={retryCreateMorph} /> }
+        {missingParams2 !== null && <MorphOption missingParams={missingParams2} onClick={recreateMorph} /> }
         <button>Create Morph!</button>
       </Form>
     </div>

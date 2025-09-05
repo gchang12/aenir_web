@@ -16,3 +16,4 @@ app_name = "dracogate"
 urlpatterns = [
     path('api/', include(router.urls)),
 ]
+

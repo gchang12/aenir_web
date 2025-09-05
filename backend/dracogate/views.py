@@ -20,10 +20,20 @@ class InitializationViewset(viewsets.ViewSet):
     """
     """
 
-    def create(self, request):
+    def list(self, request):
         """
         """
-        data = request.data['data']
+        def convert_js_boolean_to_python_boolean(value):
+            try:
+                return {
+                    'true': True,
+                    'false': False,
+                }[value]
+            except KeyError:
+                return value
+        data = {}
+        for key, value in request.query_params.items():
+            data[key] = convert_js_boolean_to_python_boolean(value)
         data['game_no'] = int(data.pop("game"))
         name = data.get("name")
         game = data.get('game_no')
@@ -57,10 +67,11 @@ class InitializationViewset(viewsets.ViewSet):
                 }
             ])
 
-    def list(self, request):
+    def create(self, request):
         """
         """
         # TODO: Use this for, like, saving the morph.
         # save to session or whatever
         print(request.data)
         return Response()
+

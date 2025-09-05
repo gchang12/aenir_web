@@ -14,7 +14,7 @@ function GameSelectMenu() {
       {feGames.map(currentGame => {
         const {no, title, name} = currentGame;
         return (
-          <li>
+          <li key={name}>
             <NavLink to={`/create-morph/fe${no}/`}>
               <figure className="cover-art" width="300" height="145">
                 <img src={`/static/${name}/cover-art.png`} alt={`Official cover for FE${no}: ${title}`} />
