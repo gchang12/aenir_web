@@ -248,8 +248,4 @@ function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
   );
 };
 
-export async function action({params, request}) {
-  return redirect('/');
-};
-
 export default UnitConfirmMenu;
