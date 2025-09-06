@@ -116,17 +116,49 @@ class InitializationViewset(viewsets.ViewSet):
         request.session.setdefault("morphs", [])
         json_morph = {
             "class": morph.__class__.__name__,
-            "current_cls": morph.current_cls,
-            "current_lv": morph.current_lv,
-            "current_stats": morph.current_stats.as_list(),
-            "current_maxes": morph.max_stats.as_list(),
-            "history": morph.history,
+            "morph": {
+                "game": morph.game,
+                "name": morph.name,
+                "current_cls": morph.current_cls,
+                "current_lv": morph.current_lv,
+                "current_stats": morph.current_stats.as_list(),
+                "current_maxes": morph.max_stats.as_list(),
+                "history": morph.history,
+                "_meta": morph._meta,
+            },
             "actions": [
                 ("__init__", init_kwargs),
             ],
         }
         morphs = request.session.get("morphs")
         morphs.append(json_morph)
-        request.session.modified = True
+        #request.session.modified = True
+        request.session.save()
+        print("InitializationViewset:", morphs)
+        return Response(morphs)
+
+class PreviewViewset(viewsets.ViewSet):
+    """
+    """
+
+    def list(self, request):
+        """
+        """
+        request.session.setdefault('morphs', [])
+        morphs = request.session.get('morphs')
+        print(morphs)
+        return Response([morph['morph'] for morph in morphs])
+
+    def create(self, request):
+        """
+        """
+        data = request.data['data']
+        print("PreviewViewset.data:", data)
+        request.session.setdefault('morphs', [])
+        morphs = request.session.get('morphs')
+        morphs.extend([record['morph'] for record in data])
+        #request.session.modified = True
+        request.session.save()
+        print("PreviewViewset.morphs:", morphs)
         return Response()
 

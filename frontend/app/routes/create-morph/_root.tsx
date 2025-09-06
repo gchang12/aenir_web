@@ -15,7 +15,10 @@ export async function action({params, request}) {
   const sourceUrl = "http://127.0.0.1:8000/dracogate/api/initialize_morph/";
   const formData = await request.formData();
   const initParams = Object.fromEntries(formData);
-  await axios.post(sourceUrl, {data: initParams});
+  // how to save this?
+  const morphList = (await axios.post(sourceUrl, {data: initParams})).data;
+  const targetUrl = "http://127.0.0.1:8000/dracogate/api/preview_morph/";
+  await axios.post(targetUrl, {data: morphList});
   return redirect('/'); // where everything in session['morphs'] will be listed. limit: 5. stuff has to expire.
 };
 
