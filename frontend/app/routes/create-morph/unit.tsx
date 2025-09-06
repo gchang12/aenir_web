@@ -46,7 +46,7 @@ function RadioWidget({choices, field, onClick}) {
         return (
           <div className="route" key={choice}>
             <label htmlFor={field}>{choice}</label>
-            <input type="radio" id={choice} name={field} data-fieldname={field} onClick={onClick} />
+            <input type="radio" id={choice} name={field} data-fieldname={field} value={choice} onClick={onClick} required />
           </div>
         );
       })}
@@ -58,7 +58,7 @@ function NumberWidget({choices, field, title, onClick}) {
   return (
     <>
       <label htmlFor={field}>{title}</label>
-      <input type="number" id={field} name={field} defaultValue="0" min="0" max={choices.length - 1} data-fieldname={field} onClick={onClick} />
+      <input type="number" id={field} name={field} defaultValue="0" min="0" max={choices.length - 1} data-fieldname={field} onClick={onClick} required />
     </>
   );
 }
@@ -67,7 +67,7 @@ function CheckboxWidget({field, title, onClick}) {
   return (
     <>
       <label htmlFor={field}>{title}</label>
-      <input type="checkbox" id={field} name={field} data-fieldname={field} onClick={onClick} />
+      <input defaultChecked={false} type="checkbox" id={field} name={field} data-fieldname={field} onClick={onClick} />
     </>
   );
 }
@@ -170,7 +170,7 @@ function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
     const inputWidget = e.currentTarget;
     const field = inputWidget.dataset.fieldname;
     let value = inputWidget.value;
-    if (field === "hard_mode") {
+    if (inputWidget.type === "checkbox") {
       value = inputWidget.checked;
     } else if (field === "father") {
       const fatherName = inputWidget.value;
@@ -233,7 +233,7 @@ function UnitConfirmMenu({loaderData}: Route.ComponentProps) {
       </table>
       <Form action="/create-morph/" method="POST">
         <input value={game.no} name="game" type="hidden" readOnly />
-        <input value={feUnit} name="unit" type="hidden" readOnly />
+        <input value={feUnit} name="name" type="hidden" readOnly />
         {missingParams !== null && <MorphOption missingParams={missingParams} onClick={recreateMorph} /> }
         {missingParams2 !== null && <MorphOption missingParams={missingParams2} onClick={recreateMorph} /> }
         <button>Create Morph!</button>

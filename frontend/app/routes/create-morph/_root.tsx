@@ -13,8 +13,10 @@ export async function action({params, request}) {
   // server saves morph to session
   // server loads session morphs into root
   const sourceUrl = "http://127.0.0.1:8000/dracogate/api/initialize_morph/";
-  await axios.post(sourceUrl, {data: params}); // blank
-  return redirect('/');
+  const formData = await request.formData();
+  const initParams = Object.fromEntries(formData);
+  await axios.post(sourceUrl, {data: initParams});
+  return redirect('/'); // where everything in session['morphs'] will be listed. limit: 5. stuff has to expire.
 };
 
 export default CreateMorph;
