@@ -8,7 +8,7 @@ VENV_NAME := .venv-aenir_web
 
 .frontend: _terminal frontend/node_modules/
 	printf '\033]0;%s\007' "frontend-server";
-	bash -c 'cd frontend/ && . ~/.nvm/nvm.sh && nvm install 24 && npm run dev;'
+	bash -c 'cd frontend/ && . ~/.nvm/nvm.sh && nvm install 24.13.0 && npm run dev;'
 
 _terminal:
 	xfce4-terminal --tab --working-directory=/home/eclair/Documents/coding/_web-dev/$(APP_NAME)/;
