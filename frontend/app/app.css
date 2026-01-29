@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'modern-normalize/modern-normalize.css';
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
@@ -7,13 +7,8 @@
 
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
 
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
   }
 }
-
-* {
-  border: 1px dashed red;
-};

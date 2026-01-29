@@ -2,14 +2,11 @@ import type { Route } from "./+types/home";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Aenir - A Fire Emblem stat calculator" },
-    { name: "description", content: "Calculate Fire Emblem stats" },
+    { title: "New React Router App" },
+    { name: "description", content: "Welcome to React Router!" },
   ];
 }
 
 export default function Home() {
-  return (
-    <>
-    </>
-  );
+  return <></>;
 }
