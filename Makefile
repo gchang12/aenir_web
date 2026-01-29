@@ -1,5 +1,6 @@
 APP_NAME := aenir_web
 VENV_NAME := .venv-aenir_web
+NVM_VERSION := 24.13.0
 
 .backend: _terminal backend/$(VENV_NAME)/
 	#firefox http://127.0.0.1:8000/api/ &
@@ -8,7 +9,7 @@ VENV_NAME := .venv-aenir_web
 
 .frontend: _terminal frontend/node_modules/
 	printf '\033]0;%s\007' "frontend-server";
-	bash -c 'cd frontend/ && . ~/.nvm/nvm.sh && nvm install 24.13.0 && npm run dev;'
+	bash -c 'cd frontend/ && . ~/.nvm/nvm.sh && nvm install $(NVM_VERSION) && npm run dev;'
 
 _terminal:
 	xfce4-terminal --tab --working-directory=/home/eclair/Documents/coding/_web-dev/$(APP_NAME)/;
@@ -17,4 +18,4 @@ backend/$(VENV_NAME)/:
 	bash -c 'cd backend && python3 -m venv $(VENV_NAME)/ && . $(VENV_NAME)/bin/activate && pip install -r requirements.txt;'
 
 frontend/node_modules/:
-	bash -c 'cd frontend/ && . ~/.nvm/nvm.sh && nvm install 24 && npm install;'
+	bash -c 'cd frontend/ && . ~/.nvm/nvm.sh && nvm install $(NVM_VERSION) && npm install;'
