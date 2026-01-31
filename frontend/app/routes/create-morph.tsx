@@ -2,9 +2,8 @@ import {
   Link,
   Outlet,
 } from "react-router";
-import type { Route } from "./+types/game-select";
 
-import { GAMES } from "../GAMES";
+import type { Route } from "./+types/create-morph";
 
 export default function({ params }: Route.ClientLoaderArgs) {
   return (

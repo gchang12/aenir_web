@@ -1,3 +1,6 @@
+import {
+  Link,
+} from "react-router";
 import type { Route } from "./+types/home";
 
 export function meta({}: Route.MetaArgs) {
@@ -8,5 +11,11 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  return <><h1>Home</h1></>;
+  const urlPrefix = "create-morph";
+  return (
+    <>
+    <h1>Home</h1>
+    <Link to={urlPrefix}>Create Morph</Link>
+    </>
+  );
 }

@@ -7,10 +7,20 @@ import type { Route } from "./+types/unit-select";
 import { UNITS } from "../UNITS";
 
 export default function({ params }: Route.ClientLoaderArgs) {
-  console.log(params);
+  const { game } = params;
+  const [unitList] = UNITS.filter(game_units => "fe" + game_units.game === game).map(game_units => game_units.units);
   return (
     <>
-    <h1>Unit Select</h1>
+    <menu>
+    {unitList.map(unit => {
+      return (
+        <li key={unit}>
+          <Link to={unit}>{unit}</Link>
+        </li>
+      );
+    })
+    }
+    </menu>
     <Outlet />
     </>
   );
