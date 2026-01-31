@@ -20,28 +20,6 @@ menu {
   padding: 0;
 }
 
-/* https://stackoverflow.com/questions/1713048/how-to-style-dt-and-dd-so-they-are-on-the-same-line */
-
-dl {
-  display: grid;
-  grid-template-rows: 1rem;
-  grid-gap: 1rem;
-}
-
-dt {
-  grid-column-start: 1;
-  text-align: right;
-}
-
-dt::after {
-  content: ":";
-}
-
-dd {
-  grid-column-start: 2;
-  margin-left: 0;
-}
-
 #create-morph {
   display: flex;
   justify-content: space-around;
@@ -58,6 +36,8 @@ dd {
 
 li > a {
   display: inline-block;
+  text-decoration: none;
+  color: inherit;
 }
 
 #unit-select a {

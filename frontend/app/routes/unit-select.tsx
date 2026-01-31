@@ -9,8 +9,8 @@ import { GAMES } from "../GAMES";
 
 export default function({ params }: Route.ClientLoaderArgs) {
   const { game } = params;
-  const [unitList] = UNITS.filter(game_units => "fe" + game_units.game === game).map(game_units => game_units.units);
   const imageSuffix = game === 8 ? ".gif" : ".png";
+  const unitList = UNITS.filter(unit => "fe" + unit.game === game);
   const [gameName] = GAMES.filter(someGame => "fe" + someGame.gameNo === game).map(someGame => someGame.name);
   return (
     <>
@@ -19,16 +19,20 @@ export default function({ params }: Route.ClientLoaderArgs) {
       return (
         <li key={unit.name}>
           <Link to={unit.name}>
-            <figure>
-              <img width="100" src={["", "images", gameName, "characters", unit.name + imageSuffix].join('/')} />
-              <figcaption>{unit.name}</figcaption>
-            </figure>
-            <dl>
-              <dt>Class</dt>
-              <dd>{unit.class}</dd>
-              <dt>Lv</dt>
-              <dd>{unit.lv}</dd>
-            </dl>
+            <img width="100" src={["", "images", gameName, "characters", unit.name + imageSuffix].join('/')} />
+            <table>
+              <tr>
+                <th><h2>{unit.name}</h2></th>
+              </tr>
+              <tr>
+                <th>Class</th>
+                <td>{unit.class}</td>
+              </tr>
+              <tr>
+                <th>Lv</th>
+                <td>{unit.lv}</td>
+              </tr>
+            </table>
           </Link>
         </li>
       );

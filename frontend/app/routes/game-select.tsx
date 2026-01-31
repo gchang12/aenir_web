@@ -19,7 +19,7 @@ export default function({ params }: Route.ClientLoaderArgs) {
           <Link to={"fe" + gameNo}>
             <figure>
               <img src={["", "images", name, "cover-art.png"].join('/')} />
-              <figcaption>{title}</figcaption>
+              <figcaption><h2>{title}</h2></figcaption>
             </figure>
           </Link>
         </li>

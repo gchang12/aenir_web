@@ -30,21 +30,20 @@ KWARGS_SET = {
     9: {},
 }
 
-UNITS_BY_GAME = []
+UNITS = []
 
 for i in range(4, 9):
     morph_cls = MORPHS[i]
     kwargs = KWARGS_SET[i]
-    unit_list = []
     for name in morph_cls.get_true_character_list():
         morph = morph_cls(name, **kwargs)
         unit = {
+            "game": i,
             "name": name,
             "class": morph.current_cls,
             "lv": morph.current_lv,
         }
-        unit_list.append(unit)
-    UNITS_BY_GAME.append({"game": i, "units": unit_list})
+        UNITS.append(unit)
 
-with open("UNITS_BY_GAME.json", mode="w") as wfile:
-    json.dump(UNITS_BY_GAME, wfile, indent=2)
+with open("UNITS.json", mode="w") as wfile:
+    json.dump(UNITS, wfile, indent=2)
