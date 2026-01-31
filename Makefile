@@ -14,8 +14,8 @@ NVM_VERSION := 24.13.0
 _terminal:
 	xfce4-terminal --tab --working-directory=/home/eclair/Documents/coding/_web-dev/$(APP_NAME)/;
 
-backend/$(VENV_NAME)/:
-	bash -c 'cd backend && python3 -m venv $(VENV_NAME)/ && . $(VENV_NAME)/bin/activate && pip install -r requirements.txt;'
+$(VENV_NAME)/:
+	bash -c 'python3 -m venv $(VENV_NAME)/ && . $(VENV_NAME)/bin/activate && pip install -r requirements.txt;'
 
 frontend/node_modules/:
 	bash -c 'cd frontend/ && . ~/.nvm/nvm.sh && nvm install $(NVM_VERSION) && npm install;'
