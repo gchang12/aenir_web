@@ -1,5 +1,5 @@
-{
-  "4": [
+export const UNITS: {number: string[]} = {
+  4: [
     "Sigurd",
     "Noish",
     "Alec",
@@ -63,7 +63,7 @@
     "Sety",
     "Corpul"
   ],
-  "5": [
+  5: [
     "Leaf",
     "Fin",
     "Evayle",
@@ -117,7 +117,7 @@
     "Sety",
     "Galzus"
   ],
-  "6": [
+  6: [
     "Roy",
     "Marcus",
     "Allen",
@@ -173,7 +173,7 @@
     "Yodel",
     "Karel"
   ],
-  "7": [
+  7: [
     "Lyn",
     "Sain",
     "Kent",
@@ -219,7 +219,7 @@
     "Renault",
     "Athos"
   ],
-  "8": [
+  8: [
     "Eirika",
     "Seth",
     "Franz",
@@ -264,7 +264,7 @@
     "Fado",
     "Lyon"
   ],
-  "9": [
+  9: [
     "Ike",
     "Titania",
     "Oscar",
