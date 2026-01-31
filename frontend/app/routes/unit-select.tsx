@@ -14,15 +14,22 @@ export default function({ params }: Route.ClientLoaderArgs) {
   const [gameName] = GAMES.filter(someGame => "fe" + someGame.gameNo === game).map(someGame => someGame.name);
   return (
     <>
-    <menu>
+    <menu id="unit-select">
     {unitList.map(unit => {
-      const { name, lv } = unit;
       return (
-        <li key={name}>
-          <img src={["", "images", gameName, "characters", name + imageSuffix].join('/')} />
-          <Link to={name}>{name}</Link>
-          <h2>{unit.class}</h2>
-          <h2>{lv}</h2>
+        <li key={unit.name}>
+          <Link to={unit.name}>
+            <figure>
+              <img width="100" src={["", "images", gameName, "characters", unit.name + imageSuffix].join('/')} />
+              <figcaption>{unit.name}</figcaption>
+            </figure>
+            <dl>
+              <dt>Class</dt>
+              <dd>{unit.class}</dd>
+              <dt>Lv</dt>
+              <dd>{unit.lv}</dd>
+            </dl>
+          </Link>
         </li>
       );
     })

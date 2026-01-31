@@ -11,6 +11,16 @@ export default function({ params }: Route.ClientLoaderArgs) {
     <>
     <h1>{unit}</h1>
     <h2>{game}</h2>
+    <table>
+      <thead>
+        <tr>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+        </tr>
+      </tbody>
+    </table>
     </>
   );
 };

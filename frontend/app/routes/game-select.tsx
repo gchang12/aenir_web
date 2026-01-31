@@ -10,19 +10,25 @@ export default function({ params }: Route.ClientLoaderArgs) {
   return (
     <>
     <h1>Create Morph</h1>
-    <menu>
+    <section id="create-morph">
+    <menu id="game-select">
     {GAMES.map(game => {
       const { gameNo, name, title } = game;
       return (
         <li key={gameNo}>
-          <img src={["", "images", name, "cover-art.png"].join('/')} />
-          <Link to={"fe" + gameNo}>{title}</Link>
+          <Link to={"fe" + gameNo}>
+            <figure>
+              <img src={["", "images", name, "cover-art.png"].join('/')} />
+              <figcaption>{title}</figcaption>
+            </figure>
+          </Link>
         </li>
       );
     })
     }
     </menu>
     <Outlet />
+    </section>
     </>
   );
 }
