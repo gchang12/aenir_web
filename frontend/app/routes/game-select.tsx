@@ -15,7 +15,8 @@ export default function({ params }: Route.ClientLoaderArgs) {
       const { gameNo, name, title } = game;
       return (
         <li key={gameNo}>
-        <Link to={"fe" + gameNo}>{title}</Link>
+          <img src={["", "images", name, "cover-art.png"].join('/')} />
+          <Link to={"fe" + gameNo}>{title}</Link>
         </li>
       );
     })
