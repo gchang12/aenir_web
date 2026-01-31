@@ -13,9 +13,12 @@ export default function({ params }: Route.ClientLoaderArgs) {
     <>
     <menu>
     {unitList.map(unit => {
+      const { name, lv } = unit;
       return (
-        <li key={unit}>
-          <Link to={unit}>{unit}</Link>
+        <li key={name}>
+          <Link to={name}>{name}</Link>
+          <h2>{unit.class}</h2>
+          <h2>{lv}</h2>
         </li>
       );
     })

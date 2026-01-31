@@ -44,7 +44,7 @@ for i in range(4, 9):
             "lv": morph.current_lv,
         }
         unit_list.append(unit)
-    UNITS_BY_GAME.append([i, unit_list])
+    UNITS_BY_GAME.append({"game": i, "units": unit_list})
 
 with open("UNITS_BY_GAME.json", mode="w") as wfile:
     json.dump(UNITS_BY_GAME, wfile, indent=2)
