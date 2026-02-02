@@ -1,3 +1,23 @@
-from django.shortcuts import render
+#
+"""
+"""
 
-# Create your views here.
+from rest_framework.response import Response
+from rest_framework import viewsets
+
+from aenir import get_morph
+from aenir._exceptions import InitError
+
+class MorphViewSet(viewsets.ViewSet):
+    """
+    """
+    queryset = None
+
+    def create(self, request):
+        """
+        """
+        more_info_needed: bool = False
+        game_no = request.data.get("game_no")
+        name = request.data.get("name")
+        kwargs = request.data.get("kwargs")
+        return Response([more_info_needed, data])
