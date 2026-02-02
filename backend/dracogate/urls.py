@@ -13,5 +13,5 @@ router = routers.DefaultRouter()
 router.register(r"morphs", views.MorphViewSet, basename="morphs")
 
 urlpatterns = [
-    path("api", include(router.urls)),
+    path("api/", include(router.urls)),
 ]
