@@ -6,6 +6,7 @@ import type { Route } from "./+types/unit-select";
 
 import type {
   Unit,
+  GameID,
 } from "../lib/_types";
 
 import {
@@ -15,25 +16,27 @@ import {
   GAMES,
 } from "../lib/GAMES";
 
-function UnitSelectItem({ unit, gameId } : { unit: Unit; gameId: string }) {
+function UnitSelectItem({ unit, gameId } : { unit: Unit; gameId: GameID }) {
   const [game] = GAMES.filter(someGame => "fe" + someGame.no === gameId);
   const imageSuffix = game.no === 8 ? ".gif" : ".png";
   return (
     <li>
-      <Link to={game.name}>
+      <Link to={unit.name}>
         <img width="100" src={["", "images", game.name, "characters", unit.name + imageSuffix].join('/')} />
         <table>
-          <tr>
-            <th><h2>{game.name}</h2></th>
-          </tr>
-          <tr>
-            <th>Class</th>
-            <td>{unit.class}</td>
-          </tr>
-          <tr>
-            <th>Lv</th>
-            <td>{unit.lv}</td>
-          </tr>
+          <tbody>
+            <tr>
+              <th><h2>{unit.name}</h2></th>
+            </tr>
+            <tr>
+              <th>Class</th>
+              <td>{unit.class}</td>
+            </tr>
+            <tr>
+              <th>Lv</th>
+              <td>{unit.lv}</td>
+            </tr>
+          </tbody>
         </table>
       </Link>
     </li>
@@ -41,7 +44,7 @@ function UnitSelectItem({ unit, gameId } : { unit: Unit; gameId: string }) {
 }
 
 export default function({ params }: Route.ClientLoaderArgs) {
-  const { gameId } = params;
+  const { gameId } : { gameId: GameID } = params;
   const unitList = UNITS.filter(unit => "fe" + unit.gameNo === gameId);
   return (
     <>
@@ -57,3 +60,4 @@ export default function({ params }: Route.ClientLoaderArgs) {
     </>
   );
 }
+

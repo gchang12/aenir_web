@@ -5,7 +5,7 @@ import {
 import type { Route } from "./+types/game-select";
 
 import {
-  GAME,
+  GAMES,
 } from "../lib/GAMES";
 import type {
   Game,
@@ -32,7 +32,7 @@ export default function({ params }: Route.ClientLoaderArgs) {
     <menu id="game-select">
     {GAMES.map(game => {
       return (
-        <GameSelectItem key={game.no} {...{game}} />
+        <GameSelectItem key={game.no} {...game} />
       );
     })
     }

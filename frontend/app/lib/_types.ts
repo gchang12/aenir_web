@@ -30,3 +30,11 @@ export type Unit = {
   lv: number;
 };
 
+export enum GameID {
+  FE4 = "fe4",
+  FE5 = "fe5",
+  FE6 = "fe6",
+  FE7 = "fe7",
+  FE8 = "fe8",
+  FE9 = "fe9",
+};

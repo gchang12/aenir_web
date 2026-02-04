@@ -4,17 +4,20 @@ import {
 } from "react-router";
 import type { Route } from "./+types/unit-confirm";
 
+import type {
+  GameID,
+} from "../lib/_types";
+
 import {
   StatTable,
 } from "../lib/StatTables";
 
 export default function({ params }: Route.ClientLoaderArgs) {
-  console.log(params);
-  const { game, unit } = params;
+  const { gameId, unitName } : {gameId: GameID, unit: string} = params;
   return (
     <>
-    <h1>{unit}</h1>
-    <h2>{game}</h2>
+    <h1>{unitName}</h1>
+    <h2>{gameId}</h2>
     </>
   );
 };
