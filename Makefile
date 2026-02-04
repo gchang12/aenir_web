@@ -2,7 +2,7 @@ PROJECT_NAME := aenir_web
 VENV_NAME := .venv-$(PROJECT_NAME)
 NVM_VERSION := 24.13.0
 
-_backend: _terminal
+_backend: _terminal $(VENV_NAME)/ backend/
 	printf '\033]0;%s\007' "backend-server";
 	bash -c 'cd backend/ && ./manage.py runserver;'
 
@@ -16,13 +16,9 @@ _terminal:
 $(VENV_NAME)/: requirements.txt
 	bash -c 'python3 -m venv $(VENV_NAME)/ && . $(VENV_NAME)/bin/activate && pip install -r requirements.txt;'
 
-backend/:
-	# ceremony to make Django project.
-	python3 -m venv .TEMP_VENV/;
-	bash -c '. .TEMP_VENV/bin/activate && pip install django && django-admin startproject $(PROJECT_NAME)';
-	# cleanup
-	rm -r .TEMP_VENV/;
-	mv $(PROJECT_NAME) backend/;
+backend/: $(VENV_NAME)/
+	bash -c '. $(VENV_NAME)/bin/activate && pip install django && django-admin startproject $(PROJECT_NAME)';
+	mv $(PROJECT_NAME)/ backend/;
 	# create .env file
 	cat backend/$(PROJECT_NAME)/settings.py | grep SECRET_KEY > backend/.env;
 	sed -i s/' '//g backend/.env;
