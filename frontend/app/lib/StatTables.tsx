@@ -1,9 +1,10 @@
+import React from "react";
 import type {
   Unit,
   Stats,
 } from "../lib/_types";
 
-function NonNumericalStats(unit: Unit) {
+function NonNumericalStats({ unit } : {unit: Unit}) : React.ReactElement {
   return (
     <>
       <tr>
@@ -18,7 +19,7 @@ function NonNumericalStats(unit: Unit) {
   );
 };
 
-function NumericalStats({ stats } : { stats: Stats }) {
+function NumericalStats({ stats } : { stats: Stats }) : React.ReactElement {
   return (
     <>
     {stats.map(fieldValue => {
@@ -35,14 +36,14 @@ function NumericalStats({ stats } : { stats: Stats }) {
   );
 };
 
-export function StatTable({unit, stats} : { unit: Unit; stats: Stats }) {
+export function StatTable({unit, stats} : { unit: Unit; stats: Stats }) : React.ReactNode {
   return (
     <table className="StatTable">
       <thead>
-      <NonNumericalStats unit={unit} />
+      <NonNumericalStats {...{unit}} />
       </thead>
       <tbody>
-      <NumericalStats stats={stats} />
+      <NumericalStats {...{stats}} />
       </tbody>
     </table>
   );

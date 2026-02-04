@@ -1,3 +1,5 @@
+import React from "react";
+
 import {
   Link,
   Outlet,
@@ -6,6 +8,7 @@ import type { Route } from "./+types/unit-select";
 
 import type {
   Unit,
+  Game,
   GameID,
 } from "../lib/_types";
 import {
@@ -18,8 +21,8 @@ import {
   GAMES,
 } from "../lib/GAMES";
 
-function UnitSelectItem({ unit, gameId } : { unit: Unit; gameId: GameID }) {
-  const [game]: [Game] = GAMES.filter(someGame => "fe" + someGame.no === gameId);
+function UnitSelectItem({ unit, gameId } : { unit: Unit; gameId: GameID }) : React.ReactNode {
+  const game: Game = GAMES.find(someGame => "fe" + someGame.no === gameId);
   return (
     <li>
       <Link to={unit.name}>
@@ -44,9 +47,9 @@ function UnitSelectItem({ unit, gameId } : { unit: Unit; gameId: GameID }) {
   );
 }
 
-export default function({ params }: Route.ClientLoaderArgs) {
-  const { gameId } : { gameId: GameID } = params;
-  const unitList = UNITS.filter(unit => "fe" + unit.gameNo === gameId);
+export default function({ params }: Route.ClientLoaderArgs) : React.ReactElement {
+  const { gameId } = params;
+  const unitList: Unit[] = UNITS.filter(unit => "fe" + unit.gameNo === gameId);
   return (
     <>
     <menu id="unit-select">

@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Link,
 } from "react-router";
@@ -10,7 +11,7 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function Home() {
+export default function Home() : React.ReactElement {
   const urlPrefix: string = "create-morph";
   return (
     <>

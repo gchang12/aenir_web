@@ -1,3 +1,5 @@
+import React from "react";
+
 import {
   Link,
   Outlet,
@@ -11,7 +13,7 @@ import type {
   Game,
 } from "../lib/_types";
 
-function GameSelectItem(game : Game) {
+function GameSelectItem(game : Game) : React.ReactNode {
   return (
     <li>
       <Link to={"fe" + game.no}>
@@ -24,7 +26,7 @@ function GameSelectItem(game : Game) {
   );
 }
 
-export default function({ params }: Route.ClientLoaderArgs) {
+export default function({ params }: Route.ClientLoaderArgs) : React.ReactElement {
   return (
     <>
     <h1>Create Morph</h1>

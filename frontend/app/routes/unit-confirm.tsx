@@ -1,3 +1,5 @@
+import React from "react";
+
 import {
   Link,
   Outlet,
@@ -9,6 +11,7 @@ import type {
   Unit,
   Game,
   Stats,
+  Morph,
 } from "../lib/_types";
 import {
   UNITS,
@@ -22,11 +25,15 @@ import {
 import {
   StatTable,
 } from "../lib/StatTables";
+import {
+  createMorph,
+} from "../lib/quintessence";
 
-export default function({ params }: Route.ClientLoaderArgs) {
+export default function({ params }: Route.ClientLoaderArgs) : React.ReactElement {
   const { gameId, unitName } : {gameId: GameID, unitName: string} = params;
-  const [unit]: [Unit] = UNITS.filter(someUnit => someUnit.name === unitName && "fe" + someUnit.gameNo === gameId);
-  const [game]: [Game] = GAMES.filter(someGame => "fe" + someGame.no === gameId);
+  const unit: Unit = UNITS.find(someUnit => someUnit.name === unitName && "fe" + someUnit.gameNo === gameId);
+  const game: Game = GAMES.find(someGame => "fe" + someGame.no === gameId);
+  const [morph, setMorph] = React.useState<Morph>(createMorph({game_no: game.no, name: unitName}));
   const stats: Stats = [
     ["HP", 18],
     ["Pow", 5],
@@ -46,3 +53,4 @@ export default function({ params }: Route.ClientLoaderArgs) {
     </>
   );
 };
+

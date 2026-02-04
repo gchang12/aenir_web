@@ -4,7 +4,7 @@ export type Game = {
   title: string;
 };
 
-export type MorphInitArgs = {
+export type MorphInitParams = {
   game_no: number;
   name: string;
   father?: string;
@@ -15,13 +15,16 @@ export type MorphInitArgs = {
 };
 
 export type Morph = {
-  currentCls: str;
+  currentCls: string;
   currentLv: number;
-  currentStats: Array<[str, number]>;
-  currentMaxes: Array<[str, number]>;
+  currentStats: Array<[string, number]>;
+  currentMaxes: Array<[string, number]>;
+  missingParams?: { string: any };
 };
 
-export type Stats = Array<[str, number]>;
+export type MissingParams = Array<[string, Array<any>]> | null;
+
+export type Stats = Array<[string, number]>;
 
 export type Unit = {
   gameNo: number;
@@ -30,6 +33,7 @@ export type Unit = {
   lv: number;
 };
 
+/*
 export enum GameID {
   FE4 = "fe4",
   FE5 = "fe5",
@@ -38,3 +42,7 @@ export enum GameID {
   FE8 = "fe8",
   FE9 = "fe9",
 };
+export type GameID = "fe4" | "fe5" | "fe6" | "fe7" | "fe8" | "fe9";
+*/
+
+export type GameID = string;

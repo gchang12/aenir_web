@@ -28,8 +28,6 @@ class MorphViewSet(viewsets.ViewSet):
                 "currentStats": morph.current_stats.as_list(),
                 "currentMaxes": morph.max_stats.as_list(),
             }
-            is_success = True
         except InitError as e:
-            data = e.init_params
-            is_success = False
-        return Response((is_success, data))
+            data = {"missingParams": e.init_params}
+        return Response(data)
