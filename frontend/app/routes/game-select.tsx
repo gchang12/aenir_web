@@ -6,10 +6,10 @@ import type { Route } from "./+types/game-select";
 
 import {
   GAME,
-} from "../GAMES";
+} from "../lib/GAMES";
 import type {
   Game,
-} from "../GAMES";
+} from "../lib/_types";
 
 function GameSelectItem({ gameNo, name, title} : Game) {
   return (

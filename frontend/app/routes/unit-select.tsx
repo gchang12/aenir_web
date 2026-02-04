@@ -4,13 +4,16 @@ import {
 } from "react-router";
 import type { Route } from "./+types/unit-select";
 
-import {
-  UNITS,
-} from "../UNITS";
 import type {
   Unit,
-} from "../UNITS";
-import { GAMES } from "../GAMES";
+} from "../lib/_types";
+
+import {
+  UNITS,
+} from "../lib/UNITS";
+import {
+  GAMES,
+} from "../lib/GAMES";
 
 function UnitSelectItem(unit : Unit) {
   return (

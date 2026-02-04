@@ -6,7 +6,7 @@ import type { Route } from "./+types/unit-confirm";
 
 import {
   StatTable,
-} from "./Stats";
+} from "../lib/StatTables";
 
 export default function({ params }: Route.ClientLoaderArgs) {
   console.log(params);

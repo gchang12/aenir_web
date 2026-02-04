@@ -1,5 +1,5 @@
-#
 """
+Interface to create and play with Morph objects.
 """
 
 from rest_framework.response import Response
@@ -10,10 +10,12 @@ from aenir._exceptions import InitError
 
 class MorphViewSet(viewsets.ViewSet):
     """
+    Handles creation and editing of Morph objects.
     """
 
     def create(self, request):
         """
+        Attempts to initialize Morph using `request.{game_no,name,kwargs}`.
         """
         game_no = int(request.data.get("game_no"))
         name = request.data.get("name")

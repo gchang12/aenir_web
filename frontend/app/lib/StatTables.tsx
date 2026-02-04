@@ -1,7 +1,7 @@
 import type {
   Unit,
   Stats,
-} from "../UNITS";
+} from "../lib/_types";
 
 function NonNumericalStats(unit: Unit) {
   return (

@@ -28,4 +28,4 @@ export type Unit = {
   name: string;
   class: string;
   lv: number;
-}
+};
