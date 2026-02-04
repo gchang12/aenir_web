@@ -1,4 +1,4 @@
-type Unit = {
+export type Unit = {
   game: number;
   name: string;
   class: string;
