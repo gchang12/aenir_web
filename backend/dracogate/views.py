@@ -12,27 +12,22 @@ class MorphViewSet(viewsets.ViewSet):
     """
     """
 
-    def list(self, request):
-        """
-        """
-        # NOTE: For debugging purposes only.
-        more_info_needed: bool = False
-        game_no = int(request.query_params.get("game_no"))
-        name = request.query_params.get("name")
-        kwargs = request.query_params.get("kwargs") or {}
-        morph = get_morph(game_no, name, **kwargs)
-        print(morph)
-        data = morph.current_stats
-        return Response([more_info_needed, data])
-
     def create(self, request):
         """
         """
-        more_info_needed: bool = False
         game_no = int(request.data.get("game_no"))
         name = request.data.get("name")
         kwargs = request.data.get("kwargs") or {}
-        morph = get_morph(game_no, name, **kwargs)
-        print(morph)
-        data = morph.current_stats
-        return Response([more_info_needed, data])
+        try:
+            morph = get_morph(game_no, name, **kwargs)
+            data = {
+                "currentCls": morph.current_cls,
+                "currentLv": morph.current_lv,
+                "currentStats": morph.current_stats,
+                "currentMaxes": morph.max_stats,
+            }
+            success = True
+        except InitError as e:
+            data = e.init_params
+            success = False
+        return Response((success, data))
