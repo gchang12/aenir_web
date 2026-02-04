@@ -1,5 +1,5 @@
 ## The following requirements were added by pip freeze:
-aenir==0.42.post1.dev652
+aenir==0.0.post1.dev1263
 asgiref==3.11.0
 Django==6.0
 django-cors-headers==4.9.0
