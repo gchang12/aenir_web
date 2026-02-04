@@ -25,11 +25,11 @@ class MorphViewSet(viewsets.ViewSet):
             data = {
                 "currentCls": morph.current_cls,
                 "currentLv": morph.current_lv,
-                "currentStats": morph.current_stats,
-                "currentMaxes": morph.max_stats,
+                "currentStats": morph.current_stats.as_list(),
+                "currentMaxes": morph.max_stats.as_list(),
             }
-            success = True
+            is_success = True
         except InitError as e:
             data = e.init_params
-            success = False
-        return Response((success, data))
+            is_success = False
+        return Response((is_success, data))

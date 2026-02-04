@@ -14,13 +14,16 @@ class NormalUnit(TestCase):
         """
         game_no = 6
         name = "Roy"
-        self.kwargs = {"game_no": game_no, "name": name}
+        options = {}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
 
     def test_create_morph(self):
         """
         """
         kwargs = self.kwargs
-        response = self.client.get("/dracogate/api/morphs/", kwargs)
+        response = self.client.post("/dracogate/api/morphs/", data=kwargs)
 
 class HardModeUnit(TestCase):
     """
