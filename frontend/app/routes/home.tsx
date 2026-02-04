@@ -11,7 +11,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  const urlPrefix = "create-morph";
+  const urlPrefix: string = "create-morph";
   return (
     <>
     <h1>Home</h1>

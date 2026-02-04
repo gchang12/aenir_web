@@ -8,7 +8,9 @@ import type {
   Unit,
   GameID,
 } from "../lib/_types";
-
+import {
+  UnitImage,
+} from "../lib/UnitPortrait";
 import {
   UNITS,
 } from "../lib/UNITS";
@@ -17,12 +19,11 @@ import {
 } from "../lib/GAMES";
 
 function UnitSelectItem({ unit, gameId } : { unit: Unit; gameId: GameID }) {
-  const [game] = GAMES.filter(someGame => "fe" + someGame.no === gameId);
-  const imageSuffix = game.no === 8 ? ".gif" : ".png";
+  const [game]: [Game] = GAMES.filter(someGame => "fe" + someGame.no === gameId);
   return (
     <li>
       <Link to={unit.name}>
-        <img width="100" src={["", "images", game.name, "characters", unit.name + imageSuffix].join('/')} />
+        <UnitImage unit={unit} />
         <table>
           <tbody>
             <tr>

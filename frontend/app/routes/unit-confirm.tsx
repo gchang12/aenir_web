@@ -10,15 +10,15 @@ import type {
   Game,
   Stats,
 } from "../lib/_types";
-
 import {
   UNITS,
 } from "../lib/UNITS";
-
 import {
   GAMES,
 } from "../lib/GAMES";
-
+import {
+  UnitPortrait,
+} from "../lib/UnitPortrait";
 import {
   StatTable,
 } from "../lib/StatTables";
@@ -41,8 +41,8 @@ export default function({ params }: Route.ClientLoaderArgs) {
   return (
     <>
     <h1>{game.title}</h1>
-    <h2>{unitName}</h2>
-    <StatTable unit={unit} stats={stats} />
+    <UnitPortrait {...{unit}} />
+    <StatTable {...{unit, stats}} />
     </>
   );
 };
