@@ -18,7 +18,7 @@ function NonNumericalStats(unit: Unit) {
   );
 };
 
-function NumericalStats(stats: Stats) {
+function NumericalStats({ stats } : { stats: Stats }) {
   return (
     <>
     {stats.map(fieldValue => {
