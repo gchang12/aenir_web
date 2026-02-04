@@ -6,6 +6,19 @@ import type { Route } from "./+types/game-select";
 
 import { GAMES } from "../GAMES";
 
+function GameSelectItem({ gameNo, name, title} : {gameNo: number; name: string; title: string }) {
+  return (
+    <li>
+      <Link to={"fe" + gameNo}>
+        <figure>
+          <img src={["", "images", name, "cover-art.png"].join('/')} />
+          <figcaption><h2>{title}</h2></figcaption>
+        </figure>
+      </Link>
+    </li>
+  );
+}
+ 
 export default function({ params }: Route.ClientLoaderArgs) {
   return (
     <>
@@ -13,16 +26,8 @@ export default function({ params }: Route.ClientLoaderArgs) {
     <section id="create-morph">
     <menu id="game-select">
     {GAMES.map(game => {
-      const { gameNo, name, title } = game;
       return (
-        <li key={gameNo}>
-          <Link to={"fe" + gameNo}>
-            <figure>
-              <img src={["", "images", name, "cover-art.png"].join('/')} />
-              <figcaption><h2>{title}</h2></figcaption>
-            </figure>
-          </Link>
-        </li>
+        <GameSelectItem key={game.gameNo} {...game} />
       );
     })
     }

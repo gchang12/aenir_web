@@ -7,6 +7,29 @@ import type { Route } from "./+types/unit-select";
 import { UNITS } from "../UNITS";
 import { GAMES } from "../GAMES";
 
+function UnitSelectItem({name, lv, class}) {
+  return (
+    <li>
+      <Link to={unit.name}>
+        <img width="100" src={["", "images", gameName, "characters", unit.name + imageSuffix].join('/')} />
+        <table>
+          <tr>
+            <th><h2>{unit.name}</h2></th>
+          </tr>
+          <tr>
+            <th>Class</th>
+            <td>{unit.class}</td>
+          </tr>
+          <tr>
+            <th>Lv</th>
+            <td>{unit.lv}</td>
+          </tr>
+        </table>
+      </Link>
+    </li>
+  );
+}
+
 export default function({ params }: Route.ClientLoaderArgs) {
   const { game } = params;
   const imageSuffix = game === 8 ? ".gif" : ".png";
@@ -17,24 +40,7 @@ export default function({ params }: Route.ClientLoaderArgs) {
     <menu id="unit-select">
     {unitList.map(unit => {
       return (
-        <li key={unit.name}>
-          <Link to={unit.name}>
-            <img width="100" src={["", "images", gameName, "characters", unit.name + imageSuffix].join('/')} />
-            <table>
-              <tr>
-                <th><h2>{unit.name}</h2></th>
-              </tr>
-              <tr>
-                <th>Class</th>
-                <td>{unit.class}</td>
-              </tr>
-              <tr>
-                <th>Lv</th>
-                <td>{unit.lv}</td>
-              </tr>
-            </table>
-          </Link>
-        </li>
+        <UnitSelectItem key={unit.name} {...unit} />
       );
     })
     }

@@ -4,6 +4,12 @@ import {
 } from "react-router";
 import type { Route } from "./+types/unit-confirm";
 
+import {
+  NonNumericalStatTable,
+  NumericalStatTable,
+  StatTable,
+} from "./StatTables";
+
 export default function({ params }: Route.ClientLoaderArgs) {
   console.log(params);
   const { game, unit } = params;
@@ -11,16 +17,6 @@ export default function({ params }: Route.ClientLoaderArgs) {
     <>
     <h1>{unit}</h1>
     <h2>{game}</h2>
-    <table>
-      <thead>
-        <tr>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-        </tr>
-      </tbody>
-    </table>
     </>
   );
 };
