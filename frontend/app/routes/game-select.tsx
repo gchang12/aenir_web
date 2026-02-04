@@ -11,13 +11,13 @@ import type {
   Game,
 } from "../lib/_types";
 
-function GameSelectItem({ gameNo, name, title} : Game) {
+function GameSelectItem(game : Game) {
   return (
     <li>
-      <Link to={"fe" + gameNo}>
+      <Link to={"fe" + game.no}>
         <figure>
-          <img src={["", "images", name, "cover-art.png"].join('/')} />
-          <figcaption><h2>{title}</h2></figcaption>
+          <img src={["", "images", game.name, "cover-art.png"].join('/')} />
+          <figcaption><h2>{game.title}</h2></figcaption>
         </figure>
       </Link>
     </li>
@@ -32,7 +32,7 @@ export default function({ params }: Route.ClientLoaderArgs) {
     <menu id="game-select">
     {GAMES.map(game => {
       return (
-        <GameSelectItem key={game.gameNo} {...game} />
+        <GameSelectItem key={game.no} {...{game}} />
       );
     })
     }
@@ -42,3 +42,4 @@ export default function({ params }: Route.ClientLoaderArgs) {
     </>
   );
 }
+

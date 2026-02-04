@@ -7,7 +7,7 @@ import {
 export default [
   index("routes/home.tsx"),
   route("create-morph/", "routes/game-select.tsx", [
-    route(":game", "routes/unit-select.tsx", [
+    route(":gameId", "routes/unit-select.tsx", [
       route(":unit", "routes/unit-confirm.tsx"),
     ]),
   ]),

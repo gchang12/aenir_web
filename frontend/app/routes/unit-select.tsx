@@ -15,14 +15,16 @@ import {
   GAMES,
 } from "../lib/GAMES";
 
-function UnitSelectItem(unit : Unit) {
+function UnitSelectItem({ unit, gameId } : { unit: Unit; gameId: string }) {
+  const [game] = GAMES.filter(someGame => "fe" + someGame.no === gameId);
+  const imageSuffix = game.no === 8 ? ".gif" : ".png";
   return (
     <li>
-      <Link to={unit.name}>
-        <img width="100" src={["", "images", gameName, "characters", unit.name + imageSuffix].join('/')} />
+      <Link to={game.name}>
+        <img width="100" src={["", "images", game.name, "characters", unit.name + imageSuffix].join('/')} />
         <table>
           <tr>
-            <th><h2>{unit.name}</h2></th>
+            <th><h2>{game.name}</h2></th>
           </tr>
           <tr>
             <th>Class</th>
@@ -39,16 +41,14 @@ function UnitSelectItem(unit : Unit) {
 }
 
 export default function({ params }: Route.ClientLoaderArgs) {
-  const { game } = params;
-  const imageSuffix = game === 8 ? ".gif" : ".png";
-  const unitList = UNITS.filter(unit => "fe" + unit.game === game);
-  const [gameName] = GAMES.filter(someGame => "fe" + someGame.gameNo === game).map(someGame => someGame.name);
+  const { gameId } = params;
+  const unitList = UNITS.filter(unit => "fe" + unit.gameNo === gameId);
   return (
     <>
     <menu id="unit-select">
     {unitList.map(unit => {
       return (
-        <UnitSelectItem key={unit.name} {...unit} />
+        <UnitSelectItem key={unit.name} {...{unit, gameId}} />
       );
     })
     }

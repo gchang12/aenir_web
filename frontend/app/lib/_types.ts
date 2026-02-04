@@ -1,5 +1,5 @@
 export type Game = {
-  gameNo: number;
+  no: number;
   name: string;
   title: string;
 };
@@ -24,8 +24,9 @@ export type Morph = {
 export type Stats = Array<[str, number]>;
 
 export type Unit = {
-  game: number;
+  gameNo: number;
   name: string;
   class: string;
   lv: number;
 };
+
