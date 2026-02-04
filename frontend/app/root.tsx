@@ -72,12 +72,5 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 }
 
 export default function App() {
-  const postParams = {
-    game_no: 6,
-    name: "Roy",
-  };
-  axios
-    .post("http://127.0.0.1:8000/dracogate/api/morphs/", postParams)
-    .then(resp => console.log(resp.data));
   return <Outlet />;
 }

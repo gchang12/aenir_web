@@ -1,44 +1,50 @@
-export function NonNumericalStatTable({}) {
-  return (
-    <table>
-      <thead>
-        <tr>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-        </tr>
-      </tbody>
-    </table>
-  );
-}
+import type {
+  Unit,
+  Stats,
+} from "../UNITS";
 
-export function NumericalStatTable({}) {
+function NonNumericalStats(unit: Unit) {
   return (
-    <table>
-      <thead>
-        <tr>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-        </tr>
-      </tbody>
-    </table>
+    <>
+      <tr>
+        <th>Class</th>
+        <td>{unit.class}</td>
+      </tr>
+      <tr>
+        <th>Lv</th>
+        <td>{unit.lv}</td>
+      </tr>
+    </>
   );
-}
+};
 
-export function StatTable({}) {
+function NumericalStats(stats: Stats) {
   return (
-    <table>
-      <thead>
-        <tr>
+    <>
+    {stats.map(fieldValue => {
+      const [field, value] = fieldValue;
+      return (
+        <tr key={field}>
+          <th>{field}</th>
+          <td>{value}</td>
         </tr>
+      );
+    })
+    }
+    </>
+  );
+};
+
+export function StatTable({unit, stats} : { unit: Unit; stats: Stats }) {
+  return (
+    <table className="StatTable">
+      <thead>
+      <NonNumericalStats unit={unit} />
       </thead>
       <tbody>
-        <tr>
-        </tr>
+      <NumericalStats stats={stats} />
       </tbody>
     </table>
   );
-}
+};
+

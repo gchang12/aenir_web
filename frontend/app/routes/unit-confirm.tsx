@@ -5,10 +5,8 @@ import {
 import type { Route } from "./+types/unit-confirm";
 
 import {
-  NonNumericalStatTable,
-  NumericalStatTable,
   StatTable,
-} from "./StatTables";
+} from "./Stats";
 
 export default function({ params }: Route.ClientLoaderArgs) {
   console.log(params);

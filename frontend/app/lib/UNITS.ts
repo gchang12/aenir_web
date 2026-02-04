@@ -1,11 +1,8 @@
-export type Unit = {
-  game: number;
-  name: string;
-  class: string;
-  lv: number;
-}
+import type {
+  Unit,
+} from "./_types";
 
-export const UNITS: UnitsByGame[] = [
+export const UNITS: Unit[] = [
   {
     "game": 4,
     "name": "Sigurd",

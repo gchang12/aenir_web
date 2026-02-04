@@ -4,10 +4,15 @@ import {
 } from "react-router";
 import type { Route } from "./+types/unit-select";
 
-import { UNITS } from "../UNITS";
+import {
+  UNITS,
+} from "../UNITS";
+import type {
+  Unit,
+} from "../UNITS";
 import { GAMES } from "../GAMES";
 
-function UnitSelectItem({name, lv, class}) {
+function UnitSelectItem(unit : Unit) {
   return (
     <li>
       <Link to={unit.name}>

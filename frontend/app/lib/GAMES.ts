@@ -1,8 +1,6 @@
-export type Game = {
-  gameNo: number;
-  name: string;
-  title: string;
-};
+import type {
+  Game,
+} from "./_types";
 
 export const GAMES: Game[] = [
   {

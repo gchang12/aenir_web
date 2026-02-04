@@ -4,9 +4,14 @@ import {
 } from "react-router";
 import type { Route } from "./+types/game-select";
 
-import { GAMES } from "../GAMES";
+import {
+  GAME,
+} from "../GAMES";
+import type {
+  Game,
+} from "../GAMES";
 
-function GameSelectItem({ gameNo, name, title} : {gameNo: number; name: string; title: string }) {
+function GameSelectItem({ gameNo, name, title} : Game) {
   return (
     <li>
       <Link to={"fe" + gameNo}>
@@ -18,7 +23,7 @@ function GameSelectItem({ gameNo, name, title} : {gameNo: number; name: string; 
     </li>
   );
 }
- 
+
 export default function({ params }: Route.ClientLoaderArgs) {
   return (
     <>
