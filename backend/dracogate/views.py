@@ -11,11 +11,11 @@ from aenir._exceptions import InitError
 class MorphViewSet(viewsets.ViewSet):
     """
     """
-    queryset = None
 
     def list(self, request):
         """
         """
+        # NOTE: For debugging purposes only.
         more_info_needed: bool = False
         game_no = int(request.query_params.get("game_no"))
         name = request.query_params.get("name")
@@ -29,7 +29,10 @@ class MorphViewSet(viewsets.ViewSet):
         """
         """
         more_info_needed: bool = False
-        game_no = request.data.get("game_no")
+        game_no = int(request.data.get("game_no"))
         name = request.data.get("name")
-        kwargs = request.data.get("kwargs")
+        kwargs = request.data.get("kwargs") or {}
+        morph = get_morph(game_no, name, **kwargs)
+        print(morph)
+        data = morph.current_stats
         return Response([more_info_needed, data])
