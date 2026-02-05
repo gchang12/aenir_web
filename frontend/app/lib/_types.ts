@@ -7,11 +7,13 @@ export type Game = {
 export type MorphInitParams = {
   game_no: number;
   name: string;
-  father?: string;
-  hard_mode?: boolean;
-  number_of_declines?: number;
-  route?: string;
-  lyn_mode?: boolean;
+  kwargs: {
+    father?: string;
+    hard_mode?: boolean;
+    number_of_declines?: number;
+    route?: string;
+    lyn_mode?: boolean;
+  };
 };
 
 export type Stats = Array<[string, number]>;
