@@ -17,6 +17,7 @@ function createMorph(kwargs: MorphInitParams) {
 };
 
 export async function forceCreateMorph(kwargs: MorphInitParams) {
+  let morph: Morph;
   const data = await createMorph(kwargs);
   if (data.missingParams != null) {
     // Repopulate `kwargs` with defaults.
@@ -25,8 +26,10 @@ export async function forceCreateMorph(kwargs: MorphInitParams) {
       const [defaultVal] = values;
       kwargs[key] = defaultVal;
     });
+    morph = await createMorph(kwargs);
+  } else {
+    morph = data;
   };
-  let morph = await createMorph(kwargs);
   morph.missingParams = data.missingParams;
   return morph;
 };

@@ -12,10 +12,22 @@ class MorphViewSet(viewsets.ViewSet):
     """
     Handles creation and editing of Morph objects.
     """
+    morph = None
 
     def create(self, request):
         """
-        Attempts to initialize Morph using `request.{game_no,name,kwargs}`.
+        Creates Morph object for user and initializes `morph` attribute to mirror user-actions.
+        """
+        game_no = int(request.data.get("game_no"))
+        name = request.data.get("name")
+        kwargs = request.data.get("kwargs") or {}
+        morph = get_morph(game_no, name, **kwargs)
+        self.morph = morph
+        return Response(data)
+
+    def list(self, request):
+        """
+        Creates temporary Morph for the user to preview, returning missing parameters as necessary.
         """
         game_no = int(request.data.get("game_no"))
         name = request.data.get("name")
@@ -31,3 +43,4 @@ class MorphViewSet(viewsets.ViewSet):
         except InitError as e:
             data = {"missingParams": e.init_params}
         return Response(data)
+
