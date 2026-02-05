@@ -8,30 +8,29 @@ import type {
 
 const RESOURCE_URL: string = "http://localhost:8000/dracogate/api/morphs/";
 
-export function createMorph(kwargs: MorphInitParams) : [Morph, MissingParams] {
-  let morph: Morph;
-  let missingParams: MissingParams;
-  axios
+async function createMorph(kwargs: MorphInitParams) : [Morph, MissingParams] {
+  const morphFetch = axios
     .post(RESOURCE_URL, kwargs)
     .then(resp => {
       const data = resp.data;
       missingParams = Object.entries(data.missingParams ?? {});
-      if (missingParams) {
-        missingParams.forEach(entry => {
-          const [key, values] = entry;
-          const [defaultVal] = values;
-          kwargs[key] = defaultVal;
-        });
-        axios
-          .post(RESOURCE_URL, kwargs)
-          .then(resp => {
-            morph = resp.data;
-            morph.missingParams = missingParams;
-          });
-      } else {
-        morph = data;
-      };
+      return [data, missingParams];
     });
+  const [morph, missingParams] = await morphFetch;
+  return [morph, missingParams];
+};
+
+export async function forceCreateMorph(kwargs: MorphInitParams) : [Morph, MissingParams] {
+  let [morph, missingParams] = await createMorph(kwargs);
+  if (missingParams.length > 0) {
+    // Repopulate `kwargs` with defaults.
+    missingParams.forEach(entry => {
+      const [key, values] = entry;
+      const [defaultVal] = values;
+      kwargs[key] = defaultVal;
+    });
+  };
+  const [morph, missingParams] = await createMorph(kwargs);
   return [morph, missingParams];
 };
 

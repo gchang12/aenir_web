@@ -19,10 +19,9 @@ export type Morph = {
   currentLv: number;
   currentStats: Array<[string, number]>;
   currentMaxes: Array<[string, number]>;
-  missingParams?: { string: any };
 };
 
-export type MissingParams = Array<[string, Array<any>]> | null;
+export type MissingParams = Array<[string, Array<any>]>;
 
 export type Stats = Array<[string, number]>;
 
