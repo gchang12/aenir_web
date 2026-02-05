@@ -14,16 +14,17 @@ export type MorphInitParams = {
   lyn_mode?: boolean;
 };
 
+export type Stats = Array<[string, number]>;
+
 export type Morph = {
   currentCls: string;
   currentLv: number;
-  currentStats: Array<[string, number]>;
-  currentMaxes: Array<[string, number]>;
+  currentStats: Stats;
+  currentMaxes: Stats;
+  missingParams?: Array<[string, Array<any>]>;
 };
 
 export type MissingParams = Array<[string, Array<any>]>;
-
-export type Stats = Array<[string, number]>;
 
 export type Unit = {
   gameNo: number;
