@@ -2,6 +2,8 @@
 Interface to create and play with Morph objects.
 """
 
+import json
+
 from rest_framework.response import Response
 from rest_framework import viewsets
 
@@ -20,7 +22,7 @@ class MorphViewSet(viewsets.ViewSet):
         """
         game_no = int(request.data.get("game_no"))
         name = request.data.get("name")
-        kwargs = request.data.get("kwargs") or {}
+        kwargs = json.loads(request.data.get("kwargs") or {})
         morph = get_morph(game_no, name, **kwargs)
         self.morph = morph
         return Response(data)
@@ -29,9 +31,11 @@ class MorphViewSet(viewsets.ViewSet):
         """
         Creates temporary Morph for the user to preview, returning missing parameters as necessary.
         """
-        game_no = int(request.data.get("game_no"))
-        name = request.data.get("name")
-        kwargs = request.data.get("kwargs") or {}
+        game_no = int(request.query_params.get("game_no"))
+        name = request.query_params.get("name")
+        #print(request.query_params.get("kwargs"))
+        kwargs = json.loads(request.query_params.get("kwargs") or "{}")
+        #print(game_no, name, kwargs)
         try:
             morph = get_morph(game_no, name, **kwargs)
             data = {
@@ -40,7 +44,10 @@ class MorphViewSet(viewsets.ViewSet):
                 "currentStats": morph.current_stats.as_list(),
                 "currentMaxes": morph.max_stats.as_list(),
             }
+            is_success = True
         except InitError as e:
             data = {"missingParams": e.init_params}
-        return Response(data)
+            is_success = False
+        #print(data)
+        return Response((is_success, data))
 

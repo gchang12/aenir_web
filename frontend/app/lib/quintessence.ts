@@ -10,7 +10,7 @@ const RESOURCE_URL: string = "http://localhost:8000/dracogate/api/morphs/";
 
 function createMorph(kwargs: MorphInitParams) {
   const morphFetchTask = axios
-    .post(RESOURCE_URL, kwargs)
+    .get(RESOURCE_URL, {params: kwargs})
     .then(resp => resp.data)
     .catch(err => console.log(err));
   return morphFetchTask;
@@ -18,19 +18,25 @@ function createMorph(kwargs: MorphInitParams) {
 
 export async function forceCreateMorph(kwargs: MorphInitParams) {
   let morph: Morph;
-  const data = await createMorph(kwargs);
-  if (data.missingParams != null) {
+  const [isSuccess, data] = await createMorph(kwargs);
+  if (isSuccess) {
+    morph = data;
+  } else {
     // Repopulate `kwargs` with defaults.
-    data.missingParams.forEach(entry => {
+    //console.log(data);
+    kwargs.kwargs = {};
+    Object.entries(data.missingParams).forEach(entry => {
       const [key, values] = entry;
       const [defaultVal] = values;
-      kwargs[key] = defaultVal;
+      kwargs.kwargs[key] = defaultVal;
     });
-    morph = await createMorph(kwargs);
-  } else {
-    morph = data;
+    kwargs.kwargs = JSON.stringify(kwargs.kwargs);
+    //console.log(kwargs);
+    let [_, defaultMorph] = await createMorph(kwargs);
+    //console.log(defaultMorph);
+    morph = defaultMorph;
+    morph.missingParams = data.missingParams;
   };
-  morph.missingParams = data.missingParams;
   return morph;
 };
 

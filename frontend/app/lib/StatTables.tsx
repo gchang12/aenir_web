@@ -27,7 +27,7 @@ function NumericalStats({ stats } : { stats: Stats }) : React.ReactElement {
       return (
         <tr key={field}>
           <th>{field}</th>
-          <td>{value}</td>
+          <td>{value / 100}</td>
         </tr>
       );
     })
