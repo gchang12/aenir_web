@@ -1,14 +1,14 @@
 import axios from 'axios';
 
 import type {
-  MorphInitParams,
+  GetMorphArgs,
   Morph,
   MissingParams,
 } from "./_types";
 
 const RESOURCE_URL: string = "http://localhost:8000/dracogate/api/morphs/";
 
-function createMorph(args: MorphInitParams) {
+function getMorph(args: GetMorphArgs) {
   const morphFetchTask = axios
     .get(RESOURCE_URL, {params: args})
     .then(resp => resp.data)
@@ -16,7 +16,7 @@ function createMorph(args: MorphInitParams) {
   return morphFetchTask;
 };
 
-export async function forceCreateMorph(args: MorphInitParams) {
+export async function forceGetMorph(args: GetMorphArgs) {
   let morph: Morph;
   const [isSuccess, data] = await createMorph(args);
   if (isSuccess) {

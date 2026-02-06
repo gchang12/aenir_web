@@ -4,7 +4,7 @@ export type Game = {
   title: string;
 };
 
-export type MorphInitParams = {
+export type GetMorphArgs = {
   game_no: number;
   name: string;
   kwargs: {
