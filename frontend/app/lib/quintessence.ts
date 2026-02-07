@@ -16,7 +16,7 @@ function getMorph(args: GetMorphArgs) {
   return morphFetchTask;
 };
 
-export async function forceGetMorph(args: GetMorphArgs) {
+export async function previewMorph(args: GetMorphArgs) {
   let morph: Morph;
   const [isSuccess, data] = await createMorph(args);
   if (isSuccess) {

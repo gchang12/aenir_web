@@ -26,7 +26,7 @@ import {
   StatTable,
 } from "../lib/StatTables";
 import {
-  forceGetMorph,
+  previewMorph,
 } from "../lib/quintessence";
 
 export async function loader({ params }: Route.LoaderArgs) : { Game, Unit, Morph } {
