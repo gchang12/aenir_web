@@ -18,15 +18,16 @@ export type GetMorphArgs = {
 
 export type Stats = Array<[string, number]>;
 
+export type MissingParams = Array<[string, Array<any>]>;
+
 export type Morph = {
   currentCls: string;
   currentLv: number;
   currentStats: Stats;
-  currentMaxes: Stats;
-  missingParams?: Array<[string, Array<any>]>;
+  maxLv: number;
+  maxStats: Stats;
+  missingParams?: MissingParams;
 };
-
-export type MissingParams = Array<[string, Array<any>]>;
 
 export type Unit = {
   gameNo: number;
@@ -49,3 +50,4 @@ export type GameID = "fe4" | "fe5" | "fe6" | "fe7" | "fe8" | "fe9";
 
 export type GameID = string;
 
+export type MorphID = string;
