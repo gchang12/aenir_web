@@ -19,6 +19,28 @@ function NonNumericalStats({ unit } : {unit: Unit}) : React.ReactElement {
   );
 };
 
+function GlowingNumericalStats({ currentStats, maxStats } : { currentStats: Stats; maxStats: Stats }) : React.ReactElement {
+  const stats: Array<[string, number, number]> = [];
+  Iterator.zip([currentStats, maxStats]).forEach(field_currentStat_field_maxStat => {
+    const [field, currentStat, _, maxStat];
+    stats.push([field, currentStat, maxStat]);
+  });
+  return (
+    <>
+    {stats.map(fieldStats => {
+      const [field, currentStat, maxStat] = fieldStats;
+      return (
+        <tr key={field} className={currentStat === maxStat ? "maxed-stat" : undefined}>
+          <th>{field}</th>
+          <td>{value / 100}</td>
+        </tr>
+      );
+    })
+    }
+    </>
+  );
+};
+
 function NumericalStats({ stats } : { stats: Stats }) : React.ReactElement {
   return (
     <>
@@ -44,6 +66,19 @@ export function StatTable({unit, stats} : { unit: Unit; stats: Stats }) : React.
       </thead>
       <tbody>
       <NumericalStats {...{stats}} />
+      </tbody>
+    </table>
+  );
+};
+
+export function GlowingStatTable({unit, stats} : { unit: Unit; currentStats: Stats; maxStats: Stats }) : React.ReactNode {
+  return (
+    <table className="StatTable">
+      <thead>
+      <NonNumericalStats {...{unit}} />
+      </thead>
+      <tbody>
+      <GlowingNumericalStats {...{currentStats, maxStats}} />
       </tbody>
     </table>
   );
