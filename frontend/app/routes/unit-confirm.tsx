@@ -43,11 +43,11 @@ export default async function({
   const { game, unit, defaultMorph } = loaderData;
   const [morph, setMorph] = React.useState<Morph>(defaultMorph);
   return (
-    <>
-    <h1>{game.title}</h1>
-    <UnitPortrait {...{unit}} />
-    <StatTable stats={morph.currentStats} unit={unit} />
-    </>
+    <div id="unit-confirm">
+      <h1>{game.title}</h1>
+      <UnitPortrait {...{unit}} />
+      <StatTable stats={morph.currentStats} unit={unit} />
+    </div>
   );
 };
 
