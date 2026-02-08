@@ -30,7 +30,7 @@ function UnitSelectItem({ unit, gameId } : { unit: Unit; gameId: GameID }) : Rea
         <table>
           <tbody>
             <tr>
-              <th><h2>{unit.name}</h2></th>
+              <th colSpan="2"><h2>{unit.name}</h2></th>
             </tr>
             <tr>
               <th>Class</th>
