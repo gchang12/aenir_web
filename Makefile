@@ -1,6 +1,6 @@
 PROJECT_NAME := aenir_web
 VENV_NAME := .venv-$(PROJECT_NAME)
-NVM_VERSION := 24.13.0
+NVM_VERSION := 24
 
 _backend: _terminal $(VENV_NAME)/ backend/
 	printf '\033]0;%s\007' "backend-server";
