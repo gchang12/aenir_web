@@ -1,7 +1,7 @@
 import React from "react";
 
 import {
-  Link,
+  NavLink,
   Outlet,
 } from "react-router";
 import type { Route } from "./+types/unit-select";
@@ -25,7 +25,7 @@ function UnitSelectItem({ unit, gameId } : { unit: Unit; gameId: GameID }) : Rea
   const game: Game = GAMES.find(someGame => "fe" + someGame.no === gameId);
   return (
     <li>
-      <Link to={unit.name}>
+      <NavLink to={unit.name}>
         <UnitImage unit={unit} />
         <table>
           <tbody>
@@ -42,7 +42,7 @@ function UnitSelectItem({ unit, gameId } : { unit: Unit; gameId: GameID }) : Rea
             </tr>
           </tbody>
         </table>
-      </Link>
+      </NavLink>
     </li>
   );
 }

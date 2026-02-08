@@ -1,7 +1,7 @@
 import React from "react";
 
 import {
-  Link,
+  NavLink,
   Outlet,
 } from "react-router";
 import type { Route } from "./+types/game-select";
@@ -16,12 +16,12 @@ import type {
 function GameSelectItem(game : Game) : React.ReactNode {
   return (
     <li>
-      <Link to={"fe" + game.no}>
+      <NavLink to={"fe" + game.no}>
         <figure>
           <img src={["", "images", game.name, "cover-art.png"].join('/')} />
           <figcaption><h2>{game.title}</h2></figcaption>
         </figure>
-      </Link>
+      </NavLink>
     </li>
   );
 }
