@@ -36,15 +36,23 @@ function HardModeToggle({ choices, onChange } : { choices: Array<boolean>; onCha
 
 function MageDecliner({ choices, onChange } : { choices: Array<number>; onChange: any }) {
   // choices: [0, 1, 2, 3]
-  const min: number = choices.at(0);
-  const max: number = choices.at(-1);
-  const [defaultValue] = choices;
+  const [defaultValue]: [number] = choices;
+  const priceByDeclineCount = {
+    0: 10_000,
+    1: 8_000,
+    2: 6_000,
+    3: 5_000,
+  };
   return (
-    <fieldset>
-      <legend>Number of Declines</legend>
-      <input name="number_of_declines" type="number" {...{min, max, defaultValue}} />
-        {/* <label> </label> */}
-    </fieldset>
+    <select name="number_of_declines">
+    {choices.map(choice => {
+      const price = priceByDeclineCount[choice];
+      return (
+        <option key={choice} value={choice}>{price}</option>
+      );
+    })
+    }
+    </select>
   );
 };
 
