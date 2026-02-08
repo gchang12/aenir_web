@@ -23,7 +23,7 @@ import {
   UnitPortrait,
 } from "../lib/UnitPortrait";
 import {
-  StatTable,
+  GlowingStatTable,
 } from "../lib/StatTables";
 import {
   previewMorph,
@@ -42,11 +42,12 @@ export default async function({
 }: Route.ComponentProps) : React.ReactElement {
   const { game, unit, defaultMorph } = loaderData;
   const [morph, setMorph] = React.useState<Morph>(defaultMorph);
+  const { currentStats, maxStats } = morph;
   return (
     <div id="unit-confirm">
       <h1>{game.title}</h1>
       <UnitPortrait {...{unit}} />
-      <StatTable stats={morph.currentStats} unit={unit} />
+      <GlowingStatTable {...{currentStats, maxStats, unit}} />
     </div>
   );
 };
