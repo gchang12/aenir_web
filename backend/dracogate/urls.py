@@ -1,4 +1,5 @@
 """
+This declares URLs by which the frontend can interface with the backend.
 """
 
 from django.urls import (
