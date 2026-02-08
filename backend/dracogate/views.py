@@ -10,6 +10,8 @@ from rest_framework import viewsets
 from aenir import get_morph
 from aenir._exceptions import InitError
 
+from dracogate._logging import logger
+
 class MorphViewSet(viewsets.ViewSet):
     """
     Handles creation and editing of Morph objects.
