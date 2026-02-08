@@ -1,4 +1,5 @@
 import React from "react";
+
 import type {
   MissingParams,
 } from "../lib/_types";
@@ -11,9 +12,7 @@ function FatherSelect({ choices, onChange } : { choices: Array<string>; onChange
     <select name="father">
     {choices.map(choice => {
       return (
-        <option value={choice}>
-        {choice}
-        </option>
+        <option key={choice} value={choice}>{choice}</option>
       );
     })
     }
@@ -26,11 +25,10 @@ function HardModeToggle({ choices, onChange } : { choices: Array<boolean>; onCha
   // choices: [false, true]
   const [defaultChecked] = choices;
   return (
-    <fieldset>
-      <legend>Hard Mode</legend>
-      {/* <label> </label> */}
-      <input name="hard_mode" {...{defaultChecked}} type="checkbox" />
-    </fieldset>
+    <>
+    <label htmlFor="hard_mode">Hard Mode</label>
+    <input name="hard_mode" {...{defaultChecked}} type="checkbox" />
+    </>
   );
 };
 
@@ -64,7 +62,7 @@ function RouteSelect({ choices, onChange } : { choices: Array<string>; onChange:
       <legend>Route Select</legend>
       {choices.map(choice => {
         return (
-          <div className="route-select">
+          <div className="route-select" key={choice}>
             <label htmlFor={choice}>{choice}</label>
             <input name="route" id={choice} value={choice} type="radio" defaultChecked={choice === defaultValue} />
           </div>
@@ -79,11 +77,10 @@ function LynModeToggle({ choices, onChange } : { choices: Array<boolean>; onChan
   // choices: [false, true]
   const [defaultChecked] = choices;
   return (
-    <fieldset>
-      <legend>Lyn Mode</legend>
-      {/* <label> </label> */}
-      <input name="lyn_mode" {...{defaultChecked}} type="checkbox" />
-    </fieldset>
+    <>
+    <label htmlFor="lyn_mode">Lyn Mode</label>
+    <input name="lyn_mode" {...{defaultChecked}} type="checkbox" />
+    </>
   );
 };
 
