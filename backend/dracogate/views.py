@@ -14,17 +14,22 @@ class MorphViewSet(viewsets.ViewSet):
     """
     Handles creation and editing of Morph objects.
     """
-    morph = None
+    morphs = {}
 
     def create(self, request):
         """
         Creates Morph object for user and initializes `morph` attribute to mirror user-actions.
         """
+        if len(self.morphs) == 5:
+            raise Exception
+        id = request.data.get('id')
+        if id in self.morphs:
+            raise Exception
         game_no = int(request.data.get("game_no"))
         name = request.data.get("name")
         kwargs = json.loads(request.data.get("kwargs") or {})
         morph = get_morph(game_no, name, **kwargs)
-        self.morph = morph
+        self.morphs[id] = morph
         return Response(data)
 
     def list(self, request):
@@ -36,13 +41,16 @@ class MorphViewSet(viewsets.ViewSet):
         #print(request.query_params.get("kwargs"))
         kwargs = json.loads(request.query_params.get("kwargs") or "{}")
         #print(game_no, name, kwargs)
+        print(game_no, name, kwargs)
         try:
             morph = get_morph(game_no, name, **kwargs)
+            morph._set_max_level()
             data = {
                 "currentCls": morph.current_cls,
                 "currentLv": morph.current_lv,
                 "currentStats": morph.current_stats.as_list(),
-                "currentMaxes": morph.max_stats.as_list(),
+                "maxStats": morph.max_stats.as_list(),
+                "maxLv": morph.max_level,
             }
             is_success = True
         except InitError as e:

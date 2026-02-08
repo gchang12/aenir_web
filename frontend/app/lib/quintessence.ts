@@ -18,7 +18,7 @@ function getMorph(args: GetMorphArgs) {
 
 export async function previewMorph(args: GetMorphArgs) {
   let morph: Morph;
-  const [isSuccess, data] = await createMorph(args);
+  let [isSuccess, data] = await getMorph(args);
   if (isSuccess) {
     morph = data;
   } else {
@@ -29,14 +29,18 @@ export async function previewMorph(args: GetMorphArgs) {
       const [key, values] = entry;
       const [defaultVal] = values;
       args.kwargs[key] = defaultVal;
+      /* console.log(key, defaultVal); */
     });
     args.kwargs = JSON.stringify(args.kwargs);
+    /* console.log(args); */
+    /* console.log(args.kwargs); */
     //console.log(kwargs);
-    let [_, defaultMorph] = await createMorph(args);
+    let [_, defaultMorph] = await getMorph(args);
     //console.log(defaultMorph);
     morph = defaultMorph;
     morph.missingParams = data.missingParams;
   };
+  morph.getMorphArgs = args;
   return morph;
 };
 

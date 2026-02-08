@@ -7,7 +7,7 @@ export type Game = {
 export type GetMorphArgs = {
   game_no: number;
   name: string;
-  kwargs: {
+  kwargs?: {
     father?: string;
     hard_mode?: boolean;
     number_of_declines?: number;
@@ -26,6 +26,7 @@ export type Morph = {
   currentStats: Stats;
   maxLv: number;
   maxStats: Stats;
+  getMorphArgs: GetMorphArgs;
   missingParams?: MissingParams;
 };
 

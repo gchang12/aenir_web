@@ -33,7 +33,7 @@ export async function loader({ params }: Route.LoaderArgs) : { Game, Unit, Morph
   const { gameId, unitName } : {gameId: GameID, unitName: string} = params;
   const unit: Unit = UNITS.find(someUnit => someUnit.name === unitName && "fe" + someUnit.gameNo === gameId);
   const game: Game = GAMES.find(someGame => "fe" + someGame.no === gameId);
-  const defaultMorph = await forceGetMorph({game_no: game.no, name: unitName});
+  const defaultMorph = await previewMorph({game_no: game.no, name: unitName});
   return { game, unit, defaultMorph };
 };
 

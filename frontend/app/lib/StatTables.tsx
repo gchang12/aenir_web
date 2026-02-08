@@ -22,7 +22,7 @@ function NonNumericalStats({ unit } : {unit: Unit}) : React.ReactElement {
 function GlowingNumericalStats({ currentStats, maxStats } : { currentStats: Stats; maxStats: Stats }) : React.ReactElement {
   const stats: Array<[string, number, number]> = [];
   Iterator.zip([currentStats, maxStats]).forEach(field_currentStat_field_maxStat => {
-    const [field, currentStat, _, maxStat];
+    const [field, currentStat, _, maxStat] = field_currentStat_field_maxStat;
     stats.push([field, currentStat, maxStat]);
   });
   return (
