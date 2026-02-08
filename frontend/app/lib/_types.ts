@@ -26,8 +26,7 @@ export type Morph = {
   currentStats: Stats;
   maxLv: number;
   maxStats: Stats;
-  getMorphArgs: GetMorphArgs;
-  missingParams?: MissingParams;
+  history: Array<[string, any]>;
 };
 
 export type Unit = {

@@ -38,9 +38,8 @@ export async function previewMorph(args: GetMorphArgs) {
     let [_, defaultMorph] = await getMorph(args);
     //console.log(defaultMorph);
     morph = defaultMorph;
-    morph.missingParams = data.missingParams;
   };
-  morph.getMorphArgs = args;
+  morph.history = ["__init__", args];
   return morph;
 };
 
