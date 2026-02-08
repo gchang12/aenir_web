@@ -18,7 +18,7 @@ export type GetMorphArgs = {
 
 export type Stats = Array<[string, number]>;
 
-export type MissingParams = Array<[string, Array<any>]>;
+export type MissingParams = Array<[string, Array<string | boolean | number>]>;
 
 export type Morph = {
   currentCls: string;

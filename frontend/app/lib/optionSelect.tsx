@@ -24,12 +24,12 @@ function FatherSelect({ choices, onChange } : { choices: Array<string>; onChange
 
 function HardModeToggle({ choices, onChange } : { choices: Array<boolean>; onChange: any }) {
   // choices: [false, true]
-  const [defaultChoice] = choices;
+  const [defaultChecked] = choices;
   return (
     <fieldset>
       <legend>Hard Mode</legend>
       {/* <label> </label> */}
-      <input name="hard_mode" defaultChecked={defaultChoice} type="checkbox" />
+      <input name="hard_mode" {...{defaultChecked}} type="checkbox" />
     </fieldset>
   );
 };
@@ -50,14 +50,17 @@ function MageDecliner({ choices, onChange } : { choices: Array<number>; onChange
 
 function RouteSelect({ choices, onChange } : { choices: Array<string>; onChange: any }) {
   // choices: ['Lalum', 'Elphin']
+  const [defaultValue] = choices;
   return (
     <fieldset>
       <legend>Route Select</legend>
       {choices.map(choice => {
-        <div className="route-select">
-          <label htmlFor={choice}>{choice}</label>
-          <input name="route" id={choice} value={choice} type="radio" defaultChecked={choice === choices.get(0)} />
-        </div>
+        return (
+          <div className="route-select">
+            <label htmlFor={choice}>{choice}</label>
+            <input name="route" id={choice} value={choice} type="radio" defaultChecked={choice === defaultValue} />
+          </div>
+        );
       })
       }
     </fieldset>
@@ -66,17 +69,17 @@ function RouteSelect({ choices, onChange } : { choices: Array<string>; onChange:
 
 function LynModeToggle({ choices, onChange } : { choices: Array<boolean>; onChange: any }) {
   // choices: [false, true]
-  const [defaultChoice] = choices;
+  const [defaultChecked] = choices;
   return (
     <fieldset>
       <legend>Lyn Mode</legend>
       {/* <label> </label> */}
-      <input name="lyn_mode" defaultChecked={defaultChoice} type="checkbox" />
+      <input name="lyn_mode" {...{defaultChecked}} type="checkbox" />
     </fieldset>
   );
 };
 
-export function MorphOptionSelect({ missingParams } : MissingParams) : Array<React.ReactNode> {
+export function compileOptionSelectControls({ missingParams } : MissingParams) : Array<React.ReactNode> {
   const widgets: Array<React.ReactNode> = [];
   missingParams.forEach(missingParamSet => {
     const [key, choices] = missingParamSet;
