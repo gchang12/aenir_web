@@ -31,15 +31,15 @@ export default function({ params }: Route.ClientLoaderArgs) : React.ReactElement
     <>
     <h1>Create Morph</h1>
     <section id="create-morph">
-    <menu id="game-select">
-    {GAMES.map(game => {
-      return (
-        <GameSelectItem key={game.no} {...game} />
-      );
-    })
-    }
-    </menu>
-    <Outlet />
+      <menu id="game-select">
+      {GAMES.map(game => {
+        return (
+          <GameSelectItem key={game.no} {...game} />
+        );
+      })
+      }
+      </menu>
+      <Outlet />
     </section>
     </>
   );
