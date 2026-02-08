@@ -127,3 +127,18 @@ STATIC_URL = 'static/'
 CORS_ORIGIN_WHITELIST = (
     "http://localhost:3000",
 )
+
+# https://docs.djangoproject.com/en/6.0/topics/logging/#id3
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "WARNING",
+    },
+}
