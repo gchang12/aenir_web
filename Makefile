@@ -28,7 +28,7 @@ backend/: $(VENV_NAME)/
 frontend/:
 	#npx create-react-router@latest $(PROJECT_NAME) --install --no-git-init;
 	npx create-vite@latest $(PROJECT_NAME) -t react-ts --no-interactive;
-	mv $(PROJECT_NAME) frontend/;
+	mv $(PROJECT_NAME)/ frontend/;
 	cd frontend/; npm install; npm install react-router;
 
 frontend/node_modules/: frontend/
