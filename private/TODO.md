@@ -1,3 +1,8 @@
+Make sure that any navigation reloads the unit-confirm page and ALL its data.
+Figure out how to configure logging in Django.
+Add input element to accept morph-id
+Take more Selenium notes
+
 Morph as class
 Enclose create-morph elements inside classed div elements
 kwargs are not optional in previewMorph
