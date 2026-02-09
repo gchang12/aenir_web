@@ -39,7 +39,7 @@ export async function previewMorph(args: GetMorphArgs) {
     //console.log(defaultMorph);
     morph = defaultMorph;
   };
-  morph.history = ["__init__", args];
-  return morph;
+  morph.history = [["__init__", args]];
+  return { morph, missingParams: Object.entries(data.missingParams) };
 };
 

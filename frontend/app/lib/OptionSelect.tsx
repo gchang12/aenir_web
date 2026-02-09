@@ -87,28 +87,28 @@ function LynModeToggle({ choices, onChange } : { choices: Array<boolean>; onChan
   );
 };
 
-export function compileWidgets({ missingParams } : MissingParams) : Array<React.ReactNode> {
-  const widgets: Array<React.ReactNode> = [];
-  missingParams.forEach(missingParamSet => {
-    const [key, choices] = missingParamSet;
-    switch(key) {
-      case "father":
-        widgets.push(<FatherSelect {...{choices, onChange}} />);
-        break;
-      case "route":
-        widgets.push(<RouteSelect {...{choices, onChange}} />);
-        break;
-      case "number_of_declines":
-        widgets.push(<MageDecliner {...{choices, onChange}} />);
-        break;
-      case "hard_mode":
-        widgets.push(<HardModeToggle {...{choices, onChange}} />);
-        break;
-      case "lyn_mode":
-        widgets.push(<LynModeToggle {...{choices, onChange}} />);
-        break;
-    };
-  });
-  return widgets;
+export function OptionSelect({ missingParams, onChange } : { missingParams: MissingParams; onChange: any }) : React.ReactNode {
+  return (
+    <>
+    {missingParams.map(missingParamSet => {
+      console.log(missingParamSet);
+      const [key, choices] = missingParamSet;
+      console.log(key, choices);
+      switch(key) {
+        case "father":
+          return <FatherSelect key={key} {...{choices, onChange}} />;
+        case "route":
+          return <RouteSelect key={key} {...{choices, onChange}} />;
+        case "number_of_declines":
+          return <MageDecliner key={key} {...{choices, onChange}} />;
+        case "hard_mode":
+          return <HardModeToggle key={key} {...{choices, onChange}} />;
+        case "lyn_mode":
+          return <LynModeToggle key={key} {...{choices, onChange}} />;
+      };
+      })
+    }
+    </>
+  );
 };
 
