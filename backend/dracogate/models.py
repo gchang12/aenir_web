@@ -20,5 +20,7 @@ class Deadlords(models.Model):
 class Morph(models.Model):
     """
     """
+    id = models.CharField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     deadlords = models.ManyToManyField(to=Deadlords)
+    history = models.JSONField()

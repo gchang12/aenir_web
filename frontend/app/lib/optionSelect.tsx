@@ -42,11 +42,12 @@ function MageDecliner({ choices, onChange } : { choices: Array<number>; onChange
     3: 5_000,
   };
   return (
+    <label htmlFor="number_of_declines">Gold Tendered</label>
     <select name="number_of_declines">
     {choices.map(choice => {
       const price = priceByDeclineCount[choice];
       return (
-        <option key={choice} value={choice}>{price}</option>
+        <option key={choice} value={choice}>{price + " G"}</option>
       );
     })
     }
