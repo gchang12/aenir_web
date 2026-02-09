@@ -137,8 +137,10 @@ LOGGING = {
             "class": "logging.StreamHandler",
         },
     },
-    "root": {
-        "handlers": ["console"],
-        "level": "INFO",
-    },
+    "loggers": {
+        "aenir_web.dracogate": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+        }
+    }
 }

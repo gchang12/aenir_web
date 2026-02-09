@@ -43,7 +43,7 @@ class MorphViewSet(viewsets.ViewSet):
         #print(request.query_params.get("kwargs"))
         kwargs = json.loads(request.query_params.get("kwargs") or "{}")
         #print(game_no, name, kwargs)
-        print(game_no, name, kwargs)
+        logger.debug("game_no: %d, name: '%s', kwargs: %r", game_no, name, kwargs)
         try:
             morph = get_morph(game_no, name, **kwargs)
             morph._set_max_level()
