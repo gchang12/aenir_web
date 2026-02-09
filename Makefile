@@ -26,8 +26,10 @@ backend/: $(VENV_NAME)/
 	sed -i s/'^SECRET_KEY = .*'/'from decouple import config; SECRET_KEY = config("SECRET_KEY")'/g backend/$(PROJECT_NAME)/settings.py;
 
 frontend/:
-	npx create-react-router@latest $(PROJECT_NAME) --install --no-git-init;
+	#npx create-react-router@latest $(PROJECT_NAME) --install --no-git-init;
+	npx create-vite@latest $(PROJECT_NAME) -t react-ts --no-interactive;
 	mv $(PROJECT_NAME) frontend/;
+	cd frontend/; npm install; npm install react-router;
 
 frontend/node_modules/: frontend/
 	bash -c 'cd frontend/ && . ~/.nvm/nvm.sh && nvm install $(NVM_VERSION) && npm install;'
