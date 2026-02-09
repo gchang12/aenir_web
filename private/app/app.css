@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+html,
+body {
+  @apply bg-white dark:bg-gray-950;
+
+  @media (prefers-color-scheme: dark) {
+    color-scheme: dark;
+  }
+}
+
+/* https://www.w3schools.com/howto/howto_css_list_without_bullets.asp */
+
+#create-morph {
+  display: flex;
+  justify-content: space-around;
+};
+
+#create-morph menu {
+  max-height: 50rem;
+  overflow-y: scroll;
+};
+
+#unit-select {
+  max-height: 50rem;
+  overflow-y: scroll;
+};
+
+* { border: 3px dashed red; }
+
+.active {
+  background-color: yellow;
+}
+
+.maxed-stat {
+  background-color: green;
+};
