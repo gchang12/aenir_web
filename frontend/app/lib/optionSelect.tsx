@@ -42,6 +42,7 @@ function MageDecliner({ choices, onChange } : { choices: Array<number>; onChange
     3: 5_000,
   };
   return (
+    <>
     <label htmlFor="number_of_declines">Gold Tendered</label>
     <select name="number_of_declines">
     {choices.map(choice => {
@@ -52,6 +53,7 @@ function MageDecliner({ choices, onChange } : { choices: Array<number>; onChange
     })
     }
     </select>
+    </>
   );
 };
 
@@ -85,7 +87,7 @@ function LynModeToggle({ choices, onChange } : { choices: Array<boolean>; onChan
   );
 };
 
-export function compileOptionSelectControls({ missingParams } : MissingParams) : Array<React.ReactNode> {
+export function compileWidgets({ missingParams } : MissingParams) : Array<React.ReactNode> {
   const widgets: Array<React.ReactNode> = [];
   missingParams.forEach(missingParamSet => {
     const [key, choices] = missingParamSet;
@@ -105,7 +107,7 @@ export function compileOptionSelectControls({ missingParams } : MissingParams) :
       case "lyn_mode":
         widgets.push(<LynModeToggle {...{choices, onChange}} />);
         break;
-    });
+    };
   });
   return widgets;
 };

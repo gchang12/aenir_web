@@ -23,11 +23,16 @@ import {
   UnitPortrait,
 } from "../lib/UnitPortrait";
 import {
+  NonNumericalStats,
+  GlowingNumericalStats,
   GlowingStatTable,
 } from "../lib/StatTables";
 import {
   previewMorph,
 } from "../lib/quintessence";
+import {
+  compileWidgets,
+} from "../lib/optionSelect";
 
 export async function loader({ params }: Route.LoaderArgs) : { game: Game; unit: Unit; defaultMorph: Morph } {
   const { gameId, unitName } : {gameId: GameID, unitName: string} = params;
@@ -43,6 +48,10 @@ export default function UnitConfirm({
   const { game, unit, defaultMorph } = loaderData;
   // const [morph, setMorph] = React.useState<Morph>(defaultMorph);
   const { currentStats, maxStats } = defaultMorph;
+  // TODO: Insert <form> here, alongside onChange callback
+  // Figure out how to change stat values in stat-table.
+  // NOTE: This doesn't work.
+  /* const [stats, setStats] = React.useState(currentStats); */
   return (
     <div id="unit-confirm">
       <h1>{game.title}</h1>

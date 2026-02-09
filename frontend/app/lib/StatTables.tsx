@@ -4,7 +4,7 @@ import type {
   Stats,
 } from "../lib/_types";
 
-function NonNumericalStats({ unit } : {unit: Unit}) : React.ReactElement {
+export function NonNumericalStats({ unit } : {unit: Unit}) : React.ReactElement {
   return (
     <>
       <tr>
@@ -19,7 +19,7 @@ function NonNumericalStats({ unit } : {unit: Unit}) : React.ReactElement {
   );
 };
 
-function GlowingNumericalStats({ currentStats, maxStats } : { currentStats: Stats; maxStats: Stats }) : React.ReactElement {
+export function GlowingNumericalStats({ currentStats, maxStats } : { currentStats: Stats; maxStats: Stats }) : React.ReactElement {
   const stats: Array<[string, number, number]> = [];
   for (let i = 0; i < currentStats.length; i++) {
     stats.push([...currentStats[i], maxStats[i][1]]);
@@ -72,7 +72,7 @@ export function StatTable({unit, stats} : { unit: Unit; stats: Stats }) : React.
 
 export function GlowingStatTable({unit, currentStats, maxStats} : { unit: Unit; currentStats: Stats; maxStats: Stats }) : React.ReactNode {
   return (
-    <table className="StatTable">
+    <table className="GlowingStatTable">
       <thead>
       <NonNumericalStats {...{unit}} />
       </thead>
