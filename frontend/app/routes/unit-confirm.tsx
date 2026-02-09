@@ -29,7 +29,7 @@ import {
   previewMorph,
 } from "../lib/quintessence";
 
-export async function loader({ params }: Route.LoaderArgs) : { Game, Unit, Morph } {
+export async function clientLoader({ params }: Route.ClientLoaderArgs) : { game: Game; unit: Unit; defaultMorph: Morph } {
   const { gameId, unitName } : {gameId: GameID, unitName: string} = params;
   const unit: Unit = UNITS.find(someUnit => someUnit.name === unitName && "fe" + someUnit.gameNo === gameId);
   const game: Game = GAMES.find(someGame => "fe" + someGame.no === gameId);
