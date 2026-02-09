@@ -18,22 +18,6 @@ class MorphViewSet(viewsets.ViewSet):
     """
     morphs = {}
 
-    def create(self, request):
-        """
-        Creates Morph object for user and initializes `morph` attribute to mirror user-actions.
-        """
-        if len(self.morphs) == 5:
-            raise Exception
-        id = request.data.get('id')
-        if id in self.morphs:
-            raise Exception
-        game_no = int(request.data.get("game_no"))
-        name = request.data.get("name")
-        kwargs = json.loads(request.data.get("kwargs") or {})
-        morph = get_morph(game_no, name, **kwargs)
-        self.morphs[id] = morph
-        return Response(data)
-
     def list(self, request):
         """
         Creates temporary Morph for the user to preview, returning missing parameters as necessary.
