@@ -40,9 +40,14 @@ class MorphViewSet(viewsets.ViewSet):
         """
         game_no = int(request.query_params.get("game_no"))
         name = request.query_params.get("name")
-        #print(request.query_params.get("kwargs"))
-        kwargs = json.loads(request.query_params.get("kwargs") or "{}")
-        #print(game_no, name, kwargs)
+        kwarg_keys = (
+            "father",
+            "hard_mode",
+            "number_of_declines",
+            "route",
+            "lyn_mode",
+        )
+        kwargs = {key: request.query_params.get(key) for key in kwarg_keys if request.query_params.get(key) is not None)}
         logger.debug("game_no: %d, name: '%s', kwargs: %r", game_no, name, kwargs)
         try:
             morph = get_morph(game_no, name, **kwargs)
@@ -54,10 +59,7 @@ class MorphViewSet(viewsets.ViewSet):
                 "maxStats": morph.max_stats.as_list(),
                 "maxLv": morph.max_level,
             }
-            is_success = True
         except InitError as e:
             data = {"missingParams": e.init_params}
-            is_success = False
-        #print(data)
         return Response((is_success, data))
 
