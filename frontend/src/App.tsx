@@ -56,15 +56,15 @@ async function previewMorph(game_no, name, kwargs) {
   let morph = await getMorph(game_no, name, kwargs);
   const { missingParams } = morph;
   if (typeof missingParams === 'object') {
+    const kwargs2 = {...kwargs};
     Object.entries(missingParams).forEach(entry => {
       const [key, values] = entry;
       const [defaultVal] = values;
-      kwargs[key] = defaultVal;
+      kwargs2[key] = defaultVal;
     });
-    morph = await getMorph(game_no, name, kwargs);
-    morph.missingParams = missingParams;
+    morph = await getMorph(game_no, name, kwargs2);
   };
-  return morph;
+  return { morph, missingParams };
 };
 
 export {

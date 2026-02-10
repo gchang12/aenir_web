@@ -8,10 +8,14 @@ import {
   previewMorph,
 } from "./App";
 
-test("Sends a request for data from the backend", () => {
+// TEST SKELETON
+
+test("This is a test skeleton that demonstrates various features of the vitest testing framework.", () => {
   expect([]).toStrictEqual([])
   expect(2).toBe(2)
 });
+
+// getMorph
 
 test("This test sends a request for Morph-data for FE6 Roy.", async () => {
   const game_no = 6;
@@ -238,3 +242,5 @@ test("This test affirms that invalid options are ignored.", async () => {
     ]
   )
 });
+
+// previewMorph
