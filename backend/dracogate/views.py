@@ -24,14 +24,14 @@ class MorphViewSet(viewsets.ViewSet):
         """
         game_no = int(request.query_params.get("game_no"))
         name = request.query_params.get("name")
-        kwarg_keys = (
+        morph_options = (
             "father",
             "hard_mode",
             "number_of_declines",
             "route",
             "lyn_mode",
         )
-        kwargs = {key: request.query_params.get(key) for key in kwarg_keys if request.query_params.get(key) is not None}
+        kwargs = {key: request.query_params.get(key) for key in morph_options if request.query_params.get(key) is not None}
         logger.debug("game_no: %d, name: '%s', kwargs: %r", game_no, name, kwargs)
         try:
             morph = get_morph(game_no, name, **kwargs)
