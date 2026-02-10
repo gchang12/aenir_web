@@ -63,9 +63,6 @@ async function previewMorph(game_no, name, kwargs) {
     });
     morph = await getMorph(game_no, name, kwargs);
   };
-  morph.history = [
-    ["__init__", [game_no, name, kwargs]],
-  ];
   return { morph, missingParams };
 };
 

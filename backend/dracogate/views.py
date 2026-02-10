@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 
 from aenir import get_morph
-from aenir._exceptions import InitError
+from aenir._exceptions import InitError, UnitNotFoundError
 
 from dracogate._logging import logger
 
@@ -45,5 +45,9 @@ class MorphViewSet(viewsets.ViewSet):
             }
         except InitError as e:
             data = {"missingParams": e.init_params}
+        except NotImplementedError:
+            data = {"error": "INVALID_GAME"}
+        except UnitNotFoundError:
+            data = {"error": "UNIT_DNE"}
         return Response(data)
 
