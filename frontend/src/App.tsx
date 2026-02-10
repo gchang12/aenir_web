@@ -52,17 +52,17 @@ function getMorph(game_no, name, kwargs) {
   return fetchTask;
 };
 
-async function previewMorph(game_no, name, kwargs) {
+async function previewMorph(game_no, name) {
+  const kwargs = {};
   let morph = await getMorph(game_no, name, kwargs);
   const { missingParams } = morph;
   if (typeof missingParams === 'object') {
-    const kwargs2 = {...kwargs};
     Object.entries(missingParams).forEach(entry => {
       const [key, values] = entry;
       const [defaultVal] = values;
-      kwargs2[key] = defaultVal;
+      kwargs[key] = defaultVal;
     });
-    morph = await getMorph(game_no, name, kwargs2);
+    morph = await getMorph(game_no, name, kwargs);
   };
   return { morph, missingParams };
 };
