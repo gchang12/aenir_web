@@ -62,8 +62,9 @@ async function previewMorph(game_no, name, kwargs) {
       kwargs[key] = defaultVal;
     });
     morph = await getMorph(game_no, name, kwargs);
+    morph.missingParams = missingParams;
   };
-  return { morph, missingParams };
+  return morph;
 };
 
 export {

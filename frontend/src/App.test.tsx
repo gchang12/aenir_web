@@ -126,6 +126,15 @@ test("This test sends an unsuccessful request for Morph-data for FE6 Rutger.", a
   expect(missingParams["hard_mode"]).toStrictEqual([false, true]);
 });
 
+test("This test sends a successful request for Morph-data for FE6 Rutger.", async () => {
+  const game_no = 6;
+  const name = "Rutger";
+  const kwargs = {"hard_mode": true};
+  const morph = await getMorph(game_no, name, kwargs);
+  const { missingParams } = morph;
+  expect(missingParams).toBe(undefined);
+});
+
 test("This test sends an unsuccessful request for Morph-data for FE6 Hugh.", async () => {
   const game_no = 6;
   const name = "Hugh";
