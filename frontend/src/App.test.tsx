@@ -21,7 +21,42 @@ import {
   previewMorph,
 } from "./App";
 
+const server = setupServer(
+  http.get("http://localhost:8000/dracogate/api/morphs/", (x) => {
+    console.log(x);
+    // Roy
+    return HttpResponse.json({
+      currentCls: "Lord",
+      currentLv: 1,
+      maxLv: 20,
+      currentStats: [
+        ["HP", 18_00],
+        ["Pow", 5_00],
+        ["Skl", 5_00],
+        ["Spd", 7_00],
+        ["Lck", 7_00],
+        ["Def", 5_00],
+        ["Res", 0],
+        ["Con", 6_00],
+        ["Mov", 5_00],
+      ],
+      maxStats: [
+        ["HP", 60_00],
+        ["Pow", 20_00],
+        ["Skl", 20_00],
+        ["Spd", 20_00],
+        ["Lck", 30_00],
+        ["Def", 20_00],
+        ["Res", 20_00],
+        ["Con", 20_00],
+        ["Mov", 15_00],
+      ]
+    });
+  })
+);
+
 // TODO: Mock server requests.
+// TODO: Divide numerical data sent by 100.
 
 // TEST SKELETON
 
