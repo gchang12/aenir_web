@@ -21,6 +21,11 @@ import {
   previewMorph,
 } from "./App";
 
+// TODO: Mock server requests.
+// TODO: Migrate tests to backend.
+// TODO: Check to see what happens if invalid choices for valid options are sent.
+// TODO: Format backend logger messages.
+
 // TEST SKELETON
 
 test("This is a test skeleton that demonstrates various features of the vitest testing framework.", () => {
@@ -161,6 +166,33 @@ test("This test sends an unsuccessful request for Morph-data for FE6 Hugh.", asy
   expect(missingParams["number_of_declines"]).toStrictEqual([0, 1, 2, 3]);
 });
 
+test("This test sends an unsuccessful request for Morph-data for FE6 Hugh.", async () => {
+  const game_no = 6;
+  const name = "Hugh";
+  const kwargs = {"number_of_declines": 3};
+  const morph = await getMorph(game_no, name, kwargs);
+  const { missingParams } = morph;
+  expect(missingParams).toBe(undefined);
+});
+
+test("This test sends another unsuccessful request for Morph-data for FE6 Hugh.", async () => {
+  const game_no = 6;
+  const name = "Hugh";
+  const kwargs = {"number_of_declines": 4};
+  const morph = await getMorph(game_no, name, kwargs);
+  const { missingParams } = morph;
+  expect(missingParams).not.toBe(undefined);
+});
+
+test("This test sends a successful request for Morph-data for FE6 Gonzales.", async () => {
+  const game_no = 6;
+  const name = "Gonzales";
+  const kwargs = {"hard_mode": false, "route": "Lalum"};
+  const morph = await getMorph(game_no, name, kwargs);
+  const { missingParams } = morph;
+  expect(missingParams).toBe(undefined);
+});
+
 test("This test sends an unsuccessful request for Morph-data for FE6 Gonzales.", async () => {
   const game_no = 6;
   const name = "Gonzales";
@@ -198,6 +230,15 @@ test("This test sends a request for Morph-data for FE7 Nils.", async () => {
   expect(missingParams["lyn_mode"]).toStrictEqual([false, true]);
 });
 
+
+test("This test sends another unsuccessful request for Morph-data for FE6 Hugh.", async () => {
+  const game_no = 8;
+  const name = "Lyon";
+  const kwargs = {};
+  const morph = await getMorph(game_no, name, kwargs);
+  const { missingParams } = morph;
+  expect(missingParams).toBe(undefined);
+});
 
 test("This test sends a request for Morph-data for a game that the aenir interface does not encompass.", async () => {
   const game_no = 10;
