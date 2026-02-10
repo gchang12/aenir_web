@@ -23,7 +23,6 @@ import {
 
 // TODO: Mock server requests.
 // TODO: Migrate tests to backend.
-// TODO: Check to see what happens if invalid choices for valid options are sent.
 
 // TEST SKELETON
 
