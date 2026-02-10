@@ -72,3 +72,94 @@ export {
   previewMorph,
 };
 
+function GameSelect() {
+  return (
+    <nav>
+      <menu>
+        <li>
+          <Link>
+            <figure>
+              <img src="" />
+              <figcaption>Game Name</figcaption>
+            </figure>
+          </Link>
+        </li>
+      </menu>
+    </nav>
+  );
+};
+
+function UnitSelect() {
+  return (
+    <nav>
+      <menu>
+        <li>
+          <Link>
+            <figure>
+              <img src="" />
+              <figcaption>Unit Name</figcaption>
+            </figure>
+            <table>
+              <tbody>
+                <tr>
+                  <th>Lv</th>
+                  <td>0</td>
+                </tr>
+                <tr>
+                  <th>Class</th>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </Link>
+        </li>
+      </menu>
+    </nav>
+  );
+};
+
+function UnitConfirm() {
+  return (
+    <form>
+      <div>
+        <h1>Game Name</h1>
+        <figure>
+          <img src="" />
+          <figcaption>Unit Name</figcaption>
+        </figure>
+        <table>
+          <tbody>
+            <tr>
+              <th>Lv</th>
+              <td>0</td>
+            </tr>
+            <tr>
+              <th>Class</th>
+              <td></td>
+            </tr>
+            <tr>
+              <th>Option</th>
+              <td>Widget</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <table>
+          <tbody>
+            <tr>Stat-Name</tr>
+            <td>Stat-Value</td>
+          </tbody>
+        </table>
+      </div>
+      <button>Create</button>
+    </form>
+  );
+};
+
+export {
+  GameSelect,
+  UnitSelect,
+  UnitConfirm,
+};
+
