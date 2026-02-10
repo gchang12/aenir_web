@@ -22,7 +22,6 @@ import {
 } from "./App";
 
 // TODO: Mock server requests.
-// TODO: Migrate tests to backend.
 
 // TEST SKELETON
 
@@ -229,7 +228,7 @@ test("This test sends a request for Morph-data for FE7 Nils.", async () => {
 });
 
 
-test("This test sends another unsuccessful request for Morph-data for FE6 Hugh.", async () => {
+test("This test sends another successful request for Morph-data for FE6 Lyon.", async () => {
   const game_no = 8;
   const name = "Lyon";
   const kwargs = {};
