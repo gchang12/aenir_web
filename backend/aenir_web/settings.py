@@ -132,13 +132,20 @@ CORS_ORIGIN_WHITELIST = (
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "formatters": {
+        "simple": {
+            "format": "%(levelname)s:%(name)s.%(module)s.%(funcName)s:%(message)s",
+            "style": "%",
+        },
+    },
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
+            "formatter": "simple",
         },
     },
     "loggers": {
-        "aenir_web.dracogate": {
+        "aenir_web": {
             "handlers": ["console"],
             "level": "DEBUG",
         }
