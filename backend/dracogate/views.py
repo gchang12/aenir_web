@@ -12,6 +12,12 @@ from aenir._exceptions import InitError, UnitNotFoundError
 
 from dracogate._logging import logger
 
+def divide_stat_by_100(stat_pair):
+    """
+    """
+    key, value = stat_pair
+    return (key, value / 100)
+
 class MorphViewSet(viewsets.ViewSet):
     """
     Handles creation and editing of Morph objects.
@@ -47,8 +53,8 @@ class MorphViewSet(viewsets.ViewSet):
             data = {
                 "currentCls": morph.current_cls,
                 "currentLv": morph.current_lv,
-                "currentStats": morph.current_stats.as_list(),
-                "maxStats": morph.max_stats.as_list(),
+                "currentStats": list(map(divide_stat_by_100, morph.current_stats.as_list())),
+                "maxStats": list(map(divide_stat_by_100, morph.max_stats.as_list())),
                 "maxLv": morph.max_level,
             }
         except InitError as e:

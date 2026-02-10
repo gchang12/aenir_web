@@ -21,43 +21,6 @@ import {
   previewMorph,
 } from "./App";
 
-const server = setupServer(
-  http.get("http://localhost:8000/dracogate/api/morphs/", (x) => {
-    console.log(x);
-    // Roy
-    return HttpResponse.json({
-      currentCls: "Lord",
-      currentLv: 1,
-      maxLv: 20,
-      currentStats: [
-        ["HP", 18_00],
-        ["Pow", 5_00],
-        ["Skl", 5_00],
-        ["Spd", 7_00],
-        ["Lck", 7_00],
-        ["Def", 5_00],
-        ["Res", 0],
-        ["Con", 6_00],
-        ["Mov", 5_00],
-      ],
-      maxStats: [
-        ["HP", 60_00],
-        ["Pow", 20_00],
-        ["Skl", 20_00],
-        ["Spd", 20_00],
-        ["Lck", 30_00],
-        ["Def", 20_00],
-        ["Res", 20_00],
-        ["Con", 20_00],
-        ["Mov", 15_00],
-      ]
-    });
-  })
-);
-
-// TODO: Mock server requests.
-// TODO: Divide numerical data sent by 100.
-
 // TEST SKELETON
 
 test("This is a test skeleton that demonstrates various features of the vitest testing framework.", () => {
@@ -78,28 +41,28 @@ test("This test sends a request for Morph-data for FE6 Roy.", async () => {
   expect(maxLv).toBe(20);
   expect(currentStats).toStrictEqual(
     [
-      ["HP", 18_00],
-      ["Pow", 5_00],
-      ["Skl", 5_00],
-      ["Spd", 7_00],
-      ["Lck", 7_00],
-      ["Def", 5_00],
+      ["HP", 18],
+      ["Pow", 5],
+      ["Skl", 5],
+      ["Spd", 7],
+      ["Lck", 7],
+      ["Def", 5],
       ["Res", 0],
-      ["Con", 6_00],
-      ["Mov", 5_00],
+      ["Con", 6],
+      ["Mov", 5],
     ]
   );
   expect(maxStats).toStrictEqual(
     [
-      ["HP", 60_00],
-      ["Pow", 20_00],
-      ["Skl", 20_00],
-      ["Spd", 20_00],
-      ["Lck", 30_00],
-      ["Def", 20_00],
-      ["Res", 20_00],
-      ["Con", 20_00],
-      ["Mov", 15_00],
+      ["HP", 60],
+      ["Pow", 20],
+      ["Skl", 20],
+      ["Spd", 20],
+      ["Lck", 30],
+      ["Def", 20],
+      ["Res", 20],
+      ["Con", 20],
+      ["Mov", 15],
     ]
   )
 });
@@ -123,26 +86,26 @@ test("This test sends a request for Morph-data for FE4 Lakche.", async () => {
   expect(maxLv).toBe(20);
   expect(currentStats).toStrictEqual(
     [
-      ["HP", 30_00],
-      ["Str", 10_00],
+      ["HP", 30],
+      ["Str", 10],
       ["Mag", 0],
-      ["Skl", 13_00],
-      ["Spd", 13_00],
-      ["Lck", 8_00],
-      ["Def", 7_00],
+      ["Skl", 13],
+      ["Spd", 13],
+      ["Lck", 8],
+      ["Def", 7],
       ["Res", 0],
     ]
   );
   expect(maxStats).toStrictEqual(
     [
-      ["HP", 80_00],
-      ["Str", 22_00],
-      ["Mag", 15_00],
-      ["Skl", 25_00],
-      ["Spd", 25_00],
-      ["Lck", 30_00],
-      ["Def", 20_00],
-      ["Res", 15_00],
+      ["HP", 80],
+      ["Str", 22],
+      ["Mag", 15],
+      ["Skl", 25],
+      ["Spd", 25],
+      ["Lck", 30],
+      ["Def", 20],
+      ["Res", 15],
     ]
   )
 });
@@ -303,28 +266,28 @@ test("This test affirms that invalid options are ignored.", async () => {
   expect(maxLv).toBe(20);
   expect(currentStats).toStrictEqual(
     [
-      ["HP", 18_00],
-      ["Pow", 5_00],
-      ["Skl", 5_00],
-      ["Spd", 7_00],
-      ["Lck", 7_00],
-      ["Def", 5_00],
+      ["HP", 18],
+      ["Pow", 5],
+      ["Skl", 5],
+      ["Spd", 7],
+      ["Lck", 7],
+      ["Def", 5],
       ["Res", 0],
-      ["Con", 6_00],
-      ["Mov", 5_00],
+      ["Con", 6],
+      ["Mov", 5],
     ]
   );
   expect(maxStats).toStrictEqual(
     [
-      ["HP", 60_00],
-      ["Pow", 20_00],
-      ["Skl", 20_00],
-      ["Spd", 20_00],
-      ["Lck", 30_00],
-      ["Def", 20_00],
-      ["Res", 20_00],
-      ["Con", 20_00],
-      ["Mov", 15_00],
+      ["HP", 60],
+      ["Pow", 20],
+      ["Skl", 20],
+      ["Spd", 20],
+      ["Lck", 30],
+      ["Def", 20],
+      ["Res", 20],
+      ["Con", 20],
+      ["Mov", 15],
     ]
   )
 });
