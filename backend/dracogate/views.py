@@ -32,7 +32,15 @@ class MorphViewSet(viewsets.ViewSet):
             "lyn_mode",
         )
         kwargs = {key: request.query_params.get(key) for key in morph_options if request.query_params.get(key) is not None}
-        logger.debug("game_no: %d, name: '%s', kwargs: %r", game_no, name, kwargs)
+        for kwarg, kwval in kwargs.items():
+            if kwarg in ("hard_mode", "lyn_mode"):
+                kwargs[kwarg] = {
+                    "true": True,
+                    "false": False,
+                }[kwval]
+            if kwarg == "number_of_declines":
+                kwargs[kwarg] = int(kwval)
+        logger.debug("game_no: %d, name: '%s', kwargs: %r", game_no, name, kwargs)#
         try:
             morph = get_morph(game_no, name, **kwargs)
             morph._set_max_level()
