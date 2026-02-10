@@ -33,3 +33,44 @@ function App() {
 }
 
 export default App
+
+// MY CODE
+
+import axios from 'axios';
+
+function getMorph(game_no, name, kwargs) {
+  const RESOURCE_URL: string = "http://localhost:8000/dracogate/api/morphs/";
+  const params = {
+    game_no,
+    name,
+    ...kwargs,
+  };
+  const fetchTask = axios
+    .get(RESOURCE_URL, {params})
+    .then(resp => resp.data)
+    .catch(err => console.log(err));
+  return fetchTask;
+};
+
+async function previewMorph(game_no, name, kwargs) {
+  let morph = await getMorph(game_no, name, kwargs);
+  const { missingParams } = morph;
+  if (typeof missingParams === 'object') {
+    Object.entries(missingParams).forEach(entry => {
+      const [key, values] = entry;
+      const [defaultVal] = values;
+      kwargs[key] = defaultVal;
+    });
+    morph = await getMorph(game_no, name, kwargs);
+  };
+  morph.history = [
+    ["__init__", [game_no, name, kwargs]],
+  ];
+  return { morph, missingParams };
+};
+
+export {
+  getMorph,
+  previewMorph,
+};
+

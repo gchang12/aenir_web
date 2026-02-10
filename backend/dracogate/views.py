@@ -31,7 +31,7 @@ class MorphViewSet(viewsets.ViewSet):
             "route",
             "lyn_mode",
         )
-        kwargs = {key: request.query_params.get(key) for key in kwarg_keys if request.query_params.get(key) is not None)}
+        kwargs = {key: request.query_params.get(key) for key in kwarg_keys if request.query_params.get(key) is not None}
         logger.debug("game_no: %d, name: '%s', kwargs: %r", game_no, name, kwargs)
         try:
             morph = get_morph(game_no, name, **kwargs)
@@ -45,5 +45,5 @@ class MorphViewSet(viewsets.ViewSet):
             }
         except InitError as e:
             data = {"missingParams": e.init_params}
-        return Response((is_success, data))
+        return Response(data)
 
