@@ -8,10 +8,6 @@ import {
   previewMorph,
 } from "./App";
 
-function sum(a, b) {
-  return a + b;
-}
-
 test("Sends a request for data from the backend", () => {
   expect([]).toStrictEqual([])
 });
@@ -52,3 +48,125 @@ test("This test sends a request for Morph-data for FE6 Roy.", async () => {
     ]
   )
 });
+
+/*
+  father
+  hard_mode
+  number_of_declines
+  route
+  lyn_mode
+*/
+
+test("This test sends a request for Morph-data for FE4 Lakche.", async () => {
+  const game_no = 4;
+  const name = "Lakche";
+  const kwargs = {"father": "Lex"};
+  const morph = await getMorph(game_no, name, kwargs);
+  const { currentCls, currentLv, currentStats, maxStats, maxLv } = morph;
+  expect(currentCls).toBe("Swordfighter");
+  expect(currentLv).toBe(1);
+  expect(maxLv).toBe(20);
+  expect(currentStats).toStrictEqual(
+    [
+      ["HP", 30_00],
+      ["Str", 10_00],
+      ["Mag", 0],
+      ["Skl", 13_00],
+      ["Spd", 13_00],
+      ["Lck", 8_00],
+      ["Def", 7_00],
+      ["Res", 0],
+    ]
+  );
+  expect(maxStats).toStrictEqual(
+    [
+      ["HP", 80_00],
+      ["Str", 22_00],
+      ["Mag", 15_00],
+      ["Skl", 25_00],
+      ["Spd", 25_00],
+      ["Lck", 30_00],
+      ["Def", 20_00],
+      ["Res", 15_00],
+    ]
+  )
+});
+
+test("This test sends an unsuccessful request for Morph-data for FE4 Lakche.", async () => {
+  const game_no = 4;
+  const name = "Lakche";
+  const kwargs = {};
+  const morph = await getMorph(game_no, name, kwargs);
+  const { missingParams } = morph;
+  const fatherList = [
+    "Arden",
+    "Azel",
+    "Alec",
+    "Claude",
+    "Jamka",
+    "Dew",
+    "Noish",
+    "Fin",
+    "Beowolf",
+    "Holyn",
+    "Midayle",
+    "Levin",
+    "Lex",
+  ];
+  expect(missingParams["father"]).toStrictEqual(fatherList);
+});
+
+test("This test sends an unsuccessful request for Morph-data for FE6 Rutger.", async () => {
+  const game_no = 6;
+  const name = "Rutger";
+  const kwargs = {};
+  const morph = await getMorph(game_no, name, kwargs);
+  const { missingParams } = morph;
+  expect(missingParams["hard_mode"]).toStrictEqual([false, true]);
+});
+
+test("This test sends an unsuccessful request for Morph-data for FE6 Hugh.", async () => {
+  const game_no = 6;
+  const name = "Hugh";
+  const kwargs = {};
+  const morph = await getMorph(game_no, name, kwargs);
+  const { missingParams } = morph;
+  expect(missingParams["number_of_declines"]).toStrictEqual([0, 1, 2, 3]);
+});
+
+test("This test sends an unsuccessful request for Morph-data for FE6 Gonzales.", async () => {
+  const game_no = 6;
+  const name = "Gonzales";
+  const kwargs = {"hard_mode": false};
+  const morph = await getMorph(game_no, name, kwargs);
+  const { missingParams } = morph;
+  expect(missingParams["route"]).toStrictEqual(["Lalum", "Elphin"]);
+});
+
+test("This test sends an unsuccessful request for Morph-data for FE7 Lyn.", async () => {
+  const game_no = 7;
+  const name = "Lyn";
+  const kwargs = {};
+  const morph = await getMorph(game_no, name, kwargs);
+  const { missingParams } = morph;
+  expect(missingParams["lyn_mode"]).toStrictEqual([false, true]);
+});
+
+test("This test sends a request for Morph-data for FE7 Ninian.", async () => {
+  const game_no = 7;
+  const name = "Ninian";
+  const kwargs = {};
+  const morph = await getMorph(game_no, name, kwargs);
+  const { missingParams } = morph;
+  expect(missingParams).toBe(undefined);
+});
+
+test("This test sends a request for Morph-data for FE7 Nils.", async () => {
+  const game_no = 7;
+  const name = "Nils";
+  const kwargs = {};
+  const morph = await getMorph(game_no, name, kwargs);
+  const { missingParams } = morph;
+  expect(missingParams["lyn_mode"]).toStrictEqual([false, true]);
+});
+
