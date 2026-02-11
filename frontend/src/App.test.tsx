@@ -21,6 +21,32 @@ import {
   previewMorph,
 } from "./App";
 
+// TODO: Figure out the point of this before mindlessly putting it in everywhere.
+/*
+const server = setupServer(
+  http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
+    return HttpResponse.json({
+      unitClass: "Lord",
+      level: [1, 20],
+      stats: [
+        ["HP", 18, 60, 80],
+        ["Pow", 5, 20, 30],
+        ["Skl", 5, 20, 30],
+        ["Spd", 7, 20, 30],
+        ["Lck", 7, 30, 30],
+        ["Def", 5, 20, 30],
+        ["Res", 0, 20, 30],
+        ["Con", 6, 20, 25],
+        ["Mov", 5, 15, 15],
+      ],
+    });
+  });
+);
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+*/
+
 // getMorph(game_no, name, { father, hard_mode, number_of_declines, route, lyn_mode })
 
 describe("FE6 Roy", () => {
