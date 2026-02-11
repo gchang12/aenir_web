@@ -32,7 +32,7 @@ class NormalUnit(TestCase):
         kwargs = self.kwargs
         kwargs.update({"invalid": "option"})
         response = self.client.get(url, data=kwargs)
-        expected = {"currentCls", "currentLv", "currentStats", "maxStats", "maxLv"}
+        expected = {"unitClass", "level", "stats"}
         actual = set(response.data.keys())
         self.assertSetEqual(actual, expected)
 
@@ -42,36 +42,24 @@ class NormalUnit(TestCase):
         url = self.url
         kwargs = self.kwargs
         response = self.client.get(url, data=kwargs)
-        expected = {"currentCls", "currentLv", "currentStats", "maxStats", "maxLv"}
+        expected = {"unitClass", "level", "stats"}
         actual = set(response.data.keys())
         self.assertSetEqual(actual, expected)
         actual = response.data
         expected = {
-            "currentCls": "Lord",
-            "currentLv": 1,
-            "currentStats": [
-                ("HP", 18),
-                ("Pow", 5),
-                ("Skl", 5),
-                ("Spd", 7),
-                ("Lck", 7),
-                ("Def", 5),
-                ("Res", 0),
-                ("Con", 6),
-                ("Mov", 5),
+            "unitClass": "Lord",
+            "level": (1, 20),
+            "stats": [
+                ("HP", 18.0, 60.0, 80),
+                ("Pow", 5.0, 20.0, 30),
+                ("Skl", 5.0, 20.0, 30),
+                ("Spd", 7.0, 20.0, 30),
+                ("Lck", 7.0, 30.0, 30),
+                ("Def", 5.0, 20.0, 30),
+                ("Res", 0.0, 20.0, 30),
+                ("Con", 6.0, 20.0, 25),
+                ("Mov", 5.0, 15.0, 15),
             ],
-            "maxStats": [
-                ("HP", 60),
-                ("Pow", 20),
-                ("Skl", 20),
-                ("Spd", 20),
-                ("Lck", 30),
-                ("Def", 20),
-                ("Res", 20),
-                ("Con", 20),
-                ("Mov", 15),
-            ],
-            "maxLv": 20,
         }
         self.assertDictEqual(actual, expected)
 
@@ -99,29 +87,18 @@ class FatheredUnit(TestCase):
         response = self.client.get(url, data=kwargs)
         actual = response.data
         expected = {
-            "currentCls": "Swordfighter",
-            "currentLv": 1,
-            "currentStats": [
-                ("HP", 30),
-                ("Str", 10),
-                ("Mag", 0),
-                ("Skl", 13),
-                ("Spd", 13),
-                ("Lck", 8),
-                ("Def", 7),
-                ("Res", 0),
+            "unitClass": "Swordfighter",
+            "level": (1, 20),
+            "stats": [
+                ("HP", 30.0, 80.0, 80),
+                ("Str", 10.0, 22.0, 30),
+                ("Mag", 0.0, 15.0, 30),
+                ("Skl", 13.0, 25.0, 30),
+                ("Spd", 13.0, 25.0, 30),
+                ("Lck", 8.0, 30.0, 30),
+                ("Def", 7.0, 20.0, 30),
+                ("Res", 0.0, 15.0, 30),
             ],
-            "maxStats": [
-                ("HP", 80),
-                ("Str", 22),
-                ("Mag", 15),
-                ("Skl", 25),
-                ("Spd", 25),
-                ("Lck", 30),
-                ("Def", 20),
-                ("Res", 15),
-            ],
-            "maxLv": 20,
         }
         self.assertDictEqual(actual, expected)
 
@@ -362,7 +339,6 @@ class Ninian(TestCase):
         response = self.client.get(url, data=kwargs)
         self.assertNotIn("missingParams", response.data)
 
-    @unittest.expectedFailure
     def test_get_morph__verify_server_failure(self):
         """
         """
@@ -370,8 +346,8 @@ class Ninian(TestCase):
         kwargs = self.kwargs
         kwargs.update({"lyn_mode": "true"})
         response = self.client.get(url, data=kwargs)
-        logger.warning("GET request for Ninian as an FE7 Lyn Mode unit was successful. Expected: No success.")
-        self.assertIn("missingParams", response.data)
+        self.assertIn("error", response.data)
+        self.assertEqual(response.data["error"], "UNIT_DNE")
 
 class Nils(TestCase):
     """
@@ -398,7 +374,6 @@ class Nils(TestCase):
         response = self.client.get(url, data=kwargs)
         self.assertNotIn("missingParams", response.data)
 
-    @unittest.expectedFailure
     def test_get_morph__verify_server_failure(self):
         """
         """
@@ -406,13 +381,9 @@ class Nils(TestCase):
         kwargs = self.kwargs
         kwargs.update({"lyn_mode": "false"})
         response = self.client.get(url, data=kwargs)
-        logger.warning("GET request for Nils as a FE7 main-campaign unit was successful. Expected: No success.")
-        expected = {"error"}
+        expected = {"unitClass", "level", "stats"}
         actual = set(response.data.keys())
         self.assertSetEqual(actual, expected)
-        #actual = response.data["error"]
-        #expected = "UNIT_DNE"
-        #self.assertEqual(actual, expected)
 
 class BonusUnit(TestCase):
     """

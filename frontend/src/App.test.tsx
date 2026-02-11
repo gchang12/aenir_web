@@ -35,36 +35,45 @@ test("This test sends a request for Morph-data for FE6 Roy.", async () => {
   const name = "Roy";
   const kwargs = {};
   const morph = await getMorph(game_no, name, kwargs);
-  const { currentCls, currentLv, currentStats, maxStats, maxLv } = morph;
-  expect(currentCls).toBe("Lord");
-  expect(currentLv).toBe(1);
-  expect(maxLv).toBe(20);
-  expect(currentStats).toStrictEqual(
+  const { unitClass, level, stats } = morph;
+  expect(unitClass).toBe("Lord");
+  expect(level).toStrictEqual([1, 20]);
+  expect(stats).toStrictEqual(
     [
-      ["HP", 18],
-      ["Pow", 5],
-      ["Skl", 5],
-      ["Spd", 7],
-      ["Lck", 7],
-      ["Def", 5],
-      ["Res", 0],
-      ["Con", 6],
-      ["Mov", 5],
+      ["HP", 18, 60, 80],
+      ["Pow", 5, 20, 30],
+      ["Skl", 5, 20, 30],
+      ["Spd", 7, 20, 30],
+      ["Lck", 7, 30, 30],
+      ["Def", 5, 20, 30],
+      ["Res", 0, 20, 30],
+      ["Con", 6, 20, 25],
+      ["Mov", 5, 15, 15],
     ]
   );
-  expect(maxStats).toStrictEqual(
+});
+
+test("This test affirms that invalid options are ignored.", async () => {
+  const game_no = 6;
+  const name = "Roy";
+  const kwargs = {"nonsensical": "stuff"};
+  const morph = await getMorph(game_no, name, kwargs);
+  const { unitClass, level, stats } = morph;
+  expect(unitClass).toBe("Lord");
+  expect(level).toStrictEqual([1, 20]);
+  expect(stats).toStrictEqual(
     [
-      ["HP", 60],
-      ["Pow", 20],
-      ["Skl", 20],
-      ["Spd", 20],
-      ["Lck", 30],
-      ["Def", 20],
-      ["Res", 20],
-      ["Con", 20],
-      ["Mov", 15],
+      ["HP", 18, 60, 80],
+      ["Pow", 5, 20, 30],
+      ["Skl", 5, 20, 30],
+      ["Spd", 7, 20, 30],
+      ["Lck", 7, 30, 30],
+      ["Def", 5, 20, 30],
+      ["Res", 0, 20, 30],
+      ["Con", 6, 20, 25],
+      ["Mov", 5, 15, 15],
     ]
-  )
+  );
 });
 
 /*
@@ -80,34 +89,21 @@ test("This test sends a request for Morph-data for FE4 Lakche.", async () => {
   const name = "Lakche";
   const kwargs = {"father": "Lex"};
   const morph = await getMorph(game_no, name, kwargs);
-  const { currentCls, currentLv, currentStats, maxStats, maxLv } = morph;
-  expect(currentCls).toBe("Swordfighter");
-  expect(currentLv).toBe(1);
-  expect(maxLv).toBe(20);
-  expect(currentStats).toStrictEqual(
+  const { unitClass, level, stats } = morph;
+  expect(unitClass).toBe("Swordfighter");
+  expect(level).toStrictEqual([1, 20]);
+  expect(stats).toStrictEqual(
     [
-      ["HP", 30],
-      ["Str", 10],
-      ["Mag", 0],
-      ["Skl", 13],
-      ["Spd", 13],
-      ["Lck", 8],
-      ["Def", 7],
-      ["Res", 0],
+      ["HP", 30, 80, 80],
+      ["Str", 10, 22, 30],
+      ["Mag", 0, 15, 30],
+      ["Skl", 13, 25, 30],
+      ["Spd", 13, 25, 30],
+      ["Lck", 8, 30, 30],
+      ["Def", 7, 20, 30],
+      ["Res", 0, 15, 30],
     ]
   );
-  expect(maxStats).toStrictEqual(
-    [
-      ["HP", 80],
-      ["Str", 22],
-      ["Mag", 15],
-      ["Skl", 25],
-      ["Spd", 25],
-      ["Lck", 30],
-      ["Def", 20],
-      ["Res", 15],
-    ]
-  )
 });
 
 test("This test sends an unsuccessful request for Morph-data for FE4 Lakche.", async () => {
@@ -218,11 +214,19 @@ test("This test sends a request for Morph-data for FE7 Ninian.", async () => {
 test("This test sends a request for Morph-data for FE7 Nils.", async () => {
   const game_no = 7;
   const name = "Nils";
-  // NOTE: I will have to exclude him.
   const kwargs = {};
   const morph = await getMorph(game_no, name, kwargs);
   const { missingParams } = morph;
   expect(missingParams["lyn_mode"]).toStrictEqual([false, true]);
+});
+
+test("This test sends a successful request for Morph-data for FE7 Nils.", async () => {
+  const game_no = 7;
+  const name = "Nils";
+  const kwargs = {"lyn_mode": false};
+  const morph = await getMorph(game_no, name, kwargs);
+  const { missingParams } = morph;
+  expect(missingParams).toBe(undefined);
 });
 
 
@@ -253,43 +257,6 @@ test("This test sends a request for Morph-data for a unit that doesn't exist in 
   const morph = await getMorph(game_no, name, kwargs);
   const { error } = morph;
   expect(error).toBe("UNIT_DNE");
-});
-
-test("This test affirms that invalid options are ignored.", async () => {
-  const game_no = 6;
-  const name = "Roy";
-  const kwargs = {"nonsensical": "stuff"};
-  const morph = await getMorph(game_no, name, kwargs);
-  const { currentCls, currentLv, currentStats, maxStats, maxLv } = morph;
-  expect(currentCls).toBe("Lord");
-  expect(currentLv).toBe(1);
-  expect(maxLv).toBe(20);
-  expect(currentStats).toStrictEqual(
-    [
-      ["HP", 18],
-      ["Pow", 5],
-      ["Skl", 5],
-      ["Spd", 7],
-      ["Lck", 7],
-      ["Def", 5],
-      ["Res", 0],
-      ["Con", 6],
-      ["Mov", 5],
-    ]
-  );
-  expect(maxStats).toStrictEqual(
-    [
-      ["HP", 60],
-      ["Pow", 20],
-      ["Skl", 20],
-      ["Spd", 20],
-      ["Lck", 30],
-      ["Def", 20],
-      ["Res", 20],
-      ["Con", 20],
-      ["Mov", 15],
-    ]
-  )
 });
 
 // previewMorph

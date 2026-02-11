@@ -12,11 +12,16 @@ from aenir._exceptions import InitError, UnitNotFoundError
 
 from dracogate._logging import logger
 
-def divide_stat_by_100(stat_pair):
+def bundle_stats(morph):
     """
     """
-    key, value = stat_pair
-    return (key, value / 100)
+    stats = []
+    current_stats = morph.current_stats.as_dict()
+    max_stats = morph.max_stats.as_dict()
+    absmax_stats = morph.Stats.ABSOLUTE_MAXES()
+    for indexno, stat in enumerate(morph.Stats.STAT_LIST()):
+        stats.append((stat, current_stats[stat] / 100, max_stats[stat] / 100, absmax_stats[indexno]))
+    return stats
 
 class MorphViewSet(viewsets.ViewSet):
     """
@@ -50,12 +55,12 @@ class MorphViewSet(viewsets.ViewSet):
         try:
             morph = get_morph(game_no, name, **kwargs)
             morph._set_max_level()
+            # name, current, max, absMax
+            stats = bundle_stats(morph)
             data = {
-                "currentCls": morph.current_cls,
-                "currentLv": morph.current_lv,
-                "currentStats": list(map(divide_stat_by_100, morph.current_stats.as_list())),
-                "maxStats": list(map(divide_stat_by_100, morph.max_stats.as_list())),
-                "maxLv": morph.max_level,
+                "unitClass": morph.current_cls,
+                "level": (morph.current_lv, morph.max_level),
+                "stats": stats,
             }
         except InitError as e:
             data = {"missingParams": e.init_params}
