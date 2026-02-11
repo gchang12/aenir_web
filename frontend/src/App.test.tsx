@@ -21,19 +21,12 @@ import {
   previewMorph,
 } from "./App";
 
-// TEST SKELETON
-
-test("This is a test skeleton that demonstrates various features of the vitest testing framework.", () => {
-  expect([]).toStrictEqual([])
-  expect(2).toBe(2)
-});
-
-// getMorph
+// getMorph(game_no, name, { father, hard_mode, number_of_declines, route, lyn_mode })
 
 describe("FE6 Roy", () => {
+  const game_no = 6;
+  const name = "Roy";
   test("successful request for stat-data.", async () => {
-    const game_no = 6;
-    const name = "Roy";
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
     const { unitClass, level, stats } = morph;
@@ -54,8 +47,6 @@ describe("FE6 Roy", () => {
     );
   });
   test("input of invalid options and that they are ignored.", async () => {
-    const game_no = 6;
-    const name = "Roy";
     const kwargs = {"nonsensical": "stuff"};
     const morph = await getMorph(game_no, name, kwargs);
     const { unitClass, level, stats } = morph;
@@ -77,18 +68,11 @@ describe("FE6 Roy", () => {
   });
 });
 
-/*
-  father
-  hard_mode
-  number_of_declines
-  route
-  lyn_mode
-*/
-
+// father
 describe("FE4 Lakche", () => {
+  const game_no = 4;
+  const name = "Lakche";
   test("successful request for stat-data.", async () => {
-    const game_no = 4;
-    const name = "Lakche";
     const kwargs = {"father": "Lex"};
     const morph = await getMorph(game_no, name, kwargs);
     const { unitClass, level, stats } = morph;
@@ -108,8 +92,6 @@ describe("FE4 Lakche", () => {
     );
   });
   test("unsuccessful request for stat-data.", async () => {
-    const game_no = 4;
-    const name = "Lakche";
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
     const { missingParams } = morph;
@@ -132,139 +114,144 @@ describe("FE4 Lakche", () => {
   });
 });
 
+// hard_mode
 describe("FE6 Rutger", () => {
+  const game_no = 6;
+  const name = "Rutger";
   test("unsuccessful request for stat-data.", async () => {
-    const game_no = 6;
-    const name = "Rutger";
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
     const { missingParams } = morph;
     expect(missingParams["hard_mode"]).toStrictEqual([false, true]);
   });
   test("successful request for stat-data.", async () => {
-    const game_no = 6;
-    const name = "Rutger";
     const kwargs = {"hard_mode": true};
     const morph = await getMorph(game_no, name, kwargs);
     const { missingParams } = morph;
-    expect(missingParams).toBe(undefined);
+    expect(missingParams).toBeUndefined();
   });
 });
 
+//  number_of_declines
 describe("FE6 Hugh", () => {
+  const game_no = 6;
+  const name = "Hugh";
   test("unsuccessful request for stat-data.", async () => {
-    const game_no = 6;
-    const name = "Hugh";
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
     const { missingParams } = morph;
     expect(missingParams["number_of_declines"]).toStrictEqual([0, 1, 2, 3]);
   });
   test("successful request for stat-data.", async () => {
-    const game_no = 6;
-    const name = "Hugh";
     const kwargs = {"number_of_declines": 3};
     const morph = await getMorph(game_no, name, kwargs);
     const { missingParams } = morph;
-    expect(missingParams).toBe(undefined);
+    expect(missingParams).toBeUndefined();
   });
   test("another unsuccessful request for stat-data, providing an invalid option-value.", async () => {
-    const game_no = 6;
-    const name = "Hugh";
     const kwargs = {"number_of_declines": 4};
     const morph = await getMorph(game_no, name, kwargs);
     const { missingParams } = morph;
-    expect(missingParams).not.toBe(undefined);
+    expect(missingParams).not.toBeUndefined();
   });
 });
 
+// route
 describe("FE6 Gonzales", () => {
-  test("This test sends a successful request for Morph-data for FE6 Gonzales.", async () => {
-    const game_no = 6;
-    const name = "Gonzales";
+  const game_no = 6;
+  const name = "Gonzales";
+  test("successful request for stat-data.", async () => {
     const kwargs = {"hard_mode": false, "route": "Lalum"};
     const morph = await getMorph(game_no, name, kwargs);
     const { missingParams } = morph;
-    expect(missingParams).toBe(undefined);
+    expect(missingParams).toBeUndefined();
   });
-  test("This test sends an unsuccessful request for Morph-data for FE6 Gonzales.", async () => {
-    const game_no = 6;
-    const name = "Gonzales";
+  test("unsuccessful request for stat-data, with 'route' parameter missing.", async () => {
     const kwargs = {"hard_mode": false};
     const morph = await getMorph(game_no, name, kwargs);
     const { missingParams } = morph;
     expect(missingParams["route"]).toStrictEqual(["Lalum", "Elphin"]);
   });
-});
-
-describe("FE7 Ninian", () => {
-  test("successful request for stat-data.", async () => {
-    const game_no = 7;
-    const name = "Ninian";
+  test("unsuccessful request for stat-data, with 'hard_mode' parameter missing.", async () => {
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
     const { missingParams } = morph;
-    expect(missingParams).toBe(undefined);
+    expect(missingParams["route"]).toStrictEqual(["Lalum", "Elphin"]);
+    expect(missingParams["hard_mode"]).toStrictEqual([false, true]);
   });
 });
 
+describe("FE7 Ninian", () => {
+  const game_no = 7;
+  const name = "Ninian";
+  test("successful request for stat-data.", async () => {
+    const kwargs = {};
+    const morph = await getMorph(game_no, name, kwargs);
+    const { missingParams } = morph;
+    expect(missingParams).toBeUndefined();
+  });
+});
+
+// lyn_mode
 describe("FE7 Nils", () => {
+  const game_no = 7;
+  const name = "Nils";
   test("unsuccessful request for stat-data.", async () => {
-    const game_no = 7;
-    const name = "Nils";
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
     const { missingParams } = morph;
     expect(missingParams["lyn_mode"]).toStrictEqual([false, true]);
   });
-
   test("successful request for stat-data.", async () => {
-    const game_no = 7;
-    const name = "Nils";
     const kwargs = {"lyn_mode": false};
     const morph = await getMorph(game_no, name, kwargs);
     const { missingParams } = morph;
-    expect(missingParams).toBe(undefined);
+    expect(missingParams).toBeUndefined();
   });
 });
 
-
-test("This test sends another successful request for Morph-data for FE6 Lyon.", async () => {
+describe("FE7 Nils", () => {
   const game_no = 8;
   const name = "Lyon";
-  const kwargs = {};
-  const morph = await getMorph(game_no, name, kwargs);
-  const { missingParams } = morph;
-  expect(missingParams).toBe(undefined);
+  test("a successful request for stat-data for an FE8 bonus unit.", async () => {
+    const kwargs = {};
+    const morph = await getMorph(game_no, name, kwargs);
+    const { missingParams } = morph;
+    expect(missingParams).toBeUndefined();
+  });
 });
 
-test("This test sends a request for Morph-data for a game that the aenir interface does not encompass.", async () => {
+describe("FE10 Ike (DNE)", () => {
   const game_no = 10;
   const name = "Ike";
-  // NOTE: I will have to exclude him.
-  const kwargs = {};
-  const morph = await getMorph(game_no, name, kwargs);
-  const { error } = morph;
-  expect(error).toBe("INVALID_GAME");
+  test("unsuccessful request for a game that aenir does not encompass.", async () => {
+    const kwargs = {};
+    const morph = await getMorph(game_no, name, kwargs);
+    const { error } = morph;
+    expect(error).toBe("INVALID_GAME");
+  });
 });
 
-test("This test sends a request for Morph-data for a unit that doesn't exist in any of the games that aenir encompasses.", async () => {
+describe("FE7 Marth (DNE)", () => {
   const game_no = 7;
   const name = "Marth";
-  // NOTE: I will have to exclude him.
-  const kwargs = {};
-  const morph = await getMorph(game_no, name, kwargs);
-  const { error } = morph;
-  expect(error).toBe("UNIT_DNE");
+  test("unsuccessful request for a unit that DNE.", async () => {
+    const kwargs = {};
+    const morph = await getMorph(game_no, name, kwargs);
+    const { error } = morph;
+    expect(error).toBe("UNIT_DNE");
+  });
 });
 
-test("This test sends an unsuccessful request for Morph-data for FE7 Lyn.", async () => {
+describe("FE7 Lyn", () => {
   const game_no = 7;
   const name = "Lyn";
-  const kwargs = {};
-  const morph = await getMorph(game_no, name, kwargs);
-  const { missingParams } = morph;
-  expect(missingParams["lyn_mode"]).toStrictEqual([false, true]);
+  test("unsuccessful request for stat-data, with 'lyn_mode' parameter missing..", async () => {
+    const kwargs = {};
+    const morph = await getMorph(game_no, name, kwargs);
+    const { missingParams } = morph;
+    expect(missingParams["lyn_mode"]).toStrictEqual([false, true]);
+  });
 });
 
 // previewMorph
