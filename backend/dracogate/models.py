@@ -21,6 +21,15 @@ class Morph(models.Model):
     """
     """
     id = models.CharField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    deadlords = models.ManyToManyField(to=Deadlords)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+    )
+    deadlords = models.ManyToManyField(
+        to=Deadlords,
+    )
     history = models.JSONField()
+    #game_no = models.PositiveSmallIntegerField()
+    #unit_name = models.PositiveSmallIntegerField()
+    #init_kwargs = models.JSONField()
