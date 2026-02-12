@@ -76,11 +76,36 @@ export {
   previewMorph,
 };
 
+function ProfileHead({gameTitle, unitName}) {
+  return (
+    <>
+    <h1>{gameTitle}</h1>
+    <h2>{unitName}</h2>
+    </>
+  );
+};
+
+function ProfileInfo({unitClass, level}) {
+  const [currentLv, maxLv] = level;
+  return (
+    <>
+    <tr>
+      <th>Class</th>
+      <td>{unitClass}</td>
+    </tr>
+    <tr>
+      <th>Lv</th>
+      <td>{currentLv} / {maxLv}</td>
+    </tr>
+    </>
+  );
+};
+
 function StatTable({stats, highlight}) {
+  const className = highlight === true ? "maxed-stat" : undefined;
   return (
     <>
     {stats.map(([stat, currentValue, localMax, absMax]) => {
-      const className = highlight === true ? "maxed-stat" : undefined;
       return (
         <tr key={stat} className={currentValue === localMax ? className : undefined}>
           <td>{currentValue}</td>
