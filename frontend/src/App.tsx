@@ -85,9 +85,9 @@ function GameSelect() {
             <figure>
               <figcaption>Game Name</figcaption>
               <img src="" />
-            gameId
-            title
-            releaseDate
+              gameId
+              title
+              releaseDate
             </figure>
           </Link>
         </li>
