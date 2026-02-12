@@ -45,7 +45,7 @@ describe("FE6 Roy", () => {
     })
   );
 
-  // beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
+  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
   const game_no = 6;
   const name = "Roy";
   test("successful request for stat-data.", async () => {
@@ -134,7 +134,7 @@ describe("FE4 Lakche", () => {
     })
   );
 
-  // beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
+  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
   const game_no = 4;
   const name = "Lakche";
   test("successful request for stat-data.", async () => {
@@ -197,7 +197,7 @@ describe("FE6 Rutger", () => {
     })
   );
 
-  // beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
+  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 6;
   const name = "Rutger";
@@ -233,7 +233,7 @@ describe("FE6 Hugh", () => {
     })
   );
 
-  // beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
+  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 6;
   const name = "Hugh";
@@ -281,7 +281,7 @@ describe("FE6 Gonzales", () => {
     })
   );
 
-  // beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
+  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
   const game_no = 6;
   const name = "Gonzales";
   test("successful request for stat-data.", async () => {
@@ -318,7 +318,7 @@ describe("FE7 Ninian", () => {
     })
   );
 
-  // beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
+  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
   const game_no = 7;
   const name = "Ninian";
   test("successful request for stat-data.", async () => {
@@ -346,7 +346,7 @@ describe("FE7 Nils", () => {
     })
   );
 
-  // beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
+  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
   const game_no = 7;
   const name = "Nils";
   test("unsuccessful request for stat-data.", async () => {
@@ -373,7 +373,7 @@ describe("FE8 Lyon", () => {
     })
   );
 
-  // beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
+  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
   const game_no = 8;
   const name = "Lyon";
   test("a successful request for stat-data for an FE8 bonus unit.", async () => {
@@ -394,7 +394,7 @@ describe("FE10 Ike (DNE)", () => {
     })
   );
 
-  // beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
+  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
   const game_no = 10;
   const name = "Ike";
   test("unsuccessful request for a game that aenir does not encompass.", async () => {
@@ -415,7 +415,7 @@ describe("FE7 Marth (DNE)", () => {
     })
   );
 
-  // beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
+  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
   const game_no = 7;
   const name = "Marth";
   test("unsuccessful request for a unit that DNE.", async () => {
@@ -439,7 +439,7 @@ describe("FE7 Lyn", () => {
     })
   );
 
-  // beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
+  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
   const game_no = 7;
   const name = "Lyn";
   test("unsuccessful request for stat-data, with 'lyn_mode' parameter missing..", async () => {
