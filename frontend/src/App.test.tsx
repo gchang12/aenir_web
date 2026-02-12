@@ -73,7 +73,7 @@ describe("FE6 Roy", () => {
     const name = "Roy";
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
-    const { unitClass, level, stats } = morph;
+    const {unitClass, level, stats} = morph;
     expect(unitClass).toBe("Lord");
     expect(level).toEqual([1, 20]);
     expect(stats).toEqual(
@@ -96,7 +96,7 @@ describe("FE6 Roy", () => {
     const name = "Roy";
     const kwargs = {"nonsensical": "stuff"};
     const morph = await getMorph(game_no, name, kwargs);
-    const { unitClass, level, stats } = morph;
+    const {unitClass, level, stats} = morph;
     expect(unitClass).toBe("Lord");
     expect(level).toEqual([1, 20]);
     expect(stats).toEqual(
@@ -197,7 +197,7 @@ describe("FE4 Lakche", () => {
     const name = "Lakche";
     const kwargs = {"father": "Lex"};
     const morph = await getMorph(game_no, name, kwargs);
-    const { unitClass, level, stats } = morph;
+    const {unitClass, level, stats} = morph;
     expect(unitClass).toBe("Swordfighter");
     expect(level).toEqual([1, 20]);
     expect(stats).toEqual(
@@ -219,7 +219,7 @@ describe("FE4 Lakche", () => {
     const name = "Lakche";
     const kwargs = {"father": "Claude"};
     const morph = await getMorph(game_no, name, kwargs);
-    const { unitClass, level, stats } = morph;
+    const {unitClass, level, stats} = morph;
     expect(unitClass).toBe("Swordfighter");
     expect(level).toEqual([1, 20]);
     expect(stats).toEqual(
@@ -241,7 +241,7 @@ describe("FE4 Lakche", () => {
     const name = "Lakche";
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
-    const { missingParams } = morph;
+    const {missingParams} = morph;
     const fatherList = [
       "Arden",
       "Azel",
@@ -363,7 +363,7 @@ describe("FE6 Rutger", () => {
     const name = "Rutger";
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
-    const { missingParams } = morph;
+    const {missingParams} = morph;
     expect(missingParams["hard_mode"]).toEqual([false, true]);
   });
 
@@ -372,7 +372,7 @@ describe("FE6 Rutger", () => {
     const name = "Rutger";
     const kwargs = {"hard_mode": true};
     const morph = await getMorph(game_no, name, kwargs);
-    const { unitClass, level, stats } = morph;
+    const {unitClass, level, stats} = morph;
     expect(unitClass).toBe("Myrmidon");
     expect(level).toEqual([4, 20]);
     expect(stats).toEqual(
@@ -395,7 +395,7 @@ describe("FE6 Rutger", () => {
     const name = "Rutger";
     const kwargs = {"hard_mode": false};
     const morph = await getMorph(game_no, name, kwargs);
-    const { unitClass, level, stats } = morph;
+    const {unitClass, level, stats} = morph;
     expect(unitClass).toBe("Myrmidon");
     expect(level).toEqual([4, 20]);
     expect(stats).toEqual(
@@ -500,7 +500,7 @@ describe("FE6 Hugh", () => {
     const name = "Hugh";
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
-    const { missingParams } = morph;
+    const {missingParams} = morph;
     expect(missingParams["number_of_declines"]).toEqual([0, 1, 2, 3]);
   });
 
@@ -509,7 +509,7 @@ describe("FE6 Hugh", () => {
     const name = "Hugh";
     const kwargs = {"number_of_declines": 0};
     const morph = await getMorph(game_no, name, kwargs);
-    const { unitClass, level, stats } = morph;
+    const {unitClass, level, stats} = morph;
     expect(unitClass).toBe("Mage");
     expect(level).toEqual([15, 20]);
     expect(stats).toEqual(
@@ -532,7 +532,7 @@ describe("FE6 Hugh", () => {
     const name = "Hugh";
     const kwargs = {"number_of_declines": 2};
     const morph = await getMorph(game_no, name, kwargs);
-    const { unitClass, level, stats } = morph;
+    const {unitClass, level, stats} = morph;
     expect(unitClass).toBe("Mage");
     expect(level).toEqual([15, 20]);
     expect(stats).toEqual(
@@ -555,7 +555,7 @@ describe("FE6 Hugh", () => {
     const name = "Hugh";
     const kwargs = {"number_of_declines": 4};
     const morph = await getMorph(game_no, name, kwargs);
-    const { missingParams } = morph;
+    const {missingParams} = morph;
     expect(missingParams).not.toBeUndefined();
   });
 
@@ -657,7 +657,7 @@ describe("FE6 Gonzales", () => {
     const name = "Gonzales";
     const kwargs = {"hard_mode": false, "route": "Lalum"};
     const morph = await getMorph(game_no, name, kwargs);
-    const { missingParams } = morph;
+    const {missingParams} = morph;
     expect(missingParams).toBeUndefined();
   });
 
@@ -666,7 +666,7 @@ describe("FE6 Gonzales", () => {
     const name = "Gonzales";
     const kwargs = {"hard_mode": false, "route": "Lalum"};
     const morph = await getMorph(game_no, name, kwargs);
-    const { unitClass, level, stats } = morph;
+    const {unitClass, level, stats} = morph;
     expect(unitClass).toBe("Bandit");
     expect(level).toEqual([5, 20]);
     expect(stats).toEqual(
@@ -689,7 +689,7 @@ describe("FE6 Gonzales", () => {
     const name = "Gonzales";
     const kwargs = {"hard_mode": true, "route": "Lalum"};
     const morph = await getMorph(game_no, name, kwargs);
-    const { unitClass, level, stats } = morph;
+    const {unitClass, level, stats} = morph;
     expect(unitClass).toBe("Bandit");
     expect(level).toEqual([5, 20]);
     expect(stats).toEqual(
@@ -712,7 +712,7 @@ describe("FE6 Gonzales", () => {
     const name = "Gonzales";
     const kwargs = {"hard_mode": false};
     const morph = await getMorph(game_no, name, kwargs);
-    const { missingParams } = morph;
+    const {missingParams} = morph;
     expect(missingParams["route"]).toEqual(["Lalum", "Elphin"]);
   });
 
@@ -721,7 +721,7 @@ describe("FE6 Gonzales", () => {
     const name = "Gonzales";
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
-    const { missingParams } = morph;
+    const {missingParams} = morph;
     expect(missingParams["route"]).toEqual(["Lalum", "Elphin"]);
     expect(missingParams["hard_mode"]).toEqual([false, true]);
   });
@@ -778,7 +778,7 @@ describe("FE7 Ninian", () => {
     const name = "Ninian";
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
-    const { missingParams } = morph;
+    const {missingParams} = morph;
     expect(missingParams).toBeUndefined();
   });
 
@@ -821,7 +821,7 @@ describe("FE7 Nils", () => {
     const name = "Nils";
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
-    const { missingParams } = morph;
+    const {missingParams} = morph;
     expect(missingParams["lyn_mode"]).toEqual([false, true]);
   });
 
@@ -830,7 +830,7 @@ describe("FE7 Nils", () => {
     const name = "Nils";
     const kwargs = {"lyn_mode": false};
     const morph = await getMorph(game_no, name, kwargs);
-    const { unitClass, level, stats } = morph;
+    const {unitClass, level, stats} = morph;
     expect(unitClass).toBe("Bard");
     expect(level).toEqual([1, 20]);
     expect(stats).toEqual(
@@ -853,7 +853,7 @@ describe("FE7 Nils", () => {
     const name = "Nils";
     const kwargs = {"lyn_mode": true};
     const morph = await getMorph(game_no, name, kwargs);
-    const { unitClass, level, stats } = morph;
+    const {unitClass, level, stats} = morph;
     expect(unitClass).toBe("Bard");
     expect(level).toEqual([1, 20]);
     expect(stats).toEqual(
@@ -920,7 +920,7 @@ describe("FE8 Lyon", () => {
     const name = "Lyon";
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
-    const { missingParams } = morph;
+    const {missingParams} = morph;
     expect(missingParams).toBeUndefined();
   });
 
@@ -943,7 +943,7 @@ describe("FE10 Ike (DNE)", () => {
     const name = "Ike";
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
-    const { error } = morph;
+    const {error} = morph;
     expect(error).toBe("INVALID_GAME");
   });
 
@@ -953,7 +953,7 @@ describe("FE10 Ike (DNE)", () => {
     const kwargs = {};
     const {morph, missingParams} = await previewMorph(game_no, name, kwargs);
     expect(missingParams).toBeUndefined();
-    const { error } = morph;
+    const {error} = morph;
     expect(error).toBe("INVALID_GAME");
   });
 
@@ -977,7 +977,7 @@ describe("FE7 Marth (DNE)", () => {
     const kwargs = {};
     const {morph, missingParams} = await previewMorph(game_no, name, kwargs);
     expect(missingParams).toBeUndefined();
-    const { error } = morph;
+    const {error} = morph;
     expect(error).toBe("UNIT_DNE");
   });
 
@@ -986,7 +986,7 @@ describe("FE7 Marth (DNE)", () => {
     const name = "Marth";
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
-    const { error } = morph;
+    const {error} = morph;
     expect(error).toBe("UNIT_DNE");
   });
 
@@ -1047,7 +1047,7 @@ describe("FE7 Lyn", () => {
     const name = "Lyn";
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
-    const { missingParams } = morph;
+    const {missingParams} = morph;
     expect(missingParams["lyn_mode"]).toEqual([false, true]);
   });
 
@@ -1056,7 +1056,7 @@ describe("FE7 Lyn", () => {
     const name = "Lyn";
     const kwargs = {"lyn_mode": true};
     const morph = await getMorph(game_no, name, kwargs);
-    const { unitClass, level, stats } = morph;
+    const {unitClass, level, stats} = morph;
     expect(unitClass).toBe("Lord");
     expect(level).toEqual([1, 20]);
     expect(stats).toEqual(
@@ -1079,7 +1079,7 @@ describe("FE7 Lyn", () => {
     const name = "Lyn";
     const kwargs = {"lyn_mode": false};
     const morph = await getMorph(game_no, name, kwargs);
-    const { unitClass, level, stats } = morph;
+    const {unitClass, level, stats} = morph;
     expect(unitClass).toBe("Lord");
     expect(level).toEqual([4, 20]);
     expect(stats).toEqual(
