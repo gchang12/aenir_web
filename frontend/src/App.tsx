@@ -76,6 +76,25 @@ export {
   previewMorph,
 };
 
+function StatTable({stats, highlight}) {
+  return (
+    <>
+    {stats.map(([stat, currentValue, localMax, absMax]) => {
+      const className = highlight === true ? "maxed-stat" : undefined;
+      return (
+        <tr key={stat} className={currentValue === localMax ? className : undefined}>
+          <td>{currentValue}</td>
+          <td>
+            <meter min="0" value={currentValue} max={absMax} high={localMax}></meter>
+          </td>
+        </tr>
+      );
+    })
+    }
+    </>
+  );
+};
+
 function GameSelect() {
   return (
     <nav>
