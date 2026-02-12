@@ -171,6 +171,21 @@ describe("FE4 Lakche", () => {
             ["Res", 1, 15, 30],
           ],
         };
+      } else if (father === "Arden") {
+        morph = {
+          unitClass: "Swordfighter",
+          level: [1, 20],
+          stats: [
+            ["HP", 31, 80, 80],
+            ["Str", 10, 22, 30],
+            ["Mag", 0, 15, 30],
+            ["Skl", 13, 25, 30],
+            ["Spd", 13, 25, 30],
+            ["Lck", 8, 30, 30],
+            ["Def", 7, 20, 30],
+            ["Res", 0, 15, 30],
+          ],
+        };
       };
       return HttpResponse.json(morph);
     })
@@ -245,6 +260,51 @@ describe("FE4 Lakche", () => {
     ];
     expect(missingParams["father"]).toEqual(fatherList);
   });
+
+  test("previewMorph: if return-value matches the expected when no kwargs are provided.", async () => {
+    const game_no = 4;
+    const name = "Lakche";
+    const kwargs = {"father": "Arden"};
+    const {morph} = await previewMorph(game_no, name, {});
+    const morph2 = await getMorph(game_no, name, kwargs);
+    expect(morph).toEqual(morph2);
+  });
+
+  test("previewMorph: if return-value matches the expected when kwargs are provided.", async () => {
+    const game_no = 6;
+    const name = "Hugh";
+    const kwargs = {"father": "Lex"};
+    const {morph} = await previewMorph(game_no, name, kwargs);
+    const morph2 = await getMorph(game_no, name, kwargs);
+    expect(morph).toEqual(morph2);
+  });
+
+  test("previewMorph: if 'missingParams' is returned if kwargs are provided, and if morph is non-null.", async () => {
+    const game_no = 6;
+    const name = "Hugh";
+    const kwargs = {"father": "Claude"};
+    const {morph, missingParams} = await previewMorph(game_no, name, kwargs);
+    expect(missingParams).toEqual({father: [
+      "Arden",
+      "Azel",
+      "Alec",
+      "Claude",
+      "Jamka",
+      "Dew",
+      "Noish",
+      "Fin",
+      "Beowolf",
+      "Holyn",
+      "Midayle",
+      "Levin",
+      "Lex",
+    ]});
+    const {unitClass, level, stats} = morph;
+    expect(unitClass).not.toBeUndefined();
+    expect(level).not.toBeUndefined();
+    expect(stats).not.toBeUndefined();
+  });
+
 
 });
 
@@ -354,6 +414,37 @@ describe("FE6 Rutger", () => {
       ]
     );
   });
+
+  test("previewMorph: if return-value matches the expected when no kwargs are provided.", async () => {
+    const game_no = 6;
+    const name = "Rutger";
+    const kwargs = {"hard_mode": false};
+    const {morph} = await previewMorph(game_no, name, {});
+    const morph2 = await getMorph(game_no, name, kwargs);
+    expect(morph).toEqual(morph2);
+  });
+
+  test("previewMorph: if return-value matches the expected when kwargs are provided.", async () => {
+    const game_no = 6;
+    const name = "Hugh";
+    const kwargs = {"hard_mode": false};
+    const {morph} = await previewMorph(game_no, name, kwargs);
+    const morph2 = await getMorph(game_no, name, kwargs);
+    expect(morph).toEqual(morph2);
+  });
+
+  test("previewMorph: if 'missingParams' is returned if kwargs are provided, and if morph is non-null.", async () => {
+    const game_no = 6;
+    const name = "Hugh";
+    const kwargs = {"hard_mode": false};
+    const {morph, missingParams} = await previewMorph(game_no, name, kwargs);
+    expect(missingParams).toEqual({hard_mode: [false, true]});
+    const {unitClass, level, stats} = morph;
+    expect(unitClass).not.toBeUndefined();
+    expect(level).not.toBeUndefined();
+    expect(stats).not.toBeUndefined();
+  });
+
 
 });
 
@@ -469,6 +560,36 @@ describe("FE6 Hugh", () => {
     const morph = await getMorph(game_no, name, kwargs);
     const { missingParams } = morph;
     expect(missingParams).not.toBeUndefined();
+  });
+
+  test("previewMorph: if return-value matches the expected when no kwargs are provided.", async () => {
+    const game_no = 6;
+    const name = "Hugh";
+    const kwargs = {"number_of_declines": 0};
+    const {morph} = await previewMorph(game_no, name, {});
+    const morph2 = await getMorph(game_no, name, kwargs);
+    expect(morph).toEqual(morph2);
+  });
+
+  test("previewMorph: if return-value matches the expected when kwargs are provided.", async () => {
+    const game_no = 6;
+    const name = "Hugh";
+    const kwargs = {"number_of_declines": 2};
+    const {morph} = await previewMorph(game_no, name, kwargs);
+    const morph2 = await getMorph(game_no, name, kwargs);
+    expect(morph).toEqual(morph2);
+  });
+
+  test("previewMorph: if 'missingParams' is returned if kwargs are provided, and if morph is non-null.", async () => {
+    const game_no = 6;
+    const name = "Hugh";
+    const kwargs = {"number_of_declines": 2};
+    const {morph, missingParams} = await previewMorph(game_no, name, kwargs);
+    expect(missingParams).toEqual({"number_of_declines": [0, 1, 2, 3]});
+    const {unitClass, level, stats} = morph;
+    expect(unitClass).not.toBeUndefined();
+    expect(level).not.toBeUndefined();
+    expect(stats).not.toBeUndefined();
   });
 
 });
@@ -609,6 +730,36 @@ describe("FE6 Gonzales", () => {
     expect(missingParams["hard_mode"]).toEqual([false, true]);
   });
 
+  test("previewMorph: if return-value matches the expected when no kwargs are provided.", async () => {
+    const game_no = 6;
+    const name = "Gonzales";
+    const kwargs = {"hard_mode": false, "route": "Lalum"};
+    const {morph} = await previewMorph(game_no, name, {});
+    const morph2 = await getMorph(game_no, name, kwargs);
+    expect(morph).toEqual(morph2);
+  });
+
+  test("previewMorph: if return-value matches the expected when kwargs are provided.", async () => {
+    const game_no = 6;
+    const name = "Gonzales";
+    const kwargs = {"hard_mode": true, "route": "Elphin"};
+    const {morph} = await previewMorph(game_no, name, kwargs);
+    const morph2 = await getMorph(game_no, name, kwargs);
+    expect(morph).toEqual(morph2);
+  });
+
+  test("previewMorph: if 'missingParams' is returned if kwargs are provided, and if morph is non-null.", async () => {
+    const game_no = 6;
+    const name = "Gonzales";
+    const kwargs = {"hard_mode": true, "route": "Lalum"};
+    const {morph, missingParams} = await previewMorph(game_no, name, kwargs);
+    expect(missingParams).toEqual({"hard_mode": [false, true], "route": ["Lalum", "Elphin"]});
+    const {unitClass, level, stats} = morph;
+    expect(unitClass).not.toBeUndefined();
+    expect(level).not.toBeUndefined();
+    expect(stats).not.toBeUndefined();
+  });
+
 });
 
 describe("FE7 Ninian", () => {
@@ -723,6 +874,36 @@ describe("FE7 Nils", () => {
         ["Mov", 5, 15, 15],
       ]
     );
+  });
+
+  test("previewMorph: if return-value matches the expected when no kwargs are provided.", async () => {
+    const game_no = 7;
+    const name = "Nils";
+    const kwargs = {"lyn_mode": false};
+    const {morph} = await previewMorph(game_no, name, {});
+    const morph2 = await getMorph(game_no, name, kwargs);
+    expect(morph).toEqual(morph2);
+  });
+
+  test("previewMorph: if return-value matches the expected when kwargs are provided.", async () => {
+    const game_no = 7;
+    const name = "Nils";
+    const kwargs = {"lyn_mode": true};
+    const {morph} = await previewMorph(game_no, name, kwargs);
+    const morph2 = await getMorph(game_no, name, kwargs);
+    expect(morph).toEqual(morph2);
+  });
+
+  test("previewMorph: if 'missingParams' is returned if kwargs are provided, and if morph is non-null.", async () => {
+    const game_no = 7;
+    const name = "Nils";
+    const kwargs = {"lyn_mode": true};
+    const {morph, missingParams} = await previewMorph(game_no, name, kwargs);
+    expect(missingParams).toEqual({lyn_mode: [false, true]});
+    const {unitClass, level, stats} = morph;
+    expect(unitClass).not.toBeUndefined();
+    expect(level).not.toBeUndefined();
+    expect(stats).not.toBeUndefined();
   });
 
 });
@@ -931,6 +1112,15 @@ describe("FE7 Lyn", () => {
     expect(morph).toEqual(morph2);
   });
 
+  test("previewMorph: if return-value matches the expected when kwargs are provided.", async () => {
+    const game_no = 7;
+    const name = "Lyn";
+    const kwargs = {"lyn_mode": true};
+    const {morph} = await previewMorph(game_no, name, kwargs);
+    const morph2 = await getMorph(game_no, name, kwargs);
+    expect(morph).toEqual(morph2);
+  });
+
   test("previewMorph: if 'missingParams' is returned if kwargs are provided, and if morph is non-null.", async () => {
     const game_no = 7;
     const name = "Lyn";
@@ -944,7 +1134,3 @@ describe("FE7 Lyn", () => {
   });
 
 });
-
-// previewMorph
-// TODO: Test if the default-values match the expected when no kwargs are provided.
-// TODO: If a value is provided, test to see if missingParams is still returned.
