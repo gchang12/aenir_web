@@ -102,6 +102,30 @@ class FatheredUnit(TestCase):
         }
         self.assertDictEqual(actual, expected)
 
+    def test_get_morph__verify_success_alt(self):
+        """
+        """
+        url = self.url
+        kwargs = self.kwargs
+        kwargs.update({"father": "Claude"})
+        response = self.client.get(url, data=kwargs)
+        actual = response.data
+        expected = {
+            "unitClass": "Swordfighter",
+            "level": (1, 20),
+            "stats": [
+                ("HP", 29.0, 80.0, 80),
+                ("Str", 9.0, 22.0, 30),
+                ("Mag", 1.0, 15.0, 30),
+                ("Skl", 13.0, 25.0, 30),
+                ("Spd", 13.0, 25.0, 30),
+                ("Lck", 9.0, 30.0, 30),
+                ("Def", 6.0, 20.0, 30),
+                ("Res", 1.0, 15.0, 30),
+            ],
+        }
+        self.assertDictEqual(actual, expected)
+
     def test_get_morph__verify_error(self):
         """
         """
@@ -141,7 +165,7 @@ class HardModeUnit(TestCase):
         """
         game_no = 6
         name = "Rutger"
-        options = {"hard_mode": "true"}
+        options = {"hard_mode": "false"}
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
@@ -153,7 +177,48 @@ class HardModeUnit(TestCase):
         url = self.url
         kwargs = self.kwargs
         response = self.client.get(url, data=kwargs)
-        self.assertNotIn("missingParams", response.data)
+        actual = response.data
+        expected = {
+            "unitClass": "Myrmidon",
+            "level": (4, 20),
+            "stats": [
+                ("HP", 22.0, 60.0, 80),
+                ("Pow", 7.0, 20.0, 30),
+                ("Skl", 12.0, 20.0, 30),
+                ("Spd", 13.0, 20.0, 30),
+                ("Lck", 2.0, 30.0, 30),
+                ("Def", 5.0, 20.0, 30),
+                ("Res", 0.0, 20.0, 30),
+                ("Con", 7.0, 20.0, 25),
+                ("Mov", 5.0, 15.0, 15),
+            ],
+        }
+        self.assertDictEqual(actual, expected)
+
+    def test_get_morph__verify_success_alt(self):
+        """
+        """
+        url = self.url
+        kwargs = self.kwargs
+        kwargs.update({'hard_mode': 'true'})
+        response = self.client.get(url, data=kwargs)
+        actual = response.data
+        expected = {
+            "unitClass": "Myrmidon",
+            "level": (4, 20),
+            "stats": [
+                ("HP", 26.0, 60.0, 80),
+                ("Pow", 9.0, 20.0, 30),
+                ("Skl", 14.0, 20.0, 30),
+                ("Spd", 15.0, 20.0, 30),
+                ("Lck", 4.0, 30.0, 30),
+                ("Def", 6.0, 20.0, 30),
+                ("Res", 1.0, 20.0, 30),
+                ("Con", 7.0, 20.0, 25),
+                ("Mov", 5.0, 15.0, 15),
+            ],
+        }
+        self.assertDictEqual(actual, expected)
 
     def test_get_morph__verify_error(self):
         """
@@ -180,7 +245,7 @@ class DeclinableUnit(TestCase):
         """
         game_no = 6
         name = "Hugh"
-        options = {"number_of_declines": 3}
+        options = {"number_of_declines": 0}
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
@@ -192,19 +257,98 @@ class DeclinableUnit(TestCase):
         url = self.url
         kwargs = self.kwargs
         response = self.client.get(url, data=kwargs)
-        self.assertNotIn("missingParams", response.data)
+        actual = response.data
+        expected = {
+            "unitClass": "Mage",
+            "level": (15, 20),
+            "stats": [
+                ("HP", 26.0, 60.0, 80),
+                ("Pow", 13.0, 20.0, 30),
+                ("Skl", 11.0, 20.0, 30),
+                ("Spd", 12.0, 20.0, 30),
+                ("Lck", 10.0, 30.0, 30),
+                ("Def", 9.0, 20.0, 30),
+                ("Res", 9.0, 20.0, 30),
+                ("Con", 7.0, 20.0, 25),
+                ("Mov", 5.0, 15.0, 15),
+            ],
+        }
+        self.assertDictEqual(actual, expected)
 
-    def test_get_morph__verify_invalid_values(self):
+    def test_get_morph__verify_success_alt1(self):
         """
         """
         url = self.url
         kwargs = self.kwargs
-        kwargs["number_of_declines"] = 4
+        kwargs.update({"number_of_declines": 1})
         response = self.client.get(url, data=kwargs)
-        self.assertIn("missingParams", response.data)
-        actual = set(response.data['missingParams'])
-        expected = {"number_of_declines"}
-        self.assertSetEqual(actual, expected)
+        actual = response.data
+        expected = {
+            "unitClass": "Mage",
+            "level": (15, 20),
+            "stats": [
+                ("HP", 25.0, 60.0, 80),
+                ("Pow", 12.0, 20.0, 30),
+                ("Skl", 10.0, 20.0, 30),
+                ("Spd", 11.0, 20.0, 30),
+                ("Lck", 9.0, 30.0, 30),
+                ("Def", 8.0, 20.0, 30),
+                ("Res", 8.0, 20.0, 30),
+                ("Con", 7.0, 20.0, 25),
+                ("Mov", 5.0, 15.0, 15),
+            ],
+        }
+        self.assertDictEqual(actual, expected)
+
+    def test_get_morph__verify_success_alt2(self):
+        """
+        """
+        url = self.url
+        kwargs = self.kwargs
+        kwargs.update({"number_of_declines": 2})
+        response = self.client.get(url, data=kwargs)
+        actual = response.data
+        expected = {
+            "unitClass": "Mage",
+            "level": (15, 20),
+            "stats": [
+                ("HP", 24.0, 60.0, 80),
+                ("Pow", 11.0, 20.0, 30),
+                ("Skl", 9.0, 20.0, 30),
+                ("Spd", 10.0, 20.0, 30),
+                ("Lck", 8.0, 30.0, 30),
+                ("Def", 7.0, 20.0, 30),
+                ("Res", 7.0, 20.0, 30),
+                ("Con", 7.0, 20.0, 25),
+                ("Mov", 5.0, 15.0, 15),
+            ],
+        }
+        self.assertDictEqual(actual, expected)
+
+    def test_get_morph__verify_success_alt3(self):
+        """
+        """
+        url = self.url
+        kwargs = self.kwargs
+        kwargs.update({"number_of_declines": 3})
+        response = self.client.get(url, data=kwargs)
+        actual = response.data
+        expected = {
+            "unitClass": "Mage",
+            "level": (15, 20),
+            "stats": [
+                ("HP", 23.0, 60.0, 80),
+                ("Pow", 10.0, 20.0, 30),
+                ("Skl", 8.0, 20.0, 30),
+                ("Spd", 9.0, 20.0, 30),
+                ("Lck", 7.0, 30.0, 30),
+                ("Def", 6.0, 20.0, 30),
+                ("Res", 6.0, 20.0, 30),
+                ("Con", 7.0, 20.0, 25),
+                ("Mov", 5.0, 15.0, 15),
+            ],
+        }
+        self.assertDictEqual(actual, expected)
 
     def test_get_morph__verify_error(self):
         """
@@ -220,6 +364,18 @@ class DeclinableUnit(TestCase):
         actual = response.data["missingParams"]["number_of_declines"]
         expected = (0, 1, 2, 3)
         self.assertTupleEqual(actual, expected)
+
+    def test_get_morph__verify_invalid_values(self):
+        """
+        """
+        url = self.url
+        kwargs = self.kwargs
+        kwargs["number_of_declines"] = 4
+        response = self.client.get(url, data=kwargs)
+        self.assertIn("missingParams", response.data)
+        actual = set(response.data['missingParams'])
+        expected = {"number_of_declines"}
+        self.assertSetEqual(actual, expected)
 
 class Gonzales(TestCase):
     """
@@ -243,7 +399,98 @@ class Gonzales(TestCase):
         url = self.url
         kwargs = self.kwargs
         response = self.client.get(url, data=kwargs)
-        self.assertNotIn("missingParams", response.data)
+        actual = response.data
+        expected = {
+            "unitClass": "Bandit",
+            "level": (5, 20),
+            "stats": [
+                ("HP", 36.0, 60.0, 80),
+                ("Pow", 12.0, 20.0, 30),
+                ("Skl", 5.0, 20.0, 30),
+                ("Spd", 9.0, 20.0, 30),
+                ("Lck", 5.0, 30.0, 30),
+                ("Def", 6.0, 20.0, 30),
+                ("Res", 0.0, 20.0, 30),
+                ("Con", 15.0, 20.0, 25),
+                ("Mov", 5.0, 15.0, 15),
+            ],
+        }
+        self.assertDictEqual(actual, expected)
+
+    def test_get_morph__verify_success__elphin_no_hm(self):
+        """
+        """
+        url = self.url
+        kwargs = self.kwargs
+        kwargs.update({"hard_mode": "false", "route": "Elphin"})
+        response = self.client.get(url, data=kwargs)
+        actual = response.data
+        expected = {
+            "unitClass": "Bandit",
+            "level": (11, 20),
+            "stats": [
+                ("HP", 36.0, 60.0, 80),
+                ("Pow", 12.0, 20.0, 30),
+                ("Skl", 5.0, 20.0, 30),
+                ("Spd", 9.0, 20.0, 30),
+                ("Lck", 5.0, 30.0, 30),
+                ("Def", 6.0, 20.0, 30),
+                ("Res", 0.0, 20.0, 30),
+                ("Con", 15.0, 20.0, 25),
+                ("Mov", 5.0, 15.0, 15),
+            ],
+        }
+        self.assertDictEqual(actual, expected)
+
+    def test_get_morph__verify_success__lalum_hm(self):
+        """
+        """
+        url = self.url
+        kwargs = self.kwargs
+        kwargs.update({"hard_mode": "true"})
+        response = self.client.get(url, data=kwargs)
+        actual = response.data
+        expected = {
+            "unitClass": "Bandit",
+            "level": (5, 20),
+            "stats": [
+                ("HP", 43.0, 60.0, 80),
+                ("Pow", 16.0, 20.0, 30),
+                ("Skl", 7.0, 20.0, 30),
+                ("Spd", 11.0, 20.0, 30),
+                ("Lck", 6.0, 30.0, 30),
+                ("Def", 7.0, 20.0, 30),
+                ("Res", 1.0, 20.0, 30),
+                ("Con", 15.0, 20.0, 25),
+                ("Mov", 5.0, 15.0, 15),
+            ],
+        }
+        self.assertDictEqual(actual, expected)
+
+    def test_get_morph__verify_success__elphin_hm(self):
+        """
+        """
+        url = self.url
+        kwargs = self.kwargs
+        kwargs.update({"hard_mode": "true", "route": "Elphin"})
+        response = self.client.get(url, data=kwargs)
+        actual = response.data
+        expected = {
+            "unitClass": "Bandit",
+            "level": (11, 20),
+            "stats": [
+                ("HP", 43.0, 60.0, 80),
+                ("Pow", 16.0, 20.0, 30),
+                ("Skl", 7.0, 20.0, 30),
+                ("Spd", 11.0, 20.0, 30),
+                ("Lck", 6.0, 30.0, 30),
+                ("Def", 7.0, 20.0, 30),
+                ("Res", 1.0, 20.0, 30),
+                ("Con", 15.0, 20.0, 25),
+                ("Mov", 5.0, 15.0, 15),
+            ],
+        }
+        self.assertDictEqual(actual, expected)
 
     def test_get_morph__verify_error1(self):
         """
@@ -306,13 +553,54 @@ class LyndisLeague(TestCase):
         expected = (False, True)
         self.assertTupleEqual(actual, expected)
 
-    def test_get_morph__verify_success(self):
+    def test_get_morph__verify_success__lyn_mode(self):
+        """
+        """
+        url = self.url
+        kwargs = self.kwargs
+        kwargs.update({"lyn_mode": "true"})
+        response = self.client.get(url, data=kwargs)
+        actual = response.data
+        expected = {
+            "unitClass": "Lord",
+            "level": (1, 20),
+            "stats": [
+                ("HP", 16.0, 60.0, 80),
+                ("Pow", 4.0, 20.0, 30),
+                ("Skl", 7.0, 20.0, 30),
+                ("Spd", 9.0, 20.0, 30),
+                ("Lck", 5.0, 30.0, 30),
+                ("Def", 2.0, 20.0, 30),
+                ("Res", 0.0, 20.0, 30),
+                ("Con", 5.0, 20.0, 25),
+                ("Mov", 5.0, 15.0, 15),
+            ],
+        }
+        self.assertDictEqual(actual, expected)
+
+    def test_get_morph__verify_success__no_lyn_mode(self):
         """
         """
         url = self.url
         kwargs = self.kwargs
         response = self.client.get(url, data=kwargs)
-        self.assertNotIn("missingParams", response.data)
+        actual = response.data
+        expected = {
+            "unitClass": "Lord",
+            "level": (4, 20),
+            "stats": [
+                ("HP", 18.0, 60.0, 80),
+                ("Pow", 5.0, 20.0, 30),
+                ("Skl", 10.0, 20.0, 30),
+                ("Spd", 11.0, 20.0, 30),
+                ("Lck", 5.0, 30.0, 30),
+                ("Def", 2.0, 20.0, 30),
+                ("Res", 0.0, 20.0, 30),
+                ("Con", 5.0, 20.0, 25),
+                ("Mov", 5.0, 15.0, 15),
+            ],
+        }
+        self.assertDictEqual(actual, expected)
 
 class Ninian(TestCase):
     """
@@ -329,7 +617,6 @@ class Ninian(TestCase):
         kwargs.update(options)
         self.kwargs = kwargs
         logger.debug("%s", self.id())
-        logger.debug("%s", self.id())
 
     def test_get_morph__verify_success(self):
         """
@@ -337,7 +624,6 @@ class Ninian(TestCase):
         url = self.url
         kwargs = self.kwargs
         response = self.client.get(url, data=kwargs)
-        self.assertNotIn("missingParams", response.data)
 
     def test_get_morph__verify_server_failure(self):
         """
@@ -372,18 +658,48 @@ class Nils(TestCase):
         kwargs = self.kwargs
         kwargs.update({"lyn_mode": "true"})
         response = self.client.get(url, data=kwargs)
-        self.assertNotIn("missingParams", response.data)
+        actual = response.data
+        expected = {
+            "unitClass": "Bard",
+            "level": (1, 20),
+            "stats": [
+                ("HP", 14.0, 60.0, 80),
+                ("Pow", 0.0, 10.0, 30),
+                ("Skl", 0.0, 10.0, 30),
+                ("Spd", 12.0, 30.0, 30),
+                ("Lck", 10.0, 30.0, 30),
+                ("Def", 5.0, 24.0, 30),
+                ("Res", 4.0, 26.0, 30),
+                ("Con", 3.0, 20.0, 25),
+                ("Mov", 5.0, 15.0, 15),
+            ],
+        }
+        self.assertDictEqual(actual, expected)
 
-    def test_get_morph__verify_server_failure(self):
+    def test_get_morph__verify_success_alt(self):
         """
         """
         url = self.url
         kwargs = self.kwargs
         kwargs.update({"lyn_mode": "false"})
         response = self.client.get(url, data=kwargs)
-        expected = {"unitClass", "level", "stats"}
-        actual = set(response.data.keys())
-        self.assertSetEqual(actual, expected)
+        actual = response.data
+        expected = {
+            "unitClass": "Bard",
+            "level": (1, 20),
+            "stats": [
+                ("HP", 14.0, 60.0, 80),
+                ("Pow", 0.0, 10.0, 30),
+                ("Skl", 0.0, 10.0, 30),
+                ("Spd", 12.0, 30.0, 30),
+                ("Lck", 10.0, 30.0, 30),
+                ("Def", 5.0, 24.0, 30),
+                ("Res", 4.0, 26.0, 30),
+                ("Con", 3.0, 20.0, 25),
+                ("Mov", 5.0, 15.0, 15),
+            ],
+        }
+        self.assertDictEqual(actual, expected)
 
 class BonusUnit(TestCase):
     """
