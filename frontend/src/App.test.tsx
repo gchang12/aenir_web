@@ -21,35 +21,33 @@ import {
   previewMorph,
 } from "./App";
 
-// TODO: Figure out the point of this before mindlessly putting it in everywhere.
-/*
-const server = setupServer(
-  http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
-    return HttpResponse.json({
-      unitClass: "Lord",
-      level: [1, 20],
-      stats: [
-        ["HP", 18, 60, 80],
-        ["Pow", 5, 20, 30],
-        ["Skl", 5, 20, 30],
-        ["Spd", 7, 20, 30],
-        ["Lck", 7, 30, 30],
-        ["Def", 5, 20, 30],
-        ["Res", 0, 20, 30],
-        ["Con", 6, 20, 25],
-        ["Mov", 5, 15, 15],
-      ],
-    });
-  });
-);
-beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
-*/
-
 // getMorph(game_no, name, { father, hard_mode, number_of_declines, route, lyn_mode })
 
 describe("FE6 Roy", () => {
+
+  const server = setupServer(
+    http.get("http://localhost:8000/dracogate/api/morphs/", () => {
+      return HttpResponse.json({
+        unitClass: "Lord",
+        level: [1, 20],
+        stats: [
+          ["HP", 18, 60, 80],
+          ["Pow", 5, 20, 30],
+          ["Skl", 5, 20, 30],
+          ["Spd", 7, 20, 30],
+          ["Lck", 7, 30, 30],
+          ["Def", 5, 20, 30],
+          ["Res", 0, 20, 30],
+          ["Con", 6, 20, 25],
+          ["Mov", 5, 15, 15],
+        ],
+      });
+    })
+  );
+
+  beforeAll(() => server.listen());
+  afterEach(() => server.resetHandlers());
+  afterAll(() => server.close());
   const game_no = 6;
   const name = "Roy";
   test("successful request for stat-data.", async () => {
@@ -96,6 +94,51 @@ describe("FE6 Roy", () => {
 
 // father
 describe("FE4 Lakche", () => {
+
+  const server = setupServer(
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({params, request}) => {
+      const {game_no, name} = params;
+      const father = new URL(request.url).searchParams.get("father");
+      let morph;
+      if (father == null) {
+        morph = {missingParams: {father: [
+          "Arden",
+          "Azel",
+          "Alec",
+          "Claude",
+          "Jamka",
+          "Dew",
+          "Noish",
+          "Fin",
+          "Beowolf",
+          "Holyn",
+          "Midayle",
+          "Levin",
+          "Lex",
+        ]}};
+      } else {
+        morph = {
+          unitClass: "Swordfighter",
+          level: [1, 20],
+          stats: [
+            ["HP", 30, 80, 80],
+            ["Str", 10, 22, 30],
+            ["Mag", 0, 15, 30],
+            ["Skl", 13, 25, 30],
+            ["Spd", 13, 25, 30],
+            ["Lck", 8, 30, 30],
+            ["Def", 7, 20, 30],
+            ["Res", 0, 15, 30],
+          ],
+        };
+      };
+      return HttpResponse.json(morph);
+    })
+  );
+
+  beforeAll(() => server.listen());
+  afterEach(() => server.resetHandlers());
+  afterAll(() => server.close());
   const game_no = 4;
   const name = "Lakche";
   test("successful request for stat-data.", async () => {
@@ -142,6 +185,26 @@ describe("FE4 Lakche", () => {
 
 // hard_mode
 describe("FE6 Rutger", () => {
+
+  const server = setupServer(
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({params, request}) => {
+      const {game_no, name} = params;
+      const url = new URL(request.url);
+      const hard_mode = url.searchParams.get("hard_mode");
+      let morph;
+      if (hard_mode == null) {
+        morph = {missingParams: {hard_mode: [false, true]}};
+      } else {
+        morph = {unitClass: "", level: [0, 0], stats: []};
+      };
+      return HttpResponse.json(morph);
+    })
+  );
+
+  beforeAll(() => server.listen());
+  afterEach(() => server.resetHandlers());
+  afterAll(() => server.close());
+
   const game_no = 6;
   const name = "Rutger";
   test("unsuccessful request for stat-data.", async () => {
@@ -160,6 +223,26 @@ describe("FE6 Rutger", () => {
 
 //  number_of_declines
 describe("FE6 Hugh", () => {
+
+  const server = setupServer(
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({params, request}) => {
+      const {game_no, name} = params;
+      const url = new URL(request.url);
+      const number_of_declines = url.searchParams.get("number_of_declines");
+      let morph;
+      if (!["0", "1", "2", "3"].includes(number_of_declines)) {
+        morph = {missingParams: {number_of_declines: [0, 1, 2, 3]}};
+      } else {
+        morph = {unitClass: "", level: [0, 0], stats: []};
+      };
+      return HttpResponse.json(morph);
+    })
+  );
+
+  beforeAll(() => server.listen());
+  afterEach(() => server.resetHandlers());
+  afterAll(() => server.close());
+
   const game_no = 6;
   const name = "Hugh";
   test("unsuccessful request for stat-data.", async () => {
@@ -184,6 +267,31 @@ describe("FE6 Hugh", () => {
 
 // route
 describe("FE6 Gonzales", () => {
+
+  const server = setupServer(
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({params, request}) => {
+      const {game_no, name} = params;
+      const url = new URL(request.url);
+      const hard_mode = url.searchParams.get("hard_mode");
+      const route = url.searchParams.get("route");
+      let morph;
+      if (route == null || hard_mode == null) {
+        morph = {};
+        morph.missingParams = {};
+        if (route == null) {
+          morph.missingParams["route"] = ["Lalum", "Elphin"];
+        };
+        if (hard_mode == null) {
+          morph.missingParams["hard_mode"] = [false, true];
+        };
+      };
+      return HttpResponse.json(morph);
+    })
+  );
+
+  beforeAll(() => server.listen());
+  afterEach(() => server.resetHandlers());
+  afterAll(() => server.close());
   const game_no = 6;
   const name = "Gonzales";
   test("successful request for stat-data.", async () => {
@@ -208,6 +316,21 @@ describe("FE6 Gonzales", () => {
 });
 
 describe("FE7 Ninian", () => {
+
+  const server = setupServer(
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({params}) => {
+      const {game_no, name, lyn_mode} = params;
+      let morph;
+      if (lyn_mode == null) {
+        morph = {missingParams: undefined};
+      };
+      return HttpResponse.json(morph);
+    })
+  );
+
+  beforeAll(() => server.listen());
+  afterEach(() => server.resetHandlers());
+  afterAll(() => server.close());
   const game_no = 7;
   const name = "Ninian";
   test("successful request for stat-data.", async () => {
@@ -220,6 +343,24 @@ describe("FE7 Ninian", () => {
 
 // lyn_mode
 describe("FE7 Nils", () => {
+
+  const server = setupServer(
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({params, request}) => {
+      const {game_no, name} = params;
+      const lyn_mode = new URL(request.url).searchParams.get("lyn_mode");
+      let morph;
+      if (lyn_mode == null) {
+        morph = {missingParams: {lyn_mode: [false, true]}};
+      } else {
+        morph = {unitClass: "", level: [0, 0], stats: []};
+      };
+      return HttpResponse.json(morph);
+    })
+  );
+
+  beforeAll(() => server.listen());
+  afterEach(() => server.resetHandlers());
+  afterAll(() => server.close());
   const game_no = 7;
   const name = "Nils";
   test("unsuccessful request for stat-data.", async () => {
@@ -236,7 +377,19 @@ describe("FE7 Nils", () => {
   });
 });
 
-describe("FE7 Nils", () => {
+describe("FE8 Lyon", () => {
+
+  const server = setupServer(
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({params}) => {
+      const {game_no, name} = params;
+      let morph;
+      return HttpResponse.json(morph);
+    })
+  );
+
+  beforeAll(() => server.listen());
+  afterEach(() => server.resetHandlers());
+  afterAll(() => server.close());
   const game_no = 8;
   const name = "Lyon";
   test("a successful request for stat-data for an FE8 bonus unit.", async () => {
@@ -248,6 +401,18 @@ describe("FE7 Nils", () => {
 });
 
 describe("FE10 Ike (DNE)", () => {
+
+  const server = setupServer(
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({params}) => {
+      const {game_no, name} = params;
+      let morph = {error: "INVALID_GAME"};
+      return HttpResponse.json(morph);
+    })
+  );
+
+  beforeAll(() => server.listen());
+  afterEach(() => server.resetHandlers());
+  afterAll(() => server.close());
   const game_no = 10;
   const name = "Ike";
   test("unsuccessful request for a game that aenir does not encompass.", async () => {
@@ -259,6 +424,18 @@ describe("FE10 Ike (DNE)", () => {
 });
 
 describe("FE7 Marth (DNE)", () => {
+
+  const server = setupServer(
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({params}) => {
+      const {game_no, name} = params;
+      let morph = {error: "UNIT_DNE"};
+      return HttpResponse.json(morph);
+    })
+  );
+
+  beforeAll(() => server.listen());
+  afterEach(() => server.resetHandlers());
+  afterAll(() => server.close());
   const game_no = 7;
   const name = "Marth";
   test("unsuccessful request for a unit that DNE.", async () => {
@@ -270,6 +447,21 @@ describe("FE7 Marth (DNE)", () => {
 });
 
 describe("FE7 Lyn", () => {
+
+  const server = setupServer(
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({params}) => {
+      const {game_no, name, lyn_mode} = params;
+      let morph = {missingParams: {}};
+      if (lyn_mode == null) {
+        morph.missingParams["lyn_mode"] = [false, true];
+      };
+      return HttpResponse.json(morph);
+    })
+  );
+
+  beforeAll(() => server.listen());
+  afterEach(() => server.resetHandlers());
+  afterAll(() => server.close());
   const game_no = 7;
   const name = "Lyn";
   test("unsuccessful request for stat-data, with 'lyn_mode' parameter missing..", async () => {
