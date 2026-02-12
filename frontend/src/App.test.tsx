@@ -68,7 +68,7 @@ describe("FE6 Roy", () => {
 
   beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
-  test("successful request for stat-data with stat-validation.", async () => {
+  test("getMorph: successful request for stat-data with stat-validation.", async () => {
     const game_no = 6;
     const name = "Roy";
     const kwargs = {};
@@ -91,7 +91,7 @@ describe("FE6 Roy", () => {
     );
   });
 
-  test("input of invalid options and that they are ignored.", async () => {
+  test("getMorph: input of invalid options and that they are ignored.", async () => {
     const game_no = 6;
     const name = "Roy";
     const kwargs = {"nonsensical": "stuff"};
@@ -178,7 +178,7 @@ describe("FE4 Lakche", () => {
 
   beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
-  test("successful request for stat-data with {father:'Lex'}, with stat-validation.", async () => {
+  test("getMorph: successful request for stat-data with {father:'Lex'}, with stat-validation.", async () => {
     const game_no = 4;
     const name = "Lakche";
     const kwargs = {"father": "Lex"};
@@ -200,7 +200,7 @@ describe("FE4 Lakche", () => {
     );
   });
 
-  test("successful request for stat-data with {father:'Claude'}, with stat-validation.", async () => {
+  test("getMorph: successful request for stat-data with {father:'Claude'}, with stat-validation.", async () => {
     const game_no = 4;
     const name = "Lakche";
     const kwargs = {"father": "Claude"};
@@ -222,7 +222,7 @@ describe("FE4 Lakche", () => {
     );
   });
 
-  test("unsuccessful request for stat-data.", async () => {
+  test("getMorph: unsuccessful request for stat-data.", async () => {
     const game_no = 4;
     const name = "Lakche";
     const kwargs = {};
@@ -300,7 +300,7 @@ describe("FE6 Rutger", () => {
 
   beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
-  test("unsuccessful request for stat-data.", async () => {
+  test("getMorph: unsuccessful request for stat-data.", async () => {
     const game_no = 6;
     const name = "Rutger";
     const kwargs = {};
@@ -309,7 +309,7 @@ describe("FE6 Rutger", () => {
     expect(missingParams["hard_mode"]).toEqual([false, true]);
   });
 
-  test("successful request for hard-mode stat-data, with stat-validation.", async () => {
+  test("getMorph: successful request for hard-mode stat-data, with stat-validation.", async () => {
     const game_no = 6;
     const name = "Rutger";
     const kwargs = {"hard_mode": true};
@@ -332,7 +332,7 @@ describe("FE6 Rutger", () => {
     );
   });
 
-  test("successful request for normal-mode stat-data, with stat-validation.", async () => {
+  test("getMorph: successful request for normal-mode stat-data, with stat-validation.", async () => {
     const game_no = 6;
     const name = "Rutger";
     const kwargs = {"hard_mode": false};
@@ -407,7 +407,7 @@ describe("FE6 Hugh", () => {
 
   beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
-  test("unsuccessful request for stat-data.", async () => {
+  test("getMorph: unsuccessful request for stat-data.", async () => {
     const game_no = 6;
     const name = "Hugh";
     const kwargs = {};
@@ -416,7 +416,7 @@ describe("FE6 Hugh", () => {
     expect(missingParams["number_of_declines"]).toEqual([0, 1, 2, 3]);
   });
 
-  test("successful request for stat-data with stat-validation {number_of_declines: 0}.", async () => {
+  test("getMorph: successful request for stat-data with stat-validation {number_of_declines: 0}.", async () => {
     const game_no = 6;
     const name = "Hugh";
     const kwargs = {"number_of_declines": 0};
@@ -439,7 +439,7 @@ describe("FE6 Hugh", () => {
     );
   });
 
-  test("successful request for stat-data with stat-validation.", async () => {
+  test("getMorph: successful request for stat-data with stat-validation.", async () => {
     const game_no = 6;
     const name = "Hugh";
     const kwargs = {"number_of_declines": 2};
@@ -462,7 +462,7 @@ describe("FE6 Hugh", () => {
     );
   });
 
-  test("another unsuccessful request for stat-data, providing an invalid option-value.", async () => {
+  test("getMorph: another unsuccessful request for stat-data, providing an invalid option-value.", async () => {
     const game_no = 6;
     const name = "Hugh";
     const kwargs = {"number_of_declines": 4};
@@ -535,7 +535,7 @@ describe("FE6 Gonzales", () => {
 
   beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
-  test("successful request for stat-data.", async () => {
+  test("getMorph: successful request for stat-data.", async () => {
     const game_no = 6;
     const name = "Gonzales";
     const kwargs = {"hard_mode": false, "route": "Lalum"};
@@ -544,7 +544,7 @@ describe("FE6 Gonzales", () => {
     expect(missingParams).toBeUndefined();
   });
 
-  test("successful request for stat-data, with stat-validation.", async () => {
+  test("getMorph: successful request for stat-data, with stat-validation.", async () => {
     const game_no = 6;
     const name = "Gonzales";
     const kwargs = {"hard_mode": false, "route": "Lalum"};
@@ -567,7 +567,7 @@ describe("FE6 Gonzales", () => {
     );
   });
 
-  test("successful request for hard-mode stat-data, with stat-validation.", async () => {
+  test("getMorph: successful request for hard-mode stat-data, with stat-validation.", async () => {
     const game_no = 6;
     const name = "Gonzales";
     const kwargs = {"hard_mode": true, "route": "Lalum"};
@@ -590,7 +590,7 @@ describe("FE6 Gonzales", () => {
     );
   });
 
-  test("unsuccessful request for stat-data, with 'route' parameter missing.", async () => {
+  test("getMorph: unsuccessful request for stat-data, with 'route' parameter missing.", async () => {
     const game_no = 6;
     const name = "Gonzales";
     const kwargs = {"hard_mode": false};
@@ -599,7 +599,7 @@ describe("FE6 Gonzales", () => {
     expect(missingParams["route"]).toEqual(["Lalum", "Elphin"]);
   });
 
-  test("unsuccessful request for stat-data, with 'hard_mode' parameter missing.", async () => {
+  test("getMorph: unsuccessful request for stat-data, with 'hard_mode' parameter missing.", async () => {
     const game_no = 6;
     const name = "Gonzales";
     const kwargs = {};
@@ -626,7 +626,7 @@ describe("FE7 Ninian", () => {
 
   beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
-  test("successful request for stat-data.", async () => {
+  test("getMorph: successful request for stat-data.", async () => {
     const game_no = 7;
     const name = "Ninian";
     const kwargs = {};
@@ -670,7 +670,7 @@ describe("FE7 Nils", () => {
 
   beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
-  test("unsuccessful request for stat-data.", async () => {
+  test("getMorph: unsuccessful request for stat-data.", async () => {
     const game_no = 7;
     const name = "Nils";
     const kwargs = {};
@@ -679,7 +679,7 @@ describe("FE7 Nils", () => {
     expect(missingParams["lyn_mode"]).toEqual([false, true]);
   });
 
-  test("successful request for stat-data with stat-validation.", async () => {
+  test("getMorph: successful request for stat-data with stat-validation.", async () => {
     const game_no = 7;
     const name = "Nils";
     const kwargs = {"lyn_mode": false};
@@ -702,7 +702,7 @@ describe("FE7 Nils", () => {
     );
   });
 
-  test("successful request for stat-data with stat-validation.", async () => {
+  test("getMorph: successful request for stat-data with stat-validation.", async () => {
     const game_no = 7;
     const name = "Nils";
     const kwargs = {"lyn_mode": true};
@@ -739,7 +739,7 @@ describe("FE8 Lyon", () => {
 
   beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
-  test("a successful request for stat-data for an FE8 bonus unit.", async () => {
+  test("getMorph: a successful request for stat-data for an FE8 bonus unit.", async () => {
     const game_no = 8;
     const name = "Lyon";
     const kwargs = {};
@@ -762,11 +762,21 @@ describe("FE10 Ike (DNE)", () => {
 
   beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
-  test("unsuccessful request for a game that aenir does not encompass.", async () => {
+  test("getMorph: unsuccessful request for a game that aenir does not encompass.", async () => {
     const game_no = 10;
     const name = "Ike";
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
+    const { error } = morph;
+    expect(error).toBe("INVALID_GAME");
+  });
+
+  test("previewMorph: if morph contains an error if bad game_no-name pair was provided.", async () => {
+    const game_no = 10;
+    const name = "Ike";
+    const kwargs = {};
+    const {morph, missingParams} = await previewMorph(game_no, name, kwargs);
+    expect(missingParams).toBeUndefined();
     const { error } = morph;
     expect(error).toBe("INVALID_GAME");
   });
@@ -785,7 +795,17 @@ describe("FE7 Marth (DNE)", () => {
 
   beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
-  test("unsuccessful request for a unit that DNE.", async () => {
+  test("previewMorph: if morph contains an error if bad game_no-name pair was provided.", async () => {
+    const game_no = 7;
+    const name = "Marth";
+    const kwargs = {};
+    const {morph, missingParams} = await previewMorph(game_no, name, kwargs);
+    expect(missingParams).toBeUndefined();
+    const { error } = morph;
+    expect(error).toBe("UNIT_DNE");
+  });
+
+  test("getMorph: unsuccessful request for a unit that DNE.", async () => {
     const game_no = 7;
     const name = "Marth";
     const kwargs = {};
@@ -793,6 +813,7 @@ describe("FE7 Marth (DNE)", () => {
     const { error } = morph;
     expect(error).toBe("UNIT_DNE");
   });
+
 });
 
 describe("FE7 Lyn", () => {
@@ -846,7 +867,7 @@ describe("FE7 Lyn", () => {
 
   beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
-  test("unsuccessful request for stat-data, with 'lyn_mode' parameter missing..", async () => {
+  test("getMorph: unsuccessful request for stat-data, with 'lyn_mode' parameter missing..", async () => {
     const game_no = 7;
     const name = "Lyn";
     const kwargs = {};
@@ -855,7 +876,7 @@ describe("FE7 Lyn", () => {
     expect(missingParams["lyn_mode"]).toEqual([false, true]);
   });
 
-  test("successful request for stat-data with stat-validation.", async () => {
+  test("getMorph: successful request for stat-data with stat-validation.", async () => {
     const game_no = 7;
     const name = "Lyn";
     const kwargs = {"lyn_mode": true};
@@ -878,7 +899,7 @@ describe("FE7 Lyn", () => {
     );
   });
 
-  test("successful request for stat-data with stat-validation.", async () => {
+  test("getMorph: successful request for stat-data with stat-validation.", async () => {
     const game_no = 7;
     const name = "Lyn";
     const kwargs = {"lyn_mode": false};
@@ -899,6 +920,27 @@ describe("FE7 Lyn", () => {
         ["Mov", 5, 15, 15],
       ]
     );
+  });
+
+  test("previewMorph: if return-value matches the expected when no kwargs are provided.", async () => {
+    const game_no = 7;
+    const name = "Lyn";
+    const kwargs = {"lyn_mode": false};
+    const {morph} = await previewMorph(game_no, name, {});
+    const morph2 = await getMorph(game_no, name, kwargs);
+    expect(morph).toEqual(morph2);
+  });
+
+  test("previewMorph: if 'missingParams' is returned if kwargs are provided, and if morph is non-null.", async () => {
+    const game_no = 7;
+    const name = "Lyn";
+    const kwargs = {"lyn_mode": true};
+    const {morph, missingParams} = await previewMorph(game_no, name, kwargs);
+    expect(missingParams).toEqual({lyn_mode: [false, true]});
+    const {unitClass, level, stats} = morph;
+    expect(unitClass).not.toBeUndefined();
+    expect(level).not.toBeUndefined();
+    expect(stats).not.toBeUndefined();
   });
 
 });
