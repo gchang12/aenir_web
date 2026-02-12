@@ -120,8 +120,7 @@ describe("FE6 Roy", () => {
 describe("FE4 Lakche", () => {
 
   const server = setupServer(
-    http.get("http://localhost:8000/dracogate/api/morphs/", ({params, request}) => {
-      const {game_no, name} = params;
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
       const father = new URL(request.url).searchParams.get("father");
       let morph;
       if (father == null) {
@@ -312,8 +311,7 @@ describe("FE4 Lakche", () => {
 describe("FE6 Rutger", () => {
 
   const server = setupServer(
-    http.get("http://localhost:8000/dracogate/api/morphs/", ({params, request}) => {
-      const {game_no, name} = params;
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
       const url = new URL(request.url);
       const hard_mode = url.searchParams.get("hard_mode");
       let morph;
@@ -452,8 +450,7 @@ describe("FE6 Rutger", () => {
 describe("FE6 Hugh", () => {
 
   const server = setupServer(
-    http.get("http://localhost:8000/dracogate/api/morphs/", ({params, request}) => {
-      const {game_no, name} = params;
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
       const url = new URL(request.url);
       const number_of_declines = url.searchParams.get("number_of_declines");
       let morph;
@@ -598,8 +595,7 @@ describe("FE6 Hugh", () => {
 describe("FE6 Gonzales", () => {
 
   const server = setupServer(
-    http.get("http://localhost:8000/dracogate/api/morphs/", ({params, request}) => {
-      const {game_no, name} = params;
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
       const url = new URL(request.url);
       const hard_mode = url.searchParams.get("hard_mode");
       const route = url.searchParams.get("route");
@@ -792,8 +788,7 @@ describe("FE7 Ninian", () => {
 describe("FE7 Nils", () => {
 
   const server = setupServer(
-    http.get("http://localhost:8000/dracogate/api/morphs/", ({params, request}) => {
-      const {game_no, name} = params;
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
       const lyn_mode = new URL(request.url).searchParams.get("lyn_mode");
       let morph;
       if (lyn_mode == null) {
@@ -1000,8 +995,7 @@ describe("FE7 Marth (DNE)", () => {
 describe("FE7 Lyn", () => {
 
   const server = setupServer(
-    http.get("http://localhost:8000/dracogate/api/morphs/", ({params, request}) => {
-      const {game_no, name} = params;
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
       const url = new URL(request.url);
       const lyn_mode = url.searchParams.get("lyn_mode");
       let morph;
