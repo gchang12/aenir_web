@@ -34,7 +34,7 @@ function App() {
   )
 }
 
-export default App
+export { App };
 
 // MY CODE
 
@@ -130,22 +130,26 @@ function StatTable({stats, highlight}) {
 function UnitConfirm() {
   const loaderData = useLoaderData();
   const {morph, missingParams, unitName, gameId} = loaderData;
-  const {stats} = morph;
+  const {stats, unitClass, level} = morph;
   const imgSuffix = gameId === "fe8" ? ".gif" : ".png";
   return (
     <>
-    <ProfileHead figureTitle={unitName} imgSrc={"/images/" + unitName + imgSuffix}>
+    <form>
+      <ProfileHead figureTitle={unitName} imgSrc={"/images/" + unitName + imgSuffix}>
+        <table>
+          <tbody>
+          <ProfileLevelAndClass {...{unitClass, level}} />
+          {/* OptionSelect */}
+          </tbody>
+        </table>
+      </ProfileHead>
       <table>
         <tbody>
-        <ProfileLevelAndClass unitClass={morph.unitClass} level={morph.level[0]} />
+        <StatTable {...{stats, highlight: true}} />
         </tbody>
       </table>
-    </ProfileHead>
-    <table>
-      <tbody>
-      <StatTable {...{stats, highlight: true}} />
-      </tbody>
-    </table>
+      <button>Create!</button>
+    </form>
     </>
   );
 };
@@ -154,14 +158,6 @@ export {
   UnitConfirm,
   StatTable,
 };
-
-/*
-export {
-  StatTable,
-  ProfileInfo,
-  ProfileHead,
-};
-*/
 
 function GameSelect() {
   return (
@@ -209,7 +205,7 @@ function UnitSelect() {
         </li>
       </menu>
     </nav>
-  );
+  ); */}
 };
 
 function UnitConfirm2() {
@@ -248,6 +244,22 @@ function UnitConfirm2() {
       </div>
       <button>Create</button>
     </form>
+  );
+};
+
+function CreateMorph({section1, section2, section3}) {
+  return (
+    <>
+    <div className="create-morph">
+    {section1}
+    </div>
+    <div className="create-morph">
+    {section2}
+    </div>
+    <div className="create-morph">
+    {section3}
+    </div>
+    </>
   );
 };
 
