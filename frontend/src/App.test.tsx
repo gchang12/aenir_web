@@ -48,11 +48,23 @@ FE7 Marth (DNE) (1)
 
 // getMorph(game_no, name, { father, hard_mode, number_of_declines, route, lyn_mode })
 
-describe("FE6 Roy", () => {
-
-  const server = setupServer(
-    http.get("http://localhost:8000/dracogate/api/morphs/", () => {
-      return HttpResponse.json({
+const server = setupServer(
+  http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
+    const url = new URL(request.url);
+    // mandatory parameters
+    const game_no = url.searchParams.get("game_no");
+    const name = url.searchParams.get("name");
+    // optional parameters
+    const lyn_mode = url.searchParams.get("lyn_mode");
+    const father = url.searchParams.get("father");
+    const hard_mode = url.searchParams.get("hard_mode");
+    const number_of_declines = url.searchParams.get("number_of_declines");
+    const route = url.searchParams.get("route");
+    // Initialize blank morph
+    let morph;
+    // FE6
+    function getRoy() {
+      return {
         unitClass: "Lord",
         level: [1, 20],
         stats: [
@@ -66,9 +78,326 @@ describe("FE6 Roy", () => {
           ["Con", 6, 20, 25],
           ["Mov", 5, 15, 15],
         ],
-      });
-    })
-  );
+      };
+    };
+    function getRutger() {
+      if (hard_mode == null) {
+        return {missingParams: {hard_mode: [false, true]}};
+      } else {
+        if (hard_mode === "false") {
+          return {
+            unitClass: "Myrmidon",
+            level: [4, 20],
+            stats: [
+              ["HP", 22, 60, 80],
+              ["Pow", 7, 20, 30],
+              ["Skl", 12, 20, 30],
+              ["Spd", 13, 20, 30],
+              ["Lck", 2, 30, 30],
+              ["Def", 5, 20, 30],
+              ["Res", 0, 20, 30],
+              ["Con", 7, 20, 25],
+              ["Mov", 5, 15, 15],
+            ]
+          };
+        } else if (hard_mode === "true") {
+          return {
+            unitClass: "Myrmidon",
+            level: [4, 20],
+            stats: [
+              ["HP", 26, 60, 80],
+              ["Pow", 9, 20, 30],
+              ["Skl", 14, 20, 30],
+              ["Spd", 15, 20, 30],
+              ["Lck", 4, 30, 30],
+              ["Def", 6, 20, 30],
+              ["Res", 1, 20, 30],
+              ["Con", 7, 20, 25],
+              ["Mov", 5, 15, 15],
+            ]
+          };
+        };
+      };
+    };
+    function getHugh() {
+      if (!["0", "1", "2", "3"].includes(number_of_declines)) {
+        return {missingParams: {number_of_declines: [0, 1, 2, 3]}};
+      } else if (number_of_declines === "2") {
+        return {
+          unitClass: "Mage",
+          level: [15, 20],
+          stats: [
+            ["HP", 24, 60, 80],
+            ["Pow", 11, 20, 30],
+            ["Skl", 9, 20, 30],
+            ["Spd", 10, 20, 30],
+            ["Lck", 8, 30, 30],
+            ["Def", 7, 20, 30],
+            ["Res", 7, 20, 30],
+            ["Con", 7, 20, 25],
+            ["Mov", 5, 15, 15],
+          ]
+        };
+      } else if (number_of_declines === "0") {
+        return {
+          unitClass: "Mage",
+          level: [15, 20],
+          stats: [
+            ["HP", 26, 60, 80],
+            ["Pow", 13, 20, 30],
+            ["Skl", 11, 20, 30],
+            ["Spd", 12, 20, 30],
+            ["Lck", 10, 30, 30],
+            ["Def", 9, 20, 30],
+            ["Res", 9, 20, 30],
+            ["Con", 7, 20, 25],
+            ["Mov", 5, 15, 15],
+          ]
+        };
+      };
+    };
+    function getGonzales() {
+      if (route == null || hard_mode == null) {
+        let morph = {missingParams: {}};
+        if (route == null) {
+          morph.missingParams["route"] = ["Lalum", "Elphin"];
+        };
+        if (hard_mode == null) {
+          morph.missingParams["hard_mode"] = [false, true];
+        };
+        return morph;
+      } else {
+        if (route === "Lalum") {
+          if (hard_mode === "false") {
+            return {
+              unitClass: "Bandit",
+              level: [5, 20],
+              stats: [
+                ["HP", 36, 60, 80],
+                ["Pow", 12, 20, 30],
+                ["Skl", 5, 20, 30],
+                ["Spd", 9, 20, 30],
+                ["Lck", 5, 30, 30],
+                ["Def", 6, 20, 30],
+                ["Res", 0, 20, 30],
+                ["Con", 15, 20, 25],
+                ["Mov", 5, 15, 15],
+              ]
+            };
+          } else if (hard_mode === "true") {
+            return {
+              unitClass: "Bandit",
+              level: [5, 20],
+              stats: [
+                ["HP", 43, 60, 80],
+                ["Pow", 16, 20, 30],
+                ["Skl", 7, 20, 30],
+                ["Spd", 11, 20, 30],
+                ["Lck", 6, 30, 30],
+                ["Def", 7, 20, 30],
+                ["Res", 1, 20, 30],
+                ["Con", 15, 20, 25],
+                ["Mov", 5, 15, 15],
+              ]
+            };
+          };
+        };
+      };
+    };
+
+    // FE4
+    function getLakche() {
+      if (father == null) {
+        return {missingParams: {father: [
+          "Arden",
+          "Azel",
+          "Alec",
+          "Claude",
+          "Jamka",
+          "Dew",
+          "Noish",
+          "Fin",
+          "Beowolf",
+          "Holyn",
+          "Midayle",
+          "Levin",
+          "Lex",
+        ]}};
+      } else {
+      } if (father === "Lex") {
+        return {
+          unitClass: "Swordfighter",
+          level: [1, 20],
+          stats: [
+            ["HP", 30, 80, 80],
+            ["Str", 10, 22, 30],
+            ["Mag", 0, 15, 30],
+            ["Skl", 13, 25, 30],
+            ["Spd", 13, 25, 30],
+            ["Lck", 8, 30, 30],
+            ["Def", 7, 20, 30],
+            ["Res", 0, 15, 30],
+          ],
+        };
+      } else if (father === "Claude") {
+        return {
+          unitClass: "Swordfighter",
+          level: [1, 20],
+          stats: [
+            ["HP", 29, 80, 80],
+            ["Str", 9, 22, 30],
+            ["Mag", 1, 15, 30],
+            ["Skl", 13, 25, 30],
+            ["Spd", 13, 25, 30],
+            ["Lck", 9, 30, 30],
+            ["Def", 6, 20, 30],
+            ["Res", 1, 15, 30],
+          ],
+        };
+      } else if (father === "Arden") {
+        return {
+          unitClass: "Swordfighter",
+          level: [1, 20],
+          stats: [
+            ["HP", 31, 80, 80],
+            ["Str", 10, 22, 30],
+            ["Mag", 0, 15, 30],
+            ["Skl", 13, 25, 30],
+            ["Spd", 13, 25, 30],
+            ["Lck", 8, 30, 30],
+            ["Def", 7, 20, 30],
+            ["Res", 0, 15, 30],
+          ],
+        };
+      };
+    };
+
+    // FE7
+    function getNinian() {
+      if (lyn_mode == null) {
+        return {missingParams: undefined};
+      };
+    };
+    function getNils() {
+      if (lyn_mode == null) {
+        return {missingParams: {lyn_mode: [false, true]}};
+      } else {
+        return {
+          unitClass: "Bard",
+          level: [1, 20],
+          stats: [
+            ["HP", 14, 60, 80],
+            ["Pow", 0, 10, 30],
+            ["Skl", 0, 10, 30],
+            ["Spd", 12, 30, 30],
+            ["Lck", 10, 30, 30],
+            ["Def", 5, 24, 30],
+            ["Res", 4, 26, 30],
+            ["Con", 3, 20, 25],
+            ["Mov", 5, 15, 15],
+          ]
+        };
+      };
+    };
+   function getLyn() {
+     if (lyn_mode == null) {
+       return {missingParams: {lyn_mode: [false, true]}};
+     } else {
+       if (lyn_mode === "false") {
+         return {
+           unitClass: "Lord",
+           level: [4, 20],
+           stats: [
+             ["HP", 18, 60, 80],
+             ["Pow", 5, 20, 30],
+             ["Skl", 10, 20, 30],
+             ["Spd", 11, 20, 30],
+             ["Lck", 5, 30, 30],
+             ["Def", 2, 20, 30],
+             ["Res", 0, 20, 30],
+             ["Con", 5, 20, 25],
+             ["Mov", 5, 15, 15],
+           ]
+         };
+       } else if (lyn_mode === "true") {
+         return {
+           unitClass: "Lord",
+           level: [1, 20],
+           stats: [
+             ["HP", 16, 60, 80],
+             ["Pow", 4, 20, 30],
+             ["Skl", 7, 20, 30],
+             ["Spd", 9, 20, 30],
+             ["Lck", 5, 30, 30],
+             ["Def", 2, 20, 30],
+             ["Res", 0, 20, 30],
+             ["Con", 5, 20, 25],
+             ["Mov", 5, 15, 15],
+             ]
+           };
+         };
+       };
+    };
+    function getMarth() {
+      return {error: "UNIT_DNE"};
+    };
+
+    // FE8
+    function getLyon() {
+      return undefined;
+    };
+
+    // FE10
+    function getIke() {
+      return {error: "INVALID_GAME"};
+    };
+
+    if (game_no === "6") {
+      if (name === "Roy") {
+        morph = getRoy();
+      } else if (name === "Rutger") {
+        morph = getRutger();
+      } else if (name === "Hugh") {
+        morph = getHugh();
+      } else if (name === "Gonzales") {
+        morph = getGonzales();
+      };
+    };
+
+    if (game_no === "4") {
+      if (name === "Lakche") {
+        morph = getLakche();
+      }; // name
+    }; // game_no
+
+    if (game_no === "7") {
+      if (name === "Ninian") {
+        morph = getNinian();
+      } else if (name === "Nils") {
+        morph = getNils();
+      } else if (name === "Lyn") {
+        morph = getLyn();
+      } else if (name === "Marth") {
+        morph = getMarth();
+      };
+    };
+
+    if (game_no === "8") {
+      if (name === "Lyon") {
+        morph = getLyon();
+      };
+    };
+
+    if (game_no === "10") {
+      if (name === "Ike") {
+        morph = getIke();
+      };
+    };
+    return HttpResponse.json(morph);
+  })
+);
+
+describe("FE6 Roy", () => {
 
   beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
@@ -120,77 +449,6 @@ describe("FE6 Roy", () => {
 
 // father
 describe("FE4 Lakche", () => {
-
-  const server = setupServer(
-    http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
-      const father = new URL(request.url).searchParams.get("father");
-      let morph;
-      if (father == null) {
-        morph = {missingParams: {father: [
-          "Arden",
-          "Azel",
-          "Alec",
-          "Claude",
-          "Jamka",
-          "Dew",
-          "Noish",
-          "Fin",
-          "Beowolf",
-          "Holyn",
-          "Midayle",
-          "Levin",
-          "Lex",
-        ]}};
-      } else {
-      } if (father === "Lex") {
-        morph = {
-          unitClass: "Swordfighter",
-          level: [1, 20],
-          stats: [
-            ["HP", 30, 80, 80],
-            ["Str", 10, 22, 30],
-            ["Mag", 0, 15, 30],
-            ["Skl", 13, 25, 30],
-            ["Spd", 13, 25, 30],
-            ["Lck", 8, 30, 30],
-            ["Def", 7, 20, 30],
-            ["Res", 0, 15, 30],
-          ],
-        };
-      } else if (father === "Claude") {
-        morph = {
-          unitClass: "Swordfighter",
-          level: [1, 20],
-          stats: [
-            ["HP", 29, 80, 80],
-            ["Str", 9, 22, 30],
-            ["Mag", 1, 15, 30],
-            ["Skl", 13, 25, 30],
-            ["Spd", 13, 25, 30],
-            ["Lck", 9, 30, 30],
-            ["Def", 6, 20, 30],
-            ["Res", 1, 15, 30],
-          ],
-        };
-      } else if (father === "Arden") {
-        morph = {
-          unitClass: "Swordfighter",
-          level: [1, 20],
-          stats: [
-            ["HP", 31, 80, 80],
-            ["Str", 10, 22, 30],
-            ["Mag", 0, 15, 30],
-            ["Skl", 13, 25, 30],
-            ["Spd", 13, 25, 30],
-            ["Lck", 8, 30, 30],
-            ["Def", 7, 20, 30],
-            ["Res", 0, 15, 30],
-          ],
-        };
-      };
-      return HttpResponse.json(morph);
-    })
-  );
 
   beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
@@ -302,52 +560,6 @@ describe("FE4 Lakche", () => {
 // hard_mode
 describe("FE6 Rutger", () => {
 
-  const server = setupServer(
-    http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
-      const url = new URL(request.url);
-      const hard_mode = url.searchParams.get("hard_mode");
-      let morph;
-      if (hard_mode == null) {
-        morph = {missingParams: {hard_mode: [false, true]}};
-      } else {
-        if (hard_mode === "false") {
-          morph = {
-            unitClass: "Myrmidon",
-            level: [4, 20],
-            stats: [
-              ["HP", 22, 60, 80],
-              ["Pow", 7, 20, 30],
-              ["Skl", 12, 20, 30],
-              ["Spd", 13, 20, 30],
-              ["Lck", 2, 30, 30],
-              ["Def", 5, 20, 30],
-              ["Res", 0, 20, 30],
-              ["Con", 7, 20, 25],
-              ["Mov", 5, 15, 15],
-            ]
-          };
-        } else if (hard_mode === "true") {
-          morph = {
-            unitClass: "Myrmidon",
-            level: [4, 20],
-            stats: [
-              ["HP", 26, 60, 80],
-              ["Pow", 9, 20, 30],
-              ["Skl", 14, 20, 30],
-              ["Spd", 15, 20, 30],
-              ["Lck", 4, 30, 30],
-              ["Def", 6, 20, 30],
-              ["Res", 1, 20, 30],
-              ["Con", 7, 20, 25],
-              ["Mov", 5, 15, 15],
-            ]
-          };
-        };
-      }
-    return HttpResponse.json(morph);
-    })
-  )
-
   beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 6;
@@ -429,50 +641,6 @@ describe("FE6 Rutger", () => {
 
 //  number_of_declines
 describe("FE6 Hugh", () => {
-
-  const server = setupServer(
-    http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
-      const url = new URL(request.url);
-      const number_of_declines = url.searchParams.get("number_of_declines");
-      let morph;
-      if (!["0", "1", "2", "3"].includes(number_of_declines)) {
-        morph = {missingParams: {number_of_declines: [0, 1, 2, 3]}};
-      } else if (number_of_declines === "2") {
-        morph = {
-          unitClass: "Mage",
-          level: [15, 20],
-          stats: [
-            ["HP", 24, 60, 80],
-            ["Pow", 11, 20, 30],
-            ["Skl", 9, 20, 30],
-            ["Spd", 10, 20, 30],
-            ["Lck", 8, 30, 30],
-            ["Def", 7, 20, 30],
-            ["Res", 7, 20, 30],
-            ["Con", 7, 20, 25],
-            ["Mov", 5, 15, 15],
-          ]
-        };
-      } else if (number_of_declines === "0") {
-        morph = {
-          unitClass: "Mage",
-          level: [15, 20],
-          stats: [
-            ["HP", 26, 60, 80],
-            ["Pow", 13, 20, 30],
-            ["Skl", 11, 20, 30],
-            ["Spd", 12, 20, 30],
-            ["Lck", 10, 30, 30],
-            ["Def", 9, 20, 30],
-            ["Res", 9, 20, 30],
-            ["Con", 7, 20, 25],
-            ["Mov", 5, 15, 15],
-          ]
-        };
-      };
-      return HttpResponse.json(morph);
-    })
-  );
 
   beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
@@ -562,62 +730,6 @@ describe("FE6 Hugh", () => {
 
 // route
 describe("FE6 Gonzales", () => {
-
-  const server = setupServer(
-    http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
-      const url = new URL(request.url);
-      const hard_mode = url.searchParams.get("hard_mode");
-      const route = url.searchParams.get("route");
-      let morph = {};
-      if (route == null || hard_mode == null) {
-        morph;
-        morph.missingParams = {};
-        if (route == null) {
-          morph.missingParams["route"] = ["Lalum", "Elphin"];
-        };
-        if (hard_mode == null) {
-          morph.missingParams["hard_mode"] = [false, true];
-        };
-      } else {
-        if (route === "Lalum") {
-          if (hard_mode === "false") {
-            morph = {
-              unitClass: "Bandit",
-              level: [5, 20],
-              stats: [
-                ["HP", 36, 60, 80],
-                ["Pow", 12, 20, 30],
-                ["Skl", 5, 20, 30],
-                ["Spd", 9, 20, 30],
-                ["Lck", 5, 30, 30],
-                ["Def", 6, 20, 30],
-                ["Res", 0, 20, 30],
-                ["Con", 15, 20, 25],
-                ["Mov", 5, 15, 15],
-              ]
-            };
-          } else if (hard_mode === "true") {
-            morph = {
-              unitClass: "Bandit",
-              level: [5, 20],
-              stats: [
-                ["HP", 43, 60, 80],
-                ["Pow", 16, 20, 30],
-                ["Skl", 7, 20, 30],
-                ["Spd", 11, 20, 30],
-                ["Lck", 6, 30, 30],
-                ["Def", 7, 20, 30],
-                ["Res", 1, 20, 30],
-                ["Con", 15, 20, 25],
-                ["Mov", 5, 15, 15],
-              ]
-            };
-          };
-        };
-      };
-      return HttpResponse.json(morph);
-    })
-  );
 
   beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
@@ -715,17 +827,6 @@ describe("FE6 Gonzales", () => {
 
 describe("FE7 Ninian", () => {
 
-  const server = setupServer(
-    http.get("http://localhost:8000/dracogate/api/morphs/", ({params}) => {
-      const {game_no, name, lyn_mode} = params;
-      let morph;
-      if (lyn_mode == null) {
-        morph = {missingParams: undefined};
-      };
-      return HttpResponse.json(morph);
-    })
-  );
-
   beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 7;
@@ -741,33 +842,6 @@ describe("FE7 Ninian", () => {
 
 // lyn_mode
 describe("FE7 Nils", () => {
-
-  const server = setupServer(
-    http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
-      const lyn_mode = new URL(request.url).searchParams.get("lyn_mode");
-      let morph;
-      if (lyn_mode == null) {
-        morph = {missingParams: {lyn_mode: [false, true]}};
-      } else {
-        morph = {
-          unitClass: "Bard",
-          level: [1, 20],
-          stats: [
-            ["HP", 14, 60, 80],
-            ["Pow", 0, 10, 30],
-            ["Skl", 0, 10, 30],
-            ["Spd", 12, 30, 30],
-            ["Lck", 10, 30, 30],
-            ["Def", 5, 24, 30],
-            ["Res", 4, 26, 30],
-            ["Con", 3, 20, 25],
-            ["Mov", 5, 15, 15],
-          ]
-        };
-      };
-      return HttpResponse.json(morph);
-    })
-  );
 
   beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
@@ -850,14 +924,6 @@ describe("FE7 Nils", () => {
 
 describe("FE8 Lyon", () => {
 
-  const server = setupServer(
-    http.get("http://localhost:8000/dracogate/api/morphs/", ({params}) => {
-      const {game_no, name} = params;
-      let morph;
-      return HttpResponse.json(morph);
-    })
-  );
-
   beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 8;
@@ -872,14 +938,6 @@ describe("FE8 Lyon", () => {
 });
 
 describe("FE10 Ike (DNE)", () => {
-
-  const server = setupServer(
-    http.get("http://localhost:8000/dracogate/api/morphs/", ({params}) => {
-      const {game_no, name} = params;
-      let morph = {error: "INVALID_GAME"};
-      return HttpResponse.json(morph);
-    })
-  );
 
   beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
@@ -904,14 +962,6 @@ describe("FE10 Ike (DNE)", () => {
 
 describe("FE7 Marth (DNE)", () => {
 
-  const server = setupServer(
-    http.get("http://localhost:8000/dracogate/api/morphs/", ({params}) => {
-      const {game_no, name} = params;
-      let morph = {error: "UNIT_DNE"};
-      return HttpResponse.json(morph);
-    })
-  );
-
   beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 7;
@@ -934,52 +984,6 @@ describe("FE7 Marth (DNE)", () => {
 });
 
 describe("FE7 Lyn", () => {
-
-  const server = setupServer(
-    http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
-      const url = new URL(request.url);
-      const lyn_mode = url.searchParams.get("lyn_mode");
-      let morph;
-      if (lyn_mode == null) {
-        morph = {missingParams: {lyn_mode: [false, true]}}
-      } else {
-        if (lyn_mode === "false") {
-          morph = {
-            unitClass: "Lord",
-            level: [4, 20],
-            stats: [
-              ["HP", 18, 60, 80],
-              ["Pow", 5, 20, 30],
-              ["Skl", 10, 20, 30],
-              ["Spd", 11, 20, 30],
-              ["Lck", 5, 30, 30],
-              ["Def", 2, 20, 30],
-              ["Res", 0, 20, 30],
-              ["Con", 5, 20, 25],
-              ["Mov", 5, 15, 15],
-            ]
-          };
-        } else if (lyn_mode === "true") {
-          morph = {
-            unitClass: "Lord",
-            level: [1, 20],
-            stats: [
-              ["HP", 16, 60, 80],
-              ["Pow", 4, 20, 30],
-              ["Skl", 7, 20, 30],
-              ["Spd", 9, 20, 30],
-              ["Lck", 5, 30, 30],
-              ["Def", 2, 20, 30],
-              ["Res", 0, 20, 30],
-              ["Con", 5, 20, 25],
-              ["Mov", 5, 15, 15],
-            ]
-          };
-        };
-      }
-      return HttpResponse.json(morph);
-    })
-  );
 
   beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
