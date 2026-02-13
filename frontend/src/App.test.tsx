@@ -23,6 +23,7 @@ import {
 import {
   getMorph,
   previewMorph,
+  StatTable,
 } from "./App";
 
 /*
@@ -64,6 +65,24 @@ class FE6Roster {
         ["Res", 0, 20, 30],
         ["Con", 6, 20, 25],
         ["Mov", 5, 15, 15],
+      ],
+    };
+  };
+
+  static getMarcus() {
+    return {
+      unitClass: "Paladin",
+      level: [1, null],
+      stats: [
+        ["HP", 32, 60, 80],
+        ["Pow", 9, 25, 30],
+        ["Skl", 14, 28, 30],
+        ["Spd", 11, 25, 30],
+        ["Lck", 10, 30, 30],
+        ["Def", 9, 25, 30],
+        ["Res", 8, 25, 30],
+        ["Con", 11, 20, 20],
+        ["Mov", 8, 15, 15],
       ],
     };
   };
@@ -409,6 +428,9 @@ const server = setupServer(
         switch(name) {
           case "Roy":
             morph = FE6Roster.getRoy();
+            break;
+          case "Marcus":
+            morph = FE6Roster.getMarcus();
             break;
           case "Rutger":
             morph = FE6Roster.getRutger(hard_mode);
@@ -1138,15 +1160,21 @@ describe("FE7 Lyn", () => {
 
 });
 
-function App() {
-  return (
-    <h1>Hello world</h1>
-  );
-};
+describe("StatTable", () => {
 
-describe("App", () => {
-  it("should be in the document.", () => {
-    render(<App />);
-    expect(screen.getByText("Hello world")).toBeInTheDocument();
+  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
+
+  it("should reload stats upon navigation.", async () => {
+    let {morph, missingParams} = await previewMorph(6, "Roy", {});
+    console.log(morph, missingParams);
+    render(<StatTable stats={morph.stats} highlight={false} />);
+    // HP=18
+    expect(screen.getByText("18")).toBeInTheDocument();
+    ({morph, missingParams} = await previewMorph(6, "Marcus", {}));
+    console.log(morph, typeof morph, missingParams);
+    render(<StatTable stats={morph.stats} highlight={false} />);
+    // HP=32
+    expect(screen.getByText("32")).toBeInTheDocument();
   });
+
 });

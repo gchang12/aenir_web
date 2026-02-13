@@ -1,11 +1,13 @@
 import { useState } from 'react'
+import {
+  useLoaderData,
+} from "react-router";
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
-
   return (
     <>
       <div>
@@ -68,7 +70,7 @@ async function previewMorph(game_no, name, kwargs) {
     });
     morph = await getMorph(game_no, name, newKwargs);
   };
-  return { morph, missingParams };
+  return {morph, missingParams};
 };
 
 export {
@@ -76,16 +78,21 @@ export {
   previewMorph,
 };
 
-function ProfileHead({gameTitle, unitName}) {
+function ProfileHead({figureTitle, imgSrc, children}) {
   return (
     <>
-    <h1>{gameTitle}</h1>
-    <h2>{unitName}</h2>
+    <figure>
+      <img src={imgSrc} alt={imgSrc} />
+      <figcaption>
+        <h2>{figureTitle}</h2>
+        <div className="ProfileHead-children">{children}</div>
+      </figcaption>
+    </figure>
     </>
   );
 };
 
-function ProfileInfo({unitClass, level}) {
+function ProfileLevelAndClass({unitClass, level}) {
   const [currentLv, maxLv] = level;
   return (
     <>
@@ -120,11 +127,41 @@ function StatTable({stats, highlight}) {
   );
 };
 
+function UnitConfirm() {
+  const loaderData = useLoaderData();
+  const {morph, missingParams, unitName, gameId} = loaderData;
+  const {stats} = morph;
+  const imgSuffix = gameId === "fe8" ? ".gif" : ".png";
+  return (
+    <>
+    <ProfileHead figureTitle={unitName} imgSrc={"/images/" + unitName + imgSuffix}>
+      <table>
+        <tbody>
+        <ProfileLevelAndClass unitClass={morph.unitClass} level={morph.level[0]} />
+        </tbody>
+      </table>
+    </ProfileHead>
+    <table>
+      <tbody>
+      <StatTable {...{stats, highlight: true}} />
+      </tbody>
+    </table>
+    </>
+  );
+};
+
+export {
+  UnitConfirm,
+  StatTable,
+};
+
+/*
 export {
   StatTable,
   ProfileInfo,
   ProfileHead,
 };
+*/
 
 function GameSelect() {
   return (
@@ -175,7 +212,7 @@ function UnitSelect() {
   );
 };
 
-function UnitConfirm() {
+function UnitConfirm2() {
   return (
     <form>
       <div>
@@ -217,6 +254,6 @@ function UnitConfirm() {
 export {
   GameSelect,
   UnitSelect,
-  UnitConfirm,
+  //UnitConfirm,
 };
 
