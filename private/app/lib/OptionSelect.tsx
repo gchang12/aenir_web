@@ -24,10 +24,25 @@ function FatherSelect({ choices, onChange } : { choices: Array<string>; onChange
 function HardModeToggle({ choices, onChange } : { choices: Array<boolean>; onChange: any }) {
   // choices: [false, true]
   const [defaultChecked] = choices;
+  const [checked, setChecked] = React.useState(defaultChecked);
   return (
     <>
     <label htmlFor="hard_mode">Hard Mode</label>
-    <input name="hard_mode" {...{defaultChecked}} type="checkbox" />
+    <input onClick={e => setChecked(e.currentTarget.checked ? true : false)} name="_hard_mode" {...{defaultChecked: checked}} type="checkbox" />
+    <input name="hard_mode" value={defaultChecked} type="hidden" />
+    </>
+  );
+};
+
+function LynModeToggle({ choices, onChange } : { choices: Array<boolean>; onChange: any }) {
+  // choices: [false, true]
+  const [defaultChecked] = choices;
+  const [checked, setChecked] = React.useState(defaultChecked);
+  return (
+    <>
+    <label htmlFor="lyn_mode">Hard Mode</label>
+    <input onClick={e => setChecked(e.currentTarget.checked ? true : false)} name="_lyn_mode" {...{defaultChecked: checked}} type="checkbox" />
+    <input name="lyn_mode" value={defaultChecked} type="hidden" />
     </>
   );
 };
@@ -73,17 +88,6 @@ function RouteSelect({ choices, onChange } : { choices: Array<string>; onChange:
       })
       }
     </fieldset>
-  );
-};
-
-function LynModeToggle({ choices, onChange } : { choices: Array<boolean>; onChange: any }) {
-  // choices: [false, true]
-  const [defaultChecked] = choices;
-  return (
-    <>
-    <label htmlFor="lyn_mode">Lyn Mode</label>
-    <input name="lyn_mode" {...{defaultChecked}} type="checkbox" />
-    </>
   );
 };
 
