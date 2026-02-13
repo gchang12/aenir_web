@@ -8,15 +8,19 @@ function FatherSelect({ choices, onChange } : { choices: Array<string>; onChange
   // choices: ['Arden', 'Azel', 'Alec', 'Claude', 'Jamka', 'Dew', 'Noish', 'Fin', 'Beowolf', 'Holyn', 'Midayle', 'Levin', 'Lex']
   return (
     <>
-    <label htmlFor="father">Father Select</label>
-    <select name="father">
-    {choices.map(choice => {
-      return (
-        <option key={choice} value={choice}>{choice}</option>
-      );
-    })
-    }
-    </select>
+    <tr>
+      <th><label htmlFor="father">Father Select</label></th>
+      <td>
+        <select name="father">
+        {choices.map(choice => {
+          return (
+            <option key={choice} value={choice}>{choice}</option>
+          );
+        })
+        }
+        </select>
+      </td>
+    </tr>
     </>
   );
 };
@@ -27,9 +31,10 @@ function HardModeToggle({ choices, onChange } : { choices: Array<boolean>; onCha
   const [checked, setChecked] = React.useState(defaultChecked);
   return (
     <>
-    <label htmlFor="hard_mode">Hard Mode</label>
-    <input onClick={e => setChecked(e.currentTarget.checked ? true : false)} name="_hard_mode" {...{defaultChecked: checked}} type="checkbox" />
-    <input name="hard_mode" value={defaultChecked} type="hidden" />
+    <tr>
+      <th><label htmlFor="hard_mode">Hard Mode</label></th>
+      <td><input onClick={e => setChecked(e.currentTarget.checked ? true : false)} name="_hard_mode" {...{defaultChecked: checked}} type="checkbox" /><input name="hard_mode" value={defaultChecked} type="hidden" /></td>
+    </tr>
     </>
   );
 };
@@ -40,9 +45,10 @@ function LynModeToggle({ choices, onChange } : { choices: Array<boolean>; onChan
   const [checked, setChecked] = React.useState(defaultChecked);
   return (
     <>
-    <label htmlFor="lyn_mode">Hard Mode</label>
-    <input onClick={e => setChecked(e.currentTarget.checked ? true : false)} name="_lyn_mode" {...{defaultChecked: checked}} type="checkbox" />
-    <input name="lyn_mode" value={defaultChecked} type="hidden" />
+    <tr>
+      <th><label htmlFor="lyn_mode">Hard Mode</label></th>
+      <td><input onClick={e => setChecked(e.currentTarget.checked ? true : false)} name="_lyn_mode" {...{defaultChecked: checked}} type="checkbox" /><input name="lyn_mode" value={defaultChecked} type="hidden" /></td>
+    </tr>
     </>
   );
 };
@@ -58,16 +64,20 @@ function MageDecliner({ choices, onChange } : { choices: Array<number>; onChange
   };
   return (
     <>
-    <label htmlFor="number_of_declines">Gold Tendered</label>
-    <select name="number_of_declines">
-    {choices.map(choice => {
-      const price = priceByDeclineCount[choice];
-      return (
-        <option key={choice} value={choice}>{price + " G"}</option>
-      );
-    })
-    }
-    </select>
+    <tr>
+      <th><label htmlFor="number_of_declines">Gold Tendered</label></th>
+      <td>
+        <select name="number_of_declines">
+        {choices.map(choice => {
+          const price = priceByDeclineCount[choice];
+          return (
+            <option key={choice} value={choice}>{price + " G"}</option>
+          );
+        })
+        }
+        </select>
+      </td>
+    </tr>
     </>
   );
 };
@@ -76,18 +86,20 @@ function RouteSelect({ choices, onChange } : { choices: Array<string>; onChange:
   // choices: ['Lalum', 'Elphin']
   const [defaultValue] = choices;
   return (
-    <fieldset>
-      <legend>Route Select</legend>
+    <tr>
+      <th>Route</th>
+      <td>
       {choices.map(choice => {
         return (
-          <div className="route-select" key={choice}>
+          <div className="route-choice" key={choice}>
             <label htmlFor={choice}>{choice}</label>
             <input name="route" id={choice} value={choice} type="radio" defaultChecked={choice === defaultValue} />
           </div>
         );
       })
       }
-    </fieldset>
+      </td>
+    </tr>
   );
 };
 
