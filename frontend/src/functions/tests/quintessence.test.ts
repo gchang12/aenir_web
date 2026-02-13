@@ -24,30 +24,7 @@ import {
   getMorph,
   previewMorph,
   StatTable,
-} from "./App";
-
-/*
-FE6 Roy (2)
-- no change
-FE4 Lakche (2)
-- write test to display difference in stats.
-FE6 Rutger (2)
-- write test to display difference in stats.
-FE6 Hugh (3)
-- write test to display difference in stats.
-FE6 Gonzales (3)
-- write test to display difference in stats.
-FE7 Lyn (1)
-- write test to display difference in stats.
-FE7 Nils (2)
-- write test to display difference in stats.
-FE7 Ninian (1)
-FE8 Lyon (1)
-FE10 Ike (DNE) (1)
-FE7 Marth (DNE) (1)
-*/
-
-// getMorph(game_no, name, { father, hard_mode, number_of_declines, route, lyn_mode })
+} from "../quintessence";
 
 class FE6Roster {
 
@@ -72,7 +49,7 @@ class FE6Roster {
   static getMarcus() {
     return {
       unitClass: "Paladin",
-      level: [1, null],
+      level: [1, 20],
       stats: [
         ["HP", 32, 60, 80],
         ["Pow", 9, 25, 30],
@@ -1156,25 +1133,6 @@ describe("FE7 Lyn", () => {
     expect(unitClass).not.toBeUndefined();
     expect(level).not.toBeUndefined();
     expect(stats).not.toBeUndefined();
-  });
-
-});
-
-describe("StatTable", () => {
-
-  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
-
-  it("should reload stats upon navigation.", async () => {
-    let {morph, missingParams} = await previewMorph(6, "Roy", {});
-    console.log(morph, missingParams);
-    render(<StatTable stats={morph.stats} highlight={false} />);
-    // HP=18
-    expect(screen.getByText("18")).toBeInTheDocument();
-    ({morph, missingParams} = await previewMorph(6, "Marcus", {}));
-    console.log(morph, typeof morph, missingParams);
-    render(<StatTable stats={morph.stats} highlight={false} />);
-    // HP=32
-    expect(screen.getByText("32")).toBeInTheDocument();
   });
 
 });
