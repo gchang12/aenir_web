@@ -120,6 +120,12 @@ function StatTable({stats, highlight}) {
   );
 };
 
+export {
+  StatTable,
+  ProfileInfo,
+  ProfileHead,
+};
+
 function GameSelect() {
   return (
     <nav>
