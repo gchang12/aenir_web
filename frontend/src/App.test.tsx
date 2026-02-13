@@ -1,4 +1,8 @@
 import {
+  render,
+  screen,
+} from "@testing-library/react";
+import {
   expect,
   test,
   describe,
@@ -1127,4 +1131,17 @@ describe("FE7 Lyn", () => {
     expect(stats).not.toBeUndefined();
   });
 
+});
+
+function App() {
+  return (
+    <h1>Hello world</h1>
+  );
+};
+
+describe("App", () => {
+  it("should be in the document.", () => {
+    render(<App />);
+    expect(screen.getByText("Hello world")).toBeInTheDocument();
+  });
 });
