@@ -81,10 +81,10 @@ const server = setupServer(
       };
     };
     function getRutger() {
-      if (hard_mode == null) {
-        return {missingParams: {hard_mode: [false, true]}};
-      } else {
-        if (hard_mode === "false") {
+      switch(hard_mode) {
+        case null:
+          return {missingParams: {hard_mode: [false, true]}};
+        case "false":
           return {
             unitClass: "Myrmidon",
             level: [4, 20],
@@ -100,7 +100,7 @@ const server = setupServer(
               ["Mov", 5, 15, 15],
             ]
           };
-        } else if (hard_mode === "true") {
+        case "true":
           return {
             unitClass: "Myrmidon",
             level: [4, 20],
@@ -118,42 +118,42 @@ const server = setupServer(
           };
         };
       };
-    };
     function getHugh() {
-      if (!["0", "1", "2", "3"].includes(number_of_declines)) {
-        return {missingParams: {number_of_declines: [0, 1, 2, 3]}};
-      } else if (number_of_declines === "2") {
-        return {
-          unitClass: "Mage",
-          level: [15, 20],
-          stats: [
-            ["HP", 24, 60, 80],
-            ["Pow", 11, 20, 30],
-            ["Skl", 9, 20, 30],
-            ["Spd", 10, 20, 30],
-            ["Lck", 8, 30, 30],
-            ["Def", 7, 20, 30],
-            ["Res", 7, 20, 30],
-            ["Con", 7, 20, 25],
-            ["Mov", 5, 15, 15],
-          ]
-        };
-      } else if (number_of_declines === "0") {
-        return {
-          unitClass: "Mage",
-          level: [15, 20],
-          stats: [
-            ["HP", 26, 60, 80],
-            ["Pow", 13, 20, 30],
-            ["Skl", 11, 20, 30],
-            ["Spd", 12, 20, 30],
-            ["Lck", 10, 30, 30],
-            ["Def", 9, 20, 30],
-            ["Res", 9, 20, 30],
-            ["Con", 7, 20, 25],
-            ["Mov", 5, 15, 15],
-          ]
-        };
+      switch(number_of_declines) {
+        case "0":
+          return {
+            unitClass: "Mage",
+            level: [15, 20],
+            stats: [
+              ["HP", 26, 60, 80],
+              ["Pow", 13, 20, 30],
+              ["Skl", 11, 20, 30],
+              ["Spd", 12, 20, 30],
+              ["Lck", 10, 30, 30],
+              ["Def", 9, 20, 30],
+              ["Res", 9, 20, 30],
+              ["Con", 7, 20, 25],
+              ["Mov", 5, 15, 15],
+            ]
+          };
+        case "2":
+          return {
+            unitClass: "Mage",
+            level: [15, 20],
+            stats: [
+              ["HP", 24, 60, 80],
+              ["Pow", 11, 20, 30],
+              ["Skl", 9, 20, 30],
+              ["Spd", 10, 20, 30],
+              ["Lck", 8, 30, 30],
+              ["Def", 7, 20, 30],
+              ["Res", 7, 20, 30],
+              ["Con", 7, 20, 25],
+              ["Mov", 5, 15, 15],
+            ]
+          };
+        default:
+          return {missingParams: {number_of_declines: [0, 1, 2, 3]}};
       };
     };
     function getGonzales() {
@@ -166,9 +166,12 @@ const server = setupServer(
           morph.missingParams["hard_mode"] = [false, true];
         };
         return morph;
+      };
+      if (route !== "Lalum") {
+        return;
       } else {
-        if (route === "Lalum") {
-          if (hard_mode === "false") {
+        switch(hard_mode) {
+          case "false":
             return {
               unitClass: "Bandit",
               level: [5, 20],
@@ -184,7 +187,7 @@ const server = setupServer(
                 ["Mov", 5, 15, 15],
               ]
             };
-          } else if (hard_mode === "true") {
+          case "true":
             return {
               unitClass: "Bandit",
               level: [5, 20],
@@ -200,110 +203,113 @@ const server = setupServer(
                 ["Mov", 5, 15, 15],
               ]
             };
-          };
         };
       };
     };
 
     // FE4
     function getLakche() {
-      if (father == null) {
-        return {missingParams: {father: [
-          "Arden",
-          "Azel",
-          "Alec",
-          "Claude",
-          "Jamka",
-          "Dew",
-          "Noish",
-          "Fin",
-          "Beowolf",
-          "Holyn",
-          "Midayle",
-          "Levin",
-          "Lex",
-        ]}};
-      } else {
-      } if (father === "Lex") {
-        return {
-          unitClass: "Swordfighter",
-          level: [1, 20],
-          stats: [
-            ["HP", 30, 80, 80],
-            ["Str", 10, 22, 30],
-            ["Mag", 0, 15, 30],
-            ["Skl", 13, 25, 30],
-            ["Spd", 13, 25, 30],
-            ["Lck", 8, 30, 30],
-            ["Def", 7, 20, 30],
-            ["Res", 0, 15, 30],
-          ],
-        };
-      } else if (father === "Claude") {
-        return {
-          unitClass: "Swordfighter",
-          level: [1, 20],
-          stats: [
-            ["HP", 29, 80, 80],
-            ["Str", 9, 22, 30],
-            ["Mag", 1, 15, 30],
-            ["Skl", 13, 25, 30],
-            ["Spd", 13, 25, 30],
-            ["Lck", 9, 30, 30],
-            ["Def", 6, 20, 30],
-            ["Res", 1, 15, 30],
-          ],
-        };
-      } else if (father === "Arden") {
-        return {
-          unitClass: "Swordfighter",
-          level: [1, 20],
-          stats: [
-            ["HP", 31, 80, 80],
-            ["Str", 10, 22, 30],
-            ["Mag", 0, 15, 30],
-            ["Skl", 13, 25, 30],
-            ["Spd", 13, 25, 30],
-            ["Lck", 8, 30, 30],
-            ["Def", 7, 20, 30],
-            ["Res", 0, 15, 30],
-          ],
-        };
+      switch(father) {
+        case null:
+          return {missingParams: {father: [
+            "Arden",
+            "Azel",
+            "Alec",
+            "Claude",
+            "Jamka",
+            "Dew",
+            "Noish",
+            "Fin",
+            "Beowolf",
+            "Holyn",
+            "Midayle",
+            "Levin",
+            "Lex",
+          ]}};
+        case "Lex":
+          return {
+            unitClass: "Swordfighter",
+            level: [1, 20],
+            stats: [
+              ["HP", 30, 80, 80],
+              ["Str", 10, 22, 30],
+              ["Mag", 0, 15, 30],
+              ["Skl", 13, 25, 30],
+              ["Spd", 13, 25, 30],
+              ["Lck", 8, 30, 30],
+              ["Def", 7, 20, 30],
+              ["Res", 0, 15, 30],
+            ],
+          };
+        case "Claude":
+          return {
+            unitClass: "Swordfighter",
+            level: [1, 20],
+            stats: [
+              ["HP", 29, 80, 80],
+              ["Str", 9, 22, 30],
+              ["Mag", 1, 15, 30],
+              ["Skl", 13, 25, 30],
+              ["Spd", 13, 25, 30],
+              ["Lck", 9, 30, 30],
+              ["Def", 6, 20, 30],
+              ["Res", 1, 15, 30],
+            ],
+          };
+        case "Arden":
+          return {
+            unitClass: "Swordfighter",
+            level: [1, 20],
+            stats: [
+              ["HP", 31, 80, 80],
+              ["Str", 10, 22, 30],
+              ["Mag", 0, 15, 30],
+              ["Skl", 13, 25, 30],
+              ["Spd", 13, 25, 30],
+              ["Lck", 8, 30, 30],
+              ["Def", 7, 20, 30],
+              ["Res", 0, 15, 30],
+            ],
+          };
       };
     };
 
     // FE7
     function getNinian() {
-      if (lyn_mode == null) {
-        return {missingParams: undefined};
+      switch(lyn_mode) {
+        case null:
+          return {missingParams: undefined};
+        default:
+          return;
       };
     };
     function getNils() {
-      if (lyn_mode == null) {
-        return {missingParams: {lyn_mode: [false, true]}};
-      } else {
-        return {
-          unitClass: "Bard",
-          level: [1, 20],
-          stats: [
-            ["HP", 14, 60, 80],
-            ["Pow", 0, 10, 30],
-            ["Skl", 0, 10, 30],
-            ["Spd", 12, 30, 30],
-            ["Lck", 10, 30, 30],
-            ["Def", 5, 24, 30],
-            ["Res", 4, 26, 30],
-            ["Con", 3, 20, 25],
-            ["Mov", 5, 15, 15],
-          ]
-        };
+      switch(lyn_mode) {
+        case null:
+          return {missingParams: {lyn_mode: [false, true]}};
+        default:
+          return {
+            unitClass: "Bard",
+            level: [1, 20],
+            stats: [
+              ["HP", 14, 60, 80],
+              ["Pow", 0, 10, 30],
+              ["Skl", 0, 10, 30],
+              ["Spd", 12, 30, 30],
+              ["Lck", 10, 30, 30],
+              ["Def", 5, 24, 30],
+              ["Res", 4, 26, 30],
+              ["Con", 3, 20, 25],
+              ["Mov", 5, 15, 15],
+            ]
+          };
       };
-    };
+   };
    function getLyn() {
-     if (lyn_mode == null) {
-       return {missingParams: {lyn_mode: [false, true]}};
-     } else {
-       if (lyn_mode === "false") {
+     switch(lyn_mode) {
+       case null:
+         return {missingParams: {lyn_mode: [false, true]}};
+       case "false":
          return {
            unitClass: "Lord",
            level: [4, 20],
@@ -319,7 +325,7 @@ const server = setupServer(
              ["Mov", 5, 15, 15],
            ]
          };
-       } else if (lyn_mode === "true") {
+       case "true":
          return {
            unitClass: "Lord",
            level: [1, 20],
@@ -333,10 +339,9 @@ const server = setupServer(
              ["Res", 0, 20, 30],
              ["Con", 5, 20, 25],
              ["Mov", 5, 15, 15],
-             ]
-           };
+           ]
          };
-       };
+      };
     };
     function getMarth() {
       return {error: "UNIT_DNE"};
@@ -352,47 +357,58 @@ const server = setupServer(
       return {error: "INVALID_GAME"};
     };
 
-    if (game_no === "6") {
-      if (name === "Roy") {
-        morph = getRoy();
-      } else if (name === "Rutger") {
-        morph = getRutger();
-      } else if (name === "Hugh") {
-        morph = getHugh();
-      } else if (name === "Gonzales") {
-        morph = getGonzales();
-      };
+    switch(game_no) {
+      case "6":
+        switch(name) {
+          case "Roy":
+            morph = getRoy();
+            break;
+          case "Rutger":
+            morph = getRutger();
+            break;
+          case "Hugh":
+            morph = getHugh();
+            break;
+          case "Gonzales":
+            morph = getGonzales();
+            break;
+        };
+        break;
+      case "4":
+        switch(name) {
+          case "Lakche":
+            morph = getLakche();
+            break;
+        };
+      case "7":
+        switch(name) {
+          case "Ninian":
+            morph = getNinian();
+            break;
+          case "Nils":
+            morph = getNils();
+            break;
+          case "Lyn":
+            morph = getLyn();
+            break;
+          case "Marth":
+            morph = getMarth();
+            break;
+        };
+      case "8":
+        switch (name) {
+          case "Lyon":
+            morph = getLyon();
+            break;
+        };
+      case "10":
+        switch(name) {
+          case "Ike":
+            morph = getIke();
+            break;
+        };
     };
 
-    if (game_no === "4") {
-      if (name === "Lakche") {
-        morph = getLakche();
-      }; // name
-    }; // game_no
-
-    if (game_no === "7") {
-      if (name === "Ninian") {
-        morph = getNinian();
-      } else if (name === "Nils") {
-        morph = getNils();
-      } else if (name === "Lyn") {
-        morph = getLyn();
-      } else if (name === "Marth") {
-        morph = getMarth();
-      };
-    };
-
-    if (game_no === "8") {
-      if (name === "Lyon") {
-        morph = getLyon();
-      };
-    };
-
-    if (game_no === "10") {
-      if (name === "Ike") {
-        morph = getIke();
-      };
-    };
     return HttpResponse.json(morph);
   })
 );
