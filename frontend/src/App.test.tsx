@@ -48,6 +48,347 @@ FE7 Marth (DNE) (1)
 
 // getMorph(game_no, name, { father, hard_mode, number_of_declines, route, lyn_mode })
 
+class FE6Roster {
+
+  static getRoy() {
+    return {
+      unitClass: "Lord",
+      level: [1, 20],
+      stats: [
+        ["HP", 18, 60, 80],
+        ["Pow", 5, 20, 30],
+        ["Skl", 5, 20, 30],
+        ["Spd", 7, 20, 30],
+        ["Lck", 7, 30, 30],
+        ["Def", 5, 20, 30],
+        ["Res", 0, 20, 30],
+        ["Con", 6, 20, 25],
+        ["Mov", 5, 15, 15],
+      ],
+    };
+  };
+
+  static getRutger(hard_mode) {
+    switch(hard_mode) {
+      case null:
+        return {missingParams: {hard_mode: [false, true]}};
+      case "false":
+        return {
+          unitClass: "Myrmidon",
+          level: [4, 20],
+          stats: [
+            ["HP", 22, 60, 80],
+            ["Pow", 7, 20, 30],
+            ["Skl", 12, 20, 30],
+            ["Spd", 13, 20, 30],
+            ["Lck", 2, 30, 30],
+            ["Def", 5, 20, 30],
+            ["Res", 0, 20, 30],
+            ["Con", 7, 20, 25],
+            ["Mov", 5, 15, 15],
+          ]
+        };
+      case "true":
+        return {
+          unitClass: "Myrmidon",
+          level: [4, 20],
+          stats: [
+            ["HP", 26, 60, 80],
+            ["Pow", 9, 20, 30],
+            ["Skl", 14, 20, 30],
+            ["Spd", 15, 20, 30],
+            ["Lck", 4, 30, 30],
+            ["Def", 6, 20, 30],
+            ["Res", 1, 20, 30],
+            ["Con", 7, 20, 25],
+            ["Mov", 5, 15, 15],
+          ]
+        };
+      default:
+        return;
+    };
+  };
+
+  static getHugh(number_of_declines) {
+    switch(number_of_declines) {
+      case "0":
+        return {
+          unitClass: "Mage",
+          level: [15, 20],
+          stats: [
+            ["HP", 26, 60, 80],
+            ["Pow", 13, 20, 30],
+            ["Skl", 11, 20, 30],
+            ["Spd", 12, 20, 30],
+            ["Lck", 10, 30, 30],
+            ["Def", 9, 20, 30],
+            ["Res", 9, 20, 30],
+            ["Con", 7, 20, 25],
+            ["Mov", 5, 15, 15],
+          ]
+        };
+      case "2":
+        return {
+          unitClass: "Mage",
+          level: [15, 20],
+          stats: [
+            ["HP", 24, 60, 80],
+            ["Pow", 11, 20, 30],
+            ["Skl", 9, 20, 30],
+            ["Spd", 10, 20, 30],
+            ["Lck", 8, 30, 30],
+            ["Def", 7, 20, 30],
+            ["Res", 7, 20, 30],
+            ["Con", 7, 20, 25],
+            ["Mov", 5, 15, 15],
+          ]
+        };
+      default:
+        return {missingParams: {number_of_declines: [0, 1, 2, 3]}};
+    };
+  };
+
+  static getGonzales(route, hard_mode) {
+    if (route == null || hard_mode == null) {
+      let morph = {missingParams: {}};
+      if (route == null) {
+        morph.missingParams["route"] = ["Lalum", "Elphin"];
+      };
+      if (hard_mode == null) {
+        morph.missingParams["hard_mode"] = [false, true];
+      };
+      return morph;
+    };
+    if (route !== "Lalum") {
+      return;
+    } else {
+      switch(hard_mode) {
+        case "false":
+          return {
+            unitClass: "Bandit",
+            level: [5, 20],
+            stats: [
+              ["HP", 36, 60, 80],
+              ["Pow", 12, 20, 30],
+              ["Skl", 5, 20, 30],
+              ["Spd", 9, 20, 30],
+              ["Lck", 5, 30, 30],
+              ["Def", 6, 20, 30],
+              ["Res", 0, 20, 30],
+              ["Con", 15, 20, 25],
+              ["Mov", 5, 15, 15],
+            ]
+          };
+        case "true":
+          return {
+            unitClass: "Bandit",
+            level: [5, 20],
+            stats: [
+              ["HP", 43, 60, 80],
+              ["Pow", 16, 20, 30],
+              ["Skl", 7, 20, 30],
+              ["Spd", 11, 20, 30],
+              ["Lck", 6, 30, 30],
+              ["Def", 7, 20, 30],
+              ["Res", 1, 20, 30],
+              ["Con", 15, 20, 25],
+              ["Mov", 5, 15, 15],
+            ]
+          };
+        default:
+          return;
+      };
+    };
+  };
+
+};
+
+class FE4Roster {
+
+  // FE4
+  static getLakche(father) {
+    switch(father) {
+      case null:
+        return {missingParams: {father: [
+          "Arden",
+          "Azel",
+          "Alec",
+          "Claude",
+          "Jamka",
+          "Dew",
+          "Noish",
+          "Fin",
+          "Beowolf",
+          "Holyn",
+          "Midayle",
+          "Levin",
+          "Lex",
+        ]}};
+      case "Lex":
+        return {
+          unitClass: "Swordfighter",
+          level: [1, 20],
+          stats: [
+            ["HP", 30, 80, 80],
+            ["Str", 10, 22, 30],
+            ["Mag", 0, 15, 30],
+            ["Skl", 13, 25, 30],
+            ["Spd", 13, 25, 30],
+            ["Lck", 8, 30, 30],
+            ["Def", 7, 20, 30],
+            ["Res", 0, 15, 30],
+          ],
+        };
+      case "Claude":
+        return {
+          unitClass: "Swordfighter",
+          level: [1, 20],
+          stats: [
+            ["HP", 29, 80, 80],
+            ["Str", 9, 22, 30],
+            ["Mag", 1, 15, 30],
+            ["Skl", 13, 25, 30],
+            ["Spd", 13, 25, 30],
+            ["Lck", 9, 30, 30],
+            ["Def", 6, 20, 30],
+            ["Res", 1, 15, 30],
+          ],
+        };
+      case "Arden":
+        return {
+          unitClass: "Swordfighter",
+          level: [1, 20],
+          stats: [
+            ["HP", 31, 80, 80],
+            ["Str", 10, 22, 30],
+            ["Mag", 0, 15, 30],
+            ["Skl", 13, 25, 30],
+            ["Spd", 13, 25, 30],
+            ["Lck", 8, 30, 30],
+            ["Def", 7, 20, 30],
+            ["Res", 0, 15, 30],
+          ],
+        };
+      default:
+        return;
+    };
+  };
+
+};
+
+class FE7Roster {
+
+  static getNinian(lyn_mode) {
+    switch(lyn_mode) {
+      case null:
+        return {missingParams: undefined};
+      default:
+        return;
+    };
+  };
+
+  static getNils(lyn_mode) {
+    switch(lyn_mode) {
+      case null:
+        return {missingParams: {lyn_mode: [false, true]}};
+      case "true":
+        return {
+          unitClass: "Bard",
+          level: [1, 20],
+          stats: [
+            ["HP", 14, 60, 80],
+            ["Pow", 0, 10, 30],
+            ["Skl", 0, 10, 30],
+            ["Spd", 12, 30, 30],
+            ["Lck", 10, 30, 30],
+            ["Def", 5, 24, 30],
+            ["Res", 4, 26, 30],
+            ["Con", 3, 20, 25],
+            ["Mov", 5, 15, 15],
+          ]
+        };
+      case "false":
+        return {
+          unitClass: "Bard",
+          level: [1, 20],
+          stats: [
+            ["HP", 14, 60, 80],
+            ["Pow", 0, 10, 30],
+            ["Skl", 0, 10, 30],
+            ["Spd", 12, 30, 30],
+            ["Lck", 10, 30, 30],
+            ["Def", 5, 24, 30],
+            ["Res", 4, 26, 30],
+            ["Con", 3, 20, 25],
+            ["Mov", 5, 15, 15],
+          ]
+        };
+      default:
+        return;
+    };
+ };
+
+ static getLyn(lyn_mode) {
+   switch(lyn_mode) {
+     case null:
+       return {missingParams: {lyn_mode: [false, true]}};
+     case "false":
+       return {
+         unitClass: "Lord",
+         level: [4, 20],
+         stats: [
+           ["HP", 18, 60, 80],
+           ["Pow", 5, 20, 30],
+           ["Skl", 10, 20, 30],
+           ["Spd", 11, 20, 30],
+           ["Lck", 5, 30, 30],
+           ["Def", 2, 20, 30],
+           ["Res", 0, 20, 30],
+           ["Con", 5, 20, 25],
+           ["Mov", 5, 15, 15],
+         ]
+       };
+     case "true":
+       return {
+         unitClass: "Lord",
+         level: [1, 20],
+         stats: [
+           ["HP", 16, 60, 80],
+           ["Pow", 4, 20, 30],
+           ["Skl", 7, 20, 30],
+           ["Spd", 9, 20, 30],
+           ["Lck", 5, 30, 30],
+           ["Def", 2, 20, 30],
+           ["Res", 0, 20, 30],
+           ["Con", 5, 20, 25],
+           ["Mov", 5, 15, 15],
+         ]
+       };
+    };
+  };
+
+  static getMarth() {
+    return {error: "UNIT_DNE"};
+  };
+
+};
+
+class FE8Roster {
+
+  static getLyon() {
+    return undefined;
+  };
+
+};
+
+class FE10Roster {
+
+  static getIke() {
+    return {error: "INVALID_GAME"};
+  };
+
+};
+
 const server = setupServer(
   http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
     const url = new URL(request.url);
@@ -62,349 +403,55 @@ const server = setupServer(
     const route = url.searchParams.get("route");
     // Initialize blank morph
     let morph;
-    // FE6
-    function getRoy() {
-      return {
-        unitClass: "Lord",
-        level: [1, 20],
-        stats: [
-          ["HP", 18, 60, 80],
-          ["Pow", 5, 20, 30],
-          ["Skl", 5, 20, 30],
-          ["Spd", 7, 20, 30],
-          ["Lck", 7, 30, 30],
-          ["Def", 5, 20, 30],
-          ["Res", 0, 20, 30],
-          ["Con", 6, 20, 25],
-          ["Mov", 5, 15, 15],
-        ],
-      };
-    };
-    function getRutger() {
-      switch(hard_mode) {
-        case null:
-          return {missingParams: {hard_mode: [false, true]}};
-        case "false":
-          return {
-            unitClass: "Myrmidon",
-            level: [4, 20],
-            stats: [
-              ["HP", 22, 60, 80],
-              ["Pow", 7, 20, 30],
-              ["Skl", 12, 20, 30],
-              ["Spd", 13, 20, 30],
-              ["Lck", 2, 30, 30],
-              ["Def", 5, 20, 30],
-              ["Res", 0, 20, 30],
-              ["Con", 7, 20, 25],
-              ["Mov", 5, 15, 15],
-            ]
-          };
-        case "true":
-          return {
-            unitClass: "Myrmidon",
-            level: [4, 20],
-            stats: [
-              ["HP", 26, 60, 80],
-              ["Pow", 9, 20, 30],
-              ["Skl", 14, 20, 30],
-              ["Spd", 15, 20, 30],
-              ["Lck", 4, 30, 30],
-              ["Def", 6, 20, 30],
-              ["Res", 1, 20, 30],
-              ["Con", 7, 20, 25],
-              ["Mov", 5, 15, 15],
-            ]
-          };
-        };
-      };
-    function getHugh() {
-      switch(number_of_declines) {
-        case "0":
-          return {
-            unitClass: "Mage",
-            level: [15, 20],
-            stats: [
-              ["HP", 26, 60, 80],
-              ["Pow", 13, 20, 30],
-              ["Skl", 11, 20, 30],
-              ["Spd", 12, 20, 30],
-              ["Lck", 10, 30, 30],
-              ["Def", 9, 20, 30],
-              ["Res", 9, 20, 30],
-              ["Con", 7, 20, 25],
-              ["Mov", 5, 15, 15],
-            ]
-          };
-        case "2":
-          return {
-            unitClass: "Mage",
-            level: [15, 20],
-            stats: [
-              ["HP", 24, 60, 80],
-              ["Pow", 11, 20, 30],
-              ["Skl", 9, 20, 30],
-              ["Spd", 10, 20, 30],
-              ["Lck", 8, 30, 30],
-              ["Def", 7, 20, 30],
-              ["Res", 7, 20, 30],
-              ["Con", 7, 20, 25],
-              ["Mov", 5, 15, 15],
-            ]
-          };
-        default:
-          return {missingParams: {number_of_declines: [0, 1, 2, 3]}};
-      };
-    };
-    function getGonzales() {
-      if (route == null || hard_mode == null) {
-        let morph = {missingParams: {}};
-        if (route == null) {
-          morph.missingParams["route"] = ["Lalum", "Elphin"];
-        };
-        if (hard_mode == null) {
-          morph.missingParams["hard_mode"] = [false, true];
-        };
-        return morph;
-      };
-      if (route !== "Lalum") {
-        return;
-      } else {
-        switch(hard_mode) {
-          case "false":
-            return {
-              unitClass: "Bandit",
-              level: [5, 20],
-              stats: [
-                ["HP", 36, 60, 80],
-                ["Pow", 12, 20, 30],
-                ["Skl", 5, 20, 30],
-                ["Spd", 9, 20, 30],
-                ["Lck", 5, 30, 30],
-                ["Def", 6, 20, 30],
-                ["Res", 0, 20, 30],
-                ["Con", 15, 20, 25],
-                ["Mov", 5, 15, 15],
-              ]
-            };
-          case "true":
-            return {
-              unitClass: "Bandit",
-              level: [5, 20],
-              stats: [
-                ["HP", 43, 60, 80],
-                ["Pow", 16, 20, 30],
-                ["Skl", 7, 20, 30],
-                ["Spd", 11, 20, 30],
-                ["Lck", 6, 30, 30],
-                ["Def", 7, 20, 30],
-                ["Res", 1, 20, 30],
-                ["Con", 15, 20, 25],
-                ["Mov", 5, 15, 15],
-              ]
-            };
-        };
-      };
-    };
-
-    // FE4
-    function getLakche() {
-      switch(father) {
-        case null:
-          return {missingParams: {father: [
-            "Arden",
-            "Azel",
-            "Alec",
-            "Claude",
-            "Jamka",
-            "Dew",
-            "Noish",
-            "Fin",
-            "Beowolf",
-            "Holyn",
-            "Midayle",
-            "Levin",
-            "Lex",
-          ]}};
-        case "Lex":
-          return {
-            unitClass: "Swordfighter",
-            level: [1, 20],
-            stats: [
-              ["HP", 30, 80, 80],
-              ["Str", 10, 22, 30],
-              ["Mag", 0, 15, 30],
-              ["Skl", 13, 25, 30],
-              ["Spd", 13, 25, 30],
-              ["Lck", 8, 30, 30],
-              ["Def", 7, 20, 30],
-              ["Res", 0, 15, 30],
-            ],
-          };
-        case "Claude":
-          return {
-            unitClass: "Swordfighter",
-            level: [1, 20],
-            stats: [
-              ["HP", 29, 80, 80],
-              ["Str", 9, 22, 30],
-              ["Mag", 1, 15, 30],
-              ["Skl", 13, 25, 30],
-              ["Spd", 13, 25, 30],
-              ["Lck", 9, 30, 30],
-              ["Def", 6, 20, 30],
-              ["Res", 1, 15, 30],
-            ],
-          };
-        case "Arden":
-          return {
-            unitClass: "Swordfighter",
-            level: [1, 20],
-            stats: [
-              ["HP", 31, 80, 80],
-              ["Str", 10, 22, 30],
-              ["Mag", 0, 15, 30],
-              ["Skl", 13, 25, 30],
-              ["Spd", 13, 25, 30],
-              ["Lck", 8, 30, 30],
-              ["Def", 7, 20, 30],
-              ["Res", 0, 15, 30],
-            ],
-          };
-      };
-    };
-
-    // FE7
-    function getNinian() {
-      switch(lyn_mode) {
-        case null:
-          return {missingParams: undefined};
-        default:
-          return;
-      };
-    };
-    function getNils() {
-      switch(lyn_mode) {
-        case null:
-          return {missingParams: {lyn_mode: [false, true]}};
-        default:
-          return {
-            unitClass: "Bard",
-            level: [1, 20],
-            stats: [
-              ["HP", 14, 60, 80],
-              ["Pow", 0, 10, 30],
-              ["Skl", 0, 10, 30],
-              ["Spd", 12, 30, 30],
-              ["Lck", 10, 30, 30],
-              ["Def", 5, 24, 30],
-              ["Res", 4, 26, 30],
-              ["Con", 3, 20, 25],
-              ["Mov", 5, 15, 15],
-            ]
-          };
-      };
-   };
-   function getLyn() {
-     switch(lyn_mode) {
-       case null:
-         return {missingParams: {lyn_mode: [false, true]}};
-       case "false":
-         return {
-           unitClass: "Lord",
-           level: [4, 20],
-           stats: [
-             ["HP", 18, 60, 80],
-             ["Pow", 5, 20, 30],
-             ["Skl", 10, 20, 30],
-             ["Spd", 11, 20, 30],
-             ["Lck", 5, 30, 30],
-             ["Def", 2, 20, 30],
-             ["Res", 0, 20, 30],
-             ["Con", 5, 20, 25],
-             ["Mov", 5, 15, 15],
-           ]
-         };
-       case "true":
-         return {
-           unitClass: "Lord",
-           level: [1, 20],
-           stats: [
-             ["HP", 16, 60, 80],
-             ["Pow", 4, 20, 30],
-             ["Skl", 7, 20, 30],
-             ["Spd", 9, 20, 30],
-             ["Lck", 5, 30, 30],
-             ["Def", 2, 20, 30],
-             ["Res", 0, 20, 30],
-             ["Con", 5, 20, 25],
-             ["Mov", 5, 15, 15],
-           ]
-         };
-      };
-    };
-    function getMarth() {
-      return {error: "UNIT_DNE"};
-    };
-
-    // FE8
-    function getLyon() {
-      return undefined;
-    };
-
-    // FE10
-    function getIke() {
-      return {error: "INVALID_GAME"};
-    };
 
     switch(game_no) {
       case "6":
         switch(name) {
           case "Roy":
-            morph = getRoy();
+            morph = FE6Roster.getRoy();
             break;
           case "Rutger":
-            morph = getRutger();
+            morph = FE6Roster.getRutger(hard_mode);
             break;
           case "Hugh":
-            morph = getHugh();
+            morph = FE6Roster.getHugh(number_of_declines);
             break;
           case "Gonzales":
-            morph = getGonzales();
+            morph = FE6Roster.getGonzales(route, hard_mode);
             break;
         };
         break;
       case "4":
         switch(name) {
           case "Lakche":
-            morph = getLakche();
+            morph = FE4Roster.getLakche(father);
             break;
         };
       case "7":
         switch(name) {
           case "Ninian":
-            morph = getNinian();
+            morph = FE7Roster.getNinian(lyn_mode);
             break;
           case "Nils":
-            morph = getNils();
+            morph = FE7Roster.getNils(lyn_mode);
             break;
           case "Lyn":
-            morph = getLyn();
+            morph = FE7Roster.getLyn(lyn_mode);
             break;
           case "Marth":
-            morph = getMarth();
+            morph = FE7Roster.getMarth();
             break;
         };
       case "8":
         switch (name) {
           case "Lyon":
-            morph = getLyon();
+            morph = FE8Roster.getLyon();
             break;
         };
       case "10":
         switch(name) {
           case "Ike":
-            morph = getIke();
+            morph = FE10Roster.getIke();
             break;
         };
     };
@@ -419,6 +466,7 @@ describe("FE6 Roy", () => {
 
   const game_no = 6;
   const name = "Roy";
+
   test("getMorph: successful request for stat-data with stat-validation.", async () => {
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
@@ -470,6 +518,7 @@ describe("FE4 Lakche", () => {
 
   const game_no = 4;
   const name = "Lakche";
+
   test("getMorph: successful request for stat-data with {father:'Lex'}, with stat-validation.", async () => {
     const kwargs = {"father": "Lex"};
     const morph = await getMorph(game_no, name, kwargs);
@@ -580,6 +629,7 @@ describe("FE6 Rutger", () => {
 
   const game_no = 6;
   const name = "Rutger";
+
   test("getMorph: unsuccessful request for stat-data.", async () => {
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
@@ -662,6 +712,7 @@ describe("FE6 Hugh", () => {
 
   const game_no = 6;
   const name = "Hugh";
+
   test("getMorph: unsuccessful request for stat-data.", async () => {
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
@@ -751,6 +802,7 @@ describe("FE6 Gonzales", () => {
 
   const game_no = 6;
   const name = "Gonzales";
+
   test("getMorph: successful request for stat-data.", async () => {
     const kwargs = {"hard_mode": false, "route": "Lalum"};
     const morph = await getMorph(game_no, name, kwargs);
@@ -847,6 +899,7 @@ describe("FE7 Ninian", () => {
 
   const game_no = 7;
   const name = "Ninian";
+
   test("getMorph: successful request for stat-data.", async () => {
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
@@ -863,6 +916,7 @@ describe("FE7 Nils", () => {
 
   const game_no = 7;
   const name = "Nils";
+
   test("getMorph: unsuccessful request for stat-data.", async () => {
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
@@ -944,6 +998,7 @@ describe("FE8 Lyon", () => {
 
   const game_no = 8;
   const name = "Lyon";
+
   test("getMorph: a successful request for stat-data for an FE8 bonus unit.", async () => {
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
@@ -959,6 +1014,7 @@ describe("FE10 Ike (DNE)", () => {
 
   const game_no = 10;
   const name = "Ike";
+
   test("getMorph: unsuccessful request for a game that aenir does not encompass.", async () => {
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
@@ -982,6 +1038,7 @@ describe("FE7 Marth (DNE)", () => {
 
   const game_no = 7;
   const name = "Marth";
+
   test("previewMorph: if morph contains an error if bad game_no-name pair was provided.", async () => {
     const kwargs = {};
     const {morph, missingParams} = await previewMorph(game_no, name, kwargs);
@@ -1005,6 +1062,7 @@ describe("FE7 Lyn", () => {
 
   const game_no = 7;
   const name = "Lyn";
+
   test("getMorph: unsuccessful request for stat-data, with 'lyn_mode' parameter missing..", async () => {
     const kwargs = {};
     const morph = await getMorph(game_no, name, kwargs);
