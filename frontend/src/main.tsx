@@ -3,14 +3,23 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router';
 import './index.css'
 import {
-  App,
-  UnitConfirm,
-  previewMorph,
-  UnitSelect,
   GameSelect,
-} from './App.tsx'
+  UnitSelect,
+  UnitConfirm,
+} from "./lib/routes";
+import {
+  previewMorph,
+} from "./lib/functions";
 
 const router = createBrowserRouter([
+  {
+    path: "/create-morph/",
+    Component: GameSelect,
+  },
+  {
+    path: "/create-morph/:gameId/",
+    Component: UnitSelect,
+  },
   {
     path: "/create-morph/:gameId/:unitName",
     loader: async ({params}) => {
@@ -23,18 +32,6 @@ const router = createBrowserRouter([
       return {morph, missingParams, unitName, gameId};
     },
     Component: UnitConfirm,
-  },
-  {
-    path: "/create-morph/",
-    Component: GameSelect,
-  },
-  {
-    path: "/create-morph/:gameId/",
-    Component: UnitSelect,
-  },
-  {
-    path: "/",
-    Component: App,
   },
 ]);
 

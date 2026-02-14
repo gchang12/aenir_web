@@ -11,7 +11,10 @@ import {
   ProfileLevelAndClass,
   StatTable,
 } from "./Components";
-import './App.css'
+import {
+  GAMES,
+  UNITS,
+} from "./constants";
 
 export function GameSelect() {
   return (

@@ -468,7 +468,7 @@ describe("StatTable", () => {
   it("should reload stats upon navigation.", async () => {
     let {morph, missingParams} = await previewMorph(6, "Roy", {});
     console.log(morph, missingParams);
-    render(<StatTable stats={morph.stats} highlight={false} />);
+    render(<table><tbody><StatTable stats={morph.stats} highlight={false} /></tbody></table>);
     // HP=18
     expect(screen.getByText("18")).toBeInTheDocument();
     ({morph, missingParams} = await previewMorph(6, "Marcus", {}));
