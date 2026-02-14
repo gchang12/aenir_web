@@ -1,18 +1,90 @@
 import React from "react";
 
-export function CreateMorph({section1, section2, section3}) {
+function UnitSelect2() {
   return (
-    <>
-    <div className="create-morph">
-    {section1}
-    </div>
-    <div className="create-morph">
-    {section2}
-    </div>
-    <div className="create-morph">
-    {section3}
-    </div>
-    </>
+    <nav>
+      <menu>
+        <li>
+          <Link>
+            <figure>
+              <img src="" />
+              <figcaption>Unit Name</figcaption>
+            </figure>
+            <table>
+              <tbody>
+                <tr>
+                  <th>Lv</th>
+                  <td>0</td>
+                </tr>
+                <tr>
+                  <th>Class</th>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </Link>
+        </li>
+      </menu>
+    </nav>
+  );
+};
+
+function UnitConfirm2() {
+  return (
+    <form>
+      <div>
+        <h1>Game Name</h1>
+        <figure>
+          <img src="" />
+          <figcaption>Unit Name</figcaption>
+        </figure>
+        <table>
+          <tbody>
+            <tr>
+              <th>Lv</th>
+              <td>0</td>
+            </tr>
+            <tr>
+              <th>Class</th>
+              <td></td>
+            </tr>
+            <tr>
+              <th>Option</th>
+              <td>Widget</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <table>
+          <tbody>
+            <tr>Stat-Name</tr>
+            <td>Stat-Value</td>
+          </tbody>
+        </table>
+      </div>
+      <button>Create</button>
+    </form>
+  );
+};
+
+function GameSelect2() {
+  return (
+    <nav>
+      <menu>
+        <li>
+          <Link>
+            <figure>
+              <figcaption>Game Name</figcaption>
+              <img src="" />
+              gameId
+              title
+              releaseDate
+            </figure>
+          </Link>
+        </li>
+      </menu>
+    </nav>
   );
 };
 
@@ -189,90 +261,18 @@ export function StatTable({stats, highlight}) {
   );
 };
 
-function UnitSelect2() {
+export function CreateMorph({section1, section2, section3}) {
   return (
-    <nav>
-      <menu>
-        <li>
-          <Link>
-            <figure>
-              <img src="" />
-              <figcaption>Unit Name</figcaption>
-            </figure>
-            <table>
-              <tbody>
-                <tr>
-                  <th>Lv</th>
-                  <td>0</td>
-                </tr>
-                <tr>
-                  <th>Class</th>
-                  <td></td>
-                </tr>
-              </tbody>
-            </table>
-          </Link>
-        </li>
-      </menu>
-    </nav>
-  );
-};
-
-function UnitConfirm2() {
-  return (
-    <form>
-      <div>
-        <h1>Game Name</h1>
-        <figure>
-          <img src="" />
-          <figcaption>Unit Name</figcaption>
-        </figure>
-        <table>
-          <tbody>
-            <tr>
-              <th>Lv</th>
-              <td>0</td>
-            </tr>
-            <tr>
-              <th>Class</th>
-              <td></td>
-            </tr>
-            <tr>
-              <th>Option</th>
-              <td>Widget</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div>
-        <table>
-          <tbody>
-            <tr>Stat-Name</tr>
-            <td>Stat-Value</td>
-          </tbody>
-        </table>
-      </div>
-      <button>Create</button>
-    </form>
-  );
-};
-
-function GameSelect2() {
-  return (
-    <nav>
-      <menu>
-        <li>
-          <Link>
-            <figure>
-              <figcaption>Game Name</figcaption>
-              <img src="" />
-              gameId
-              title
-              releaseDate
-            </figure>
-          </Link>
-        </li>
-      </menu>
-    </nav>
+    <>
+    <div className="create-morph">
+    {section1}
+    </div>
+    <div className="create-morph">
+    {section2}
+    </div>
+    <div className="create-morph">
+    {section3}
+    </div>
+    </>
   );
 };
