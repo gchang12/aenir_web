@@ -3,9 +3,11 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router';
 import './index.css'
 import {
-  // App,
+  App,
   UnitConfirm,
   previewMorph,
+  UnitSelect,
+  GameSelect,
 } from './App.tsx'
 
 const router = createBrowserRouter([
@@ -21,7 +23,19 @@ const router = createBrowserRouter([
       return {morph, missingParams, unitName, gameId};
     },
     Component: UnitConfirm,
-  }
+  },
+  {
+    path: "/create-morph/",
+    Component: GameSelect,
+  },
+  {
+    path: "/create-morph/:gameId/",
+    Component: UnitSelect,
+  },
+  {
+    path: "/",
+    Component: App,
+  },
 ]);
 
 createRoot(document.getElementById('root')!).render(

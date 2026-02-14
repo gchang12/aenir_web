@@ -1,15 +1,25 @@
 import { useState } from 'react'
 import {
   useLoaderData,
+  NavLink,
+  useParams,
 } from "react-router";
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
+import {
+  GAMES,
+} from "./constants/GAMES";
+import {
+  UNITS,
+} from "./constants/UNITS";
+
 function App() {
   const [count, setCount] = useState(0)
   return (
     <>
+    {/* <img src="/public/images/binding-blade/cover-art.png" /> */}
       <div>
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
@@ -163,49 +173,83 @@ function GameSelect() {
   return (
     <nav>
       <menu>
-        <li>
-          <Link>
-            <figure>
-              <figcaption>Game Name</figcaption>
-              <img src="" />
-              gameId
-              title
-              releaseDate
-            </figure>
-          </Link>
-        </li>
+      {GAMES.map(game => {
+        return (
+          <li key={game.no}>
+            <NavLink to={["", 'create-morph', 'fe' + game.no, ''].join('/')}>
+              <figure>
+                <img src={["", "images", game.name, "cover-art.png"].join('/')} />
+                <figcaption>
+                  <table>
+                    <tbody>
+                      <tr>
+                        <th>Game ID</th>
+                        <td>{"FE" + game.no}</td>
+                      </tr>
+                      <tr>
+                        <th>Title</th>
+                        <td>{game.title}</td>
+                      </tr>
+                      <tr>
+                        <th>Released</th>
+                        <td>{game.released}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </figcaption>
+              </figure>
+            </NavLink>
+          </li>
+        );
+      })
+      }
       </menu>
     </nav>
   );
 };
 
 function UnitSelect() {
+  const {gameId} = useParams();
+  const gameName = GAMES.find(game => gameId === "fe" + game.no)?.name;
+  const unitListForGame = UNITS.filter(unit => gameId === "fe" + unit.gameNo);
+  const imgSuffix = gameId === "fe8" ? ".gif" : ".png";
   return (
     <nav>
       <menu>
-        <li>
-          <Link>
-            <figure>
-              <img src="" />
-              <figcaption>Unit Name</figcaption>
-            </figure>
-            <table>
-              <tbody>
-                <tr>
-                  <th>Lv</th>
-                  <td>0</td>
-                </tr>
-                <tr>
-                  <th>Class</th>
-                  <td></td>
-                </tr>
-              </tbody>
-            </table>
-          </Link>
-        </li>
+      {unitListForGame.map(unit => {
+        const imgSrc = ["", "public/images", gameName, "characters", unit.name + imgSuffix].join('/');
+        return (
+          <li key={unit.name}>
+            <NavLink to={["", "create-morph", gameName, unit.name, ""].join("/")}>
+              <figure>
+                <img src={imgSrc} alt={imgSrc} />
+                <figcaption>
+                  <table>
+                    <tbody>
+                      <tr>
+                        <th>Name</th>
+                        <td>{unit.name}</td>
+                      </tr>
+                      <tr>
+                        <th>Lv</th>
+                        <td>{unit.lv}</td>
+                      </tr>
+                      <tr>
+                        <th>Class</th>
+                        <td>{unit.class}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </figcaption>
+              </figure>
+            </NavLink>
+          </li>
+        );
+      })
+      }
       </menu>
     </nav>
-  ); */}
+  );
 };
 
 function UnitConfirm2() {

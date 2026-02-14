@@ -1,8 +1,4 @@
-import type {
-  Game,
-} from "./_types";
-
-export const GAMES: Game[] = [
+export const GAMES = [
   {
     no: 4,
     name: "genealogy-of-the-holy-war",

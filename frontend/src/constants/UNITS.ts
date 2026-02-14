@@ -1,8 +1,4 @@
-import type {
-  Unit,
-} from "./_types";
-
-export const UNITS: Unit[] = [
+export const UNITS = [
   {
     "gameNo": 4,
     "name": "Sigurd",
