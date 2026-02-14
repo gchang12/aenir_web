@@ -174,11 +174,12 @@ function GameSelect() {
     <nav>
       <menu>
       {GAMES.map(game => {
+        const imgSrc = ["", "images", game.name, "cover-art.png"].join('/');
         return (
           <li key={game.no}>
             <NavLink to={["", 'create-morph', 'fe' + game.no, ''].join('/')}>
               <figure>
-                <img src={["", "images", game.name, "cover-art.png"].join('/')} />
+                <img src={imgSrc} alt={imgSrc} />
                 <figcaption>
                   <table>
                     <tbody>
@@ -217,7 +218,7 @@ function UnitSelect() {
     <nav>
       <menu>
       {unitListForGame.map(unit => {
-        const imgSrc = ["", "public/images", gameName, "characters", unit.name + imgSuffix].join('/');
+        const imgSrc = ["", "images", gameName, "characters", unit.name + imgSuffix].join('/');
         return (
           <li key={unit.name}>
             <NavLink to={["", "create-morph", gameName, unit.name, ""].join("/")}>
