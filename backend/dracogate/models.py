@@ -81,6 +81,7 @@ def validate_history(history):
     """
     # check that it's a list of [str, [...args]] pairs
     # also, validate each entry.
+    # level_up, promote, use_stat_booster, use_afas_drops, etc.
     pass
 
 class Morph(models.Model):
