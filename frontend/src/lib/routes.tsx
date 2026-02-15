@@ -1,11 +1,13 @@
 import {
   useState,
+  useEffect,
 } from 'react'
 import {
   useLoaderData,
   useFetcher,
-  NavLink,
   useParams,
+  NavLink,
+  Outlet,
 } from "react-router";
 import {
   ProfileHead,
@@ -21,9 +23,27 @@ import {
   previewMorph,
 } from "./functions";
 
+export function Root() {
+  return (
+    <>
+    <nav>
+      <menu>
+        <li><NavLink to="/create-morph/">Select Game</NavLink></li>
+        <li><NavLink to="/create-morph/fe6/">Select Unit - FE6</NavLink></li>
+        <li><NavLink to="/create-morph/fe6/Roy">Confirm FE6 Roy</NavLink></li>
+        <li><NavLink to="/create-morph/fe6/Rutger">Confirm FE6 Rutger</NavLink></li>
+      </menu>
+    </nav>
+    <Outlet />
+    </>
+  );
+};
+
 export function GameSelect() {
   return (
-    <nav>
+    <>
+    <main id="create-morph">
+    <nav className="create-morph">
       <menu>
       {GAMES.map(game => {
         const imgSrc = ["", "images", game.name, "cover-art.png"].join('/');
@@ -33,22 +53,8 @@ export function GameSelect() {
               <figure>
                 <img src={imgSrc} alt={imgSrc} />
                 <figcaption>
-                  <table>
-                    <tbody>
-                      <tr>
-                        <th>Game ID</th>
-                        <td>{"FE" + game.no}</td>
-                      </tr>
-                      <tr>
-                        <th>Title</th>
-                        <td>{game.title}</td>
-                      </tr>
-                      <tr>
-                        <th>Released</th>
-                        <td>{game.released}</td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <h2>{"FE" + game.no}</h2>
+                  <h3>{game.title}</h3>
                 </figcaption>
               </figure>
             </NavLink>
@@ -58,6 +64,9 @@ export function GameSelect() {
       }
       </menu>
     </nav>
+    <Outlet />
+    </main>
+    </>
   );
 };
 
@@ -67,22 +76,20 @@ export function UnitSelect() {
   const unitListForGame = UNITS.filter(unit => gameId === "fe" + unit.gameNo);
   const imgSuffix = gameId === "fe8" ? ".gif" : ".png";
   return (
-    <nav>
+    <>
+    <nav className="create-morph">
       <menu>
       {unitListForGame.map(unit => {
         const imgSrc = ["", "images", gameName, "characters", unit.name + imgSuffix].join('/');
         return (
           <li key={unit.name}>
-            <NavLink to={["", "create-morph", gameName, unit.name, ""].join("/")}>
+            <NavLink to={["", "create-morph", gameId, unit.name, ""].join("/")}>
               <figure>
                 <img src={imgSrc} alt={imgSrc} />
                 <figcaption>
+                  <h2>{unit.name}</h2>
                   <table>
                     <tbody>
-                      <tr>
-                        <th>Name</th>
-                        <td>{unit.name}</td>
-                      </tr>
                       <tr>
                         <th>Class</th>
                         <td>{unit.class}</td>
@@ -102,11 +109,21 @@ export function UnitSelect() {
       }
       </menu>
     </nav>
+    <Outlet />
+    </>
   );
 };
 
 export function UnitConfirm() {
   const {morph, missingParams, unitName, gameId} = useLoaderData();
+  /*
+  useEffect(async () => {
+    previewMorph(game_no, name, {})
+      .then(resp => resp.data)
+      .then(data => setKishuna(data.morph))
+      .catch(err => console.log(err))
+  }, [unitName]);
+  */
   // const fetcher = useFetcher();
   // console.log(gameId, unitName, missingParams);
   const gameName = GAMES.find(game => gameId === "fe" + game.no)?.name;
@@ -114,10 +131,13 @@ export function UnitConfirm() {
   const {stats, unitClass, level} = kishuna;
   const imgSuffix = gameId === "fe8" ? ".gif" : ".png";
   function toggleButtonAbility(value) {
-    document.querySelector("#create-morph-button").disabled = value;
+    const createMorphButton = document.querySelector("#create-morph-button");
+    if (createMorphButton != null) {
+      createMorphButton.disabled = value;
+    };
   };
   async function refetchMorph(e) {
-    // TODO: Test to see if this works.
+    // Test to see if this works.
     toggleButtonAbility(true);
     const formData = new FormData(e.currentTarget);
     const kwargs = {};
@@ -144,7 +164,7 @@ export function UnitConfirm() {
   toggleButtonAbility(false);
   return (
     <>
-    <form onChange={refetchMorph} method="post">
+    <form onChange={refetchMorph} method="post" className="create-morph">
       <ProfileHead figureTitle={unitName} imgSrc={["", "images", gameName, "characters", unitName + imgSuffix].join("/")}>
         <table>
           <tbody>
