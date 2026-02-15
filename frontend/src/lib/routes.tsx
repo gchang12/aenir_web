@@ -116,16 +116,18 @@ export function UnitSelect() {
 
 export function UnitConfirm() {
   const {morph, missingParams, unitName, gameId} = useLoaderData();
+  const fetcher = useFetcher();
   const [kishuna, setKishuna] = useState(morph);
-  /*
+  // Fixes the data-reloading problem.
   useEffect(() => {
     const game_no = gameId.replace("fe", "");
     const name = unitName;
+    console.log(game_no, name);
     previewMorph(game_no, name, {})
-      .then(resp => resp.data)
-      .then(data => setKishuna(data.morph))
+      .then(resp => setKishuna(resp.morph))
       .catch(err => console.log(err))
   }, [unitName]);
+  /*
   useEffect(async () => {
     previewMorph(game_no, name, {})
       .then(resp => resp.data)
@@ -190,7 +192,7 @@ export function UnitConfirm() {
       <input name="name" value={unitName} type="hidden" />
       {/* TODO: Reinsert this if the user is logged in. */}
       {/* <input name="morph_id" type="text" defaultValue={morphId} required maxlength="25" /> */}
-      <input name="morph_id" type="hidden" defaultValue={morphId} required maxlength="25" />
+      <input name="morph_id" type="hidden" defaultValue={morphId} required maxLength="25" />
       <button type="submit" id="create-morph-button">Create!</button>
     </form>
     </>
