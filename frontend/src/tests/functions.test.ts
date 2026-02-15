@@ -18,7 +18,7 @@ import {
 } from "../lib/functions";
 import {
   server,
-} from "./fixtures";
+} from "./_fixtures";
 
 describe("FE6 Roy", () => {
 

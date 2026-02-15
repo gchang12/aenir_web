@@ -28,7 +28,7 @@ import {
 } from "../lib/Components";
 import {
   server,
-} from "./fixtures";
+} from "./_fixtures";
 
 describe("StatTable", () => {
 
