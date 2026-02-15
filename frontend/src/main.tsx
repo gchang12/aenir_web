@@ -29,7 +29,7 @@ const router = createBrowserRouter([
       const game_no = gameId.replace("fe", "");
       const name = unitName;
       const kwargs = {};
-      console.log(game_no, name, kwargs);
+      // console.log(game_no, name, kwargs);
       const {morph, missingParams} = await previewMorph(game_no, name, kwargs);
       return {morph, missingParams, unitName, gameId};
     },

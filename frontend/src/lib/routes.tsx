@@ -3,6 +3,7 @@ import {
 } from 'react'
 import {
   useLoaderData,
+  useFetcher,
   NavLink,
   useParams,
 } from "react-router";
@@ -10,11 +11,15 @@ import {
   ProfileHead,
   ProfileLevelAndClass,
   StatTable,
+  OptionSelect,
 } from "./Components";
 import {
   GAMES,
   UNITS,
 } from "./constants";
+import {
+  previewMorph,
+} from "./functions";
 
 export function GameSelect() {
   return (
@@ -101,18 +106,42 @@ export function UnitSelect() {
 };
 
 export function UnitConfirm() {
-  const loaderData = useLoaderData();
-  const {morph, missingParams, unitName, gameId} = loaderData;
-  const {stats, unitClass, level} = morph;
+  const {morph, missingParams, unitName, gameId} = useLoaderData();
+  // const fetcher = useFetcher();
+  // console.log(gameId, unitName, missingParams);
+  const gameName = GAMES.find(game => gameId === "fe" + game.no)?.name;
+  const [kishuna, setKishuna] = useState(morph);
+  const {stats, unitClass, level} = kishuna;
   const imgSuffix = gameId === "fe8" ? ".gif" : ".png";
+  async function refetchMorph(e) {
+    const game_no = gameId.replace("fe", "");
+    const name = unitName;
+    const kwargs = {};
+    const formData = new FormData(e.currentTarget);
+    for (const [key, value] of formData) {
+      switch(value) {
+        case "on":
+          kwargs[key] = "true";
+          break;
+        case "off":
+          kwargs[key] = "false";
+          break;
+        default:
+          kwargs[key] = value;
+          break;
+      };
+    };
+    // console.log(Object.entries(kwargs));
+    setKishuna((await previewMorph(game_no, name, kwargs)).morph);
+  };
   return (
     <>
-    <form>
-      <ProfileHead figureTitle={unitName} imgSrc={"/images/" + unitName + imgSuffix}>
+    <form onChange={refetchMorph}>
+      <ProfileHead figureTitle={unitName} imgSrc={["", "images", gameName, "characters", unitName + imgSuffix].join("/")}>
         <table>
           <tbody>
           <ProfileLevelAndClass {...{unitClass, level}} />
-          {/* OptionSelect */}
+          <OptionSelect {...{missingParams}} />
           </tbody>
         </table>
       </ProfileHead>

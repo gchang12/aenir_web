@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 
 function UnitSelect2() {
   return (
@@ -95,7 +95,7 @@ function FatherSelect({choices}) {
     <tr>
       <th><label htmlFor="father">Father Select</label></th>
       <td>
-        <select name="father">
+        <select required name="father">
         {choices.map(choice => {
           return (
             <option key={choice} value={choice}>{choice}</option>
@@ -112,12 +112,14 @@ function FatherSelect({choices}) {
 function HardModeToggle({choices}) {
   // choices: [false, true]
   const [defaultChecked] = choices;
-  const [checked, setChecked] = React.useState(defaultChecked);
+  // const [checked, setChecked] = React.useState(defaultChecked);
   return (
     <>
     <tr>
       <th><label htmlFor="hard_mode">Hard Mode</label></th>
-      <td><input onClick={e => setChecked(e.currentTarget.checked ? true : false)} name="_hard_mode" {...{defaultChecked: checked}} type="checkbox" /><input name="hard_mode" value={defaultChecked} type="hidden" /></td>
+      <td><input required name="hard_mode" {...{defaultChecked}} type="checkbox" />
+      {/* <input name="hard_mode" value={!checked} type="hidden" /> */}
+      </td>
     </tr>
     </>
   );
@@ -126,12 +128,14 @@ function HardModeToggle({choices}) {
 function LynModeToggle({choices}) {
   // choices: [false, true]
   const [defaultChecked] = choices;
-  const [checked, setChecked] = React.useState(defaultChecked);
+  // const [checked, setChecked] = React.useState(defaultChecked);
   return (
     <>
     <tr>
-      <th><label htmlFor="lyn_mode">Hard Mode</label></th>
-      <td><input onClick={e => setChecked(e.currentTarget.checked ? true : false)} name="_lyn_mode" {...{defaultChecked: checked}} type="checkbox" /><input name="lyn_mode" value={defaultChecked} type="hidden" /></td>
+      <th><label htmlFor="lyn_mode">Lyn Mode</label></th>
+      <td><input required name="lyn_mode" {...{defaultChecked}} type="checkbox" />
+      {/* <input name="lyn_mode" value={!checked} type="hidden" /> */}
+      </td>
     </tr>
     </>
   );
@@ -151,11 +155,11 @@ function MageDecliner({choices}) {
     <tr>
       <th><label htmlFor="number_of_declines">Gold Tendered</label></th>
       <td>
-        <select name="number_of_declines">
+        <select required name="number_of_declines">
         {choices.map(choice => {
           const price = priceByDeclineCount[choice];
           return (
-            <option key={choice} value={choice}>{price + " G"}</option>
+            <option key={choice} value={choice}>{price.toLocaleString() + " G"}</option>
           );
         })
         }
@@ -176,8 +180,8 @@ function RouteSelect({choices}) {
       {choices.map(choice => {
         return (
           <div className="route-choice" key={choice}>
-            <label htmlFor={choice}>{choice}</label>
-            <input name="route" id={choice} value={choice} type="radio" defaultChecked={choice === defaultValue} />
+            <label htmlFor={choice} required>{choice}</label>
+            <input required name="route" id={choice} value={choice} type="radio" defaultChecked={choice === defaultValue} />
           </div>
         );
       })
@@ -190,10 +194,10 @@ function RouteSelect({choices}) {
 export function OptionSelect({missingParams}) {
   return (
     <>
-    {missingParams.map(missingParamSet => {
-      console.log(missingParamSet);
+    {Object.entries(missingParams ?? {}).map(missingParamSet => {
+      // console.log(missingParamSet);
       const [key, choices] = missingParamSet;
-      console.log(key, choices);
+      // console.log(key, choices);
       switch(key) {
         case "father":
           return <FatherSelect key={key} {...{choices}} />;
@@ -249,6 +253,7 @@ export function StatTable({stats, highlight}) {
     {stats.map(([stat, currentValue, localMax, absMax]) => {
       return (
         <tr key={stat} className={currentValue === localMax ? className : undefined}>
+          <th>{stat}</th>
           <td>{currentValue}</td>
           <td>
             <meter min="0" value={currentValue} max={absMax} high={localMax}></meter>
