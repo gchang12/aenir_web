@@ -29,6 +29,12 @@ class MorphViewSet(viewsets.ViewSet):
     """
     morphs = {}
 
+    def create(self, request):
+        """
+        """
+        # initialize morph
+        # TODO: Defer this task for later - 'create entry in database and associate with user, if any was given.'
+
     def list(self, request):
         """
         Creates temporary Morph for the user to preview, returning missing parameters as necessary.

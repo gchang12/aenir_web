@@ -114,10 +114,8 @@ export function UnitConfirm() {
   const {stats, unitClass, level} = kishuna;
   const imgSuffix = gameId === "fe8" ? ".gif" : ".png";
   async function refetchMorph(e) {
-    const game_no = gameId.replace("fe", "");
-    const name = unitName;
-    const kwargs = {};
     const formData = new FormData(e.currentTarget);
+    const kwargs = {};
     for (const [key, value] of formData) {
       switch(value) {
         case "on":
@@ -132,8 +130,11 @@ export function UnitConfirm() {
       };
     };
     // console.log(Object.entries(kwargs));
+    const game_no = kwargs["game_no"];
+    const name = kwargs["name"];
     setKishuna((await previewMorph(game_no, name, kwargs)).morph);
   };
+  const morphId = "Morph-" + new Date().toISOString().replaceAll(/[.:-]/g, "").replace("T", "_").slice(0, -4);
   return (
     <>
     <form onChange={refetchMorph}>
@@ -150,6 +151,9 @@ export function UnitConfirm() {
         <StatTable {...{stats, highlight: true}} />
         </tbody>
       </table>
+      <input name="game_no" value={gameId.replace("fe", "")} type="hidden" />
+      <input name="name" value={unitName} type="hidden" />
+      <input name="morph_id" type="text" defaultValue={morphId} required maxlength="21" />
       <button>Create!</button>
     </form>
     </>
