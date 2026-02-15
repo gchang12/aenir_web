@@ -113,7 +113,12 @@ export function UnitConfirm() {
   const [kishuna, setKishuna] = useState(morph);
   const {stats, unitClass, level} = kishuna;
   const imgSuffix = gameId === "fe8" ? ".gif" : ".png";
+  function toggleButtonAbility(value) {
+    document.querySelector("#create-morph-button").disabled = value;
+  };
   async function refetchMorph(e) {
+    // TODO: Test to see if this works.
+    toggleButtonAbility(true);
     const formData = new FormData(e.currentTarget);
     const kwargs = {};
     for (const [key, value] of formData) {
@@ -134,10 +139,12 @@ export function UnitConfirm() {
     const name = kwargs["name"];
     setKishuna((await previewMorph(game_no, name, kwargs)).morph);
   };
-  const morphId = "Morph-" + new Date().toISOString().replaceAll(/[.:-]/g, "").replace("T", "_").slice(0, -4);
+  // const morphId = "Morph-" + new Date().toISOString().replaceAll(/[.:-]/g, "").replace("T", "_");
+  const morphId = "";
+  toggleButtonAbility(false);
   return (
     <>
-    <form onChange={refetchMorph}>
+    <form onChange={refetchMorph} method="post">
       <ProfileHead figureTitle={unitName} imgSrc={["", "images", gameName, "characters", unitName + imgSuffix].join("/")}>
         <table>
           <tbody>
@@ -153,8 +160,10 @@ export function UnitConfirm() {
       </table>
       <input name="game_no" value={gameId.replace("fe", "")} type="hidden" />
       <input name="name" value={unitName} type="hidden" />
-      <input name="morph_id" type="text" defaultValue={morphId} required maxlength="21" />
-      <button>Create!</button>
+      {/* TODO: Reinsert this if the user is logged in. */}
+      {/* <input name="morph_id" type="text" defaultValue={morphId} required maxlength="25" /> */}
+      <input name="morph_id" type="hidden" defaultValue={morphId} required maxlength="25" />
+      <button type="submit" id="create-morph-button">Create!</button>
     </form>
     </>
   );

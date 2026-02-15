@@ -1,3 +1,4 @@
+Disable submit-button while stats are being updated.
 Test if glowing stats work
 Test to see if stat-data reloads upon navigation
 
