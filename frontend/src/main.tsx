@@ -1,6 +1,12 @@
-import { StrictMode } from 'react'
+import {
+  StrictMode,
+  useEffect,
+} from 'react'
 import { createRoot } from 'react-dom/client'
-import { createBrowserRouter, RouterProvider } from 'react-router';
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from 'react-router';
 
 import './index.css'
 

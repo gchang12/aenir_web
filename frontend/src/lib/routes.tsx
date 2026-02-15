@@ -116,7 +116,16 @@ export function UnitSelect() {
 
 export function UnitConfirm() {
   const {morph, missingParams, unitName, gameId} = useLoaderData();
+  const [kishuna, setKishuna] = useState(morph);
   /*
+  useEffect(() => {
+    const game_no = gameId.replace("fe", "");
+    const name = unitName;
+    previewMorph(game_no, name, {})
+      .then(resp => resp.data)
+      .then(data => setKishuna(data.morph))
+      .catch(err => console.log(err))
+  }, [unitName]);
   useEffect(async () => {
     previewMorph(game_no, name, {})
       .then(resp => resp.data)
@@ -127,7 +136,6 @@ export function UnitConfirm() {
   // const fetcher = useFetcher();
   // console.log(gameId, unitName, missingParams);
   const gameName = GAMES.find(game => gameId === "fe" + game.no)?.name;
-  const [kishuna, setKishuna] = useState(morph);
   const {stats, unitClass, level} = kishuna;
   const imgSuffix = gameId === "fe8" ? ".gif" : ".png";
   function toggleButtonAbility(value) {
