@@ -8,7 +8,7 @@ _backend: _terminal $(VENV_NAME)/ backend/
 
 _frontend: _terminal frontend/node_modules/
 	printf '\033]0;%s\007' "frontend-server";
-	bash -c 'cd frontend/ && . ~/.nvm/nvm.sh && nvm install $(NVM_VERSION) && npm run dev -- --port 3000 --open;'
+	bash -c 'cd frontend/ && . ~/.nvm/nvm.sh && npm run dev -- --port 3000 --open;'
 
 _terminal:
 	xfce4-terminal --tab --working-directory=/home/eclair/Documents/coding/_web-dev/$(PROJECT_NAME)/;
@@ -32,5 +32,5 @@ frontend/:
 	cd frontend/; npm install; npm install react-router;
 
 frontend/node_modules/: frontend/
-	bash -c 'cd frontend/ && . ~/.nvm/nvm.sh && nvm install $(NVM_VERSION) && npm install;'
+	bash -c 'cd frontend/ && . ~/.nvm/nvm.sh && npm install;'
 
