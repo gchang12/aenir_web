@@ -1567,5 +1567,281 @@ export const UNITS = [
     "name": "Lyon",
     "class": "Necromancer",
     "lv": 14
+  },
+  {
+    "gameNo": 9,
+    "name": "Ike",
+    "class": "Ranger",
+    "lv": 1
+  },
+  {
+    "gameNo": 9,
+    "name": "Titania",
+    "class": "Paladin",
+    "lv": 1
+  },
+  {
+    "gameNo": 9,
+    "name": "Oscar",
+    "class": "Lance Knight",
+    "lv": 3
+  },
+  {
+    "gameNo": 9,
+    "name": "Boyd",
+    "class": "Fighter",
+    "lv": 2
+  },
+  {
+    "gameNo": 9,
+    "name": "Rhys",
+    "class": "Priest",
+    "lv": 4
+  },
+  {
+    "gameNo": 9,
+    "name": "Shinon",
+    "class": "Sniper",
+    "lv": 1
+  },
+  {
+    "gameNo": 9,
+    "name": "Gatrie",
+    "class": "Knight",
+    "lv": 9
+  },
+  {
+    "gameNo": 9,
+    "name": "Soren",
+    "class": "Mage",
+    "lv": 1
+  },
+  {
+    "gameNo": 9,
+    "name": "Mia",
+    "class": "Myrmidon",
+    "lv": 6
+  },
+  {
+    "gameNo": 9,
+    "name": "Ilyana",
+    "class": "Mage",
+    "lv": 6
+  },
+  {
+    "gameNo": 9,
+    "name": "Marcia",
+    "class": "Pegasus Knight",
+    "lv": 5
+  },
+  {
+    "gameNo": 9,
+    "name": "Mist",
+    "class": "Cleric",
+    "lv": 1
+  },
+  {
+    "gameNo": 9,
+    "name": "Rolf",
+    "class": "Archer",
+    "lv": 1
+  },
+  {
+    "gameNo": 9,
+    "name": "Lethe",
+    "class": "Beast tribe (Cat)",
+    "lv": 3
+  },
+  {
+    "gameNo": 9,
+    "name": "Mordecai",
+    "class": "Beast tribe (Tiger)",
+    "lv": 2
+  },
+  {
+    "gameNo": 9,
+    "name": "Volke",
+    "class": "Thief",
+    "lv": 10
+  },
+  {
+    "gameNo": 9,
+    "name": "Kieran",
+    "class": "Axe Knight",
+    "lv": 12
+  },
+  {
+    "gameNo": 9,
+    "name": "Brom",
+    "class": "Knight",
+    "lv": 8
+  },
+  {
+    "gameNo": 9,
+    "name": "Nephenee",
+    "class": "Soldier",
+    "lv": 7
+  },
+  {
+    "gameNo": 9,
+    "name": "Zihark",
+    "class": "Myrmidon",
+    "lv": 10
+  },
+  {
+    "gameNo": 9,
+    "name": "Jill",
+    "class": "Wyvern Rider",
+    "lv": 8
+  },
+  {
+    "gameNo": 9,
+    "name": "Sothe",
+    "class": "Thief",
+    "lv": 1
+  },
+  {
+    "gameNo": 9,
+    "name": "Astrid",
+    "class": "Bow Knight",
+    "lv": 1
+  },
+  {
+    "gameNo": 9,
+    "name": "Makalov",
+    "class": "Sword Knight",
+    "lv": 10
+  },
+  {
+    "gameNo": 9,
+    "name": "Stefan",
+    "class": "Swordmaster",
+    "lv": 8
+  },
+  {
+    "gameNo": 9,
+    "name": "Muarim",
+    "class": "Beast tribe (Tiger)",
+    "lv": 9
+  },
+  {
+    "gameNo": 9,
+    "name": "Tormod",
+    "class": "Mage",
+    "lv": 7
+  },
+  {
+    "gameNo": 9,
+    "name": "Devdan",
+    "class": "Halberdier",
+    "lv": 4
+  },
+  {
+    "gameNo": 9,
+    "name": "Tanith",
+    "class": "Falcon Knight",
+    "lv": 10
+  },
+  {
+    "gameNo": 9,
+    "name": "Reyson",
+    "class": "Bird tribe (Heron)",
+    "lv": 3
+  },
+  {
+    "gameNo": 9,
+    "name": "Janaff",
+    "class": "Bird tribe (Hawk)",
+    "lv": 8
+  },
+  {
+    "gameNo": 9,
+    "name": "Ulki",
+    "class": "Bird tribe (Hawk)",
+    "lv": 7
+  },
+  {
+    "gameNo": 9,
+    "name": "Calill",
+    "class": "Sage",
+    "lv": 6
+  },
+  {
+    "gameNo": 9,
+    "name": "Tauroneo",
+    "class": "General",
+    "lv": 14
+  },
+  {
+    "gameNo": 9,
+    "name": "Ranulf",
+    "class": "Beast tribe (Cat)",
+    "lv": 9
+  },
+  {
+    "gameNo": 9,
+    "name": "Haar",
+    "class": "Wyvern Lord",
+    "lv": 11
+  },
+  {
+    "gameNo": 9,
+    "name": "Lucia",
+    "class": "Swordmaster",
+    "lv": 12
+  },
+  {
+    "gameNo": 9,
+    "name": "Bastian",
+    "class": "Sage",
+    "lv": 13
+  },
+  {
+    "gameNo": 9,
+    "name": "Geoffrey",
+    "class": "Paladin",
+    "lv": 11
+  },
+  {
+    "gameNo": 9,
+    "name": "Largo",
+    "class": "Berserker",
+    "lv": 7
+  },
+  {
+    "gameNo": 9,
+    "name": "Elincia",
+    "class": "Princess Crimea",
+    "lv": 1
+  },
+  {
+    "gameNo": 9,
+    "name": "Ena",
+    "class": "Dragon tribe (Red)",
+    "lv": 10
+  },
+  {
+    "gameNo": 9,
+    "name": "Nasir",
+    "class": "Dragon tribe (White)",
+    "lv": 18
+  },
+  {
+    "gameNo": 9,
+    "name": "Tibarn",
+    "class": "Bird tribe (Hawk)",
+    "lv": 18
+  },
+  {
+    "gameNo": 9,
+    "name": "Naesala",
+    "class": "Bird tribe (Raven)",
+    "lv": 17
+  },
+  {
+    "gameNo": 9,
+    "name": "Giffca",
+    "class": "Beast tribe (Lion)",
+    "lv": 20
   }
 ]
