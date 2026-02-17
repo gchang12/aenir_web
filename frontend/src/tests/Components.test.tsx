@@ -26,6 +26,7 @@ import {
 import {
   StatTable,
 } from "../lib/Components";
+
 import {
   server,
 } from "./_fixtures";
@@ -49,4 +50,20 @@ describe("StatTable", () => {
 
 });
 
+/* TODO
+OptionSelect: Provides options to select.
+ProfileHead: Displays portrait and other info.
+ProfileLevelAndClass: Displays level and class
+StatTable: Displays stats in a table.
+NOTE: Aren't these all liable to change?
 
+Confirm:
+- images are showing up
+- links lead to expected destinations
+- destinations contain expected content
+- stats are present
+- Gonzales-toggling works
+
+Test:
+- routes.
+*/
