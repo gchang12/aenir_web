@@ -1,5 +1,21 @@
 // import React from "react";
 
+function CreateMorph({section1, section2, section3}) {
+  return (
+    <>
+    <div className="create-morph">
+    {section1}
+    </div>
+    <div className="create-morph">
+    {section2}
+    </div>
+    <div className="create-morph">
+    {section3}
+    </div>
+    </>
+  );
+};
+
 function UnitSelect2() {
   return (
     <nav>
@@ -262,22 +278,6 @@ export function StatTable({stats, highlight}) {
       );
     })
     }
-    </>
-  );
-};
-
-export function CreateMorph({section1, section2, section3}) {
-  return (
-    <>
-    <div className="create-morph">
-    {section1}
-    </div>
-    <div className="create-morph">
-    {section2}
-    </div>
-    <div className="create-morph">
-    {section3}
-    </div>
     </>
   );
 };
