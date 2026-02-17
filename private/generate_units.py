@@ -32,13 +32,13 @@ KWARGS_SET = {
 
 UNITS = []
 
-for i in range(4, 9):
+for i in range(4, 10):
     morph_cls = MORPHS[i]
     kwargs = KWARGS_SET[i]
     for name in morph_cls.get_true_character_list():
         morph = morph_cls(name, **kwargs)
         unit = {
-            "game": i,
+            "gameNo": i,
             "name": name,
             "class": morph.current_cls,
             "lv": morph.current_lv,
