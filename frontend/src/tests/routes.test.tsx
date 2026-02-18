@@ -15,12 +15,19 @@ import {
 describe("GameSelect", () => {
 
   it("lists all game-ID's.", () => {
+    expect(0).toBe(1);
   });
 
   it("lists game titles.", () => {
+    expect(0).toBe(1);
   });
 
   it("renders images of each game.", () => {
+    expect(0).toBe(1);
+  });
+
+  it("contains links that lead the user to the expected destination.", () => {
+    expect(0).toBe(1);
   });
 
 });
@@ -28,9 +35,15 @@ describe("GameSelect", () => {
 describe("UnitSelect", () => {
 
   it("shows the images of all units.", () => {
+    expect(0).toBe(1);
   });
 
   it("shows the names of all units.", () => {
+    expect(0).toBe(1);
+  });
+
+  it("affirms that the expected destinations contain the expected content", () => {
+    expect(0).toBe(1);
   });
 
 });
@@ -38,15 +51,23 @@ describe("UnitSelect", () => {
 describe("UnitConfirm", () => {
 
   it("shows the image of the selected unit.", () => {
+    expect(0).toBe(1);
   });
 
   it("shows the class and level of the selected unit.", () => {
+    expect(0).toBe(1);
   });
 
   it("shows the stats of the selected unit.", () => {
+    expect(0).toBe(1);
   });
 
   it("allows the user to toggle the initialization options (father, hard_mode, lyn_mode, route, number_of_declines), the stats changing in accordance with the selection.", () => {
+    expect(0).toBe(1);
+  });
+
+  it("allows the user to toggle Gonzales' initialization options.", () => {
+    expect(0).toBe(1);
   });
 
 });

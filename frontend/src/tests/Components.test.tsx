@@ -50,20 +50,50 @@ describe("StatTable", () => {
 
 });
 
-/* TODO
-OptionSelect: Provides options to select.
-ProfileHead: Displays portrait and other info.
-ProfileLevelAndClass: Displays level and class
-StatTable: Displays stats in a table.
-NOTE: Aren't these all liable to change?
+describe("OptionSelect", () => {
 
-Confirm:
-- images are showing up
-- links lead to expected destinations
-- destinations contain expected content
-- stats are present
-- Gonzales-toggling works
+  it("provides options to select for 'hard_mode'.", () => {
+    expect(0).toBe(1);
+  });
 
-Test:
-- routes.
-*/
+  it("provides options to select for 'father'.", () => {
+    expect(0).toBe(1);
+  });
+
+  it("provides options to select for 'lyn_mode'.", () => {
+    expect(0).toBe(1);
+  });
+
+  it("provides options to select for 'route'.", () => {
+    expect(0).toBe(1);
+  });
+
+  it("provides options to select for 'number_of_declines'.", () => {
+    expect(0).toBe(1);
+  });
+
+});
+
+describe("ProfileHead", () => {
+
+  it("displays the portrait-image and children provided.", () => {
+    expect(0).toBe(1);
+  });
+
+});
+
+describe("ProfileLevelAndClass", () => {
+
+  it("displays the level and class of the unit.", () => {
+    expect(0).toBe(1);
+  });
+
+});
+
+describe("StatTable", () => {
+
+  it("shows the stats and names thereof.", () => {
+    expect(0).toBe(1);
+  });
+
+});
