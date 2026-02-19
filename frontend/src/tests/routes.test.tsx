@@ -55,7 +55,11 @@ describe("GameSelect", () => {
       expect(linkElement).toHaveAttribute("src", "/images/" + name + "/cover-art.png");
       expect(linkElement).toHaveAttribute("alt", "/images/" + name + "/cover-art.png");
     };
+  });
 
+  it("renders links.", () => {
+    render(<div><GameSelect /></div>);
+    const linkElements = screen.getAllByRole('link');
     let linkElement;
     let href;
     for (let game_no=4; game_no <= 9; game_no++) {
@@ -65,22 +69,18 @@ describe("GameSelect", () => {
       expect(linkElement).toBeVisible();
       expect(linkElement).toHaveAttribute("href", href);
     };
-
   });
 
 });
 
 describe("UnitSelect", () => {
 
-  it("shows the images of all units.", () => {
+  it("shows the image of a unit.", () => {
+    // NOTE: must use useParams hook.
     expect(0).toBe(1);
   });
 
-  it("shows the names of all units.", () => {
-    expect(0).toBe(1);
-  });
-
-  it("affirms that the expected destinations contain the expected content", () => {
+  it("shows the name of a unit.", () => {
     expect(0).toBe(1);
   });
 
