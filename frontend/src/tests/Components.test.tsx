@@ -11,6 +11,7 @@ import {
   afterEach,
   afterAll,
 } from 'vitest';
+// import { page, } from "vitest/browser";
 
 import {
   http,
@@ -31,18 +32,23 @@ import {
   server,
 } from "./_fixtures";
 
+/* TODO
+  - Learn how to query for elements on the page.
+  - Learn how to make assertions about attributes of certain elements.
+*/
+
 describe("StatTable", () => {
 
   beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   it("should reload stats upon navigation.", async () => {
     let {morph, missingParams} = await previewMorph(6, "Roy", {});
-    console.log(morph, missingParams);
+    //console.log(morph, missingParams);
     render(<table><tbody><StatTable stats={morph.stats} highlight={false} /></tbody></table>);
     // HP=18
     expect(screen.getByText("18")).toBeInTheDocument();
     ({morph, missingParams} = await previewMorph(6, "Marcus", {}));
-    console.log(morph, typeof morph, missingParams);
+    //console.log(morph, typeof morph, missingParams);
     render(<table><tbody><StatTable stats={morph.stats} highlight={false} /></tbody></table>);
     // HP=32
     expect(screen.getByText("32")).toBeInTheDocument();
@@ -50,14 +56,17 @@ describe("StatTable", () => {
 
   it("shows the stats and names thereof.", () => {
     const stats = [
-      ["HP", 10],
-      ["Pow", 20],
-      ["Spd", 30],
-      ["Lck", 40],
-      ["Def", 50],
+      ["HP", 10, 50, 99],
+      ["Pow", 20, 50, 99],
+      ["Spd", 30, 50, 99],
+      ["Lck", 40, 50, 99],
+      ["Def", 50, 50, 99],
     ];
     render(<table><tbody><StatTable {...{stats}} /></tbody></table>);
-    expect(0).toBe(1);
+    const rowHeaders = screen.getAllByRole("rowheader");
+    for (const [indexNo, rowHeader] of Object.entries(rowHeaders)) {
+      expect(rowHeader).toHaveTextContent(stats[indexNo][0]);
+    };
   });
 
 });
@@ -67,30 +76,35 @@ describe("OptionSelect", () => {
   it("provides options to select for 'hard_mode'.", () => {
     const missingParams = {hard_mode: [true, false]};
     render(<table><tbody><OptionSelect {...{missingParams}} /></tbody></table>);
+    const role = "checkbox";
     expect(0).toBe(1);
   });
 
   it("provides options to select for 'father'.", () => {
     const missingParams = {father: ["Arden", "Lex", "Claude"]};
     render(<table><tbody><OptionSelect {...{missingParams}} /></tbody></table>);
+    const role = "combobox";
     expect(0).toBe(1);
   });
 
   it("provides options to select for 'lyn_mode'.", () => {
     const missingParams = {lyn_mode: [true, false]};
     render(<table><tbody><OptionSelect {...{missingParams}} /></tbody></table>);
+    const role = "checkbox";
     expect(0).toBe(1);
   });
 
   it("provides options to select for 'route'.", () => {
     const missingParams = {route: ["A", "B"]};
     render(<table><tbody><OptionSelect {...{missingParams}} /></tbody></table>);
+    const role = "radio";
     expect(0).toBe(1);
   });
 
   it("provides options to select for 'number_of_declines'.", () => {
     const missingParams = {number_of_declines: [1, 3]};
     render(<table><tbody><OptionSelect {...{missingParams}} /></tbody></table>);
+    const role = "combobox";
     expect(0).toBe(1);
   });
 
