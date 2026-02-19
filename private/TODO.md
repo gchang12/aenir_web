@@ -1,7 +1,8 @@
-Disable submit-button while stats are being updated.
-Test if glowing stats work
+
 Test to see if stat-data reloads upon navigation
 
+Test if glowing stats work
+Disable submit-button while stats are being updated.
 Make sure that any navigation reloads the unit-confirm page and ALL its data.
 Figure out how to configure logging in Django.
 Add input element to accept morph-id

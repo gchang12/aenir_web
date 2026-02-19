@@ -31,6 +31,6 @@ frontend/:
 	mv $(PROJECT_NAME)/ frontend/;
 	cd frontend/; npm install; npm install react-router;
 
-frontend/node_modules/: frontend/
+frontend/node_modules: frontend/
 	bash -c 'cd frontend/ && . ~/.nvm/nvm.sh && npm install;'
 

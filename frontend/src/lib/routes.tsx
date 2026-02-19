@@ -169,8 +169,8 @@ export function UnitConfirm() {
     const name = kwargs["name"];
     setKishuna((await previewMorph(game_no, name, kwargs)).morph);
   };
-  // const morphId = "Morph-" + new Date().toISOString().replaceAll(/[.:-]/g, "").replace("T", "_");
-  const morphId = "";
+  const morphId = "Morph-" + new Date().toISOString().replaceAll(/[.:-]/g, "").replace("T", "_");
+  // const morphId = "";
   toggleButtonAbility(false);
   return (
     <>
@@ -191,8 +191,8 @@ export function UnitConfirm() {
       <input name="game_no" value={gameId.replace("fe", "")} type="hidden" />
       <input name="name" value={unitName} type="hidden" />
       {/* TODO: Reinsert this if the user is logged in. */}
-      {/* <input name="morph_id" type="text" defaultValue={morphId} required maxlength="25" /> */}
-      <input name="morph_id" type="hidden" defaultValue={morphId} required maxLength="25" />
+      <input name="morph_id" type="text" defaultValue={morphId} required maxlength="25" />
+      {/* <input name="morph_id" type="hidden" defaultValue={morphId} required maxLength="25" /> */}
       <button type="submit" id="create-morph-button">Create!</button>
     </form>
     </>

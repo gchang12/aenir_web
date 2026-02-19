@@ -87,4 +87,8 @@ button:focus-visible {
 
 a.active figcaption {
   background-color: yellow;
-};
+}
+
+.maxed-stat {
+  color: green;
+}

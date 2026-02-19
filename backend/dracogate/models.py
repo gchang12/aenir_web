@@ -89,7 +89,7 @@ class Morph(models.Model):
     """
     # meta: composite pk
     morph_id = models.CharField(
-        max_length=21,
+        max_length=25,
     )
     user = models.ForeignKey(
         User,
