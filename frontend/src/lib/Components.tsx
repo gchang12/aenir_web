@@ -262,6 +262,7 @@ export function ProfileLevelAndClass({unitClass, level}) {
   );
 };
 
+// TODO: Modify highlight-option
 export function StatTable({stats, highlight}) {
   const className = highlight === true ? "maxed-stat" : undefined;
   return (

@@ -48,27 +48,49 @@ describe("StatTable", () => {
     expect(screen.getByText("32")).toBeInTheDocument();
   });
 
+  it("shows the stats and names thereof.", () => {
+    const stats = [
+      ["HP", 10],
+      ["Pow", 20],
+      ["Spd", 30],
+      ["Lck", 40],
+      ["Def", 50],
+    ];
+    render(<table><tbody><StatTable {...{stats}} /></tbody></table>);
+    expect(0).toBe(1);
+  });
+
 });
 
 describe("OptionSelect", () => {
 
   it("provides options to select for 'hard_mode'.", () => {
+    const missingParams = {hard_mode: [true, false]};
+    render(<table><tbody><OptionSelect {...{missingParams}} /></tbody></table>);
     expect(0).toBe(1);
   });
 
   it("provides options to select for 'father'.", () => {
+    const missingParams = {father: ["Arden", "Lex", "Claude"]};
+    render(<table><tbody><OptionSelect {...{missingParams}} /></tbody></table>);
     expect(0).toBe(1);
   });
 
   it("provides options to select for 'lyn_mode'.", () => {
+    const missingParams = {lyn_mode: [true, false]};
+    render(<table><tbody><OptionSelect {...{missingParams}} /></tbody></table>);
     expect(0).toBe(1);
   });
 
   it("provides options to select for 'route'.", () => {
+    const missingParams = {route: ["A", "B"]};
+    render(<table><tbody><OptionSelect {...{missingParams}} /></tbody></table>);
     expect(0).toBe(1);
   });
 
   it("provides options to select for 'number_of_declines'.", () => {
+    const missingParams = {number_of_declines: [1, 3]};
+    render(<table><tbody><OptionSelect {...{missingParams}} /></tbody></table>);
     expect(0).toBe(1);
   });
 
@@ -77,6 +99,9 @@ describe("OptionSelect", () => {
 describe("ProfileHead", () => {
 
   it("displays the portrait-image and children provided.", () => {
+    const figureTitle = "";
+    const imgSrc = "";
+    render(<div><ProfileHead {...{figureTitle, imgSrc}}><iframe src="" className="ProfileHead-child"></iframe></ProfileHead></div>);
     expect(0).toBe(1);
   });
 
@@ -85,14 +110,9 @@ describe("ProfileHead", () => {
 describe("ProfileLevelAndClass", () => {
 
   it("displays the level and class of the unit.", () => {
-    expect(0).toBe(1);
-  });
-
-});
-
-describe("StatTable", () => {
-
-  it("shows the stats and names thereof.", () => {
+    const unitClass = "";
+    const level = [0, 0];
+    render(<table><tbody><ProfileLevelAndClass {...{unitClass, level}} /></tbody></table>);
     expect(0).toBe(1);
   });
 
