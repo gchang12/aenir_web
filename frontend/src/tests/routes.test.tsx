@@ -15,19 +15,57 @@ import {
 describe("GameSelect", () => {
 
   it("lists all game-ID's.", () => {
-    expect(0).toBe(1);
+    render(<div><GameSelect /></div>);
+    let linkElement;
+    for (let game_no=4; game_no <= 9; game_no++) {
+      linkElement = screen.getByText("FE" + game_no);
+      expect(linkElement).toBeVisible();
+      expect(linkElement).toHaveAttribute("href", "/create-morph/fe" + game_no + "/");
+    };
+    /* /create-morph/fe{4..9} */
   });
 
   it("lists game titles.", () => {
-    expect(0).toBe(1);
+    render(<div><GameSelect /></div>);
+    let linkElement;
+    for (let game_no=4; game_no <= 9; game_no++) {
+      linkElement = screen.getByText("FE" + game_no);
+      expect(linkElement).toBeVisible();
+      expect(linkElement).toHaveAttribute("href", "/create-morph/fe" + game_no + "/");
+    };
   });
 
   it("renders images of each game.", () => {
-    expect(0).toBe(1);
-  });
+    render(<div><GameSelect /></div>);
+    const linkElements = screen.getAllByRole('image');
+    // Check if they're all visible
+    linkElements.forEach(linkElement => expect(linkElement).toBeVisible());
+    // Check if they've got the right alt-image
+    // Check if they've got the right src
+    const gameNames = [
+      "genealogy-of-the-holy-war",
+      "thracia-776",
+      "binding-blade",
+      "blazing-sword",
+      "the-sacred-stones",
+      "path-of-radiance",
+    ];
+    for (const [indexNo, name] in Object.entries(gameNames)) {
+      linkElement = linkElements[indexNo];
+      expect(linkElement).toHaveAttribute("src", "/images/" + name + "/cover-art.png");
+      expect(linkElement).toHaveAttribute("alt", "/images/" + name + "/cover-art.png");
+    };
 
-  it("contains links that lead the user to the expected destination.", () => {
-    expect(0).toBe(1);
+    let linkElement;
+    let href;
+    for (let game_no=4; game_no <= 9; game_no++) {
+      href = "/create-morph/fe" + game_no + "/";
+      linkElement = screen.getByAltText(href);
+      expect(linkElement).toHaveTextContent("FE" + game_no);
+      expect(linkElement).toBeVisible();
+      expect(linkElement).toHaveAttribute("href", href);
+    };
+
   });
 
 });
