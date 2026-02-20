@@ -94,7 +94,6 @@ class Morph(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        null=True,
     )
     # content
     game_no = models.PositiveSmallIntegerField(
