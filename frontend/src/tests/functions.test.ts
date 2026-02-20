@@ -15,6 +15,8 @@ import {
 import {
   getMorph,
   previewMorph,
+  postMorph,
+  createMorph,
 } from "../lib/functions";
 import {
   server,
@@ -698,3 +700,16 @@ describe("FE7 Lyn", () => {
 
 });
 
+describe("postMorph", () => {
+
+  test("", () => {
+  });
+
+});
+
+describe("createMorph", () => {
+
+  test("", () => {
+  });
+
+});
