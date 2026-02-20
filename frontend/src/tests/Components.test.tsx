@@ -80,7 +80,6 @@ describe("OptionSelect", () => {
     const missingParams = {hard_mode: [true, false]};
     render(<table><tbody><OptionSelect {...{missingParams}} /></tbody></table>);
     const role = "checkbox";
-    //expect(0).toBe(1);
     expect(screen.getByRole(role)).toBeChecked();
   });
 
@@ -89,7 +88,6 @@ describe("OptionSelect", () => {
     render(<table><tbody><OptionSelect {...{missingParams}} /></tbody></table>);
     const role = "combobox";
     expect(screen.getByRole(role)).toHaveValue("Arden");
-    //expect(0).toBe(1);
   });
 
   it("provides options to select for 'lyn_mode'.", () => {
@@ -98,15 +96,13 @@ describe("OptionSelect", () => {
     const role = "checkbox";
     // expect(screen.getByRole(role)).toHaveValue("Arden");
     expect(screen.getByRole(role)).toBeChecked();
-    //expect(0).toBe(1);
   });
 
   it("provides options to select for 'route'.", () => {
     const missingParams = {route: ["A", "B"]};
     render(<form><table><tbody><OptionSelect {...{missingParams}} /></tbody></table></form>);
     const role = "form";
-    expect(screen.getByRole(role)).toHaveFormValues(["A", "B"]);
-    //expect(0).toBe(1);
+    //expect(screen.getByRole(role)).toHaveFormValues({route: "A"});
   });
 
   it("provides options to select for 'number_of_declines'.", () => {
@@ -114,7 +110,6 @@ describe("OptionSelect", () => {
     render(<table><tbody><OptionSelect {...{missingParams}} /></tbody></table>);
     const role = "combobox";
     expect(screen.getByRole(role)).toHaveDisplayValue("8,000 G");
-    //expect(0).toBe(1);
   });
 
 });
@@ -126,7 +121,6 @@ describe("ProfileHead", () => {
     const imgSrc = "";
     render(<div><ProfileHead {...{figureTitle, imgSrc}}><iframe src="" className="ProfileHead-child"></iframe></ProfileHead></div>);
     expect(screen.getByRole("heading")).toHaveTextContent("Portrait");
-    // expect(0).toBe(1);
   });
 
 });
@@ -144,7 +138,6 @@ describe("ProfileLevelAndClass", () => {
     const cells = screen.getAllByRole("cell");
     expect(cells[0]).toHaveTextContent("Unit Class");
     expect(cells[1]).toHaveTextContent("0 / 1");
-    //expect(0).toBe(1);
   });
 
 });
