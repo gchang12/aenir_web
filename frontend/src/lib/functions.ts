@@ -33,7 +33,7 @@ export async function previewMorph(game_no, name, kwargs) {
   return {morph, missingParams};
 };
 
-export function postMorph(morph_id, game_no, name, kwargs) {
+export function createMorph(morph_id, game_no, name, kwargs) {
   const RESOURCE_URL: string = "http://localhost:8000/dracogate/api/morphs/";
   const data = {
     morph_id,
@@ -48,8 +48,20 @@ export function postMorph(morph_id, game_no, name, kwargs) {
   return fetchTask;
 };
 
-export async function createMorph(morph_id, game_no, name, kwargs) {
-  let morph = await postMorph(game_no, name, kwargs);
-  return morph;
+export function levelUp(morph_id, num_levels) {
 };
 
+export function promote(morph_id, promoClass) {
+};
+
+export function useStatBooster(morph_id, itemName) {
+};
+
+export function equipScroll(morph_id, itemName) {
+};
+
+export function useGrowthsBooster(morph_id) {
+};
+
+export function equipBand(morph_id, itemName) {
+};
