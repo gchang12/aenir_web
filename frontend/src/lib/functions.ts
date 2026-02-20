@@ -33,3 +33,23 @@ export async function previewMorph(game_no, name, kwargs) {
   return {morph, missingParams};
 };
 
+export function postMorph(morph_id, game_no, name, kwargs) {
+  const RESOURCE_URL: string = "http://localhost:8000/dracogate/api/morphs/";
+  const data = {
+    morph_id,
+    game_no,
+    name,
+    ...kwargs,
+  };
+  const fetchTask = axios
+    .post(RESOURCE_URL, data)
+    .then(resp => resp.data)
+    .catch(err => console.log(err));
+  return fetchTask;
+};
+
+export async function createMorph(morph_id, game_no, name, kwargs) {
+  let morph = await postMorph(game_no, name, kwargs);
+  return morph;
+};
+
