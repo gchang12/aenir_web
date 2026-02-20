@@ -46,6 +46,9 @@ const router = createBrowserRouter([
                   const {morph, missingParams} = await previewMorph(game_no, name, kwargs);
                   return {morph, missingParams, unitName, gameId};
                 },
+                action: () => {
+                  return;
+                },
                 Component: UnitConfirm,
               }
             ],
@@ -61,3 +64,4 @@ createRoot(document.getElementById('root')!).render(
     <RouterProvider router={router} />
   </StrictMode>,
 )
+

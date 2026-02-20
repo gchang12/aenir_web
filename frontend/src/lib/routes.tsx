@@ -8,6 +8,7 @@ import {
   useParams,
   NavLink,
   Outlet,
+  Form,
 } from "react-router";
 import {
   ProfileHead,
@@ -174,7 +175,7 @@ export function UnitConfirm() {
   toggleButtonAbility(false);
   return (
     <>
-    <form onChange={refetchMorph} method="post" className="create-morph">
+    <Form onChange={refetchMorph} method="post" className="create-morph">
       <ProfileHead figureTitle={unitName} imgSrc={["", "images", gameName, "characters", unitName + imgSuffix].join("/")}>
         <table>
           <tbody>
@@ -188,13 +189,14 @@ export function UnitConfirm() {
         <StatTable {...{stats, highlight: true}} />
         </tbody>
       </table>
-      <input name="game_no" value={gameId.replace("fe", "")} type="hidden" />
+      <input id="game_no" name="game_no" value={gameId.replace("fe", "")} type="hidden" />
       <input name="name" value={unitName} type="hidden" />
       {/* TODO: Reinsert this if the user is logged in. */}
-      <input name="morph_id" type="text" defaultValue={morphId} required maxlength="25" />
+      <label htmlFor="morph_id">Morph ID</label>
+      <input id="morph_id" name="morph_id" type="text" defaultValue={morphId} required maxlength="25" />
       {/* <input name="morph_id" type="hidden" defaultValue={morphId} required maxLength="25" /> */}
       <button type="submit" id="create-morph-button">Create!</button>
-    </form>
+    </Form>
     </>
   );
 };
