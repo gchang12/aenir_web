@@ -1,6 +1,5 @@
 PROJECT_NAME := aenir_web
 VENV_NAME := .venv-$(PROJECT_NAME)
-NVM_VERSION := 24
 
 _backend: _terminal $(VENV_NAME)/ backend/
 	printf '\033]0;%s\007' "backend-server";
@@ -31,6 +30,6 @@ frontend/:
 	mv $(PROJECT_NAME)/ frontend/;
 	cd frontend/; npm install; npm install react-router;
 
-frontend/node_modules: frontend/
+frontend/node_modules/: frontend/
 	bash -c 'cd frontend/ && . ~/.nvm/nvm.sh && npm install;'
 
