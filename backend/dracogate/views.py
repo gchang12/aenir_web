@@ -20,17 +20,21 @@ class MorphViewSet(viewsets.ViewSet):
 
     def create(self, request):
         """
+        Creates a Morph instance and stores it in the 'morphs' attribute.
         """
-        if len(morphs) == 5:
-            raise Exception
-        elif len(morphs) > 5:
-            raise Exception
+        if len(self.morphs) == 5:
+            raise Exception("Max capacity has been exceeded.")
+        elif len(self.morphs) > 5:
+            raise Exception("Max capacity has been exceeded.")
         morph_id = request.data.get("morph_id")
-        if morph_id and morph_id in morphs:
-            raise Exception
+        if not morph_id:
+            raise Exception("'morph_id' was blank. Please try again.")
+        if morph_id in morphs:
+            raise Exception("The morph '%s' already exists." % morph_id)
         game_no, name, kwargs = self.parse_args(request.data)
         morph = get_morph(game_no, name, **kwargs)
         morph._set_max_level()
+        self.morphs[morph_id] = morph
         # name, current, max, absMax
         statdicts = self.serialize_current_stats(morph)
         data = self.serialize_morph(morph, *statdicts)
@@ -129,7 +133,7 @@ class MorphViewSet(viewsets.ViewSet):
         is_success: bool
         try:
             morph.level_up(num_levels)
-            statdicts = ()
+            statdicts = self.serialize_current_stats(morph)
             value = self.serialize_morph(morph, *statdicts)
             is_success = True
         except LevelUpError as err:
@@ -334,8 +338,8 @@ class MorphViewSet(viewsets.ViewSet):
         """
         Bundles stats for default display-purposes.
         """
-        current_stats = {stat: value / 100 for (stat, value) in morph.current_stats.as_dict().items()}
-        max_stats = {stat: value / 100 for (stat, value) in morph.max_stats.as_dict().items()}
+        current_stats = (morph.current_stats * 0.01).as_dict()
+        max_stats = (morph.max_stats * 0.01).as_dict()
         absmax_stats = dict(zip(morph.Stats.STAT_LIST(), morph.Stats.ABSOLUTE_MAXES()))
         statdicts = (current_stats, max_stats, absmax_stats)
         return statdicts
