@@ -231,6 +231,37 @@ class MorphViewSet(viewsets.ViewSet):
         value = self.serialize_morph(morph)
         return (is_success, value)
 
+    # FE8
+    @staticmethod
+    def equip_knight_ward(morph, **kwargs):
+        """
+        Equips the Knight Ward on a morph. (FE9 Knights only!)
+        """
+        is_success: bool
+        try:
+            morph.equip_knight_ward()
+            is_success = True
+        except GrowthsItemError as err:
+            is_success = False
+        # TODO: get growths, not current
+        value = self.serialize_morph(morph)
+        return (is_success, value)
+
+    # FE8
+    @staticmethod
+    def unequip_knight_ward(morph, **kwargs):
+        """
+        Unequips the Knight Ward from a morph. (FE9 Knights only!)
+        """
+        try:
+            morph.equip_knight_ward()
+            is_success = True
+        except GrowthsItemError as err:
+            is_success = False
+        # TODO: get growths, not current
+        value = self.serialize_morph(morph)
+        return (is_success, value)
+
     # FE9
     @staticmethod
     def equip_band(morph, **kwargs):
