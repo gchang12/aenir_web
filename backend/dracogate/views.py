@@ -170,12 +170,13 @@ class MorphViewSet(viewsets.ViewSet):
         """
         Equips a growth-altering scroll onto on a morph. (FE5 only!)
         """
+        old_growths = morph.growth_rates.as_dict()
         scroll_name = kwargs.get("scroll_name")
         is_success: bool
         try:
             morph.equip_scroll(scroll_name)
-            # TODO: get growths, not current.
-            value = self.serialize_morph(morph)
+            new_growths = morph.growth_rates.as_dict()
+            value = self.serialize_growths(old_growths, new_growths)
             is_success = True
         except StatBoosterError as err:
             value = err.valid_scrolls
@@ -187,12 +188,13 @@ class MorphViewSet(viewsets.ViewSet):
         """
         Unequips a growth-altering scroll from a morph. (FE5 only!)
         """
+        old_growths = morph.growth_rates.as_dict()
         scroll_name = kwargs.get("scroll_name")
         is_success: bool
         try:
             morph.unequip_scroll(scroll_name)
-            # TODO: get growths, not current.
-            value = self.serialize_morph(morph)
+            new_growths = morph.growth_rates.as_dict()
+            value = self.serialize_growths(old_growths, new_growths)
             is_success = True
         except StatBoosterError as err:
             value = err.valid_scrolls
@@ -206,13 +208,15 @@ class MorphViewSet(viewsets.ViewSet):
         Uses Afa's Drops on a morph. (FE7 only!)
         """
         is_success: bool
+        old_growths = morph.growth_rates.as_dict()
         try:
             morph.use_afas_drops()
+            new_growths = morph.growth_rates.as_dict()
+            value = self.serialize_growths(old_growths, new_growths)
             is_success = True
         except GrowthsItemError as err:
+            value = None
             is_success = False
-        # TODO: get growths, not current
-        value = self.serialize_morph(morph)
         return (is_success, value)
 
     # FE8
@@ -222,13 +226,15 @@ class MorphViewSet(viewsets.ViewSet):
         Uses Metis' Tome on a morph. (FE8 only!)
         """
         is_success: bool
+        old_growths = morph.growth_rates.as_dict()
         try:
             morph.use_metiss_drops()
+            new_growths = morph.growth_rates.as_dict()
+            value = self.serialize_growths(old_growths, new_growths)
             is_success = True
         except GrowthsItemError as err:
+            value = None
             is_success = False
-        # TODO: get growths, not current
-        value = self.serialize_morph(morph)
         return (is_success, value)
 
     # FE8
@@ -238,13 +244,15 @@ class MorphViewSet(viewsets.ViewSet):
         Equips the Knight Ward on a morph. (FE9 Knights only!)
         """
         is_success: bool
+        old_growths = morph.growth_rates.as_dict()
         try:
             morph.equip_knight_ward()
+            new_growths = morph.growth_rates.as_dict()
+            value = self.serialize_growths(old_growths, new_growths)
             is_success = True
         except GrowthsItemError as err:
+            value = None
             is_success = False
-        # TODO: get growths, not current
-        value = self.serialize_morph(morph)
         return (is_success, value)
 
     # FE8
@@ -253,13 +261,16 @@ class MorphViewSet(viewsets.ViewSet):
         """
         Unequips the Knight Ward from a morph. (FE9 Knights only!)
         """
+        is_success: bool
+        old_growths = morph.growth_rates.as_dict()
         try:
             morph.equip_knight_ward()
+            new_growths = morph.growth_rates.as_dict()
+            value = self.serialize_growths(old_growths, new_growths)
             is_success = True
         except GrowthsItemError as err:
+            value = None
             is_success = False
-        # TODO: get growths, not current
-        value = self.serialize_morph(morph)
         return (is_success, value)
 
     # FE9
@@ -268,12 +279,13 @@ class MorphViewSet(viewsets.ViewSet):
         """
         Equips a growth-altering band onto on a morph. (FE9 only!)
         """
-        band_name = kwargs.get("band_name")
         is_success: bool
+        band_name = kwargs.get("band_name")
+        old_growths = morph.growth_rates.as_dict()
         try:
             morph.equip_band(band_name)
-            # get growths, not current.
-            value = self.serialize_morph(morph)
+            new_growths = morph.growth_rates.as_dict()
+            value = self.serialize_growths(old_growths, new_growths)
             is_success = True
         except BandError as err:
             value = err.valid_bands
@@ -287,10 +299,11 @@ class MorphViewSet(viewsets.ViewSet):
         """
         band_name = kwargs.get("band_name")
         is_success: bool
+        old_growths = morph.growth_rates.as_dict()
         try:
             morph.unequip_band(band_name)
-            # get growths, not current.
-            value = self.serialize_morph(morph)
+            new_growths = morph.growth_rates.as_dict()
+            value = self.serialize_growths(old_growths, new_growths)
             is_success = True
         except BandError as err:
             value = err.valid_bands
@@ -300,7 +313,7 @@ class MorphViewSet(viewsets.ViewSet):
     @staticmethod
     def serialize_morph(morph):
         """
-        Bundles a morph's attribute for display purposes.
+        Bundles a morph's attributes for display purposes.
         """
         stats = []
         current_stats = morph.current_stats.as_dict()
@@ -313,6 +326,19 @@ class MorphViewSet(viewsets.ViewSet):
             "level": (morph.current_lv, morph.max_level),
             "stats": stats,
         }
+
+    @staticmethod
+    def serialize_new_growths(old_growths: dict[str, int], new_growths: dict[str, int]):
+        """
+        Bundles growth rates for display purposes.
+        """
+        stats = []
+        #growth_rates = morph.growth_rates.as_dict()
+        #max_stats = morph.max_stats.as_dict()
+        #absmax_stats = morph.Stats.ABSOLUTE_MAXES()
+        for indexno, stat in enumerate(morph.Stats.STAT_LIST()):
+            stats.append((stat, old_growths[stat] / 100, new_growths[stat] / 100, (new_growths[stat] - old_growths[stat]) / 100))
+        return {"stats": stats}
 
     @staticmethod
     def parse_args(dictlike):
