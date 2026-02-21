@@ -32,7 +32,8 @@ class MorphViewSet(viewsets.ViewSet):
         morph = get_morph(game_no, name, **kwargs)
         morph._set_max_level()
         # name, current, max, absMax
-        data = self.serialize_morph(morph)
+        statdicts = self.serialize_current_stats(morph)
+        data = self.serialize_morph(morph, *statdicts)
         return Response({"id": morph_id, "morph": data})
 
     def list(self, request):
@@ -45,7 +46,8 @@ class MorphViewSet(viewsets.ViewSet):
             morph = get_morph(game_no, name, **kwargs)
             morph._set_max_level()
             # name, current, max, absMax
-            data = self.serialize_morph(morph)
+            statdicts = self.serialize_current_stats(morph)
+            data = self.serialize_morph(morph, *statdicts)
         except InitError as e:
             data = {"missingParams": e.init_params}
         except NotImplementedError:
@@ -75,6 +77,7 @@ class MorphViewSet(viewsets.ViewSet):
             "equip_scroll": self.equip_scroll,
             "unequip_scroll": self.unequip_scroll,
         }[method](morph, **kwargs)
+        # TODO: Refactor code s.t. stat formats are selected also.
         return self.serialize_morph(morph)
 
     def update(self, request):
@@ -98,6 +101,8 @@ class MorphViewSet(viewsets.ViewSet):
             "equip_scroll": self.equip_scroll,
             "unequip_scroll": self.unequip_scroll,
         }[method](morph, **kwargs)
+        #statdicts = serializer(morph)
+        # TODO: Refactor code s.t. stat formats are selected also.
         return self.serialize_morph(morph)
 
     def destroy(self, request):
@@ -157,7 +162,8 @@ class MorphViewSet(viewsets.ViewSet):
         is_success: bool
         try:
             morph.use_stat_booster(item_name)
-            value = self.serialize_morph(morph)
+            statdicts = self.serialize_current_stats(morph)
+            value = self.serialize_morph(morph, *statdicts)
             is_success = True
         except StatBoosterError as err:
             value = err.valid_stat_boosters
@@ -311,21 +317,31 @@ class MorphViewSet(viewsets.ViewSet):
         return (is_success, value)
 
     @staticmethod
-    def serialize_morph(morph):
+    def serialize_morph(morph, *statdicts):
         """
         Bundles a morph's attributes for display purposes.
         """
         stats = []
-        current_stats = morph.current_stats.as_dict()
-        max_stats = morph.max_stats.as_dict()
-        absmax_stats = morph.Stats.ABSOLUTE_MAXES()
-        for indexno, stat in enumerate(morph.Stats.STAT_LIST()):
-            stats.append((stat, current_stats[stat] / 100, max_stats[stat] / 100, absmax_stats[indexno]))
+        for stat in morph.Stats.STAT_LIST():
+            statrow = map(lambda statdict: statdict[stat], statdicts)
+            stats.append(stat, *statrow)
+            #stats.append((stat, current_stats[stat] / 100, max_stats[stat] / 100, absmax_stats[indexno]))
         return {
             "unitClass": morph.current_cls,
             "level": (morph.current_lv, morph.max_level),
             "stats": stats,
         }
+
+    @staticmethod
+    def serialize_current_stats(morph):
+        """
+        Bundles stats for default display-purposes.
+        """
+        current_stats = {stat: value / 100 for (stat, value) in morph.current_stats.as_dict().items()}
+        max_stats = {stat: value / 100 for (stat, value) in morph.max_stats.as_dict().items()}
+        absmax_stats = dict(zip(morph.Stats.STAT_LIST(), morph.Stats.ABSOLUTE_MAXES()))
+        statdicts = (current_stats, max_stats, absmax_stats)
+        return statdicts
 
     @staticmethod
     def serialize_new_growths(old_growths: dict[str, int], new_growths: dict[str, int]):
