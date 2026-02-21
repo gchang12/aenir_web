@@ -9,6 +9,7 @@ import {
   NavLink,
   Outlet,
   Form,
+  Link,
 } from "react-router";
 import {
   ProfileHead,
@@ -27,15 +28,26 @@ import {
 export function Root() {
   return (
     <>
-    <nav>
-      <menu>
-        <li><NavLink to="/create-morph/">Select Game</NavLink></li>
-        <li><NavLink to="/create-morph/fe6/">Select Unit - FE6</NavLink></li>
-        <li><NavLink to="/create-morph/fe6/Roy">Confirm FE6 Roy</NavLink></li>
-        <li><NavLink to="/create-morph/fe6/Rutger">Confirm FE6 Rutger</NavLink></li>
-      </menu>
-    </nav>
+    <header id="top-banner">
+      <Link to="/">
+      <figure>
+        <img src="/logo.png" />
+        <figcaption>
+          <h1>aenir</h1>
+          <h2>A Fire Emblem stats calculator and comparison tool</h2>
+        </figcaption>
+      </figure>
+      </Link>
+      <nav>
+        <menu>
+          <li><NavLink to="/create-morph/">Create Morph</NavLink></li>
+          <li><NavLink to="/edit-morphs/">Edit Morphs</NavLink></li>
+        </menu>
+      </nav>
+    </header>
+    <main>
     <Outlet />
+    </main>
     </>
   );
 };
@@ -43,7 +55,7 @@ export function Root() {
 export function GameSelect() {
   return (
     <>
-    <main id="create-morph">
+    <div id="create-morph">
     <nav className="create-morph">
       <menu>
       {GAMES.map(game => {
@@ -66,7 +78,7 @@ export function GameSelect() {
       </menu>
     </nav>
     <Outlet />
-    </main>
+    </div>
     </>
   );
 };

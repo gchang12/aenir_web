@@ -69,6 +69,10 @@ button:focus-visible {
 
 /* MY CODE */
 
+#root {
+  width: 100%;
+}
+
 #create-morph {
   display: flex;
   &> .create-morph {
@@ -91,4 +95,21 @@ a.active figcaption {
 
 .maxed-stat {
   color: green;
+}
+
+header > figure {
+  display: flex;
+}
+
+#top-banner {
+  display: flex;
+  justify-content: space-between;
+}
+
+#top-banner figure {
+  display: flex;
+}
+
+body {
+  display: revert;
 }
