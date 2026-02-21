@@ -189,28 +189,28 @@ export function UnitConfirm() {
   toggleButtonAbility(false);
   return (
     <>
-    <Form onChange={refetchMorph} method="post" className="create-morph">
-      <ProfileHead figureTitle={unitName} imgSrc={["", "images", gameName, "characters", unitName + imgSuffix].join("/")}>
-        <table>
-          <tbody>
-          <ProfileLevelAndClass {...{unitClass, level}} />
-          <OptionSelect {...{missingParams}} />
-          </tbody>
-        </table>
-      </ProfileHead>
+    <ProfileHead figureTitle={unitName} imgSrc={["", "images", gameName, "characters", unitName + imgSuffix].join("/")}>
       <table>
         <tbody>
-        <StatTable {...{stats, highlight: true}} />
+        <ProfileLevelAndClass {...{unitClass, level}} />
+        <Form onChange={refetchMorph} method="post" className="create-morph">
+          <input id="game_no" name="game_no" value={gameId.replace("fe", "")} type="hidden" />
+          <input name="name" value={unitName} type="hidden" />
+          <OptionSelect {...{missingParams}} />
+          {/* TODO: Reinsert this if the user is logged in. */}
+          <label htmlFor="morph_id">Morph ID</label>
+          <input id="morph_id" name="morph_id" type="text" defaultValue={morphId} required maxlength="25" />
+          {/* <input name="morph_id" type="hidden" defaultValue={morphId} required maxLength="25" /> */}
+          <button type="submit" id="create-morph-button">Create!</button>
+        </Form>
         </tbody>
       </table>
-      <input id="game_no" name="game_no" value={gameId.replace("fe", "")} type="hidden" />
-      <input name="name" value={unitName} type="hidden" />
-      {/* TODO: Reinsert this if the user is logged in. */}
-      <label htmlFor="morph_id">Morph ID</label>
-      <input id="morph_id" name="morph_id" type="text" defaultValue={morphId} required maxlength="25" />
-      {/* <input name="morph_id" type="hidden" defaultValue={morphId} required maxLength="25" /> */}
-      <button type="submit" id="create-morph-button">Create!</button>
-    </Form>
+    </ProfileHead>
+    <table>
+      <tbody>
+      <StatTable {...{stats, highlight: true}} />
+      </tbody>
+    </table>
     </>
   );
 };
