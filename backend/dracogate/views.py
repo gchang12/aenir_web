@@ -321,11 +321,7 @@ class MorphViewSet(viewsets.ViewSet):
         """
         Bundles a morph's attributes for display purposes.
         """
-        stats = []
-        for stat in morph.Stats.STAT_LIST():
-            statrow = map(lambda statdict: statdict[stat], statdicts)
-            stats.append(stat, *statrow)
-            #stats.append((stat, current_stats[stat] / 100, max_stats[stat] / 100, absmax_stats[indexno]))
+        stats = tuple(map(lambda stat: (stat, *map(lambda statdict: statdict[stat], statdicts)), morph.Stats.STAT_LIST()))
         return {
             "unitClass": morph.current_cls,
             "level": (morph.current_lv, morph.max_level),
@@ -344,17 +340,28 @@ class MorphViewSet(viewsets.ViewSet):
         return statdicts
 
     @staticmethod
-    def serialize_new_growths(old_growths: dict[str, int], new_growths: dict[str, int]):
+    def serialize_augmented_growths(morph, _old_growths):
+        """
+        Bundles growth rates, when augmented in FE5 (Scrolls), FE7 (Afa's Drops), FE8 (Metis' Tome), or FE9 (Bands).
+        """
+        # level-up with old growths
+        # with new growths
+        #old_growths = {stat: value / 100 for (stat, value) in _old_growths.as_dict().items()}
+        #new_growths = {stat: value / 100 for (stat, value) in morph.growth_rates.as_dict().items()}
+        #growths_diff = {stat: (new_growths[stat] - old_growths[stat]) / 100 for stat in morph.Stats.STAT_LIST()}
+        #statdicts = (old_growths, new_growths, growths_diff)
+        #return statdicts
+
+    @staticmethod
+    def serialize_new_growths(morph, old_growths):
         """
         Bundles growth rates for display purposes.
         """
-        stats = []
-        #growth_rates = morph.growth_rates.as_dict()
-        #max_stats = morph.max_stats.as_dict()
-        #absmax_stats = morph.Stats.ABSOLUTE_MAXES()
-        for indexno, stat in enumerate(morph.Stats.STAT_LIST()):
-            stats.append((stat, old_growths[stat] / 100, new_growths[stat] / 100, (new_growths[stat] - old_growths[stat]) / 100))
-        return {"stats": stats}
+        old_growths = {stat: value / 100 for (stat, value) in old_growths.as_dict().items()}
+        new_growths = {stat: value / 100 for (stat, value) in morph.growth_rates.as_dict().items()}
+        growths_diff = {stat: (new_growths[stat] - old_growths[stat]) / 100 for stat in morph.Stats.STAT_LIST()}
+        statdicts = (old_growths, new_growths, growths_diff)
+        return statdicts
 
     @staticmethod
     def parse_args(dictlike):
