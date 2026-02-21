@@ -129,7 +129,8 @@ class MorphViewSet(viewsets.ViewSet):
         is_success: bool
         try:
             morph.level_up(num_levels)
-            value = 
+            statdicts = ()
+            value = self.serialize_morph(morph, *statdicts)
             is_success = True
         except LevelUpError as err:
             value = morph.max_level
@@ -182,7 +183,7 @@ class MorphViewSet(viewsets.ViewSet):
         try:
             morph.equip_scroll(scroll_name)
             new_growths = morph.growth_rates.as_dict()
-            value = self.serialize_growths(old_growths, new_growths)
+            #value = self.serialize_growths(old_growths, new_growths)
             is_success = True
         except StatBoosterError as err:
             value = err.valid_scrolls
@@ -200,7 +201,7 @@ class MorphViewSet(viewsets.ViewSet):
         try:
             morph.unequip_scroll(scroll_name)
             new_growths = morph.growth_rates.as_dict()
-            value = self.serialize_growths(old_growths, new_growths)
+            #value = self.serialize_growths(old_growths, new_growths)
             is_success = True
         except StatBoosterError as err:
             value = err.valid_scrolls
@@ -218,7 +219,7 @@ class MorphViewSet(viewsets.ViewSet):
         try:
             morph.use_afas_drops()
             new_growths = morph.growth_rates.as_dict()
-            value = self.serialize_growths(old_growths, new_growths)
+            #value = self.serialize_growths(old_growths, new_growths)
             is_success = True
         except GrowthsItemError as err:
             value = None
@@ -236,7 +237,7 @@ class MorphViewSet(viewsets.ViewSet):
         try:
             morph.use_metiss_drops()
             new_growths = morph.growth_rates.as_dict()
-            value = self.serialize_growths(old_growths, new_growths)
+            #value = self.serialize_growths(old_growths, new_growths)
             is_success = True
         except GrowthsItemError as err:
             value = None
@@ -254,7 +255,7 @@ class MorphViewSet(viewsets.ViewSet):
         try:
             morph.equip_knight_ward()
             new_growths = morph.growth_rates.as_dict()
-            value = self.serialize_growths(old_growths, new_growths)
+            #value = self.serialize_growths(old_growths, new_growths)
             is_success = True
         except GrowthsItemError as err:
             value = None
@@ -272,7 +273,7 @@ class MorphViewSet(viewsets.ViewSet):
         try:
             morph.equip_knight_ward()
             new_growths = morph.growth_rates.as_dict()
-            value = self.serialize_growths(old_growths, new_growths)
+            #value = self.serialize_growths(old_growths, new_growths)
             is_success = True
         except GrowthsItemError as err:
             value = None
@@ -291,7 +292,7 @@ class MorphViewSet(viewsets.ViewSet):
         try:
             morph.equip_band(band_name)
             new_growths = morph.growth_rates.as_dict()
-            value = self.serialize_growths(old_growths, new_growths)
+            #value = self.serialize_growths(old_growths, new_growths)
             is_success = True
         except BandError as err:
             value = err.valid_bands
@@ -309,7 +310,7 @@ class MorphViewSet(viewsets.ViewSet):
         try:
             morph.unequip_band(band_name)
             new_growths = morph.growth_rates.as_dict()
-            value = self.serialize_growths(old_growths, new_growths)
+            #value = self.serialize_growths(old_growths, new_growths)
             is_success = True
         except BandError as err:
             value = err.valid_bands
@@ -321,7 +322,7 @@ class MorphViewSet(viewsets.ViewSet):
         """
         Bundles a morph's attributes for display purposes.
         """
-        stats = tuple(map(lambda stat: (stat, *map(lambda statdict: statdict[stat], statdicts)), morph.Stats.STAT_LIST()))
+        stats = list(map(lambda stat: (stat, *map(lambda statdict: statdict[stat], statdicts)), morph.Stats.STAT_LIST()))
         return {
             "unitClass": morph.current_cls,
             "level": (morph.current_lv, morph.max_level),
@@ -337,30 +338,6 @@ class MorphViewSet(viewsets.ViewSet):
         max_stats = {stat: value / 100 for (stat, value) in morph.max_stats.as_dict().items()}
         absmax_stats = dict(zip(morph.Stats.STAT_LIST(), morph.Stats.ABSOLUTE_MAXES()))
         statdicts = (current_stats, max_stats, absmax_stats)
-        return statdicts
-
-    @staticmethod
-    def serialize_augmented_growths(morph, _old_growths):
-        """
-        Bundles growth rates, when augmented in FE5 (Scrolls), FE7 (Afa's Drops), FE8 (Metis' Tome), or FE9 (Bands).
-        """
-        # level-up with old growths
-        # with new growths
-        #old_growths = {stat: value / 100 for (stat, value) in _old_growths.as_dict().items()}
-        #new_growths = {stat: value / 100 for (stat, value) in morph.growth_rates.as_dict().items()}
-        #growths_diff = {stat: (new_growths[stat] - old_growths[stat]) / 100 for stat in morph.Stats.STAT_LIST()}
-        #statdicts = (old_growths, new_growths, growths_diff)
-        #return statdicts
-
-    @staticmethod
-    def serialize_new_growths(morph, old_growths):
-        """
-        Bundles growth rates for display purposes.
-        """
-        old_growths = {stat: value / 100 for (stat, value) in old_growths.as_dict().items()}
-        new_growths = {stat: value / 100 for (stat, value) in morph.growth_rates.as_dict().items()}
-        growths_diff = {stat: (new_growths[stat] - old_growths[stat]) / 100 for stat in morph.Stats.STAT_LIST()}
-        statdicts = (old_growths, new_growths, growths_diff)
         return statdicts
 
     @staticmethod
