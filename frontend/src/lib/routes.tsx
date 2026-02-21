@@ -29,19 +29,21 @@ export function Root() {
   return (
     <>
     <header id="top-banner">
-      <Link to="/">
       <figure>
-        <img src="/logo.png" />
+        <Link to="/">
+          <img src="/logo.png" />
+        </Link>
         <figcaption>
           <h1>aenir</h1>
           <h2>A Fire Emblem stats calculator and comparison tool</h2>
         </figcaption>
       </figure>
-      </Link>
       <nav>
         <menu>
           <li><NavLink to="/create-morph/">Create Morph</NavLink></li>
-          <li><NavLink to="/edit-morphs/">Edit Morphs</NavLink></li>
+          <li><NavLink to="/evolve-morphs/">Evolve Morphs</NavLink></li>
+          <li><NavLink to="/compare-morphs/">Compare Morphs</NavLink></li>
+          <li><NavLink to="/calculate-stat-differences/">Calculate Stat Differences</NavLink></li>
         </menu>
       </nav>
     </header>
