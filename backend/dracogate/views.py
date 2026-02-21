@@ -32,12 +32,7 @@ class MorphViewSet(viewsets.ViewSet):
         morph = get_morph(game_no, name, **kwargs)
         morph._set_max_level()
         # name, current, max, absMax
-        stats = self.bundle_stats(morph)
-        data = {
-            "unitClass": morph.current_cls,
-            "level": (morph.current_lv, morph.max_level),
-            "stats": stats,
-        }
+        data = self.serialize_morph(morph)
         return Response({"id": morph_id, "morph": data})
 
     def list(self, request):
@@ -50,12 +45,7 @@ class MorphViewSet(viewsets.ViewSet):
             morph = get_morph(game_no, name, **kwargs)
             morph._set_max_level()
             # name, current, max, absMax
-            stats = self.bundle_stats(morph)
-            data = {
-                "unitClass": morph.current_cls,
-                "level": (morph.current_lv, morph.max_level),
-                "stats": stats,
-            }
+            data = self.serialize_morph(morph)
         except InitError as e:
             data = {"missingParams": e.init_params}
         except NotImplementedError:
@@ -66,13 +56,49 @@ class MorphViewSet(viewsets.ViewSet):
 
     def partial_update(self, request):
         """
-        For previewing.
+        Simulates operations on a morph without modifying it.
         """
+        morph_id = request.data.get("morph_id")
+        if morph_id not in self.morphs:
+            raise Exception
+        morph = self.morphs[morph_id].copy()
+        method = request.data.get("method")
+        kwargs = request.data.get("kwargs")
+        error = {
+            "level_up": self.level_up,
+            "promote": self.promote,
+            "use_stat_booster": self.use_stat_booster,
+            "use_afas_drops": self.use_afas_drops,
+            "use_metiss_tome": self.use_metiss_tome,
+            "equip_band": self.equip_band,
+            "unequip_band": self.unequip_band,
+            "equip_scroll": self.equip_scroll,
+            "unequip_scroll": self.unequip_scroll,
+        }[method](morph, **kwargs)
+        return self.serialize_morph(morph)
 
     def update(self, request):
         """
-        For changing server-side data.
+        Performs operations on a morph and modifies it.
         """
+        morph_id = request.data.get("morph_id")
+        if morph_id not in self.morphs:
+            raise Exception
+        morph = self.morphs[morph_id]
+        method = request.data.get("method")
+        kwargs = request.data.get("kwargs")
+        error = {
+            "level_up": self.level_up,
+            "promote": self.promote,
+            "use_stat_booster": self.use_stat_booster,
+            "use_afas_drops": self.use_afas_drops,
+            "use_metiss_tome": self.use_metiss_tome,
+            "equip_band": self.equip_band,
+            "unequip_band": self.unequip_band,
+            "equip_scroll": self.equip_scroll,
+            "unequip_scroll": self.unequip_scroll,
+        }[method](morph, **kwargs)
+        return self.serialize_morph(morph)
 
     def destroy(self, request):
         """
@@ -92,56 +118,158 @@ class MorphViewSet(viewsets.ViewSet):
     @staticmethod
     def level_up(morph, **kwargs):
         """
+        Levels up a morph.
         """
+        num_levels = int(kwargs.get("num_levels"))
+        is_success: bool
+        try:
+            morph.level_up(num_levels)
+            value = 
+            is_success = True
+        except LevelUpError as err:
+            value = morph.max_level
+            is_success = False
+        return (is_success, value)
 
     @staticmethod
     def promote(morph, **kwargs):
         """
+        Promotes a morph.
         """
+        promo_cls = kwargs.get("promo_cls")
+        morph.promo_cls = promo_cls
+        is_success: bool
+        try:
+            value = morph.promote()
+            is_success = True
+        except PromotionError as err:
+            value = morph.possible_promotions
+            is_success = False
+        return (is_success, value)
 
     # FE5,6,7,8,9
     @staticmethod
     def use_stat_booster(morph, **kwargs):
         """
+        Uses a stat booster on a morph.
         """
-
-    # FE7
-    @staticmethod
-    def use_afas_drops(morph, **kwargs):
-        """
-        """
-
-    # FE8
-    @staticmethod
-    def use_metiss_tome(morph, **kwargs):
-        """
-        """
-
-    # FE9
-    @staticmethod
-    def equip_band(morph, **kwargs):
-        """
-        """
-
-    @staticmethod
-    def unequip_band(morph, **kwargs):
-        """
-        """
+        item_name = kwargs.get("item_name")
+        is_success: bool
+        try:
+            morph.use_stat_booster(item_name)
+            value = self.serialize_morph(morph)
+            is_success = True
+        except StatBoosterError as err:
+            value = err.valid_stat_boosters
+            is_success = False
+        return (is_success, value)
 
     # FE5
     @staticmethod
     def equip_scroll(morph, **kwargs):
         """
+        Equips a growth-altering scroll onto on a morph. (FE5 only!)
         """
+        scroll_name = kwargs.get("scroll_name")
+        is_success: bool
+        try:
+            morph.equip_scroll(scroll_name)
+            # TODO: get growths, not current.
+            value = self.serialize_morph(morph)
+            is_success = True
+        except StatBoosterError as err:
+            value = err.valid_scrolls
+            is_success = False
+        return (is_success, value)
 
     @staticmethod
     def unequip_scroll(morph, **kwargs):
         """
+        Unequips a growth-altering scroll from a morph. (FE5 only!)
         """
+        scroll_name = kwargs.get("scroll_name")
+        is_success: bool
+        try:
+            morph.unequip_scroll(scroll_name)
+            # TODO: get growths, not current.
+            value = self.serialize_morph(morph)
+            is_success = True
+        except StatBoosterError as err:
+            value = err.valid_scrolls
+            is_success = False
+        return (is_success, value)
+
+    # FE7
+    @staticmethod
+    def use_afas_drops(morph, **kwargs):
+        """
+        Uses Afa's Drops on a morph. (FE7 only!)
+        """
+        is_success: bool
+        try:
+            morph.use_afas_drops()
+            is_success = True
+        except GrowthsItemError as err:
+            is_success = False
+        # TODO: get growths, not current
+        value = self.serialize_morph(morph)
+        return (is_success, value)
+
+    # FE8
+    @staticmethod
+    def use_metiss_tome(morph, **kwargs):
+        """
+        Uses Metis' Tome on a morph. (FE8 only!)
+        """
+        is_success: bool
+        try:
+            morph.use_metiss_drops()
+            is_success = True
+        except GrowthsItemError as err:
+            is_success = False
+        # TODO: get growths, not current
+        value = self.serialize_morph(morph)
+        return (is_success, value)
+
+    # FE9
+    @staticmethod
+    def equip_band(morph, **kwargs):
+        """
+        Equips a growth-altering band onto on a morph. (FE9 only!)
+        """
+        band_name = kwargs.get("band_name")
+        is_success: bool
+        try:
+            morph.equip_band(band_name)
+            # get growths, not current.
+            value = self.serialize_morph(morph)
+            is_success = True
+        except BandError as err:
+            value = err.valid_bands
+            is_success = False
+        return (is_success, value)
 
     @staticmethod
-    def bundle_stats(morph):
+    def unequip_band(morph, **kwargs):
         """
+        Unequips a growth-altering band from a morph. (FE9 only!)
+        """
+        band_name = kwargs.get("band_name")
+        is_success: bool
+        try:
+            morph.unequip_band(band_name)
+            # get growths, not current.
+            value = self.serialize_morph(morph)
+            is_success = True
+        except BandError as err:
+            value = err.valid_bands
+            is_success = False
+        return (is_success, value)
+
+    @staticmethod
+    def serialize_morph(morph):
+        """
+        Bundles a morph's attribute for display purposes.
         """
         stats = []
         current_stats = morph.current_stats.as_dict()
@@ -149,11 +277,16 @@ class MorphViewSet(viewsets.ViewSet):
         absmax_stats = morph.Stats.ABSOLUTE_MAXES()
         for indexno, stat in enumerate(morph.Stats.STAT_LIST()):
             stats.append((stat, current_stats[stat] / 100, max_stats[stat] / 100, absmax_stats[indexno]))
-        return stats
+        return {
+            "unitClass": morph.current_cls,
+            "level": (morph.current_lv, morph.max_level),
+            "stats": stats,
+        }
 
     @staticmethod
     def parse_args(dictlike):
         """
+        Parses default values from response and converts them for interpretation by program.
         """
         game_no = int(dictlike.get("game_no"))
         name = dictlike.get("name")
