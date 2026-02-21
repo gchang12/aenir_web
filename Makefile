@@ -1,17 +1,6 @@
 PROJECT_NAME := aenir_web
 VENV_NAME := .venv-$(PROJECT_NAME)
 
-_backend: _terminal $(VENV_NAME)/ backend/
-	printf '\033]0;%s\007' "backend-server";
-	bash -c 'cd backend/ && ./manage.py runserver;'
-
-_frontend: _terminal frontend/node_modules/
-	printf '\033]0;%s\007' "frontend-server";
-	bash -c 'cd frontend/ && . ~/.nvm/nvm.sh && npm run dev -- --port 3000 --open;'
-
-_terminal:
-	xfce4-terminal --tab --working-directory=/home/eclair/Documents/coding/_web-dev/$(PROJECT_NAME)/;
-
 $(VENV_NAME)/: requirements.txt
 	bash -c 'python3 -m venv $(VENV_NAME)/ && . $(VENV_NAME)/bin/activate && pip install -r requirements.txt;'
 
@@ -32,4 +21,3 @@ frontend/:
 
 frontend/node_modules/: frontend/
 	bash -c 'cd frontend/ && . ~/.nvm/nvm.sh && npm install;'
-
