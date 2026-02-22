@@ -2,17 +2,17 @@
 """
 
 import unittest
+from unittest.mock import patch
 
 from django.test import TestCase
 
-from aenir import get_morph
-
 from dracogate._logging import logger
+
+RESOURCE_URL = "/dracogate/api/morphs/"
 
 class NormalUnit(TestCase):
     """
     """
-    url = "/dracogate/api/morphs/"
 
     def setUp(self):
         """
@@ -28,7 +28,7 @@ class NormalUnit(TestCase):
     def test_get_morph__verify_that_invalid_options_are_ignored(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         kwargs.update({"invalid": "option"})
         response = self.client.get(url, data=kwargs)
@@ -39,7 +39,7 @@ class NormalUnit(TestCase):
     def test_get_morph__verify_success(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         response = self.client.get(url, data=kwargs)
         expected = {"unitClass", "level", "stats"}
@@ -63,6 +63,28 @@ class NormalUnit(TestCase):
         }
         self.assertDictEqual(actual, expected)
 
+    def test_create_morph(self):
+        """
+        Tests the morph-creation method.
+        """
+        url = RESOURCE_URL
+        kwargs = self.kwargs
+        kwargs["morph_id"] = "my-morph"
+        response = self.client.post(url, data=kwargs)
+        data = response.data
+        logger.debug("response.data: %r", data)
+
+    def test_delete_morph(self):
+        """
+        """
+        url = RESOURCE_URL
+        kwargs = self.kwargs
+        kwargs["morph_id"] = "my-morph"
+        response = self.client.delete(url + "my-morph" + "/", data=kwargs)
+        #logger.debug("response.data: %r", response.data)
+        # If the deletion method didn't work, this should raise an error.
+        self.client.post(url, data=kwargs)
+
 class FatheredUnit(TestCase):
     """
     """
@@ -82,7 +104,7 @@ class FatheredUnit(TestCase):
     def test_get_morph__verify_success(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         response = self.client.get(url, data=kwargs)
         actual = response.data
@@ -105,7 +127,7 @@ class FatheredUnit(TestCase):
     def test_get_morph__verify_success_alt(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         kwargs.update({"father": "Claude"})
         response = self.client.get(url, data=kwargs)
@@ -129,7 +151,7 @@ class FatheredUnit(TestCase):
     def test_get_morph__verify_error(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         kwargs.pop("father")
         response = self.client.get(url, data=kwargs)
@@ -174,7 +196,7 @@ class HardModeUnit(TestCase):
     def test_get_morph__verify_success(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         response = self.client.get(url, data=kwargs)
         actual = response.data
@@ -198,7 +220,7 @@ class HardModeUnit(TestCase):
     def test_get_morph__verify_success_alt(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         kwargs.update({'hard_mode': 'true'})
         response = self.client.get(url, data=kwargs)
@@ -223,7 +245,7 @@ class HardModeUnit(TestCase):
     def test_get_morph__verify_error(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         kwargs.pop("hard_mode")
         response = self.client.get(url, data=kwargs)
@@ -254,7 +276,7 @@ class DeclinableUnit(TestCase):
     def test_get_morph__verify_success(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         response = self.client.get(url, data=kwargs)
         actual = response.data
@@ -278,7 +300,7 @@ class DeclinableUnit(TestCase):
     def test_get_morph__verify_success_alt1(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         kwargs.update({"number_of_declines": 1})
         response = self.client.get(url, data=kwargs)
@@ -303,7 +325,7 @@ class DeclinableUnit(TestCase):
     def test_get_morph__verify_success_alt2(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         kwargs.update({"number_of_declines": 2})
         response = self.client.get(url, data=kwargs)
@@ -328,7 +350,7 @@ class DeclinableUnit(TestCase):
     def test_get_morph__verify_success_alt3(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         kwargs.update({"number_of_declines": 3})
         response = self.client.get(url, data=kwargs)
@@ -353,7 +375,7 @@ class DeclinableUnit(TestCase):
     def test_get_morph__verify_error(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         kwargs.pop("number_of_declines")
         response = self.client.get(url, data=kwargs)
@@ -368,7 +390,7 @@ class DeclinableUnit(TestCase):
     def test_get_morph__verify_invalid_values(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         kwargs["number_of_declines"] = 4
         response = self.client.get(url, data=kwargs)
@@ -396,7 +418,7 @@ class Gonzales(TestCase):
     def test_get_morph__verify_success(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         response = self.client.get(url, data=kwargs)
         actual = response.data
@@ -420,7 +442,7 @@ class Gonzales(TestCase):
     def test_get_morph__verify_success__elphin_no_hm(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         kwargs.update({"hard_mode": "false", "route": "Elphin"})
         response = self.client.get(url, data=kwargs)
@@ -445,7 +467,7 @@ class Gonzales(TestCase):
     def test_get_morph__verify_success__lalum_hm(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         kwargs.update({"hard_mode": "true"})
         response = self.client.get(url, data=kwargs)
@@ -470,7 +492,7 @@ class Gonzales(TestCase):
     def test_get_morph__verify_success__elphin_hm(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         kwargs.update({"hard_mode": "true", "route": "Elphin"})
         response = self.client.get(url, data=kwargs)
@@ -495,7 +517,7 @@ class Gonzales(TestCase):
     def test_get_morph__verify_error1(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         kwargs.pop("route")
         response = self.client.get(url, data=kwargs)
@@ -510,7 +532,7 @@ class Gonzales(TestCase):
     def test_get_morph__verify_error2(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         kwargs.pop("hard_mode")
         response = self.client.get(url, data=kwargs)
@@ -541,7 +563,7 @@ class LyndisLeague(TestCase):
     def test_get_morph__verify_error(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         kwargs.pop("lyn_mode")
         response = self.client.get(url, data=kwargs)
@@ -556,7 +578,7 @@ class LyndisLeague(TestCase):
     def test_get_morph__verify_success__lyn_mode(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         kwargs.update({"lyn_mode": "true"})
         response = self.client.get(url, data=kwargs)
@@ -581,7 +603,7 @@ class LyndisLeague(TestCase):
     def test_get_morph__verify_success__no_lyn_mode(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         response = self.client.get(url, data=kwargs)
         actual = response.data
@@ -621,14 +643,14 @@ class Ninian(TestCase):
     def test_get_morph__verify_success(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         response = self.client.get(url, data=kwargs)
 
     def test_get_morph__verify_server_failure(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         kwargs.update({"lyn_mode": "true"})
         response = self.client.get(url, data=kwargs)
@@ -654,7 +676,7 @@ class Nils(TestCase):
     def test_get_morph__verify_success(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         kwargs.update({"lyn_mode": "true"})
         response = self.client.get(url, data=kwargs)
@@ -679,7 +701,7 @@ class Nils(TestCase):
     def test_get_morph__verify_success_alt(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         kwargs.update({"lyn_mode": "false"})
         response = self.client.get(url, data=kwargs)
@@ -720,7 +742,7 @@ class BonusUnit(TestCase):
     def test_get_morph__verify_success(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         response = self.client.get(url, data=kwargs)
         self.assertNotIn("missingParams", response.data)
@@ -744,7 +766,7 @@ class InvalidGame(TestCase):
     def test_get_morph__verify_error(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         response = self.client.get(url, data=kwargs)
         expected = {"error"}
@@ -773,7 +795,7 @@ class InvalidUnit(TestCase):
     def test_get_morph__verify_error(self):
         """
         """
-        url = self.url
+        url = RESOURCE_URL
         kwargs = self.kwargs
         response = self.client.get(url, data=kwargs)
         expected = {"error"}
@@ -782,4 +804,183 @@ class InvalidUnit(TestCase):
         actual = response.data["error"]
         expected = "UNIT_DNE"
         self.assertEqual(actual, expected)
+
+# NOTE: POST
+
+class NormalUnitPOST(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        game_no = 6
+        name = "Roy"
+        options = {}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+        self.client
+
+class FatheredUnitPOST(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 4
+        name = "Lakche"
+        options = {"father": "Lex"}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+
+class HardModeUnitPOST(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 6
+        name = "Rutger"
+        options = {"hard_mode": "false"}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+class DeclinableUnitPOST(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 6
+        name = "Hugh"
+        options = {"number_of_declines": 0}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+class GonzalesPOST(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 6
+        name = "Gonzales"
+        options = {"hard_mode": "false", "route": "Lalum"}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+class LyndisLeaguePOST(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 7
+        name = "Lyn"
+        options = {"lyn_mode": "false"}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+class NinianPOST(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 7
+        name = "Ninian"
+        options = {}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+class NilsPOST(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 7
+        name = "Nils"
+        options = {}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+class BonusUnitPOST(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 8
+        name = "Lyon"
+        options = {}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+class InvalidGamePOST(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 10
+        name = "Ike"
+        options = {}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+class InvalidUnitPOST(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 7
+        name = "Marth"
+        options = {}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
 

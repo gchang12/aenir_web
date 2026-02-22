@@ -29,7 +29,7 @@ class MorphViewSet(viewsets.ViewSet):
         morph_id = request.data.get("morph_id")
         if not morph_id:
             raise Exception("'morph_id' was blank. Please try again.")
-        if morph_id in morphs:
+        if morph_id in self.morphs:
             raise Exception("The morph '%s' already exists." % morph_id)
         game_no, name, kwargs = self.parse_init_args(request.data)
         morph = get_morph(game_no, name, **kwargs)
@@ -45,7 +45,6 @@ class MorphViewSet(viewsets.ViewSet):
         Creates temporary Morph for the user to preview, returning missing parameters as necessary.
         """
         game_no, name, kwargs = self.parse_init_args(request.query_params)
-        logger.debug("game_no: %d, name: '%s', kwargs: %r", game_no, name, kwargs)
         try:
             morph = get_morph(game_no, name, **kwargs)
             morph._set_max_level()
@@ -109,17 +108,18 @@ class MorphViewSet(viewsets.ViewSet):
         # TODO: Refactor code s.t. stat formats are selected also.
         return self.serialize_morph(morph)
 
-    def destroy(self, request):
+    def destroy(self, request, pk):
         """
         For deleting morph objects from the viewset.
         """
-        morph_id = request.data.get("morph_id")
+        morph_id = pk
         status = {"success": None}
         try:
             self.morphs.pop(morph_id)
             status['success'] = True
         except KeyError as err:
             status['success'] = False
+        logger.debug("status: %r", status)
         return Response(status)
 
     #level_up, promote, use_stat_booster, use_growths_item, equip_band, unequip_band, equip_scroll, unequip_scroll
