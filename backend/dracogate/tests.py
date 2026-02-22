@@ -810,6 +810,25 @@ class NormalUnitPOST(TestCase):
         self.id_set.add(morph_id)
         return response
 
+    def test_create_and_delete_morph(self):
+        """
+        Tests this framework's 'create_morph' and 'delete_morph' helper methods.
+        """
+        url = RESOURCE_URL
+        kwargs = self.kwargs
+        morph_id = "my-morph"
+        self.assertEqual(len(self.id_set), 0)
+        self.create_morph(kwargs, morph_id)
+        self.assertEqual(len(self.id_set), 1)
+        self.delete_morph(morph_id)
+        self.assertEqual(len(self.id_set), 0)
+        logger.debug("Morph has been deleted.")
+        #logger.debug("response.data: %r", response.data)
+        # If the deletion method didn't work, this should raise an error.
+        response2 = self.create_morph(kwargs, morph_id)
+        self.assertEqual(len(self.id_set), 1)
+        logger.debug("Morph with id=%r has been created.", response2.data['id'])
+
     def delete_morph(self, morph_id):
         """
         """
@@ -853,20 +872,6 @@ class NormalUnitPOST(TestCase):
             response = self.create_morph(kwargs, morph_id)
         with self.assertRaises(Exception):
             self.create_morph(kwargs, morph_id + "52")
-
-    def test_create_and_delete_morph(self):
-        """
-        """
-        url = RESOURCE_URL
-        kwargs = self.kwargs
-        morph_id = "my-morph"
-        self.create_morph(kwargs, morph_id)
-        self.delete_morph(morph_id)
-        logger.debug("Morph has been deleted.")
-        #logger.debug("response.data: %r", response.data)
-        # If the deletion method didn't work, this should raise an error.
-        response2 = self.create_morph(kwargs, morph_id)
-        logger.debug("Morph with id=%r has been created.", response2.data['id'])
 
 class FatheredUnitPOST(TestCase):
     """
