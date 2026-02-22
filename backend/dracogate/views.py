@@ -31,7 +31,7 @@ class MorphViewSet(viewsets.ViewSet):
             raise Exception("'morph_id' was blank. Please try again.")
         if morph_id in morphs:
             raise Exception("The morph '%s' already exists." % morph_id)
-        game_no, name, kwargs = self.parse_args(request.data)
+        game_no, name, kwargs = self.parse_init_args(request.data)
         morph = get_morph(game_no, name, **kwargs)
         morph._set_max_level()
         self.morphs[morph_id] = morph
@@ -44,7 +44,7 @@ class MorphViewSet(viewsets.ViewSet):
         """
         Creates temporary Morph for the user to preview, returning missing parameters as necessary.
         """
-        game_no, name, kwargs = self.parse_args(request.query_params)
+        game_no, name, kwargs = self.parse_init_args(request.query_params)
         logger.debug("game_no: %d, name: '%s', kwargs: %r", game_no, name, kwargs)
         try:
             morph = get_morph(game_no, name, **kwargs)
@@ -319,6 +319,8 @@ class MorphViewSet(viewsets.ViewSet):
             is_success = False
         return (is_success, value)
 
+    # NOTE: SERIALIZERS
+
     @staticmethod
     def serialize_morph(morph, *statdicts):
         """
@@ -366,8 +368,10 @@ class MorphViewSet(viewsets.ViewSet):
         statdicts = [bonus_without_augment, augment]
         return statdicts
 
+    # NOTE: ARGUMENT PARSERS
+
     @staticmethod
-    def parse_args(dictlike):
+    def parse_init_args(dictlike):
         """
         Parses default values from response and converts them for interpretation by program.
         """
