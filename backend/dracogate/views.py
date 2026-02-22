@@ -112,14 +112,13 @@ class MorphViewSet(viewsets.ViewSet):
         """
         For deleting morph objects from the viewset.
         """
-        morph_id = pk
         status = {"success": None}
         try:
-            self.morphs.pop(morph_id)
+            self.morphs.pop(pk)
             status['success'] = True
         except KeyError as err:
             status['success'] = False
-        logger.debug("status: %r", status)
+        logger.debug("Morph with id=%r has been deleted: %r", pk, status['success'])
         return Response(status)
 
     #level_up, promote, use_stat_booster, use_growths_item, equip_band, unequip_band, equip_scroll, unequip_scroll

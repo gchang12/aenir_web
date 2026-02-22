@@ -80,10 +80,12 @@ class NormalUnit(TestCase):
         url = RESOURCE_URL
         kwargs = self.kwargs
         kwargs["morph_id"] = "my-morph"
-        response = self.client.delete(url + "my-morph" + "/", data=kwargs)
+        response = self.client.delete(url + f"{kwargs['morph_id']}/", data=kwargs)
+        logger.debug("Morph has been deleted.")
         #logger.debug("response.data: %r", response.data)
         # If the deletion method didn't work, this should raise an error.
-        self.client.post(url, data=kwargs)
+        response2 = self.client.post(url, data=kwargs)
+        logger.debug("Morph with id=%r has been created.", response2.data['id'])
 
 class FatheredUnit(TestCase):
     """
