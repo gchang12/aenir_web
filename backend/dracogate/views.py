@@ -123,6 +123,7 @@ class MorphViewSet(viewsets.ViewSet):
         return Response(status)
 
     #level_up, promote, use_stat_booster, use_growths_item, equip_band, unequip_band, equip_scroll, unequip_scroll
+    # NOTE: MORPH METHODS
 
     @staticmethod
     def level_up(morph, **kwargs):
@@ -133,7 +134,12 @@ class MorphViewSet(viewsets.ViewSet):
         is_success: bool
         try:
             morph.level_up(num_levels)
+            # get forecast stats.
             statdicts = self.serialize_current_stats(morph)
+            if morph.growth_rates.has_been_augmented:
+                statdicts.extend(self.serialize_level_up(morph, num_levels))
+            else:
+                statdicts.append((morph.growth_rates * 0.01).as_dict())
             value = self.serialize_morph(morph, *statdicts)
             is_success = True
         except LevelUpError as err:
@@ -153,7 +159,7 @@ class MorphViewSet(viewsets.ViewSet):
             value = morph.promote()
             is_success = True
         except PromotionError as err:
-            value = morph.possible_promotions
+            value = err.promotion_list
             is_success = False
         return (is_success, value)
 
@@ -186,8 +192,7 @@ class MorphViewSet(viewsets.ViewSet):
         is_success: bool
         try:
             morph.equip_scroll(scroll_name)
-            new_growths = morph.growth_rates.as_dict()
-            #value = self.serialize_growths(old_growths, new_growths)
+            value = self.serialize_growth_rates(morph)
             is_success = True
         except StatBoosterError as err:
             value = err.valid_scrolls
@@ -204,8 +209,7 @@ class MorphViewSet(viewsets.ViewSet):
         is_success: bool
         try:
             morph.unequip_scroll(scroll_name)
-            new_growths = morph.growth_rates.as_dict()
-            #value = self.serialize_growths(old_growths, new_growths)
+            value = self.serialize_growth_rates(morph)
             is_success = True
         except StatBoosterError as err:
             value = err.valid_scrolls
@@ -222,8 +226,7 @@ class MorphViewSet(viewsets.ViewSet):
         old_growths = morph.growth_rates.as_dict()
         try:
             morph.use_afas_drops()
-            new_growths = morph.growth_rates.as_dict()
-            #value = self.serialize_growths(old_growths, new_growths)
+            value = self.serialize_growth_rates(morph)
             is_success = True
         except GrowthsItemError as err:
             value = None
@@ -240,8 +243,7 @@ class MorphViewSet(viewsets.ViewSet):
         old_growths = morph.growth_rates.as_dict()
         try:
             morph.use_metiss_drops()
-            new_growths = morph.growth_rates.as_dict()
-            #value = self.serialize_growths(old_growths, new_growths)
+            value = self.serialize_growth_rates(morph)
             is_success = True
         except GrowthsItemError as err:
             value = None
@@ -258,8 +260,7 @@ class MorphViewSet(viewsets.ViewSet):
         old_growths = morph.growth_rates.as_dict()
         try:
             morph.equip_knight_ward()
-            new_growths = morph.growth_rates.as_dict()
-            #value = self.serialize_growths(old_growths, new_growths)
+            value = self.serialize_growth_rates(morph)
             is_success = True
         except GrowthsItemError as err:
             value = None
@@ -276,8 +277,7 @@ class MorphViewSet(viewsets.ViewSet):
         old_growths = morph.growth_rates.as_dict()
         try:
             morph.equip_knight_ward()
-            new_growths = morph.growth_rates.as_dict()
-            #value = self.serialize_growths(old_growths, new_growths)
+            value = self.serialize_growth_rates(morph)
             is_success = True
         except GrowthsItemError as err:
             value = None
@@ -295,8 +295,7 @@ class MorphViewSet(viewsets.ViewSet):
         old_growths = morph.growth_rates.as_dict()
         try:
             morph.equip_band(band_name)
-            new_growths = morph.growth_rates.as_dict()
-            #value = self.serialize_growths(old_growths, new_growths)
+            value = self.serialize_growth_rates(morph)
             is_success = True
         except BandError as err:
             value = err.valid_bands
@@ -313,8 +312,7 @@ class MorphViewSet(viewsets.ViewSet):
         old_growths = morph.growth_rates.as_dict()
         try:
             morph.unequip_band(band_name)
-            new_growths = morph.growth_rates.as_dict()
-            #value = self.serialize_growths(old_growths, new_growths)
+            value = self.serialize_growth_rates(morph)
             is_success = True
         except BandError as err:
             value = err.valid_bands
@@ -341,7 +339,31 @@ class MorphViewSet(viewsets.ViewSet):
         current_stats = (morph.current_stats * 0.01).as_dict()
         max_stats = (morph.max_stats * 0.01).as_dict()
         absmax_stats = dict(zip(morph.Stats.STAT_LIST(), morph.Stats.ABSOLUTE_MAXES()))
-        statdicts = (current_stats, max_stats, absmax_stats)
+        statdicts = [current_stats, max_stats, absmax_stats]
+        return statdicts
+
+    @staticmethod
+    def serialize_growth_rates(morph):
+        """
+        Bundles growth augments for FE5, FE7, FE8, and FE9.
+        """
+        old_growths = (morph._og_growth_rates * 0.01).as_dict()
+        new_growths = (morph.growth_rates * 0.01).as_dict()
+        growths_diff = (morph.get_growth_augment() * 0.01).as_dict()
+        statdicts = [old_growths, new_growths, growths_diff]
+        return statdicts
+
+    @staticmethod
+    def serialize_level_up(morph, num_levels: int):
+        """
+        Bundles level-up stats for FE5, FE7, FE8, and FE9.
+        """
+        bonus_without_augment = (morph._og_growth_rates * num_levels * 0.01).as_dict()
+        augment = (morph.get_growth_augment() * -num_levels * 0.01).as_dict()
+        for stat in morph.Stats.ZERO_GROWTH_STAT_LIST():
+            bonus_without_augment[stat] = None
+            augment[stat] = None
+        statdicts = [bonus_without_augment, augment]
         return statdicts
 
     @staticmethod
