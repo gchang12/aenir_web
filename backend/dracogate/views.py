@@ -22,9 +22,9 @@ class MorphViewSet(viewsets.ViewSet):
         """
         Creates a Morph instance and stores it in the 'morphs' attribute.
         """
-        if len(self.morphs) == 5:
-            raise Exception("Max capacity has been exceeded.")
         morph_id = request.data.get("morph_id")
+        if len(self.morphs) == 5:
+            raise Exception("Could not add %r. Max capacity has been exceeded." % morph_id)
         if not morph_id:
             raise Exception("'morph_id' was blank. Please try again.")
         if morph_id in self.morphs:
