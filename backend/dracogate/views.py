@@ -24,8 +24,6 @@ class MorphViewSet(viewsets.ViewSet):
         """
         if len(self.morphs) == 5:
             raise Exception("Max capacity has been exceeded.")
-        elif len(self.morphs) > 5:
-            raise Exception("Max capacity has been exceeded.")
         morph_id = request.data.get("morph_id")
         if not morph_id:
             raise Exception("'morph_id' was blank. Please try again.")

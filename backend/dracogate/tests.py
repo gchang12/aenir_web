@@ -63,7 +63,45 @@ class NormalUnit(TestCase):
         }
         self.assertDictEqual(actual, expected)
 
-    def test_create_morph(self):
+    def test_create_morph__blank_id(self):
+        """
+        Tests the morph-creation method.
+        """
+        url = RESOURCE_URL
+        kwargs = self.kwargs
+        kwargs["morph_id"] = ""
+        with self.assertRaises(Exception):
+            self.client.post(url, data=kwargs)
+
+    def test_create_morph__duplicate_id(self):
+        """
+        Tests the morph-creation method.
+        """
+        url = RESOURCE_URL
+        kwargs = self.kwargs
+        kwargs["morph_id"] = "morph_id"
+        self.client.post(url, data=kwargs)
+        with self.assertRaises(Exception):
+            self.client.post(url, data=kwargs)
+        response = self.client.delete(url + f"{kwargs['morph_id']}/")
+
+    def test_create_morph__max_length_exceeded(self):
+        """
+        Tests the morph-creation method.
+        """
+        url = RESOURCE_URL
+        kwargs = self.kwargs
+        for i in range(5):
+            kwargs["morph_id"] = "my-morph%d" % i
+            response = self.client.post(url, data=kwargs)
+        with self.assertRaises(Exception):
+            self.client.post(url, data=kwargs)
+        # cleanup
+        for i in range(5):
+            kwargs["morph_id"] = "my-morph%d" % i
+            response = self.client.delete(url + f"{kwargs['morph_id']}/")
+
+    def test_create_and_delete_morph(self):
         """
         Tests the morph-creation method.
         """
@@ -73,6 +111,7 @@ class NormalUnit(TestCase):
         response = self.client.post(url, data=kwargs)
         data = response.data
         logger.debug("response.data: %r", data)
+        response = self.client.delete(url + f"{kwargs['morph_id']}/")
 
     def test_delete_morph(self):
         """
@@ -80,7 +119,7 @@ class NormalUnit(TestCase):
         url = RESOURCE_URL
         kwargs = self.kwargs
         kwargs["morph_id"] = "my-morph"
-        response = self.client.delete(url + f"{kwargs['morph_id']}/", data=kwargs)
+        response = self.client.delete(url + f"{kwargs['morph_id']}/")
         logger.debug("Morph has been deleted.")
         #logger.debug("response.data: %r", response.data)
         # If the deletion method didn't work, this should raise an error.
@@ -823,7 +862,13 @@ class NormalUnitPOST(TestCase):
         kwargs.update(options)
         self.kwargs = kwargs
         logger.debug("%s", self.id())
-        self.client
+        self.client.post(URL, data=self.kwargs)
+
+    def tearDown(self):
+        """
+        """
+        morph_id = self.kwargs['morph_id']
+        self.client.delete(URL + f"{morph_id}/")
 
 class FatheredUnitPOST(TestCase):
     """
