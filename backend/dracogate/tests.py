@@ -783,7 +783,7 @@ class InvalidUnit(TestCase):
         expected = "UNIT_DNE"
         self.assertEqual(actual, expected)
 
-# NOTE: POST
+# NOTE: POST, DELETE
 
 class NormalUnitPOST(TestCase):
     """
@@ -1034,3 +1034,453 @@ class InvalidUnitPOST(TestCase):
         self.kwargs = kwargs
         logger.debug("%s", self.id())
 
+# NOTE: GET
+
+class NormalUnitGET(TestCase):
+    """
+    """
+
+    # TODO: Declare constraints upon 'morph_id' value.
+    def setUp(self):
+        """
+        """
+        game_no = 6
+        name = "Roy"
+        options = {}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        morph_id = "NormalUnitGET"
+        kwargs["morph_id"] = morph_id
+        self.client.post(RESOURCE_URL, data=kwargs)
+        logger.debug("%s", self.id())
+
+    def create_morph(self, kwargs, morph_id):
+        """
+        """
+        self.id_set.add(morph_id)
+        return response
+
+    def delete_morph(self, morph_id):
+        """
+        """
+        self.id_set.remove(morph_id)
+        return response
+
+    def tearDown(self):
+        """
+        """
+        response = self.client.delete(RESOURCE_URL + f"{morph_id}/")
+
+class FatheredUnitGET(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 4
+        name = "Lakche"
+        options = {"father": "Lex"}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+
+class HardModeUnitGET(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 6
+        name = "Rutger"
+        options = {"hard_mode": "false"}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+class DeclinableUnitGET(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 6
+        name = "Hugh"
+        options = {"number_of_declines": 0}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+class GonzalesGET(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 6
+        name = "Gonzales"
+        options = {"hard_mode": "false", "route": "Lalum"}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+class LyndisLeagueGET(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 7
+        name = "Lyn"
+        options = {"lyn_mode": "false"}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+class NinianGET(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 7
+        name = "Ninian"
+        options = {}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+class NilsGET(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 7
+        name = "Nils"
+        options = {}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+class BonusUnitGET(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 8
+        name = "Lyon"
+        options = {}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+class InvalidGameGET(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 10
+        name = "Ike"
+        options = {}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+class InvalidUnitGET(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 7
+        name = "Marth"
+        options = {}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+
+# NOTE: PUT
+# NOTE: PATCH
+
+class NormalUnitPATCH(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        game_no = 6
+        name = "Roy"
+        options = {}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+        self.id_set = set()
+
+    def create_morph(self, kwargs, morph_id):
+        """
+        """
+        data = dict(kwargs)
+        data['morph_id'] = morph_id
+        response = self.client.post(RESOURCE_URL, data=data)
+        self.id_set.add(morph_id)
+        return response
+
+    def test_create_and_delete_morph(self):
+        """
+        Tests this framework's 'create_morph' and 'delete_morph' helper methods.
+        """
+        url = RESOURCE_URL
+        kwargs = self.kwargs
+        morph_id = "my-morph"
+        self.assertEqual(len(self.id_set), 0)
+        self.create_morph(kwargs, morph_id)
+        self.assertEqual(len(self.id_set), 1)
+        self.delete_morph(morph_id)
+        self.assertEqual(len(self.id_set), 0)
+        logger.debug("Morph has been deleted.")
+        #logger.debug("response.data: %r", response.data)
+        # If the deletion method didn't work, this should raise an error.
+        response2 = self.create_morph(kwargs, morph_id)
+        self.assertEqual(len(self.id_set), 1)
+        logger.debug("Morph with id=%r has been created.", response2.data['id'])
+
+    def delete_morph(self, morph_id):
+        """
+        """
+        response = self.client.delete(RESOURCE_URL + f"{morph_id}/")
+        self.id_set.remove(morph_id)
+        return response
+
+    def tearDown(self):
+        """
+        """
+        for morph_id in set(self.id_set):
+            self.delete_morph(morph_id)
+
+    def test_create_morph__blank_id(self):
+        """
+        Tests the morph-creation method.
+        """
+        url = RESOURCE_URL
+        kwargs = self.kwargs
+        with self.assertRaises(Exception):
+            self.create_morph(kwargs, "")
+
+    def test_create_morph__duplicate_id(self):
+        """
+        Tests the morph-creation method.
+        """
+        url = RESOURCE_URL
+        kwargs = self.kwargs
+        self.create_morph(kwargs, "morph_id")
+        with self.assertRaises(Exception):
+            self.create_morph(kwargs, "morph_id")
+
+    def test_create_morph__max_capacity_exceeded(self):
+        """
+        Tests the morph-creation method.
+        """
+        url = RESOURCE_URL
+        kwargs = self.kwargs
+        for i in range(5):
+            morph_id = "my-morph%d" % i
+            response = self.create_morph(kwargs, morph_id)
+        with self.assertRaises(Exception):
+            self.create_morph(kwargs, morph_id + "52")
+
+class FatheredUnitPATCH(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 4
+        name = "Lakche"
+        options = {"father": "Lex"}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+
+class HardModeUnitPATCH(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 6
+        name = "Rutger"
+        options = {"hard_mode": "false"}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+class DeclinableUnitPATCH(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 6
+        name = "Hugh"
+        options = {"number_of_declines": 0}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+class GonzalesPATCH(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 6
+        name = "Gonzales"
+        options = {"hard_mode": "false", "route": "Lalum"}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+class LyndisLeaguePATCH(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 7
+        name = "Lyn"
+        options = {"lyn_mode": "false"}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+class NinianPATCH(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 7
+        name = "Ninian"
+        options = {}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+class NilsPATCH(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 7
+        name = "Nils"
+        options = {}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+class BonusUnitPATCH(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 8
+        name = "Lyon"
+        options = {}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+class InvalidGamePATCH(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 10
+        name = "Ike"
+        options = {}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
+
+class InvalidUnitPATCH(TestCase):
+    """
+    """
+    url = "/dracogate/api/morphs/"
+
+    def setUp(self):
+        """
+        """
+        game_no = 7
+        name = "Marth"
+        options = {}
+        kwargs = {"game_no": game_no, "name": name}
+        kwargs.update(options)
+        self.kwargs = kwargs
+        logger.debug("%s", self.id())
