@@ -10,6 +10,7 @@ from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
 
+'''
 def validate_game_no(game_no):
     """
     """
@@ -125,3 +126,4 @@ class Deadlords(models.Model):
         to=Morph,
     )
 
+'''
