@@ -1,3 +1,4 @@
+Keep initArgs at top-level.
 
 Test to see if stat-data reloads upon navigation
 
