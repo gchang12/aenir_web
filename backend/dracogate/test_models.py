@@ -6,8 +6,9 @@ import unittest
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
-from dracogate.models import Morph
 from aenir_web._logging import logger
+
+from dracogate.models import Morph
 
 class NormalMorph(TestCase):
     """

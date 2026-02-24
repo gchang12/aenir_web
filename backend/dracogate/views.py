@@ -10,28 +10,13 @@ from rest_framework import viewsets
 from aenir import get_morph
 from aenir._exceptions import InitError, UnitNotFoundError
 
-from dracogate._logging import logger
+from aenir_web._logging import logger
 from dracogate.models import Morph
 
 class MorphViewSet(viewsets.ViewSet):
     """
     Handles creation and editing of Morph objects.
     """
-
-    def create(self, request):
-        """
-        Creates a Morph instance and stores it in the database.
-        """
-        morph_id = request.data.get("morph_id")
-        game_no, name, kwargs = self.parse_init_args(request.data)
-        morph = get_morph(game_no, name, **kwargs)
-        morph._set_max_level()
-        self.morphs[morph_id] = morph
-        # name, current, max, absMax
-        statdicts = self.serialize_current_stats(morph)
-        data = self.serialize_morph(morph, *statdicts)
-        id = Morph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=kwargs).id
-        return Response({"id": id, "unit": {"game_no": game_no, "name": name}, "morph": data})
 
     def list(self, request):
         """
@@ -51,6 +36,21 @@ class MorphViewSet(viewsets.ViewSet):
         except UnitNotFoundError:
             data = {"error": "UNIT_DNE"}
         return Response(data)
+
+    def create(self, request):
+        """
+        Creates a Morph instance and stores it in the database.
+        """
+        morph_id = request.data.get("morph_id")
+        game_no, name, kwargs = self.parse_init_args(request.data)
+        morph = get_morph(game_no, name, **kwargs)
+        morph._set_max_level()
+        self.morphs[morph_id] = morph
+        # name, current, max, absMax
+        statdicts = self.serialize_current_stats(morph)
+        data = self.serialize_morph(morph, *statdicts)
+        id = Morph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=kwargs).id
+        return Response({"id": id, "unit": {"game_no": game_no, "name": name}, "morph": data})
 
     def retrieve(self, request, pk):
         """
