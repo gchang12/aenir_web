@@ -11,24 +11,18 @@ from aenir import get_morph
 from aenir._exceptions import InitError, UnitNotFoundError
 
 from dracogate._logging import logger
+from dracogate.models import Morph
 
 class MorphViewSet(viewsets.ViewSet):
     """
     Handles creation and editing of Morph objects.
     """
-    morphs = {}
 
     def create(self, request):
         """
-        Creates a Morph instance and stores it in the 'morphs' attribute.
+        Creates a Morph instance and stores it in the database.
         """
         morph_id = request.data.get("morph_id")
-        if len(self.morphs) == 5:
-            raise Exception("Could not add %r. Max capacity has been exceeded." % morph_id)
-        if not morph_id:
-            raise Exception("'morph_id' was blank. Please try again.")
-        if morph_id in self.morphs:
-            raise Exception("The morph '%s' already exists." % morph_id)
         game_no, name, kwargs = self.parse_init_args(request.data)
         morph = get_morph(game_no, name, **kwargs)
         morph._set_max_level()
@@ -36,7 +30,8 @@ class MorphViewSet(viewsets.ViewSet):
         # name, current, max, absMax
         statdicts = self.serialize_current_stats(morph)
         data = self.serialize_morph(morph, *statdicts)
-        return Response({"id": morph_id, "morph": data})
+        id = Morph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=kwargs).id
+        return Response({"id": id, "unit": {"game_no": game_no, "name": name}, "morph": data})
 
     def list(self, request):
         """
@@ -56,6 +51,10 @@ class MorphViewSet(viewsets.ViewSet):
         except UnitNotFoundError:
             data = {"error": "UNIT_DNE"}
         return Response(data)
+
+    def retrieve(self, request, pk):
+        """
+        """
 
     def partial_update(self, request):
         """
@@ -91,7 +90,7 @@ class MorphViewSet(viewsets.ViewSet):
         morph = self.morphs[morph_id]
         method = request.data.get("method")
         kwargs = request.data.get("kwargs")
-        error = {
+        is_success, value = {
             "level_up": self.level_up,
             "promote": self.promote,
             "use_stat_booster": self.use_stat_booster,
