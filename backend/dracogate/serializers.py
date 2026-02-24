@@ -3,26 +3,16 @@
 
 from rest_framework import serializers
 
-class MorphSerializer(serializers.Serializer):
+class StatsSerializer(serializers.Serializer):
     """
     """
+    statdicts = serializers.JSONField()
 
-    def __init__(self, morph):
+    def __init__(self, morph, stat_type: str):
         """
         """
         self.morph = morph
-
-    def serialize_morph(self, *statdicts):
-        """
-        Bundles a morph's attributes for display purposes.
-        """
-        morph = self.morph
-        stats = list(map(lambda stat: (stat, *map(lambda statdict: statdict[stat], statdicts)), morph.Stats.STAT_LIST()))
-        return {
-            "unitClass": morph.current_cls,
-            "level": (morph.current_lv, morph.max_level),
-            "stats": stats,
-        }
+        self.stat_type = stat_type
 
     def serialize_current_stats(self):
         """
@@ -58,4 +48,29 @@ class MorphSerializer(serializers.Serializer):
             augment[stat] = None
         statdicts = [bonus_without_augment, augment]
         return statdicts
+
+
+class MorphSerializer(serializers.Serializer):
+    """
+    """
+    unitClass = serializers.CharField()
+    level = serializers.JSONField()
+    stats = StatsSerializer()
+
+    def __init__(self, morph):
+        """
+        """
+        self.morph = morph
+
+    def serialize_morph(self, *statdicts):
+        """
+        Bundles a morph's attributes for display purposes.
+        """
+        morph = self.morph
+        stats = list(map(lambda stat: (stat, *map(lambda statdict: statdict[stat], statdicts)), morph.Stats.STAT_LIST()))
+        return {
+            "unitClass": morph.current_cls,
+            "level": (morph.current_lv, morph.max_level),
+            "stats": stats,
+        }
 
