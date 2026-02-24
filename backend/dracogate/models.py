@@ -13,67 +13,6 @@ from aenir import get_morph
 
 User = get_user_model()
 
-def validate_game_no(game_no):
-    """
-    """
-    if game_no not in range(4, 10):
-        raise ValidationError(
-            "No support for FE%(game_no)d yet.",
-            params={"game_no": game_no},
-        )
-
-def validate_options(options):
-    """
-    """
-    valid_options = (
-        "father",
-        "hard_mode",
-        "number_of_declines",
-        "route",
-        "lyn_mode",
-    )
-    invalid_options = sorted(lambda item: tuple(options).index(item), set(options) - set(valid_options))
-    if invalid_options:
-        raise ValidationError(
-            _("Invalid options were found: %(invalid_options)s."),
-            params={"invalid_options": invalid_options},
-        )
-    for option in set.intersection(valid_options, options):
-        if option == "father" and options[option] not in (
-            'Arden',
-            'Azel',
-            'Alec',
-            'Claude',
-            'Jamka',
-            'Dew',
-            'Noish',
-            'Fin',
-            'Beowolf',
-            'Holyn',
-            'Midayle',
-            'Levin',
-            'Lex',
-       ):
-            raise ValidationError(
-                _("Invalid 'father' found: '%(father)s'."),
-                params={"father": options[option]},
-            )
-        if option in ("hard_mode", "lyn_mode") and options[option] not in ('true', 'false'):
-            raise ValidationError(
-                _("Non-pseudo-boolean value found for '%(mode)s': '%(nonboolean)s'."),
-                params={"mode": option, "nonboolean": options[option]},
-            )
-        if option == "number_of_declines" and options[option] not in (str(i) for i in range(0, 4)):
-            raise ValidationError(
-                _("Invalid 'number_of_declines' value found: '%(number_of_declines)s.'"),
-                params={"number_of_declines": options[option]},
-            )
-        if route == "route" and options[option] not in ("Elphin", "Lalum"):
-            raise ValidationError(
-                _("Invalid 'route' value found: %(route)s."),
-                params={"route": options[option]},
-            )
-
 def validate_history(history):
     """
     """
