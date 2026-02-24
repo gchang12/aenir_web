@@ -16,6 +16,19 @@ class MorphSerializer:#(serializers.Serializer):
         self.morph = morph
         #self.stats = StatsSerializer(morph)
 
+    @staticmethod
+    def divide_by_100(dictlike):
+        """
+        """
+        new_dictlike = {}
+        for stat, value in dictlike.items():
+            if value is None:
+                new_value = None
+            else:
+                new_value = 0.01 * value
+            new_dictlike[stat] = value
+        return new_dictlike
+
     def morph(self, *statdicts):
         """
         Bundles a morph's attributes for display purposes.
@@ -33,8 +46,8 @@ class MorphSerializer:#(serializers.Serializer):
         Bundles stats for default display-purposes.
         """
         morph = self.morph
-        current_stats = (morph.current_stats * 0.01).as_dict()
-        max_stats = (morph.max_stats * 0.01).as_dict()
+        current_stats = morph.current_stats.as_dict()
+        max_stats = morph.max_stats.as_dict()
         absmax_stats = dict(zip(morph.Stats.STAT_LIST(), morph.Stats.ABSOLUTE_MAXES()))
         statdicts = [current_stats, max_stats, absmax_stats]
         return statdicts
@@ -44,9 +57,9 @@ class MorphSerializer:#(serializers.Serializer):
         Bundles growth augments for FE5, FE7, FE8, and FE9.
         """
         morph = self.morph
-        old_growths = (morph._og_growth_rates * 0.01).as_dict()
-        new_growths = (morph.growth_rates * 0.01).as_dict()
-        growths_diff = (morph.get_growth_augment() * 0.01).as_dict()
+        old_growths = morph._og_growth_rates.as_dict()
+        new_growths = morph.growth_rates.as_dict()
+        growths_diff = morph.get_growth_augment().as_dict()
         statdicts = [old_growths, new_growths, growths_diff]
         return statdicts
 
@@ -55,8 +68,8 @@ class MorphSerializer:#(serializers.Serializer):
         Bundles level-up stats for FE5, FE7, FE8, and FE9.
         """
         morph = self.morph
-        bonus_without_augment = (morph._og_growth_rates * num_levels * 0.01).as_dict()
-        augment = (morph.get_growth_augment() * -num_levels * 0.01).as_dict()
+        bonus_without_augment = (morph._og_growth_rates * num_levels).as_dict()
+        augment = (morph.get_growth_augment() * -num_levels).as_dict()
         for stat in morph.Stats.ZERO_GROWTH_STAT_LIST():
             bonus_without_augment[stat] = None
             augment[stat] = None
@@ -68,7 +81,7 @@ class MorphSerializer:#(serializers.Serializer):
         Bundles stat differences between Morphs into native Python data-type.
         """
         morph1 = self.morph
-        morph_diff = ((morph1.current_stats > morph2.current_stats) * 0.01).as_dict()
+        morph_diff = (morph1.current_stats > morph2.current_stats).as_dict()
         statdicts = [morph_diff]
         return statdicts
 

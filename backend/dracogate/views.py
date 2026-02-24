@@ -50,7 +50,16 @@ class MorphViewSet(viewsets.ViewSet):
         statdicts = self.serialize_current_stats(morph)
         data = self.serialize_morph(morph, *statdicts)
         id = Morph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=kwargs).id
-        return Response({"id": id, "unit": {"game_no": game_no, "name": name}, "morph": data})
+        return Response({
+            "pk": pk,
+            "morphId": morph_id,
+            "initArgs": {
+                "gameNo": game_no,
+                "unitName": name,
+                "options": options,
+            },
+            "stats": data,
+        })
 
     def retrieve(self, request, pk):
         """
