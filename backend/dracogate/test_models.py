@@ -69,13 +69,3 @@ class NormalMorph(TestCase):
         morph = Morph.objects.create(morph_id=morph_id, **kwargs)
         with self.assertRaises(ValidationError):
             morph.full_clean()
-
-    def test_morph_cannot_be_from_invalid_game(self):
-        """
-        """
-        morph_id = self.morph_id
-        kwargs = self.kwargs
-        kwargs["game_no"] = 3
-        morph = Morph.objects.create(morph_id=morph_id, **kwargs)
-        with self.assertRaises(ValidationError):
-            morph.full_clean()

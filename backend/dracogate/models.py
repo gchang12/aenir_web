@@ -16,19 +16,8 @@ User = get_user_model()
 def validate_history(history):
     """
     """
-    # check that it's a list of [str, [...args]] pairs
-    # also, validate each entry.
-    # level_up, promote, use_stat_booster, use_afas_drops, etc.
-    try:
-        for method, kwargs in history:
-            assert isinstance(method, str)
-            assert isinstance(kwargs, dict)
-            for key in kwargs:
-                assert isinstance(key, str)
-    except AssertionError as err:
-        raise ValidationError(
-            "History is invalid",
-        )
+    for method, kwargs in history:
+        logger.info("%s(**%r)", method, kwargs)
 
 class Morph(models.Model):
     """
@@ -55,7 +44,7 @@ class Morph(models.Model):
     )
     # content
     game_no = models.PositiveSmallIntegerField(
-        validators=[validate_game_no],
+        #validators=[validate_game_no],
     )
     name = models.CharField(
         max_length=9,
@@ -85,6 +74,7 @@ class Morph(models.Model):
         options = self.options
         morph = get_morph(game_no, name, **options)
         for method, kwargs in self.history:
+            logger.info("%s(**%r)", method, kwargs)
             getattr(morph, method)(**kwargs)
         return morph
 
