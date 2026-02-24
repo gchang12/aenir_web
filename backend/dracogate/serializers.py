@@ -1,20 +1,34 @@
 """
 """
 
-from rest_framework import serializers
+#from rest_framework import serializers
 
-class StatsSerializer(serializers.Serializer):
+class MorphSerializer:#(serializers.Serializer):
     """
     """
-    statdicts = serializers.JSONField()
+    #unitClass = serializers.CharField()
+    #level = serializers.JSONField()
+    #stats = StatsSerializer()
 
-    def __init__(self, morph, stat_type: str):
+    def __init__(self, morph):
         """
         """
         self.morph = morph
-        self.stat_type = stat_type
+        #self.stats = StatsSerializer(morph)
 
-    def serialize_current_stats(self):
+    def morph(self, *statdicts):
+        """
+        Bundles a morph's attributes for display purposes.
+        """
+        morph = self.morph
+        stats = list(map(lambda stat: (stat, *map(lambda statdict: statdict[stat], statdicts)), morph.Stats.STAT_LIST()))
+        return {
+            "unitClass": morph.current_cls,
+            "level": (morph.current_lv, morph.max_level),
+            "stats": stats,
+        }
+
+    def current_stats(self):
         """
         Bundles stats for default display-purposes.
         """
@@ -25,7 +39,7 @@ class StatsSerializer(serializers.Serializer):
         statdicts = [current_stats, max_stats, absmax_stats]
         return statdicts
 
-    def serialize_growth_rates(self):
+    def growth_rates(self):
         """
         Bundles growth augments for FE5, FE7, FE8, and FE9.
         """
@@ -36,7 +50,7 @@ class StatsSerializer(serializers.Serializer):
         statdicts = [old_growths, new_growths, growths_diff]
         return statdicts
 
-    def serialize_level_up(self, num_levels: int):
+    def level_up_bonuses(self, num_levels: int):
         """
         Bundles level-up stats for FE5, FE7, FE8, and FE9.
         """
@@ -49,28 +63,12 @@ class StatsSerializer(serializers.Serializer):
         statdicts = [bonus_without_augment, augment]
         return statdicts
 
-
-class MorphSerializer(serializers.Serializer):
-    """
-    """
-    unitClass = serializers.CharField()
-    level = serializers.JSONField()
-    stats = StatsSerializer()
-
-    def __init__(self, morph):
+    def morph_diff(self, morph2):
         """
+        Bundles Morph differences into native Python data-type.
         """
-        self.morph = morph
-
-    def serialize_morph(self, *statdicts):
-        """
-        Bundles a morph's attributes for display purposes.
-        """
-        morph = self.morph
-        stats = list(map(lambda stat: (stat, *map(lambda statdict: statdict[stat], statdicts)), morph.Stats.STAT_LIST()))
-        return {
-            "unitClass": morph.current_cls,
-            "level": (morph.current_lv, morph.max_level),
-            "stats": stats,
-        }
+        morph1 = self.morph
+        morph_diff = ((morph1.current_stats > morph2.current_stats) * 0.01).as_dict()
+        statdicts = [morph_diff]
+        return statdicts
 
