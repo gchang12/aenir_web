@@ -8,9 +8,11 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
+from aenir.morph import Morph as VirtualMorph
+from aenir import get_morph
+
 User = get_user_model()
 
-'''
 def validate_game_no(game_no):
     """
     """
@@ -95,6 +97,7 @@ class Morph(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
+        null=True,
     )
     # content
     game_no = models.PositiveSmallIntegerField(
@@ -118,12 +121,14 @@ class Morph(models.Model):
             ["user", "morph_id"],
         ]
 
-class Deadlords(models.Model):
-    """
-    """
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    deadlords = models.ManyToManyField(
-        to=Morph,
-    )
+    def recreate(self) -> VirtualMorph:
+        """
+        """
+        game_no = self.game_no
+        name = self.name
+        options = self.options
+        morph = get_morph(game_no, name, **options)
+        for method, kwargs in self.history:
+            getattr(morph, method)(**kwargs)
+        return morph
 
-'''
