@@ -8,7 +8,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
-from aenir.morph import Morph as VirtualMorph
+from aenir.morph import Morph
 from aenir import get_morph
 
 User = get_user_model()
@@ -19,7 +19,7 @@ def validate_history(history):
     for method, kwargs in history:
         logger.info("%s(**%r)", method, kwargs)
 
-class Morph(models.Model):
+class VirtualMorph(models.Model):
     """
     """
     id = models.UUIDField(
@@ -42,7 +42,7 @@ class Morph(models.Model):
         blank=True,
         default=None,
     )
-    # content
+    # initialization
     game_no = models.PositiveSmallIntegerField(
         #validators=[validate_game_no],
     )
@@ -55,6 +55,7 @@ class Morph(models.Model):
         default=dict,
         blank=True,
     )
+    # post-initialization
     history = models.JSONField(
         default=list,
         #validators=[validate_history],
@@ -66,7 +67,7 @@ class Morph(models.Model):
             ["user", "morph_id"],
         ]
 
-    def init(self) -> VirtualMorph:
+    def init(self) -> Morph:
         """
         """
         game_no = self.game_no
@@ -98,6 +99,7 @@ class Morph(models.Model):
                 #statdicts.append((morph.growth_rates * 0.01).as_dict())
             #value = self.serialize_morph(self, *statdicts)
             is_success = True
+            self.history.append(("level_up", {"num_levels": num_levels}))
         except LevelUpError as err:
             #value = morph.max_level
             value = err.max_level
@@ -116,6 +118,7 @@ class Morph(models.Model):
             morph.promote()
             value = morph
             is_success = True
+            self.history.append(("promote", {}))
         except PromotionError as err:
             value = err.promotion_list
             is_success = False
@@ -135,6 +138,7 @@ class Morph(models.Model):
             #value = self.serialize_morph(self, *statdicts)
             value = morph
             is_success = True
+            self.history.append(("use_stat_booster", {"item_name": item_name}))
         except StatBoosterError as err:
             value = err.valid_stat_boosters
             is_success = False
@@ -154,6 +158,7 @@ class Morph(models.Model):
             value = morph
             #value = self.serialize_growth_rates(morph)
             is_success = True
+            self.history.append(("equip_scroll", {"scroll_name": scroll_name}))
         except StatBoosterError as err:
             value = err.valid_scrolls
             is_success = False
@@ -172,6 +177,7 @@ class Morph(models.Model):
             value = morph
             #value = self.serialize_growth_rates(morph)
             is_success = True
+            self.history.append(("unequip_scroll", {"scroll_name": scroll_name}))
         except StatBoosterError as err:
             value = err.valid_scrolls
             is_success = False
@@ -190,6 +196,7 @@ class Morph(models.Model):
             value = morph
             #value = self.serialize_growth_rates(morph)
             is_success = True
+            self.history.append(("use_afas_drops", {}))
         except GrowthsItemError as err:
             value = err.reason
             is_success = False
@@ -208,6 +215,7 @@ class Morph(models.Model):
             value = morph
             #value = self.serialize_growth_rates(morph)
             is_success = True
+            self.history.append(("use_afas_drops", {}))
         except GrowthsItemError as err:
             value = err.reason
             is_success = False
@@ -226,6 +234,7 @@ class Morph(models.Model):
             value = morph
             #value = self.serialize_growth_rates(morph)
             is_success = True
+            self.history.append(("equip_knight_ward", {}))
         except GrowthsItemError as err:
             value = err.reason
             is_success = False
@@ -243,6 +252,7 @@ class Morph(models.Model):
             morph.equip_knight_ward()
             value = self.serialize_growth_rates(morph)
             is_success = True
+            self.history.append(("unequip_knight_ward", {}))
         except GrowthsItemError as err:
             value = err.reason
             is_success = False
@@ -262,6 +272,7 @@ class Morph(models.Model):
             #value = self.serialize_growth_rates(morph)
             value = morph
             is_success = True
+            self.history.append(("equip_band", {"band_name": band_name}))
         except BandError as err:
             value = err.valid_bands
             is_success = False
@@ -280,6 +291,7 @@ class Morph(models.Model):
             #value = self.serialize_growth_rates(morph)
             value = morph
             is_success = True
+            self.history.append(("unequip_band", {"band_name": band_name}))
         except BandError as err:
             value = err.valid_bands
             is_success = False
