@@ -1,7 +1,7 @@
 """
 """
 
-import json
+import uuid
 
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -21,11 +21,6 @@ def validate_game_no(game_no):
             "No support for FE%(game_no)d yet.",
             params={"game_no": game_no},
         )
-
-def validate_name(name):
-    """
-    """
-    pass
 
 def validate_options(options):
     """
@@ -85,19 +80,39 @@ def validate_history(history):
     # check that it's a list of [str, [...args]] pairs
     # also, validate each entry.
     # level_up, promote, use_stat_booster, use_afas_drops, etc.
-    pass
+    try:
+        for method, kwargs in history:
+            assert isinstance(method, str)
+            assert isinstance(kwargs, dict)
+            for key in kwargs:
+                assert isinstance(key, str)
+    except AssertionError as err:
+        raise ValidationError(
+            "History is invalid",
+        )
 
 class Morph(models.Model):
     """
     """
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+    )
     # meta: composite pk
     morph_id = models.CharField(
+        #min_length=1,
         max_length=25,
+        # For forms only
+        #blank=False,
+        #null=False,
+        #validators=[validate_morph_id],
     )
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         null=True,
+        blank=True,
+        default=None,
     )
     # content
     game_no = models.PositiveSmallIntegerField(
@@ -105,15 +120,17 @@ class Morph(models.Model):
     )
     name = models.CharField(
         max_length=9,
-        validators=[validate_name],
+        blank=False,
     )
     options = models.JSONField(
-        validators=[validate_options],
+        #validators=[validate_options],
         default=dict,
+        blank=True,
     )
     history = models.JSONField(
         default=list,
-        validators=[validate_history],
+        #validators=[validate_history],
+        blank=True,
     )
 
     class Meta:
