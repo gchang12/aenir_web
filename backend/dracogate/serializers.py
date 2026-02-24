@@ -63,9 +63,9 @@ class MorphSerializer:#(serializers.Serializer):
         statdicts = [bonus_without_augment, augment]
         return statdicts
 
-    def morph_diff(self, morph2):
+    def stat_differences(self, morph2):
         """
-        Bundles Morph differences into native Python data-type.
+        Bundles stat differences between Morphs into native Python data-type.
         """
         morph1 = self.morph
         morph_diff = ((morph1.current_stats > morph2.current_stats) * 0.01).as_dict()
