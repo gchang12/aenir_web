@@ -2,6 +2,7 @@
 """
 
 import unittest
+from unittest.mock import patch
 
 from django.test import TestCase
 from django.core.exceptions import ValidationError
@@ -26,16 +27,16 @@ class NormalMorph(TestCase):
         """
         morph_id = self.morph_id
         kwargs = self.kwargs
-        morph = VirtualMorph.objects.create(morph_id=morph_id, **self.kwargs)
-        actual = morph.options
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **self.kwargs)
+        actual = vmorph.options
         expected = {}
-        logger.debug("morph.options: %r", morph.options)
+        logger.debug("vmorph.options: %r", vmorph.options)
         self.assertDictEqual(actual, expected)
-        actual = morph.history
+        actual = vmorph.history
         expected = []
-        logger.debug("morph.history: %r", morph.history)
+        logger.debug("vmorph.history: %r", vmorph.history)
         self.assertListEqual(actual, expected)
-        actual = morph.user
+        actual = vmorph.user
         self.assertIsNone(actual)
 
     def test_two_morphs_with_same_id_can_coexist_if_user_is_null(self):
@@ -51,15 +52,15 @@ class NormalMorph(TestCase):
         morph1.full_clean()
         morph2.full_clean()
 
-    def test_morph_can_have_blank_name(self):
+    def test_morph_can_have_blank_morph_id(self):
         """
         """
         morph_id = ""
         kwargs = self.kwargs
-        morph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
         with self.assertRaises(ValidationError):
-            morph.full_clean()
-        logger.debug("At the model level, Morph can have blank 'morph_id' values; not so much at the form level.")
+            vmorph.full_clean()
+        logger.debug("At the model level, a Morph object can have a blank 'morph_id' value; not so much at the form level.")
 
     def test_morph_cannot_have_blank_name(self):
         """
@@ -67,9 +68,59 @@ class NormalMorph(TestCase):
         morph_id = self.morph_id
         kwargs = self.kwargs
         kwargs['name'] = ""
-        morph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
         with self.assertRaises(ValidationError):
-            morph.full_clean()
+            vmorph.full_clean()
+        logger.debug("At the model level, a Morph object can have a blank 'name' value; not so much at the form level.")
+
+    def test_init(self):
+        """
+        """
+        morph_id = self.morph_id
+        kwargs = self.kwargs
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        with patch("dracogate.models.get_morph") as MOCK_get_morph:
+            vmorph.init()
+        MOCK_get_morph.assert_called_once_with(kwargs['game_no'], kwargs['name'])
+
+    def test_level_up(self):
+        """
+        """
+        morph_id = self.morph_id
+        kwargs = self.kwargs
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        logger.debug("This test is being run with the assumption that 'init' works.")
+        vmorph.init()
+        num_levels = 19
+        with patch("dracogate.models.Morph.level_up") as MOCK_level_up:
+            vmorph.level_up(num_levels=num_levels)
+        MOCK_level_up.assert_called_once_with(num_levels)
+
+    def test_promote(self):
+        """
+        """
+        morph_id = self.morph_id
+        kwargs = self.kwargs
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        logger.debug("This test is being run with the assumption that 'init' works.")
+        vmorph.init()
+        promo_cls = None
+        with patch("dracogate.models.Morph.promote") as MOCK_promote:
+            vmorph.promote(promo_cls=promo_cls)
+        MOCK_promote.assert_called_once_with()
+
+    def test_use_stat_booster(self):
+        """
+        """
+        morph_id = self.morph_id
+        kwargs = self.kwargs
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        logger.debug("This test is being run with the assumption that 'init' works.")
+        vmorph.init()
+        item_name = "Angelic Robe"
+        with patch("dracogate.models.Morph.use_stat_booster") as MOCK_use_stat_booster:
+            vmorph.use_stat_booster(item_name=item_name)
+        MOCK_use_stat_booster.assert_called_once_with(item_name)
 
 class FatheredUnit(TestCase):
     """

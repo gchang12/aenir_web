@@ -13,27 +13,15 @@ from aenir import get_morph
 
 User = get_user_model()
 
-def validate_history(history):
-    """
-    """
-    for method, kwargs in history:
-        logger.info("%s(**%r)", method, kwargs)
-
 class VirtualMorph(models.Model):
     """
     """
-    id = models.UUIDField(
+    id = models.AutoField(
         primary_key=True,
-        default=uuid.uuid4,
     )
     # meta: composite pk
     morph_id = models.CharField(
-        #min_length=1,
         max_length=25,
-        # For forms only
-        #blank=False,
-        #null=False,
-        #validators=[validate_morph_id],
     )
     user = models.ForeignKey(
         User,
@@ -43,22 +31,18 @@ class VirtualMorph(models.Model):
         default=None,
     )
     # initialization
-    game_no = models.PositiveSmallIntegerField(
-        #validators=[validate_game_no],
-    )
+    game_no = models.PositiveSmallIntegerField()
     name = models.CharField(
         max_length=9,
         blank=False,
     )
     options = models.JSONField(
-        #validators=[validate_options],
         default=dict,
         blank=True,
     )
     # post-initialization
     history = models.JSONField(
         default=list,
-        #validators=[validate_history],
         blank=True,
     )
 
@@ -91,7 +75,6 @@ class VirtualMorph(models.Model):
             param_bounds = None
             self.history.append(("level_up", {"num_levels": num_levels}))
         except LevelUpError as err:
-            #value = morph.max_level
             param_bounds = err.max_level
             is_success = False
         return (morph, param_bounds)
@@ -109,7 +92,11 @@ class VirtualMorph(models.Model):
             param_bounds = None
             self.history.append(("promote", {}))
         except PromotionError as err:
-            param_bounds = err.promotion_list
+            param_bounds = {
+                err.Reason.NO_PROMOTIONS: (0, []),
+                err.Reason.LEVEL_TOO_LOW: (err.min_promo_level, []),
+                err.Reason.INVALID_PROMOTION: (0, err.promotion_list),
+            }[err.reason]
         return (morph, param_bounds)
 
     # FE5,6,7,8,9
@@ -124,7 +111,10 @@ class VirtualMorph(models.Model):
             param_bounds = None
             self.history.append(("use_stat_booster", {"item_name": item_name}))
         except StatBoosterError as err:
-            param_bounds = err.valid_stat_boosters
+            param_bounds = {
+                err.Reason.NOT_FOUND: err.valid_stat_boosters,
+                err.Reason.STAT_IS_MAXED: err.max_stat,
+            }[err.reason]
         return (morph, param_bounds)
 
     # FE5
@@ -138,8 +128,13 @@ class VirtualMorph(models.Model):
             morph.equip_scroll(scroll_name)
             param_bounds = None
             self.history.append(("equip_scroll", {"scroll_name": scroll_name}))
-        except StatBoosterError as err:
-            param_bounds = err.valid_scrolls
+        except ScrollError as err:
+            param_bounds = {
+                err.Reason.NOT_FOUND: err.valid_scrolls,
+                err.Reason.NO_INVENTORY_SPACE: morph.inventory_size,
+                #err.Reason.NOT_EQUIPPED: err.valid_scrolls,
+                err.Reason.ALREADY_EQUIPPED: err.valid_scrolls,
+            }[err.reason]
         return (morph, param_bounds)
 
     def unequip_scroll(self, **kwargs):
@@ -152,8 +147,13 @@ class VirtualMorph(models.Model):
             morph.unequip_scroll(scroll_name)
             param_bounds = None
             self.history.append(("unequip_scroll", {"scroll_name": scroll_name}))
-        except StatBoosterError as err:
-            param_bounds = err.valid_scrolls
+        except ScrollError as err:
+            param_bounds = {
+                err.Reason.NOT_FOUND: err.valid_scrolls,
+                err.Reason.NO_INVENTORY_SPACE: morph.inventory_size,
+                #err.Reason.NOT_EQUIPPED: err.valid_scrolls,
+                err.Reason.ALREADY_EQUIPPED: err.valid_scrolls,
+            }[err.reason]
         return (morph, param_bounds)
 
     # FE7
@@ -167,7 +167,10 @@ class VirtualMorph(models.Model):
             param_bounds = None
             self.history.append(("use_afas_drops", {}))
         except GrowthsItemError as err:
-            param_bounds = err.reason
+            param_bounds = {
+                # TODO: Insert consumption date.
+                err.Reason.ALREADY_CONSUMED: err.reason,
+            }[err.reason]
         return (morph, param_bounds)
 
     # FE8
@@ -181,7 +184,10 @@ class VirtualMorph(models.Model):
             param_bounds = None
             self.history.append(("use_afas_drops", {}))
         except GrowthsItemError as err:
-            param_bounds = err.reason
+            param_bounds = {
+                # TODO: Insert consumption date.
+                err.Reason.ALREADY_CONSUMED: err.reason,
+            }[err.reason]
         return (morph, param_bounds)
 
     # FE8
@@ -195,7 +201,12 @@ class VirtualMorph(models.Model):
             param_bounds = None
             self.history.append(("equip_knight_ward", {}))
         except GrowthsItemError as err:
-            param_bounds = err.reason
+            param_bounds = {
+                err.Reason.NOT_A_KNIGHT: err.knights,
+                err.Reason.ALREADY_EQUIPPED: None,
+                #err.Reason.NOT_EQUIPPED: None,
+                err.Reason.NO_INVENTORY_SPACE: None,
+            }[err.reason]
         return (morph, param_bounds)
 
     # FE8
@@ -209,7 +220,12 @@ class VirtualMorph(models.Model):
             param_bounds = None
             self.history.append(("unequip_knight_ward", {}))
         except GrowthsItemError as err:
-            param_bounds = err.reason
+            param_bounds = {
+                err.Reason.NOT_A_KNIGHT: err.knights,
+                #err.Reason.ALREADY_EQUIPPED: None,
+                err.Reason.NOT_EQUIPPED: None,
+                err.Reason.NO_INVENTORY_SPACE: None,
+            }[err.reason]
         return (morph, param_bounds)
 
     # FE9
@@ -224,7 +240,12 @@ class VirtualMorph(models.Model):
             param_bounds = None
             self.history.append(("equip_band", {"band_name": band_name}))
         except BandError as err:
-            param_bounds = err.valid_bands
+            param_bounds = {
+                err.Reason.NOT_FOUND: err.valid_bands,
+                err.Reason.NO_INVENTORY_SPACE: morph.inventory_size,
+                #err.Reason.NOT_EQUIPPED: err.valid_scrolls,
+                err.Reason.ALREADY_EQUIPPED: err.valid_scrolls,
+            }[err.reason]
         return (morph, param_bounds)
 
     def unequip_band(self, **kwargs):
@@ -238,6 +259,11 @@ class VirtualMorph(models.Model):
             param_bounds = None
             self.history.append(("unequip_band", {"band_name": band_name}))
         except BandError as err:
-            param_bounds = err.valid_bands
+            param_bounds = {
+                err.Reason.NOT_FOUND: err.valid_bands,
+                err.Reason.NO_INVENTORY_SPACE: morph.inventory_size,
+                #err.Reason.NOT_EQUIPPED: err.valid_scrolls,
+                err.Reason.ALREADY_EQUIPPED: err.valid_scrolls,
+            }[err.reason]
         return (morph, param_bounds)
 
