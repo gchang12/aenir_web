@@ -17,13 +17,9 @@ import {
   previewMorph,
   createMorph,
 } from "../lib/functions";
-import {
-  server,
-} from "./_fixtures";
 
 describe("FE6 Roy", () => {
 
-  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 6;
   const name = "Roy";
@@ -75,7 +71,6 @@ describe("FE6 Roy", () => {
 // father
 describe("FE4 Lakche", () => {
 
-  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 4;
   const name = "Lakche";
@@ -186,7 +181,6 @@ describe("FE4 Lakche", () => {
 // hard_mode
 describe("FE6 Rutger", () => {
 
-  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 6;
   const name = "Rutger";
@@ -269,7 +263,6 @@ describe("FE6 Rutger", () => {
 //  number_of_declines
 describe("FE6 Hugh", () => {
 
-  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 6;
   const name = "Hugh";
@@ -359,7 +352,6 @@ describe("FE6 Hugh", () => {
 // route
 describe("FE6 Gonzales", () => {
 
-  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 6;
   const name = "Gonzales";
@@ -456,7 +448,6 @@ describe("FE6 Gonzales", () => {
 
 describe("FE7 Ninian", () => {
 
-  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 7;
   const name = "Ninian";
@@ -473,7 +464,6 @@ describe("FE7 Ninian", () => {
 // lyn_mode
 describe("FE7 Nils", () => {
 
-  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 7;
   const name = "Nils";
@@ -555,7 +545,6 @@ describe("FE7 Nils", () => {
 
 describe("FE8 Lyon", () => {
 
-  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 8;
   const name = "Lyon";
@@ -571,7 +560,6 @@ describe("FE8 Lyon", () => {
 
 describe("FE10 Ike (DNE)", () => {
 
-  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 10;
   const name = "Ike";
@@ -595,7 +583,6 @@ describe("FE10 Ike (DNE)", () => {
 
 describe("FE7 Marth (DNE)", () => {
 
-  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 7;
   const name = "Marth";
@@ -619,7 +606,6 @@ describe("FE7 Marth (DNE)", () => {
 
 describe("FE7 Lyn", () => {
 
-  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 7;
   const name = "Lyn";

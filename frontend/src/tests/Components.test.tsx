@@ -31,18 +31,12 @@ import {
   ProfileHead,
 } from "../lib/Components";
 
-import {
-  server,
-} from "./_fixtures";
-
 /* TODO
   - Learn how to query for elements on the page.
   - Learn how to make assertions about attributes of certain elements.
 */
 
 describe("StatTable", () => {
-
-  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   it("should reload stats upon navigation.", async () => {
     let {morph, missingParams} = await previewMorph(6, "Roy", {});
