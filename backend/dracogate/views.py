@@ -9,9 +9,10 @@ from rest_framework import viewsets
 
 from aenir import get_morph
 from aenir._exceptions import InitError, UnitNotFoundError
-
 from aenir_web._logging import logger
-from dracogate.models import Morph
+
+from dracogate.models import VirtualMorph
+from dracogate.serializers import MorphSerializer
 
 class MorphViewSet(viewsets.ViewSet):
     """
@@ -27,8 +28,9 @@ class MorphViewSet(viewsets.ViewSet):
             morph = get_morph(game_no, name, **kwargs)
             morph._set_max_level()
             # name, current, max, absMax
-            statdicts = self.serialize_current_stats(morph)
-            data = self.serialize_morph(morph, *statdicts)
+            serializer_queue = MorphSerializer(morph)
+            statdicts = serializer_queue.current_stats()
+            data = serializer_queue.get_morph(*statdicts)
         except InitError as e:
             data = {"missingParams": e.init_params}
         except NotImplementedError:
@@ -46,9 +48,10 @@ class MorphViewSet(viewsets.ViewSet):
         morph = get_morph(game_no, name, **kwargs)
         morph._set_max_level()
         # name, current, max, absMax
-        statdicts = self.serialize_current_stats(morph)
-        data = self.serialize_morph(morph, *statdicts)
-        id = Morph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=kwargs).id
+        serializer_queue = MorphSerializer(morph)
+        statdicts = serializer_queue.current_stats()
+        data = serializer_queue.get_morph(*statdicts)
+        id = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=kwargs).id
         return Response({
             "pk": pk,
             "morphId": morph_id,
@@ -68,41 +71,16 @@ class MorphViewSet(viewsets.ViewSet):
         """
         Simulates operations on a morph without modifying it.
         """
-        morph_id = request.data.get("morph_id")
-        method = request.data.get("method")
-        kwargs = request.data.get("kwargs")
-        error = {
-            "level_up": self.level_up,
-            "promote": self.promote,
-            "use_stat_booster": self.use_stat_booster,
-            "use_afas_drops": self.use_afas_drops,
-            "use_metiss_tome": self.use_metiss_tome,
-            "equip_band": self.equip_band,
-            "unequip_band": self.unequip_band,
-            "equip_scroll": self.equip_scroll,
-            "unequip_scroll": self.unequip_scroll,
-        }[method](morph, **kwargs)
-        return self.serialize_morph(morph)
+        (vmorph, serializer_queue) = self.simulate_operation(request.data)
+        return serializer_queue.get_morph()
 
-    def update(self, request):
+    def update(self, request, pk):
         """
         Performs operations on a morph and modifies it.
         """
-        morph_id = request.data.get("morph_id")
-        method = request.data.get("method")
-        kwargs = request.data.get("kwargs")
-        is_success, value = {
-            "level_up": self.level_up,
-            "promote": self.promote,
-            "use_stat_booster": self.use_stat_booster,
-            "use_afas_drops": self.use_afas_drops,
-            "use_metiss_tome": self.use_metiss_tome,
-            "equip_band": self.equip_band,
-            "unequip_band": self.unequip_band,
-            "equip_scroll": self.equip_scroll,
-            "unequip_scroll": self.unequip_scroll,
-        }[method](morph, **kwargs)
-        return self.serialize_morph(morph)
+        (vmorph, serializer_queue) = self.simulate_operation(request.data)
+        vmorph.save()
+        return serializer_queue.get_morph()
 
     def destroy(self, request, pk):
         """
@@ -140,4 +118,27 @@ class MorphViewSet(viewsets.ViewSet):
             if kwarg == "number_of_declines":
                 kwargs[kwarg] = int(kwval)
         return (game_no, name, kwargs)
+
+    @staticmethod
+    def simulate_operation(dictlike):
+        """
+        """
+        morph_id = dictlike.get("morph_id")
+        method = dictlike.get("method")
+        kwargs = dictlike.get("kwargs")
+        vmorph = VirtualMorph.objects.get(pk=dictlike.get("pk"))
+        vmorph.init()
+        morph, param_bounds = {
+            "level_up": vmorph.level_up,
+            "promote": vmorph.promote,
+            "use_stat_booster": vmorph.use_stat_booster,
+            "use_afas_drops": vmorph.use_afas_drops,
+            "use_metiss_tome": vmorph.use_metiss_tome,
+            "equip_band": vmorph.equip_band,
+            "unequip_band": vmorph.unequip_band,
+            "equip_scroll": vmorph.equip_scroll,
+            "unequip_scroll": vmorph.unequip_scroll,
+        }[method](**kwargs)
+        serializer_queue = MorphSerializer(morph)
+        return (vmorph, serializer_queue)
 

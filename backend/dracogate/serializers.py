@@ -26,10 +26,10 @@ class MorphSerializer:#(serializers.Serializer):
                 new_value = None
             else:
                 new_value = 0.01 * value
-            new_dictlike[stat] = value
+            new_dictlike[stat] = new_value
         return new_dictlike
 
-    def morph(self, *statdicts):
+    def get_morph(self, *statdicts):
         """
         Bundles a morph's attributes for display purposes.
         """
@@ -48,9 +48,9 @@ class MorphSerializer:#(serializers.Serializer):
         morph = self.morph
         current_stats = morph.current_stats.as_dict()
         max_stats = morph.max_stats.as_dict()
-        absmax_stats = dict(zip(morph.Stats.STAT_LIST(), morph.Stats.ABSOLUTE_MAXES()))
-        statdicts = [current_stats, max_stats, absmax_stats]
-        return statdicts
+        absmax_stats = dict(zip(morph.Stats.STAT_LIST(), (100 * stat for stat in morph.Stats.ABSOLUTE_MAXES())))
+        statdicts = (current_stats, max_stats, absmax_stats)
+        return list(map(lambda dictlike: self.divide_by_100(dictlike), statdicts))
 
     def growth_rates(self):
         """
@@ -60,8 +60,8 @@ class MorphSerializer:#(serializers.Serializer):
         old_growths = morph._og_growth_rates.as_dict()
         new_growths = morph.growth_rates.as_dict()
         growths_diff = morph.get_growth_augment().as_dict()
-        statdicts = [old_growths, new_growths, growths_diff]
-        return statdicts
+        statdicts = (old_growths, new_growths, growths_diff)
+        return list(map(lambda dictlike: self.divide_by_100(dictlike), statdicts))
 
     def level_up_bonuses(self, num_levels: int):
         """
@@ -73,8 +73,8 @@ class MorphSerializer:#(serializers.Serializer):
         for stat in morph.Stats.ZERO_GROWTH_STAT_LIST():
             bonus_without_augment[stat] = None
             augment[stat] = None
-        statdicts = [bonus_without_augment, augment]
-        return statdicts
+        statdicts = (bonus_without_augment, augment)
+        return list(map(lambda dictlike: self.divide_by_100(dictlike), statdicts))
 
     def stat_differences(self, morph2):
         """
@@ -82,6 +82,6 @@ class MorphSerializer:#(serializers.Serializer):
         """
         morph1 = self.morph
         morph_diff = (morph1.current_stats > morph2.current_stats).as_dict()
-        statdicts = [morph_diff]
-        return statdicts
+        statdicts = (morph_diff,)
+        return list(map(lambda dictlike: self.divide_by_100(dictlike), statdicts))
 

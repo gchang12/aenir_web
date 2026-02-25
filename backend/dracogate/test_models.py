@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 
 from aenir_web._logging import logger
 
-from dracogate.models import Morph
+from dracogate.models import VirtualMorph
 
 class NormalMorph(TestCase):
     """
@@ -26,7 +26,7 @@ class NormalMorph(TestCase):
         """
         morph_id = self.morph_id
         kwargs = self.kwargs
-        morph = Morph.objects.create(morph_id=morph_id, **self.kwargs)
+        morph = VirtualMorph.objects.create(morph_id=morph_id, **self.kwargs)
         actual = morph.options
         expected = {}
         logger.debug("morph.options: %r", morph.options)
@@ -43,9 +43,9 @@ class NormalMorph(TestCase):
         """
         morph_id = self.morph_id
         kwargs = self.kwargs
-        morph1 = Morph.objects.create(morph_id=morph_id, **kwargs)
-        morph2 = Morph.objects.create(morph_id=morph_id, **kwargs)
-        actual = Morph.objects.filter(morph_id=morph_id).count()
+        morph1 = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        morph2 = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        actual = VirtualMorph.objects.filter(morph_id=morph_id).count()
         expected = 2
         self.assertEqual(actual, expected)
         morph1.full_clean()
@@ -56,7 +56,7 @@ class NormalMorph(TestCase):
         """
         morph_id = ""
         kwargs = self.kwargs
-        morph = Morph.objects.create(morph_id=morph_id, **kwargs)
+        morph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
         with self.assertRaises(ValidationError):
             morph.full_clean()
         logger.debug("At the model level, Morph can have blank 'morph_id' values; not so much at the form level.")
@@ -67,6 +67,6 @@ class NormalMorph(TestCase):
         morph_id = self.morph_id
         kwargs = self.kwargs
         kwargs['name'] = ""
-        morph = Morph.objects.create(morph_id=morph_id, **kwargs)
+        morph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
         with self.assertRaises(ValidationError):
             morph.full_clean()
