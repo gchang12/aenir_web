@@ -70,3 +70,108 @@ class NormalMorph(TestCase):
         morph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
         with self.assertRaises(ValidationError):
             morph.full_clean()
+
+class FatheredUnit(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+
+    def tearDown(self):
+        """
+        """
+
+class HardModeUnit(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+
+    def tearDown(self):
+        """
+        """
+
+class DeclinableUnit(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+
+    def tearDown(self):
+        """
+        """
+
+class Gonzales(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+
+    def tearDown(self):
+        """
+        """
+
+class LyndisLeague(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+
+    def tearDown(self):
+        """
+        """
+
+class Ninian(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+
+    def tearDown(self):
+        """
+        """
+
+class Nils(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+
+    def tearDown(self):
+        """
+        """
+
+class CreatureCampaignUnit(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+
+    def tearDown(self):
+        """
+        """
+
