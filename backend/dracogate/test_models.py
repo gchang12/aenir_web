@@ -194,6 +194,21 @@ class FatheredUnit(TestCase):
         """
         """
         logger.debug("%s", self.id())
+        morph_id = "FatheredMorph"
+        kwargs = {'game_no': 4, "name": "Lakche", "options": {"father": "Lex"}}
+        self.vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        self.options = kwargs.pop('options')
+        self.kwargs = kwargs
+
+    def test_init(self):
+        """
+        """
+        kwargs = self.kwargs
+        options = self.options
+        vmorph = self.vmorph
+        with patch("aenir.morph.Morph4") as MOCK_get_morph:
+            vmorph.init()
+        MOCK_get_morph.assert_called_once_with(kwargs['name'], father=options['father'])
 
     def tearDown(self):
         """
@@ -207,10 +222,25 @@ class HardModeUnit(TestCase):
         """
         """
         logger.debug("%s", self.id())
+        morph_id = "HardModeMorph"
+        kwargs = {'game_no': 6, "name": "Rutger", "options": {"hard_mode": True}}
+        self.vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        self.options = kwargs.pop('options')
+        self.kwargs = kwargs
 
     def tearDown(self):
         """
         """
+
+    def test_init(self):
+        """
+        """
+        kwargs = self.kwargs
+        options = self.options
+        vmorph = self.vmorph
+        with patch("aenir.morph.Morph6") as MOCK_get_morph:
+            vmorph.init()
+        MOCK_get_morph.assert_called_once_with(kwargs['name'], hard_mode=options['hard_mode'])
 
 class DeclinableUnit(TestCase):
     """

@@ -68,6 +68,7 @@ class VirtualMorph(models.Model):
         game_no = self.game_no
         name = self.name
         options = self.options
+        logger.debug("Now calling get_morph(%d, '%s', **%r)", game_no, name, options)
         morph = get_morph(game_no, name, **options)
         for method, kwargs in self.history:
             logger.info("%s(**%r)", method, kwargs)

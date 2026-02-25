@@ -134,7 +134,7 @@ LOGGING = {
     "disable_existing_loggers": False,
     "formatters": {
         "simple": {
-            "format": "%(levelname)s:%(name)s: %(message)s",
+            "format": "%(levelname)s:%(name)s.%(module)s.%(funcName)s: %(message)s",
             "style": "%",
         },
     },
