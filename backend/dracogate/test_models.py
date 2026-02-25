@@ -79,9 +79,9 @@ class NormalMorph(TestCase):
         morph_id = self.morph_id
         kwargs = self.kwargs
         vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
-        with patch("dracogate.models.get_morph") as MOCK_get_morph:
+        with patch("aenir.morph.Morph6") as MOCK_get_morph:
             vmorph.init()
-        MOCK_get_morph.assert_called_once_with(kwargs['game_no'], kwargs['name'])
+        MOCK_get_morph.assert_called_once_with(kwargs['name'])
 
     def test_level_up(self):
         """
@@ -92,9 +92,29 @@ class NormalMorph(TestCase):
         logger.debug("This test is being run with the assumption that 'init' works.")
         vmorph.init()
         num_levels = 19
-        with patch("dracogate.models.Morph.level_up") as MOCK_level_up:
+        with patch("aenir.morph.Morph.level_up") as MOCK_level_up:
             vmorph.level_up(num_levels=num_levels)
         MOCK_level_up.assert_called_once_with(num_levels)
+        actual = vmorph.history
+        expected = [("level_up", {"num_levels": num_levels})]
+        self.assertListEqual(actual, expected)
+        vmorph.init()
+
+    def test_level_up__no_simulate(self):
+        """
+        """
+        morph_id = self.morph_id
+        kwargs = self.kwargs
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        logger.debug("This test is being run with the assumption that 'init' works.")
+        vmorph.init()
+        num_levels = 19
+        vmorph.level_up(num_levels=num_levels)
+        self.assertTrue(vmorph.history)
+        morph = vmorph.init()
+        actual = morph.current_lv
+        expected = 20
+        self.assertEqual(actual, expected)
 
     def test_promote(self):
         """
@@ -105,9 +125,30 @@ class NormalMorph(TestCase):
         logger.debug("This test is being run with the assumption that 'init' works.")
         vmorph.init()
         promo_cls = None
-        with patch("dracogate.models.Morph.promote") as MOCK_promote:
+        with patch("aenir.morph.Morph.promote") as MOCK_promote:
             vmorph.promote(promo_cls=promo_cls)
         MOCK_promote.assert_called_once_with()
+        actual = vmorph.history
+        expected = [("promote", {"promo_cls": promo_cls})]
+        self.assertListEqual(actual, expected)
+        morph = vmorph.init()
+
+    def test_promote__no_simulate(self):
+        """
+        """
+        morph_id = self.morph_id
+        kwargs = self.kwargs
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        logger.debug("This test is being run with the assumption that 'init' works.")
+        vmorph.init()
+        promo_cls = None
+        vmorph.promote(promo_cls=promo_cls)
+        self.assertTrue(vmorph.history)
+        vmorph.save()
+        morph = vmorph.init()
+        actual = morph.current_cls
+        expected = "Master Lord"
+        self.assertEqual(actual, expected)
 
     def test_use_stat_booster(self):
         """
@@ -118,9 +159,32 @@ class NormalMorph(TestCase):
         logger.debug("This test is being run with the assumption that 'init' works.")
         vmorph.init()
         item_name = "Angelic Robe"
-        with patch("dracogate.models.Morph.use_stat_booster") as MOCK_use_stat_booster:
+        #with patch("dracogate.models.Morph.use_stat_booster") as MOCK_use_stat_booster:
+        with patch("aenir.morph.Morph.use_stat_booster") as MOCK_use_stat_booster:
             vmorph.use_stat_booster(item_name=item_name)
         MOCK_use_stat_booster.assert_called_once_with(item_name)
+        actual = vmorph.history
+        expected = [("use_stat_booster", {"item_name": item_name})]
+        self.assertListEqual(actual, expected)
+        vmorph.init()
+
+    def test_use_stat_booster__no_simulate(self):
+        """
+        """
+        morph_id = self.morph_id
+        kwargs = self.kwargs
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        logger.debug("This test is being run with the assumption that 'init' works.")
+        morph = vmorph.init()
+        og_hp = morph.current_stats.HP
+        item_name = "Angelic Robe"
+        #with patch("dracogate.models.Morph.use_stat_booster") as MOCK_use_stat_booster:
+        vmorph.use_stat_booster(item_name=item_name)
+        self.assertTrue(vmorph.history)
+        morph2 = vmorph.init()
+        expected = og_hp + 7_00
+        actual = morph2.current_stats.HP
+        self.assertEqual(actual, expected)
 
 class FatheredUnit(TestCase):
     """
@@ -221,6 +285,70 @@ class CreatureCampaignUnit(TestCase):
         """
         """
         logger.debug("%s", self.id())
+
+    def tearDown(self):
+        """
+        """
+
+class ThracianUnit(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+        morph_id = "ThracianMorph"
+        kwargs = {'game_no': 5, "name": "Leaf"}
+        self.vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+
+    def tearDown(self):
+        """
+        """
+
+class ElibeanUnit(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+        morph_id = "ElibeanMorph"
+        kwargs = {'game_no': 7, "name": "Eliwood"}
+        self.vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+
+    def tearDown(self):
+        """
+        """
+
+class SacredStonesUnit(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+        morph_id = "ElibeanMorph"
+        kwargs = {'game_no': 8, "name": "Seth"}
+        self.vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+
+    def tearDown(self):
+        """
+        """
+
+class TelliusKnightUnit(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+        morph_id = "ElibeanMorph"
+        kwargs = {'game_no': 9, "name": "Kieran"}
+        self.vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
 
     def tearDown(self):
         """

@@ -8,8 +8,19 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
-from aenir.morph import Morph
 from aenir import get_morph
+from aenir._exceptions import (
+    UnitNotFoundError,
+    LevelUpError,
+    PromotionError,
+    StatBoosterError,
+    ScrollError,
+    BandError,
+    GrowthsItemError,
+    KnightWardError,
+    InitError,
+)
+from aenir_web._logging import logger
 
 User = get_user_model()
 
@@ -51,7 +62,7 @@ class VirtualMorph(models.Model):
             ["user", "morph_id"],
         ]
 
-    def init(self) -> Morph:
+    def init(self):
         """
         """
         game_no = self.game_no
@@ -60,7 +71,7 @@ class VirtualMorph(models.Model):
         morph = get_morph(game_no, name, **options)
         for method, kwargs in self.history:
             logger.info("%s(**%r)", method, kwargs)
-            getattr(self, method)(**kwargs)
+            getattr(morph, method)(**kwargs)
         self.morph = morph
         return morph
 
@@ -90,7 +101,7 @@ class VirtualMorph(models.Model):
         try:
             morph.promote()
             param_bounds = None
-            self.history.append(("promote", {}))
+            self.history.append(("promote", {"promo_cls": promo_cls}))
         except PromotionError as err:
             param_bounds = {
                 err.Reason.NO_PROMOTIONS: (0, []),
@@ -167,9 +178,10 @@ class VirtualMorph(models.Model):
             param_bounds = None
             self.history.append(("use_afas_drops", {}))
         except GrowthsItemError as err:
+            err.consumption_date = (0, "")
             param_bounds = {
                 # TODO: Insert consumption date.
-                err.Reason.ALREADY_CONSUMED: err.reason,
+                err.Reason.ALREADY_CONSUMED: err.consumption_date,
             }[err.reason]
         return (morph, param_bounds)
 
@@ -185,8 +197,7 @@ class VirtualMorph(models.Model):
             self.history.append(("use_afas_drops", {}))
         except GrowthsItemError as err:
             param_bounds = {
-                # TODO: Insert consumption date.
-                err.Reason.ALREADY_CONSUMED: err.reason,
+                err.Reason.ALREADY_CONSUMED: morph._meta["Metis's Tome"],
             }[err.reason]
         return (morph, param_bounds)
 
@@ -203,9 +214,9 @@ class VirtualMorph(models.Model):
         except GrowthsItemError as err:
             param_bounds = {
                 err.Reason.NOT_A_KNIGHT: err.knights,
-                err.Reason.ALREADY_EQUIPPED: None,
+                err.Reason.ALREADY_EQUIPPED: err.valid_bands,
                 #err.Reason.NOT_EQUIPPED: None,
-                err.Reason.NO_INVENTORY_SPACE: None,
+                err.Reason.NO_INVENTORY_SPACE: morph.inventory_size,
             }[err.reason]
         return (morph, param_bounds)
 
@@ -223,8 +234,8 @@ class VirtualMorph(models.Model):
             param_bounds = {
                 err.Reason.NOT_A_KNIGHT: err.knights,
                 #err.Reason.ALREADY_EQUIPPED: None,
-                err.Reason.NOT_EQUIPPED: None,
-                err.Reason.NO_INVENTORY_SPACE: None,
+                err.Reason.NOT_EQUIPPED: err.valid_bands,
+                err.Reason.NO_INVENTORY_SPACE: morph.inventory_size,
             }[err.reason]
         return (morph, param_bounds)
 
@@ -244,7 +255,7 @@ class VirtualMorph(models.Model):
                 err.Reason.NOT_FOUND: err.valid_bands,
                 err.Reason.NO_INVENTORY_SPACE: morph.inventory_size,
                 #err.Reason.NOT_EQUIPPED: err.valid_scrolls,
-                err.Reason.ALREADY_EQUIPPED: err.valid_scrolls,
+                err.Reason.ALREADY_EQUIPPED: err.valid_bands,
             }[err.reason]
         return (morph, param_bounds)
 
@@ -263,7 +274,7 @@ class VirtualMorph(models.Model):
                 err.Reason.NOT_FOUND: err.valid_bands,
                 err.Reason.NO_INVENTORY_SPACE: morph.inventory_size,
                 #err.Reason.NOT_EQUIPPED: err.valid_scrolls,
-                err.Reason.ALREADY_EQUIPPED: err.valid_scrolls,
+                err.Reason.ALREADY_EQUIPPED: err.valid_bands,
             }[err.reason]
         return (morph, param_bounds)
 
