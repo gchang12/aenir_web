@@ -45,7 +45,6 @@ class MorphViewSet(viewsets.ViewSet):
         game_no, name, kwargs = self.parse_init_args(request.data)
         morph = get_morph(game_no, name, **kwargs)
         morph._set_max_level()
-        self.morphs[morph_id] = morph
         # name, current, max, absMax
         statdicts = self.serialize_current_stats(morph)
         data = self.serialize_morph(morph, *statdicts)
@@ -70,9 +69,6 @@ class MorphViewSet(viewsets.ViewSet):
         Simulates operations on a morph without modifying it.
         """
         morph_id = request.data.get("morph_id")
-        if morph_id not in self.morphs:
-            raise Exception
-        morph = self.morphs[morph_id].copy()
         method = request.data.get("method")
         kwargs = request.data.get("kwargs")
         error = {
@@ -86,7 +82,6 @@ class MorphViewSet(viewsets.ViewSet):
             "equip_scroll": self.equip_scroll,
             "unequip_scroll": self.unequip_scroll,
         }[method](morph, **kwargs)
-        # TODO: Refactor code s.t. stat formats are selected also.
         return self.serialize_morph(morph)
 
     def update(self, request):
@@ -94,9 +89,6 @@ class MorphViewSet(viewsets.ViewSet):
         Performs operations on a morph and modifies it.
         """
         morph_id = request.data.get("morph_id")
-        if morph_id not in self.morphs:
-            raise Exception
-        morph = self.morphs[morph_id]
         method = request.data.get("method")
         kwargs = request.data.get("kwargs")
         is_success, value = {
@@ -110,8 +102,6 @@ class MorphViewSet(viewsets.ViewSet):
             "equip_scroll": self.equip_scroll,
             "unequip_scroll": self.unequip_scroll,
         }[method](morph, **kwargs)
-        #statdicts = serializer(morph)
-        # TODO: Refactor code s.t. stat formats are selected also.
         return self.serialize_morph(morph)
 
     def destroy(self, request, pk):
@@ -120,7 +110,6 @@ class MorphViewSet(viewsets.ViewSet):
         """
         status = {"success": None}
         try:
-            self.morphs.pop(pk)
             status['success'] = True
         except KeyError as err:
             status['success'] = False
