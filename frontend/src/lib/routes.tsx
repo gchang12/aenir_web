@@ -189,7 +189,8 @@ export function UnitConfirm() {
   toggleButtonAbility(false);
   return (
     <>
-    <ProfileHead figureTitle={unitName} imgSrc={["", "images", gameName, "characters", unitName + imgSuffix].join("/")}>
+    <ProfileHead imgSrc={["", "images", gameName, "characters", unitName + imgSuffix].join("/")}>
+      <h2>{unitName}</h2>
       <table>
         <tbody>
         <ProfileLevelAndClass {...{unitClass, level}} />

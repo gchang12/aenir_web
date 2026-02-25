@@ -127,14 +127,13 @@ export function OptionSelect({missingParams}) {
   );
 };
 
-export function ProfileHead({figureTitle, imgSrc, children}) {
+export function ProfileHead({imgSrc, children}) {
   return (
     <>
     <figure>
       <img src={imgSrc} alt={imgSrc} />
       <figcaption>
-        <h2>{figureTitle}</h2>
-        <div className="ProfileHead-children">{children}</div>
+      {children}
       </figcaption>
     </figure>
     </>
