@@ -29,7 +29,7 @@ class MorphViewSet(viewsets.ViewSet):
             morph._set_max_level()
             # name, current, max, absMax
             serializer_queue = MorphSerializer(morph)
-            statdicts = serializer_queue.current_stats()
+            statdicts = serializer_queue.get_current_stats()
             data = serializer_queue.get_morph(*statdicts)
         except InitError as e:
             data = {"missingParams": e.init_params}
@@ -49,7 +49,7 @@ class MorphViewSet(viewsets.ViewSet):
         morph._set_max_level()
         # name, current, max, absMax
         serializer_queue = MorphSerializer(morph)
-        statdicts = serializer_queue.current_stats()
+        statdicts = serializer_queue.get_current_stats()
         data = serializer_queue.get_morph(*statdicts)
         id = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=kwargs).id
         return Response({

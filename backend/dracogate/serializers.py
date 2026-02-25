@@ -16,19 +16,6 @@ class MorphSerializer:#(serializers.Serializer):
         self.morph = morph
         #self.stats = StatsSerializer(morph)
 
-    @staticmethod
-    def divide_by_100(dictlike):
-        """
-        """
-        new_dictlike = {}
-        for stat, value in dictlike.items():
-            if value is None:
-                new_value = None
-            else:
-                new_value = 0.01 * value
-            new_dictlike[stat] = new_value
-        return new_dictlike
-
     def get_morph(self, *statdicts):
         """
         Bundles a morph's attributes for display purposes.
@@ -41,7 +28,7 @@ class MorphSerializer:#(serializers.Serializer):
             "stats": stats,
         }
 
-    def current_stats(self):
+    def get_current_stats(self):
         """
         Bundles stats for default display-purposes.
         """
@@ -52,7 +39,7 @@ class MorphSerializer:#(serializers.Serializer):
         statdicts = (current_stats, max_stats, absmax_stats)
         return list(map(lambda dictlike: self.divide_by_100(dictlike), statdicts))
 
-    def growth_rates(self):
+    def get_growth_rates(self):
         """
         Bundles growth augments for FE5, FE7, FE8, and FE9.
         """
@@ -63,7 +50,7 @@ class MorphSerializer:#(serializers.Serializer):
         statdicts = (old_growths, new_growths, growths_diff)
         return list(map(lambda dictlike: self.divide_by_100(dictlike), statdicts))
 
-    def level_up_bonuses(self, num_levels: int):
+    def get_level_up_bonuses(self, num_levels: int):
         """
         Bundles level-up stats for FE5, FE7, FE8, and FE9.
         """
@@ -76,7 +63,7 @@ class MorphSerializer:#(serializers.Serializer):
         statdicts = (bonus_without_augment, augment)
         return list(map(lambda dictlike: self.divide_by_100(dictlike), statdicts))
 
-    def stat_differences(self, morph2):
+    def get_stat_differences(self, morph2):
         """
         Bundles stat differences between Morphs into native Python data-type.
         """
@@ -84,4 +71,17 @@ class MorphSerializer:#(serializers.Serializer):
         morph_diff = (morph1.current_stats > morph2.current_stats).as_dict()
         statdicts = (morph_diff,)
         return list(map(lambda dictlike: self.divide_by_100(dictlike), statdicts))
+
+    @staticmethod
+    def divide_by_100(dictlike):
+        """
+        """
+        new_dictlike = {}
+        for stat, value in dictlike.items():
+            if value is None:
+                new_value = None
+            else:
+                new_value = 0.01 * value
+            new_dictlike[stat] = new_value
+        return new_dictlike
 
