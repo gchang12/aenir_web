@@ -11,7 +11,7 @@ from aenir_web._logging import logger
 
 from dracogate.models import VirtualMorph
 
-class NormalMorph(TestCase):
+class NormalUnit(TestCase):
     """
     """
 
@@ -194,7 +194,7 @@ class FatheredUnit(TestCase):
         """
         """
         logger.debug("%s", self.id())
-        morph_id = "FatheredMorph"
+        morph_id = "FatheredUnit"
         kwargs = {'game_no': 4, "name": "Lakche", "options": {"father": "Lex"}}
         self.vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
         self.options = kwargs.pop('options')
@@ -222,7 +222,7 @@ class HardModeUnit(TestCase):
         """
         """
         logger.debug("%s", self.id())
-        morph_id = "HardModeMorph"
+        morph_id = "HardModeUnit"
         kwargs = {'game_no': 6, "name": "Rutger", "options": {"hard_mode": True}}
         self.vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
         self.options = kwargs.pop('options')
@@ -250,6 +250,21 @@ class DeclinableUnit(TestCase):
         """
         """
         logger.debug("%s", self.id())
+        morph_id = "DeclinableUnit"
+        kwargs = {'game_no': 6, "name": "Hugh", "options": {"number_of_declines": True}}
+        self.vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        self.options = kwargs.pop('options')
+        self.kwargs = kwargs
+
+    def test_init(self):
+        """
+        """
+        kwargs = self.kwargs
+        options = self.options
+        vmorph = self.vmorph
+        with patch("aenir.morph.Morph6") as MOCK_get_morph:
+            vmorph.init()
+        MOCK_get_morph.assert_called_once_with(kwargs['name'], number_of_declines=options['number_of_declines'])
 
     def tearDown(self):
         """
@@ -263,6 +278,63 @@ class Gonzales(TestCase):
         """
         """
         logger.debug("%s", self.id())
+        morph_id = "Gonzales"
+        kwargs = {'game_no': 6, "name": "Gonzales", "options": {"hard_mode": False, "route": "Lalum"}}
+        self.options = kwargs.pop('options')
+        self.kwargs = kwargs
+        self.morph_id = morph_id
+
+    def test_init(self):
+        """
+        """
+        morph_id = self.morph_id
+        kwargs = self.kwargs
+        options = self.options
+        kwargs["options"] = options
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        with patch("aenir.morph.Morph6") as MOCK_get_morph:
+            vmorph.init()
+        MOCK_get_morph.assert_called_once_with(kwargs['name'], hard_mode=options['hard_mode'], route=options['route'])
+
+    def test_init__lalum_hm(self):
+        """
+        """
+        morph_id = self.morph_id
+        kwargs = self.kwargs
+        options = self.options
+        options['hard_mode'] = True
+        kwargs["options"] = options
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        with patch("aenir.morph.Morph6") as MOCK_get_morph:
+            vmorph.init()
+        MOCK_get_morph.assert_called_once_with(kwargs['name'], hard_mode=options['hard_mode'], route=options['route'])
+
+    def test_init__elphin(self):
+        """
+        """
+        morph_id = self.morph_id
+        kwargs = self.kwargs
+        options = self.options
+        options['route'] = "Elphin"
+        kwargs["options"] = options
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        with patch("aenir.morph.Morph6") as MOCK_get_morph:
+            vmorph.init()
+        MOCK_get_morph.assert_called_once_with(kwargs['name'], hard_mode=options['hard_mode'], route=options['route'])
+
+    def test_init__elphin_hm(self):
+        """
+        """
+        morph_id = self.morph_id
+        kwargs = self.kwargs
+        options = self.options
+        options['route'] = "Elphin"
+        options['hard_mode'] = True
+        kwargs["options"] = options
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        with patch("aenir.morph.Morph6") as MOCK_get_morph:
+            vmorph.init()
+        MOCK_get_morph.assert_called_once_with(kwargs['name'], hard_mode=options['hard_mode'], route=options['route'])
 
     def tearDown(self):
         """
@@ -276,6 +348,36 @@ class LyndisLeague(TestCase):
         """
         """
         logger.debug("%s", self.id())
+        kwargs = {'game_no': 7, "name": "Lyn", "options": {"lyn_mode": False}}
+        morph_id = "LyndisLeague"
+        self.options = kwargs.pop('options')
+        self.kwargs = kwargs
+        self.morph_id = morph_id
+
+    def test_init(self):
+        """
+        """
+        morph_id = self.morph_id
+        kwargs = self.kwargs
+        options = self.options
+        kwargs["options"] = options
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        with patch("aenir.morph.Morph7") as MOCK_get_morph:
+            vmorph.init()
+        MOCK_get_morph.assert_called_once_with(kwargs['name'], lyn_mode=False)
+
+    def test_init__lyn_mode(self):
+        """
+        """
+        morph_id = self.morph_id
+        kwargs = self.kwargs
+        options = self.options
+        options['lyn_mode'] = True
+        kwargs["options"] = options
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        with patch("aenir.morph.Morph7") as MOCK_get_morph:
+            vmorph.init()
+        MOCK_get_morph.assert_called_once_with(kwargs['name'], lyn_mode=True)
 
     def tearDown(self):
         """
