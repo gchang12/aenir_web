@@ -17,13 +17,13 @@ class NormalUnit(TestCase):
     def setUp(self):
         """
         """
+        logger.debug("%s", self.id())
         game_no = 6
         name = "Roy"
         options = {}
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
-        logger.debug("%s", self.id())
 
     def test_get_morph__verify_that_invalid_options_are_ignored(self):
         """
@@ -71,13 +71,13 @@ class FatheredUnit(TestCase):
     def setUp(self):
         """
         """
+        logger.debug("%s", self.id())
         game_no = 4
         name = "Lakche"
         options = {"father": "Lex"}
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
-        logger.debug("%s", self.id())
 
     def test_get_morph__verify_success(self):
         """
@@ -163,13 +163,13 @@ class HardModeUnit(TestCase):
     def setUp(self):
         """
         """
+        logger.debug("%s", self.id())
         game_no = 6
         name = "Rutger"
         options = {"hard_mode": "false"}
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
-        logger.debug("%s", self.id())
 
     def test_get_morph__verify_success(self):
         """
@@ -243,13 +243,13 @@ class DeclinableUnit(TestCase):
     def setUp(self):
         """
         """
+        logger.debug("%s", self.id())
         game_no = 6
         name = "Hugh"
         options = {"number_of_declines": 0}
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
-        logger.debug("%s", self.id())
 
     def test_get_morph__verify_success(self):
         """
@@ -385,13 +385,13 @@ class Gonzales(TestCase):
     def setUp(self):
         """
         """
+        logger.debug("%s", self.id())
         game_no = 6
         name = "Gonzales"
         options = {"hard_mode": "false", "route": "Lalum"}
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
-        logger.debug("%s", self.id())
 
     def test_get_morph__verify_success(self):
         """
@@ -530,13 +530,13 @@ class LyndisLeague(TestCase):
     def setUp(self):
         """
         """
+        logger.debug("%s", self.id())
         game_no = 7
         name = "Lyn"
         options = {"lyn_mode": "false"}
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
-        logger.debug("%s", self.id())
 
     def test_get_morph__verify_error(self):
         """
@@ -610,13 +610,13 @@ class Ninian(TestCase):
     def setUp(self):
         """
         """
+        logger.debug("%s", self.id())
         game_no = 7
         name = "Ninian"
         options = {}
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
-        logger.debug("%s", self.id())
 
     def test_get_morph__verify_success(self):
         """
@@ -643,13 +643,13 @@ class Nils(TestCase):
     def setUp(self):
         """
         """
+        logger.debug("%s", self.id())
         game_no = 7
         name = "Nils"
         options = {}
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
-        logger.debug("%s", self.id())
 
     def test_get_morph__verify_success(self):
         """
@@ -709,13 +709,13 @@ class BonusUnit(TestCase):
     def setUp(self):
         """
         """
+        logger.debug("%s", self.id())
         game_no = 8
         name = "Lyon"
         options = {}
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
-        logger.debug("%s", self.id())
 
     def test_get_morph__verify_success(self):
         """
@@ -733,13 +733,13 @@ class InvalidGame(TestCase):
     def setUp(self):
         """
         """
+        logger.debug("%s", self.id())
         game_no = 10
         name = "Ike"
         options = {}
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
-        logger.debug("%s", self.id())
 
     def test_get_morph__verify_error(self):
         """
@@ -762,13 +762,13 @@ class InvalidUnit(TestCase):
     def setUp(self):
         """
         """
+        logger.debug("%s", self.id())
         game_no = 7
         name = "Marth"
         options = {}
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
-        logger.debug("%s", self.id())
 
     def test_get_morph__verify_error(self):
         """

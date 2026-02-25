@@ -23,7 +23,7 @@ class MorphViewSet(viewsets.ViewSet):
         """
         Creates temporary Morph for the user to preview, returning missing parameters as necessary.
         """
-        game_no, name, kwargs = self.parse_init_args(request.query_params)
+        game_no, name, kwargs = MorphSerializer.parse_init_args(request.query_params)
         try:
             morph = get_morph(game_no, name, **kwargs)
             morph._set_max_level()
@@ -44,7 +44,7 @@ class MorphViewSet(viewsets.ViewSet):
         Creates a Morph instance and stores it in the database.
         """
         morph_id = request.data.get("morph_id")
-        game_no, name, kwargs = self.parse_init_args(request.data)
+        game_no, name, kwargs = MorphSerializer.parse_init_args(request.data)
         morph = get_morph(game_no, name, **kwargs)
         morph._set_max_level()
         # name, current, max, absMax
@@ -93,31 +93,6 @@ class MorphViewSet(viewsets.ViewSet):
             status['success'] = False
         logger.debug("Morph with id=%r has been deleted: %r", pk, status['success'])
         return Response(status)
-
-    @staticmethod
-    def parse_init_args(dictlike):
-        """
-        Parses default values from response and converts them for interpretation by program.
-        """
-        game_no = int(dictlike.get("game_no"))
-        name = dictlike.get("name")
-        morph_options = (
-            "father",
-            "hard_mode",
-            "number_of_declines",
-            "route",
-            "lyn_mode",
-        )
-        kwargs = {key: dictlike.get(key) for key in morph_options if dictlike.get(key) is not None}
-        for kwarg, kwval in kwargs.items():
-            if kwarg in ("hard_mode", "lyn_mode"):
-                kwargs[kwarg] = {
-                    "true": True,
-                    "false": False,
-                }[kwval]
-            if kwarg == "number_of_declines":
-                kwargs[kwarg] = int(kwval)
-        return (game_no, name, kwargs)
 
     @staticmethod
     def simulate_operation(dictlike):

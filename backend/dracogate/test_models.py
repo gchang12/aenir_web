@@ -98,6 +98,7 @@ class NormalUnit(TestCase):
         actual = vmorph.history
         expected = [("level_up", {"num_levels": num_levels})]
         self.assertListEqual(actual, expected)
+        logger.debug("Checking to see if any errors are raised.")
         vmorph.init()
 
     def test_level_up__no_simulate(self):
@@ -111,7 +112,8 @@ class NormalUnit(TestCase):
         num_levels = 19
         vmorph.level_up(num_levels=num_levels)
         self.assertTrue(vmorph.history)
-        morph = vmorph.init()
+        vmorph.save()
+        morph = VirtualMorph.objects.get().init()
         actual = morph.current_lv
         expected = 20
         self.assertEqual(actual, expected)
@@ -131,6 +133,7 @@ class NormalUnit(TestCase):
         actual = vmorph.history
         expected = [("promote", {"promo_cls": promo_cls})]
         self.assertListEqual(actual, expected)
+        logger.debug("Checking to see if any errors are raised.")
         morph = vmorph.init()
 
     def test_promote__no_simulate(self):
@@ -145,7 +148,7 @@ class NormalUnit(TestCase):
         vmorph.promote(promo_cls=promo_cls)
         self.assertTrue(vmorph.history)
         vmorph.save()
-        morph = vmorph.init()
+        morph = VirtualMorph.objects.get().init()
         actual = morph.current_cls
         expected = "Master Lord"
         self.assertEqual(actual, expected)
@@ -166,6 +169,7 @@ class NormalUnit(TestCase):
         actual = vmorph.history
         expected = [("use_stat_booster", {"item_name": item_name})]
         self.assertListEqual(actual, expected)
+        logger.debug("Checking to see if any errors are raised.")
         vmorph.init()
 
     def test_use_stat_booster__no_simulate(self):
@@ -181,7 +185,8 @@ class NormalUnit(TestCase):
         #with patch("dracogate.models.Morph.use_stat_booster") as MOCK_use_stat_booster:
         vmorph.use_stat_booster(item_name=item_name)
         self.assertTrue(vmorph.history)
-        morph2 = vmorph.init()
+        vmorph.save()
+        morph2 = VirtualMorph.objects.get().init()
         expected = og_hp + 7_00
         actual = morph2.current_stats.HP
         self.assertEqual(actual, expected)
@@ -210,10 +215,6 @@ class FatheredUnit(TestCase):
             vmorph.init()
         MOCK_get_morph.assert_called_once_with(kwargs['name'], father=options['father'])
 
-    def tearDown(self):
-        """
-        """
-
 class HardModeUnit(TestCase):
     """
     """
@@ -227,10 +228,6 @@ class HardModeUnit(TestCase):
         self.vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
         self.options = kwargs.pop('options')
         self.kwargs = kwargs
-
-    def tearDown(self):
-        """
-        """
 
     def test_init(self):
         """
@@ -265,10 +262,6 @@ class DeclinableUnit(TestCase):
         with patch("aenir.morph.Morph6") as MOCK_get_morph:
             vmorph.init()
         MOCK_get_morph.assert_called_once_with(kwargs['name'], number_of_declines=options['number_of_declines'])
-
-    def tearDown(self):
-        """
-        """
 
 class Gonzales(TestCase):
     """
@@ -336,10 +329,6 @@ class Gonzales(TestCase):
             vmorph.init()
         MOCK_get_morph.assert_called_once_with(kwargs['name'], hard_mode=options['hard_mode'], route=options['route'])
 
-    def tearDown(self):
-        """
-        """
-
 class LyndisLeague(TestCase):
     """
     """
@@ -379,10 +368,6 @@ class LyndisLeague(TestCase):
             vmorph.init()
         MOCK_get_morph.assert_called_once_with(kwargs['name'], lyn_mode=True)
 
-    def tearDown(self):
-        """
-        """
-
 class Ninian(TestCase):
     """
     """
@@ -391,10 +376,6 @@ class Ninian(TestCase):
         """
         """
         logger.debug("%s", self.id())
-
-    def tearDown(self):
-        """
-        """
 
 class Nils(TestCase):
     """
@@ -405,10 +386,6 @@ class Nils(TestCase):
         """
         logger.debug("%s", self.id())
 
-    def tearDown(self):
-        """
-        """
-
 class CreatureCampaignUnit(TestCase):
     """
     """
@@ -417,10 +394,6 @@ class CreatureCampaignUnit(TestCase):
         """
         """
         logger.debug("%s", self.id())
-
-    def tearDown(self):
-        """
-        """
 
 class ThracianUnit(TestCase):
     """
@@ -434,10 +407,6 @@ class ThracianUnit(TestCase):
         kwargs = {'game_no': 5, "name": "Leaf"}
         self.vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
 
-    def tearDown(self):
-        """
-        """
-
 class ElibeanUnit(TestCase):
     """
     """
@@ -449,10 +418,6 @@ class ElibeanUnit(TestCase):
         morph_id = "ElibeanMorph"
         kwargs = {'game_no': 7, "name": "Eliwood"}
         self.vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
-
-    def tearDown(self):
-        """
-        """
 
 class SacredStonesUnit(TestCase):
     """
@@ -466,10 +431,6 @@ class SacredStonesUnit(TestCase):
         kwargs = {'game_no': 8, "name": "Seth"}
         self.vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
 
-    def tearDown(self):
-        """
-        """
-
 class TelliusKnightUnit(TestCase):
     """
     """
@@ -481,8 +442,4 @@ class TelliusKnightUnit(TestCase):
         morph_id = "ElibeanMorph"
         kwargs = {'game_no': 9, "name": "Kieran"}
         self.vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
-
-    def tearDown(self):
-        """
-        """
 

@@ -85,3 +85,28 @@ class MorphSerializer:#(serializers.Serializer):
             new_dictlike[stat] = new_value
         return new_dictlike
 
+    @staticmethod
+    def parse_init_args(dictlike):
+        """
+        Parses default values from response and converts them for interpretation by program.
+        """
+        game_no = int(dictlike.get("game_no"))
+        name = dictlike.get("name")
+        morph_options = (
+            "father",
+            "hard_mode",
+            "number_of_declines",
+            "route",
+            "lyn_mode",
+        )
+        kwargs = {key: dictlike.get(key) for key in morph_options if dictlike.get(key) is not None}
+        for kwarg, kwval in kwargs.items():
+            if kwarg in ("hard_mode", "lyn_mode"):
+                kwargs[kwarg] = {
+                    "true": True,
+                    "false": False,
+                }[kwval]
+            if kwarg == "number_of_declines":
+                kwargs[kwarg] = int(kwval)
+        return (game_no, name, kwargs)
+
