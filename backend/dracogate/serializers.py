@@ -48,7 +48,7 @@ class MorphSerializer:#(serializers.Serializer):
         morph = self.morph
         current_stats = morph.current_stats.as_dict()
         max_stats = morph.max_stats.as_dict()
-        absmax_stats = dict(zip(morph.Stats.STAT_LIST(), (100 * stat for stat in morph.Stats.ABSOLUTE_MAXES())))
+        absmax_stats = dict(zip(morph.Stats.STAT_LIST(), morph.Stats.ABSOLUTE_MAXES()))
         statdicts = (current_stats, max_stats, absmax_stats)
         return list(map(lambda dictlike: self.divide_by_100(dictlike), statdicts))
 
