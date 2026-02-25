@@ -5,16 +5,40 @@ import {
 } from 'vitest';
 
 import {
+  http,
+  HttpResponse,
+} from "msw";
+import {
+  setupServer,
+} from "msw/node";
+
+import {
   getMorph,
   previewMorph,
   createMorph,
 } from "../lib/functions";
+import {
+  FE4Roster,
+  FE6Roster,
+  FE7Roster,
+  FE8Roster,
+  FE10Roster,
+} from "./_fixtures";
 
 describe("FE6 Roy", () => {
 
-
   const game_no = 6;
   const name = "Roy";
+
+  const server = setupServer(
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
+      const url = new URL(request.url);
+      const morph = FE6Roster.getRoy();
+      return HttpResponse.json(morph);
+    })
+  );
+
+  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   test("getMorph: successful request for stat-data with stat-validation.", async () => {
     const kwargs = {};
@@ -63,9 +87,19 @@ describe("FE6 Roy", () => {
 // father
 describe("FE4 Lakche", () => {
 
-
   const game_no = 4;
   const name = "Lakche";
+
+  const server = setupServer(
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
+      const url = new URL(request.url);
+      const father = url.searchParams.get("father");
+      const morph = FE4Roster.getLakche(father);
+      return HttpResponse.json(morph);
+    })
+  );
+
+  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   test("getMorph: successful request for stat-data with {father:'Lex'}, with stat-validation.", async () => {
     const kwargs = {"father": "Lex"};
@@ -173,6 +207,16 @@ describe("FE4 Lakche", () => {
 // hard_mode
 describe("FE6 Rutger", () => {
 
+  const server = setupServer(
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
+      const url = new URL(request.url);
+      const hard_mode = url.searchParams.get("hard_mode");
+      const morph = FE6Roster.getRutger(hard_mode);
+      return HttpResponse.json(morph);
+    })
+  );
+
+  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 6;
   const name = "Rutger";
@@ -255,6 +299,16 @@ describe("FE6 Rutger", () => {
 //  number_of_declines
 describe("FE6 Hugh", () => {
 
+  const server = setupServer(
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
+      const url = new URL(request.url);
+      const number_of_declines = url.searchParams.get("number_of_declines");
+      const morph = FE6Roster.getHugh(number_of_declines);
+      return HttpResponse.json(morph);
+    })
+  );
+
+  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 6;
   const name = "Hugh";
@@ -344,6 +398,17 @@ describe("FE6 Hugh", () => {
 // route
 describe("FE6 Gonzales", () => {
 
+  const server = setupServer(
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
+      const url = new URL(request.url);
+      const hard_mode = url.searchParams.get("hard_mode");
+      const route = url.searchParams.get("route");
+      const morph = FE6Roster.getGonzales(route, hard_mode);
+      return HttpResponse.json(morph);
+    })
+  );
+
+  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 6;
   const name = "Gonzales";
@@ -440,6 +505,16 @@ describe("FE6 Gonzales", () => {
 
 describe("FE7 Ninian", () => {
 
+  const server = setupServer(
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
+      const url = new URL(request.url);
+      const lyn_mode = url.searchParams.get("lyn_mode");
+      const morph = FE7Roster.getNinian(lyn_mode);
+      return HttpResponse.json(morph);
+    })
+  );
+
+  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 7;
   const name = "Ninian";
@@ -456,6 +531,16 @@ describe("FE7 Ninian", () => {
 // lyn_mode
 describe("FE7 Nils", () => {
 
+  const server = setupServer(
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
+      const url = new URL(request.url);
+      const lyn_mode = url.searchParams.get("lyn_mode");
+      const morph = FE7Roster.getNils(lyn_mode);
+      return HttpResponse.json(morph);
+    })
+  );
+
+  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 7;
   const name = "Nils";
@@ -537,6 +622,15 @@ describe("FE7 Nils", () => {
 
 describe("FE8 Lyon", () => {
 
+  const server = setupServer(
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
+      const url = new URL(request.url);
+      const morph = FE8Roster.getLyon();
+      return HttpResponse.json(morph);
+    })
+  );
+
+  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 8;
   const name = "Lyon";
@@ -552,6 +646,15 @@ describe("FE8 Lyon", () => {
 
 describe("FE10 Ike (DNE)", () => {
 
+  const server = setupServer(
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
+      const url = new URL(request.url);
+      const morph = FE10Roster.getIke();
+      return HttpResponse.json(morph);
+    })
+  );
+
+  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 10;
   const name = "Ike";
@@ -575,6 +678,15 @@ describe("FE10 Ike (DNE)", () => {
 
 describe("FE7 Marth (DNE)", () => {
 
+  const server = setupServer(
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
+      const url = new URL(request.url);
+      const morph = FE7Roster.getMarth();
+      return HttpResponse.json(morph);
+    })
+  );
+
+  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 7;
   const name = "Marth";
@@ -598,6 +710,16 @@ describe("FE7 Marth (DNE)", () => {
 
 describe("FE7 Lyn", () => {
 
+  const server = setupServer(
+    http.get("http://localhost:8000/dracogate/api/morphs/", ({request}) => {
+      const url = new URL(request.url);
+      const lyn_mode = url.searchParams.get("lyn_mode");
+      const morph = FE7Roster.getLyn(lyn_mode);
+      return HttpResponse.json(morph);
+    })
+  );
+
+  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 7;
   const name = "Lyn";

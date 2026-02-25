@@ -69,21 +69,8 @@ class MorphSerializer:#(serializers.Serializer):
         """
         morph1 = self.morph
         morph_diff = (morph1.current_stats > morph2.current_stats).as_dict()
-        statdicts = (morph1.current_stats.as_dict(), morph_diff, morph2.current_stats.as_dict())
+        statdicts = (morph_diff,)
         return list(map(lambda dictlike: self.divide_by_100(dictlike), statdicts))
-
-    @staticmethod
-    def divide_by_100(dictlike):
-        """
-        """
-        new_dictlike = {}
-        for stat, value in dictlike.items():
-            if value is None:
-                new_value = None
-            else:
-                new_value = 0.01 * value
-            new_dictlike[stat] = new_value
-        return new_dictlike
 
     @staticmethod
     def divide_by_100(dictlike):
