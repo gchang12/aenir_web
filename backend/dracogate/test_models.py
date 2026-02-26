@@ -7,11 +7,23 @@ from unittest.mock import patch
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
+from aenir._exceptions import (
+    UnitNotFoundError,
+    LevelUpError,
+    PromotionError,
+    StatBoosterError,
+    ScrollError,
+    BandError,
+    GrowthsItemError,
+    KnightWardError,
+    InitError,
+)
+
 from aenir_web._logging import logger
 
 from dracogate.models import VirtualMorph
 
-class NormalUnit(TestCase):
+class InitTest(TestCase):
     """
     """
 
@@ -19,7 +31,7 @@ class NormalUnit(TestCase):
         """
         """
         logger.debug("%s", self.id())
-        self.morph_id = "NormalMorph"
+        self.morph_id = "InitTest"
         self.kwargs = {'game_no': 6, "name": "Roy"}
 
     def test_default_values(self):
@@ -73,23 +85,30 @@ class NormalUnit(TestCase):
             vmorph.full_clean()
         logger.debug("At the model level, a Morph object can have a blank 'name' value; not so much at the form level.")
 
+class NormalUnit(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+        morph_id = "NormalUnit"
+        kwargs = {'game_no': 6, "name": "Roy"}
+        self.vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+
     def test_init(self):
         """
         """
-        morph_id = self.morph_id
-        kwargs = self.kwargs
-        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        vmorph = self.vmorph
         with patch("aenir.morph.Morph6") as MOCK_get_morph:
             vmorph.init()
-        MOCK_get_morph.assert_called_once_with(kwargs['name'])
+        MOCK_get_morph.assert_called_once_with("Roy")
 
     def test_level_up(self):
         """
         """
-        morph_id = self.morph_id
-        kwargs = self.kwargs
-        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
-        logger.debug("This test is being run with the assumption that 'init' works.")
+        vmorph = self.vmorph
         vmorph.init()
         num_levels = 19
         with patch("aenir.morph.Morph.level_up") as MOCK_level_up:
@@ -104,10 +123,7 @@ class NormalUnit(TestCase):
     def test_level_up__no_simulate(self):
         """
         """
-        morph_id = self.morph_id
-        kwargs = self.kwargs
-        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
-        logger.debug("This test is being run with the assumption that 'init' works.")
+        vmorph = self.vmorph
         vmorph.init()
         num_levels = 19
         vmorph.level_up(num_levels=num_levels)
@@ -121,10 +137,7 @@ class NormalUnit(TestCase):
     def test_promote(self):
         """
         """
-        morph_id = self.morph_id
-        kwargs = self.kwargs
-        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
-        logger.debug("This test is being run with the assumption that 'init' works.")
+        vmorph = self.vmorph
         vmorph.init()
         promo_cls = None
         with patch("aenir.morph.Morph.promote") as MOCK_promote:
@@ -139,10 +152,7 @@ class NormalUnit(TestCase):
     def test_promote__no_simulate(self):
         """
         """
-        morph_id = self.morph_id
-        kwargs = self.kwargs
-        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
-        logger.debug("This test is being run with the assumption that 'init' works.")
+        vmorph = self.vmorph
         vmorph.init()
         promo_cls = None
         vmorph.promote(promo_cls=promo_cls)
@@ -156,10 +166,7 @@ class NormalUnit(TestCase):
     def test_use_stat_booster(self):
         """
         """
-        morph_id = self.morph_id
-        kwargs = self.kwargs
-        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
-        logger.debug("This test is being run with the assumption that 'init' works.")
+        vmorph = self.vmorph
         vmorph.init()
         item_name = "Angelic Robe"
         #with patch("dracogate.models.Morph.use_stat_booster") as MOCK_use_stat_booster:
@@ -175,10 +182,7 @@ class NormalUnit(TestCase):
     def test_use_stat_booster__no_simulate(self):
         """
         """
-        morph_id = self.morph_id
-        kwargs = self.kwargs
-        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
-        logger.debug("This test is being run with the assumption that 'init' works.")
+        vmorph = self.vmorph
         morph = vmorph.init()
         og_hp = morph.current_stats.HP
         item_name = "Angelic Robe"
@@ -190,6 +194,62 @@ class NormalUnit(TestCase):
         expected = og_hp + 7_00
         actual = morph2.current_stats.HP
         self.assertEqual(actual, expected)
+
+    def test_level_up__get_bounds(self):
+        """
+        """
+        vmorph = self.vmorph
+        vmorph.init()
+        expected = (2, 20)
+        actual = vmorph.level_up(num_levels=0)
+        self.assertTupleEqual(actual, expected)
+
+    def test_level_up__exceeds_max(self):
+        """
+        """
+        vmorph = self.vmorph
+        vmorph.init()
+        expected = (2, 20)
+        actual = vmorph.level_up(num_levels=0)
+        self.assertTupleEqual(actual, expected)
+
+    def test_promote__get_bounds(self):
+        """
+        """
+        vmorph = self.vmorph
+        vmorph.init()
+        actual = vmorph.promote(promo_cls=None)
+        expected = (["Master Lord"], 1)
+        self.assertTupleEqual(actual, expected)
+
+    def test_use_stat_booster__get_bounds(self):
+        """
+        """
+        vmorph = self.vmorph
+        morph = vmorph.init()
+        morph.current_stats.HP = 60
+        actual = vmorph.use_stat_booster(item_name="")
+        #actual = vmorph.use_stat_booster(item_name="Angelic Robe")
+        expected = {
+            "Angelic Robe": ("HP", 7),
+            "Energy Ring": ("Pow", 2),
+            "Secret Book": ("Skl", 2),
+            "Speedwings": ("Spd", 2),
+            "Goddess Icon": ("Lck", 2),
+            "Dragonshield": ("Def", 2),
+            "Talisman": ("Res", 2),
+            "Boots": ("Mov", 2),
+            "Body Ring": ("Con", 3),
+        }
+        self.assertDictEqual(actual, expected)
+
+    def test_use_stat_booster__stat_is_maxed(self):
+        """
+        """
+
+    def test_promote__no_promotions(self):
+        """
+        """
 
 class FatheredUnit(TestCase):
     """
@@ -208,12 +268,10 @@ class FatheredUnit(TestCase):
     def test_init(self):
         """
         """
-        kwargs = self.kwargs
-        options = self.options
         vmorph = self.vmorph
         with patch("aenir.morph.Morph4") as MOCK_get_morph:
             vmorph.init()
-        MOCK_get_morph.assert_called_once_with(kwargs['name'], father=options['father'])
+        MOCK_get_morph.assert_called_once_with("Lakche", father="Lex")
 
 class HardModeUnit(TestCase):
     """
@@ -232,12 +290,10 @@ class HardModeUnit(TestCase):
     def test_init(self):
         """
         """
-        kwargs = self.kwargs
-        options = self.options
         vmorph = self.vmorph
         with patch("aenir.morph.Morph6") as MOCK_get_morph:
             vmorph.init()
-        MOCK_get_morph.assert_called_once_with(kwargs['name'], hard_mode=options['hard_mode'])
+        MOCK_get_morph.assert_called_once_with("Rutger", hard_mode=True)
 
 class DeclinableUnit(TestCase):
     """
@@ -248,7 +304,7 @@ class DeclinableUnit(TestCase):
         """
         logger.debug("%s", self.id())
         morph_id = "DeclinableUnit"
-        kwargs = {'game_no': 6, "name": "Hugh", "options": {"number_of_declines": True}}
+        kwargs = {'game_no': 6, "name": "Hugh", "options": {"number_of_declines": 3}}
         self.vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
         self.options = kwargs.pop('options')
         self.kwargs = kwargs
@@ -256,12 +312,10 @@ class DeclinableUnit(TestCase):
     def test_init(self):
         """
         """
-        kwargs = self.kwargs
-        options = self.options
         vmorph = self.vmorph
         with patch("aenir.morph.Morph6") as MOCK_get_morph:
             vmorph.init()
-        MOCK_get_morph.assert_called_once_with(kwargs['name'], number_of_declines=options['number_of_declines'])
+        MOCK_get_morph.assert_called_once_with("Hugh", number_of_declines=3)
 
 class Gonzales(TestCase):
     """
@@ -353,7 +407,7 @@ class LyndisLeague(TestCase):
         vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
         with patch("aenir.morph.Morph7") as MOCK_get_morph:
             vmorph.init()
-        MOCK_get_morph.assert_called_once_with(kwargs['name'], lyn_mode=False)
+        MOCK_get_morph.assert_called_once_with("Lyn", lyn_mode=False)
 
     def test_init__lyn_mode(self):
         """
@@ -366,7 +420,7 @@ class LyndisLeague(TestCase):
         vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
         with patch("aenir.morph.Morph7") as MOCK_get_morph:
             vmorph.init()
-        MOCK_get_morph.assert_called_once_with(kwargs['name'], lyn_mode=True)
+        MOCK_get_morph.assert_called_once_with("Lyn", lyn_mode=True)
 
 class Ninian(TestCase):
     """
@@ -376,6 +430,36 @@ class Ninian(TestCase):
         """
         """
         logger.debug("%s", self.id())
+        kwargs = {'game_no': 7, "name": "Ninian", "options": {"lyn_mode": False}}
+        morph_id = "Ninian"
+        self.options = kwargs.pop('options')
+        self.kwargs = kwargs
+        self.morph_id = morph_id
+
+    def test_init(self):
+        """
+        """
+        morph_id = self.morph_id
+        kwargs = self.kwargs
+        options = self.options
+        kwargs["options"] = options
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        with patch("aenir.morph.Morph7") as MOCK_get_morph:
+            vmorph.init()
+        MOCK_get_morph.assert_called_once_with("Ninian", lyn_mode=False)
+
+    def test_init__lyn_mode(self):
+        """
+        """
+        morph_id = self.morph_id
+        kwargs = self.kwargs
+        options = self.options
+        options['lyn_mode'] = True
+        kwargs["options"] = options
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        with patch("aenir.morph.Morph7") as MOCK_get_morph:
+            vmorph.init()
+        MOCK_get_morph.assert_called_once_with("Ninian", lyn_mode=True)
 
 class Nils(TestCase):
     """
@@ -385,6 +469,36 @@ class Nils(TestCase):
         """
         """
         logger.debug("%s", self.id())
+        kwargs = {'game_no': 7, "name": "Nils", "options": {"lyn_mode": False}}
+        morph_id = "Nils"
+        self.options = kwargs.pop('options')
+        self.kwargs = kwargs
+        self.morph_id = morph_id
+
+    def test_init(self):
+        """
+        """
+        morph_id = self.morph_id
+        kwargs = self.kwargs
+        options = self.options
+        kwargs["options"] = options
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        with patch("aenir.morph.Morph7") as MOCK_get_morph:
+            vmorph.init()
+        MOCK_get_morph.assert_called_once_with("Nils", lyn_mode=False)
+
+    def test_init__lyn_mode(self):
+        """
+        """
+        morph_id = self.morph_id
+        kwargs = self.kwargs
+        options = self.options
+        options['lyn_mode'] = True
+        kwargs["options"] = options
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        with patch("aenir.morph.Morph7") as MOCK_get_morph:
+            vmorph.init()
+        MOCK_get_morph.assert_called_once_with("Nils", lyn_mode=True)
 
 class CreatureCampaignUnit(TestCase):
     """
@@ -394,6 +508,30 @@ class CreatureCampaignUnit(TestCase):
         """
         """
         logger.debug("%s", self.id())
+        kwargs = {'game_no': 8, "name": "Lyon"}
+        morph_id = "CreatureCampaignUnit"
+        self.vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+
+    def test_init(self):
+        """
+        """
+        vmorph = self.vmorph
+        with patch("aenir.morph.Morph8") as MOCK_get_morph:
+            vmorph.init()
+        MOCK_get_morph.assert_called_once_with("Lyon")
+
+    def test_level_up(self):
+        """
+        """
+        vmorph = self.vmorph
+        vmorph.init()
+        vmorph.level_up(num_levels=20 - vmorph.morph.current_lv)
+        vmorph.save()
+        vmorph2 = VirtualMorph.objects.get()
+        morph = vmorph2.init()
+        with self.assertRaises(LevelUpError):
+            morph.level_up(1)
+
 
 class ThracianUnit(TestCase):
     """
@@ -403,9 +541,35 @@ class ThracianUnit(TestCase):
         """
         """
         logger.debug("%s", self.id())
-        morph_id = "ThracianMorph"
+        morph_id = "ThracianUnit"
         kwargs = {'game_no': 5, "name": "Leaf"}
         self.vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+
+    def test_init(self):
+        """
+        """
+        vmorph = self.vmorph
+        with patch("aenir.morph.Morph5") as MOCK_get_morph:
+            vmorph.init()
+        MOCK_get_morph.assert_called_once_with("Leaf")
+
+    def test_equip_scroll(self):
+        """
+        """
+
+    def test_unequip_scroll(self):
+        """
+        """
+
+    def test_equip_scroll__get_bounds(self):
+        """
+        """
+        raise NotImplementedError
+
+    def test_unequip_scroll__get_bounds(self):
+        """
+        """
+        raise NotImplementedError
 
 class ElibeanUnit(TestCase):
     """
@@ -415,9 +579,26 @@ class ElibeanUnit(TestCase):
         """
         """
         logger.debug("%s", self.id())
-        morph_id = "ElibeanMorph"
+        morph_id = "ElibeanUnit"
         kwargs = {'game_no': 7, "name": "Eliwood"}
         self.vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+
+    def test_init(self):
+        """
+        """
+        vmorph = self.vmorph
+        with patch("aenir.morph.Morph7") as MOCK_get_morph:
+            vmorph.init()
+        MOCK_get_morph.assert_called_once_with("Eliwood")
+
+    def test_use_afas_drops(self):
+        """
+        """
+
+    def test_use_afas_drops__get_bounds(self):
+        """
+        """
+        raise NotImplementedError
 
 class SacredStonesUnit(TestCase):
     """
@@ -427,9 +608,47 @@ class SacredStonesUnit(TestCase):
         """
         """
         logger.debug("%s", self.id())
-        morph_id = "ElibeanMorph"
-        kwargs = {'game_no': 8, "name": "Seth"}
+        morph_id = "SacredStonesUnit"
+        kwargs = {'game_no': 8, "name": "Ephraim"}
         self.vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+
+    def test_init(self):
+        """
+        """
+        vmorph = self.vmorph
+        with patch("aenir.morph.Morph8") as MOCK_get_morph:
+            vmorph.init()
+        MOCK_get_morph.assert_called_once_with("Ephraim")
+
+    def test_use_metiss_tome(self):
+        """
+        """
+
+    def test_use_metiss_tome__get_bounds(self):
+        """
+        """
+        raise NotImplementedError
+
+
+class TraineeUnit(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+        morph_id = "TraineeUnit"
+        kwargs = {'game_no': 8, "name": "Ross"}
+        self.vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+
+    def test_promote__invalid_promotion(self):
+        """
+        """
+
+    def test_promote__level_too_low(self):
+        """
+        """
 
 class TelliusKnightUnit(TestCase):
     """
@@ -439,7 +658,51 @@ class TelliusKnightUnit(TestCase):
         """
         """
         logger.debug("%s", self.id())
-        morph_id = "ElibeanMorph"
+        morph_id = "SacredStonesUnit"
         kwargs = {'game_no': 9, "name": "Kieran"}
         self.vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+
+    def test_init(self):
+        """
+        """
+        vmorph = self.vmorph
+        with patch("aenir.morph.Morph9") as MOCK_get_morph:
+            vmorph.init()
+        MOCK_get_morph.assert_called_once_with("Kieran")
+
+    def test_equip_band(self):
+        """
+        """
+
+    def test_unequip_band(self):
+        """
+        """
+
+    def test_unequip_band__get_bounds(self):
+        """
+        """
+        raise NotImplementedError
+
+    def test_equip_band__get_bounds(self):
+        """
+        """
+        raise NotImplementedError
+
+    def test_equip_knight_ward(self):
+        """
+        """
+
+    def test_unequip_knight_ward(self):
+        """
+        """
+
+    def test_equip_knight_ward__get_bounds(self):
+        """
+        """
+        raise NotImplementedError
+
+    def test_unequip_knight_ward__get_bounds(self):
+        """
+        """
+        raise NotImplementedError
 

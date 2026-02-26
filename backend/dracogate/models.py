@@ -87,9 +87,12 @@ class VirtualMorph(models.Model):
             param_bounds = None
             self.history.append(("level_up", {"num_levels": num_levels}))
         except LevelUpError as err:
-            param_bounds = err.max_level
+            param_bounds = {
+                LevelUpError.Reason.NOT_POSITIVE: err.level_range,
+                LevelUpError.Reason.EXCEEDS_MAX: err.level_range,
+            }[err.reason]
             is_success = False
-        return (morph, param_bounds)
+        return param_bounds
 
     def promote(self, **kwargs):
         """
@@ -98,18 +101,19 @@ class VirtualMorph(models.Model):
         morph = self.morph
         promo_cls = kwargs.get("promo_cls")
         morph.promo_cls = promo_cls
-        is_success: bool
+        morph._set_min_promo_level()
+        min_promo_level = morph.min_promo_level
         try:
             morph.promote()
-            param_bounds = None
+            param_bounds = ([morph.current_cls], min_promo_level)
             self.history.append(("promote", {"promo_cls": promo_cls}))
         except PromotionError as err:
             param_bounds = {
-                err.Reason.NO_PROMOTIONS: (0, []),
-                err.Reason.LEVEL_TOO_LOW: (err.min_promo_level, []),
-                err.Reason.INVALID_PROMOTION: (0, err.promotion_list),
+                err.Reason.NO_PROMOTIONS: ([], min_promo_level),
+                err.Reason.LEVEL_TOO_LOW: ([], min_promo_level),
+                err.Reason.INVALID_PROMOTION: (err.promotion_list, min_promo_level),
             }[err.reason]
-        return (morph, param_bounds)
+        return param_bounds
 
     # FE5,6,7,8,9
     def use_stat_booster(self, **kwargs):
@@ -127,7 +131,7 @@ class VirtualMorph(models.Model):
                 err.Reason.NOT_FOUND: err.valid_stat_boosters,
                 err.Reason.STAT_IS_MAXED: err.max_stat,
             }[err.reason]
-        return (morph, param_bounds)
+        return param_bounds
 
     # FE5
     def equip_scroll(self, **kwargs):
