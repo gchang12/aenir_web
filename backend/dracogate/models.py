@@ -108,9 +108,9 @@ class VirtualMorph(models.Model):
             self.history.append(("promote", {"promo_cls": promo_cls}))
         except PromotionError as err:
             param_bounds = {
-                err.Reason.NO_PROMOTIONS: ([], min_promo_level),
-                err.Reason.LEVEL_TOO_LOW: ([], min_promo_level),
-                err.Reason.INVALID_PROMOTION: (err.promotion_list, min_promo_level),
+                err.Reason.NO_PROMOTIONS: ([], 0),
+                err.Reason.LEVEL_TOO_LOW: (None, min_promo_level),
+                err.Reason.INVALID_PROMOTION: (err.promotion_list, 0),
             }[err.reason]
         return param_bounds
 
@@ -121,13 +121,14 @@ class VirtualMorph(models.Model):
         """
         morph = self.morph
         item_name = kwargs.get("item_name")
+        logger.debug("item_name: %r", item_name)
         try:
             morph.use_stat_booster(item_name)
             param_bounds = None
             self.history.append(("use_stat_booster", {"item_name": item_name}))
         except StatBoosterError as err:
             param_bounds = {
-                err.Reason.NOT_FOUND: tuple(err.valid_stat_boosters),
+                err.Reason.NOT_FOUND: err.valid_stat_boosters,
                 err.Reason.STAT_IS_MAXED: err.max_stat,
             }[err.reason]
         return param_bounds
@@ -232,14 +233,14 @@ class VirtualMorph(models.Model):
         """
         morph = self.morph
         try:
-            morph.equip_knight_ward()
+            morph.unequip_knight_ward()
             param_bounds = None
             self.history.append(("unequip_knight_ward", {}))
         except KnightWardError as err:
             param_bounds = {
                 err.Reason.NOT_A_KNIGHT: err.knights,
                 #err.Reason.ALREADY_EQUIPPED: None,
-                err.Reason.NOT_EQUIPPED: err.valid_bands,
+                err.Reason.NOT_EQUIPPED: err.reason,
                 #err.Reason.NO_INVENTORY_SPACE: morph.equipped_bands,
             }[err.reason]
         return param_bounds
