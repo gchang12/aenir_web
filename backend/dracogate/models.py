@@ -104,13 +104,13 @@ class VirtualMorph(models.Model):
         min_promo_level = morph.min_promo_level
         try:
             morph.promote()
-            param_bounds = ([morph.current_cls], min_promo_level)
+            param_bounds = [morph.current_cls]
             self.history.append(("promote", {"promo_cls": promo_cls}))
         except PromotionError as err:
             param_bounds = {
-                err.Reason.NO_PROMOTIONS: ([], 0),
-                err.Reason.LEVEL_TOO_LOW: (None, min_promo_level),
-                err.Reason.INVALID_PROMOTION: (err.promotion_list, 0),
+                err.Reason.NO_PROMOTIONS: [],
+                err.Reason.LEVEL_TOO_LOW: min_promo_level,
+                err.Reason.INVALID_PROMOTION: err.promotion_list,
             }[err.reason]
         return param_bounds
 
@@ -147,7 +147,6 @@ class VirtualMorph(models.Model):
         except ScrollError as err:
             param_bounds = {
                 err.Reason.NOT_FOUND: err.valid_scrolls,
-                # TODO: Return list of items that can be tossed.
                 err.Reason.NO_INVENTORY_SPACE: err.valid_scrolls,
                 #err.Reason.NOT_EQUIPPED: err.valid_scrolls,
                 err.Reason.ALREADY_EQUIPPED: err.valid_scrolls,
@@ -167,7 +166,6 @@ class VirtualMorph(models.Model):
         except ScrollError as err:
             param_bounds = {
                 err.Reason.NOT_FOUND: err.valid_scrolls,
-                # TODO: Return list of items that can be tossed.
                 err.Reason.NO_INVENTORY_SPACE: err.valid_scrolls,
                 err.Reason.NOT_EQUIPPED: err.valid_scrolls,
                 #err.Reason.ALREADY_EQUIPPED: err.valid_scrolls,
@@ -221,7 +219,6 @@ class VirtualMorph(models.Model):
                 err.Reason.NOT_A_KNIGHT: err.knights,
                 err.Reason.ALREADY_EQUIPPED: err.valid_bands,
                 #err.Reason.NOT_EQUIPPED: None,
-                # TODO: Return list of items that can be tossed.
                 err.Reason.NO_INVENTORY_SPACE: err.valid_bands,
             }[err.reason]
         return param_bounds
@@ -259,7 +256,6 @@ class VirtualMorph(models.Model):
         except BandError as err:
             param_bounds = {
                 err.Reason.NOT_FOUND: err.valid_bands,
-                # TODO: Return list of items that can be tossed.
                 err.Reason.NO_INVENTORY_SPACE: err.valid_bands,
                 err.Reason.ALREADY_EQUIPPED: err.valid_bands,
             }[err.reason]
@@ -278,7 +274,6 @@ class VirtualMorph(models.Model):
         except BandError as err:
             param_bounds = {
                 err.Reason.NOT_FOUND: err.valid_bands,
-                # TODO: Return list of items that can be tossed.
                 err.Reason.NO_INVENTORY_SPACE: err.valid_bands,
                 err.Reason.NOT_EQUIPPED: err.valid_bands,
                 #err.Reason.ALREADY_EQUIPPED: err.valid_bands,

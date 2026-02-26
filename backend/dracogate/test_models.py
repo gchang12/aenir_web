@@ -23,8 +23,6 @@ from aenir_web._logging import logger
 
 from dracogate.models import VirtualMorph
 
-# TODO: Check the history attribute of each class
-
 class InitTest(TestCase):
     """
     """
@@ -230,8 +228,8 @@ class NormalUnit(TestCase):
         vmorph = self.vmorph
         vmorph.init()
         actual = vmorph.promote(promo_cls=None)
-        expected = (["Master Lord"], 1)
-        self.assertTupleEqual(actual, expected)
+        expected = ["Master Lord"]
+        self.assertListEqual(actual, expected)
         expected = [
             ("promote", {"promo_cls": None}),
         ]
@@ -270,11 +268,6 @@ class NormalUnit(TestCase):
         actual = vmorph.use_stat_booster(item_name="Angelic Robe")
         expected = ("HP", 60_00)
         self.assertTupleEqual(actual, expected)
-
-    def test_promote__no_promotions(self):
-        """
-        """
-        raise NotImplementedError
 
 class FatheredUnit(TestCase):
     """
@@ -485,6 +478,23 @@ class Ninian(TestCase):
         with patch("aenir.morph.Morph7") as MOCK_get_morph:
             vmorph.init()
         MOCK_get_morph.assert_called_once_with("Ninian", lyn_mode=True)
+
+    def test_promote__no_promotions(self):
+        """
+        """
+        morph_id = self.morph_id
+        kwargs = self.kwargs
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        vmorph.init()
+        vmorph.morph._set_max_level()
+        vmorph.level_up(num_levels=19)
+        actual = vmorph.promote(promo_cls="")
+        expected = []
+        self.assertListEqual(actual, expected)
+        actual = vmorph.history
+        expected = [
+            ("level_up", {"num_levels": 19}),
+        ]
 
 class Nils(TestCase):
     """
@@ -806,12 +816,29 @@ class TraineeUnit(TestCase):
     def test_promote__invalid_promotion(self):
         """
         """
-        raise NotImplementedError
+        vmorph = self.vmorph
+        vmorph.init()
+        vmorph.level_up(num_levels=9)
+        actual = vmorph.promote(promo_cls="")
+        expected = ("Fighter", "Pirate", "Journeyman (2)")
+        self.assertTupleEqual(actual, expected)
+        actual = vmorph.history
+        expected = [
+            ("level_up", {'num_levels': 9}),
+        ]
+        self.assertListEqual(actual, expected)
 
     def test_promote__level_too_low(self):
         """
         """
-        raise NotImplementedError
+        vmorph = self.vmorph
+        vmorph.init()
+        actual = vmorph.promote(promo_cls="Pirate")
+        expected = 10
+        self.assertEqual(actual, expected)
+        actual = vmorph.history
+        expected = []
+        self.assertListEqual(actual, expected)
 
 class TelliusKnightUnit(TestCase):
     """
