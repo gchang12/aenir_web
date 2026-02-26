@@ -143,11 +143,20 @@ LOGGING = {
             "class": "logging.StreamHandler",
             "formatter": "simple",
         },
+        "file": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            "filename": ".aenir_web.log",
+        },
     },
     "loggers": {
         "aenir_web": {
-            "handlers": ["console"],
+            "handlers": ["file"],
             "level": "DEBUG",
+        },
+        "aenir": {
+            "handlers": [],
+            "level": "NOTSET",
         }
     }
 }

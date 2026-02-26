@@ -488,6 +488,18 @@ class Ninian(TestCase):
             vmorph.init()
         MOCK_get_morph.assert_called_once_with("Ninian", lyn_mode=True)
 
+    def test_init__lyn_mode__no_simulation(self):
+        """
+        """
+        morph_id = self.morph_id
+        kwargs = self.kwargs
+        options = self.options
+        options['lyn_mode'] = True
+        kwargs["options"] = options
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+        with self.assertRaises(UnitNotFoundError):
+            vmorph.init()
+
     def test_promote__no_promotions(self):
         """
         """
