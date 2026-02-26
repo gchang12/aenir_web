@@ -126,7 +126,8 @@ class NormalUnit(TestCase):
         vmorph = self.vmorph
         vmorph.init()
         num_levels = 19
-        vmorph.level_up(num_levels=num_levels)
+        (is_success, _) = vmorph.level_up(num_levels=num_levels)
+        self.assertIs(is_success, True)
         self.assertTrue(vmorph.history)
         vmorph.save()
         morph = VirtualMorph.objects.get().init()
@@ -155,7 +156,8 @@ class NormalUnit(TestCase):
         vmorph = self.vmorph
         vmorph.init()
         promo_cls = None
-        vmorph.promote(promo_cls=promo_cls)
+        (is_success, _) = vmorph.promote(promo_cls=promo_cls)
+        self.assertIs(is_success, True)
         self.assertTrue(vmorph.history)
         vmorph.save()
         morph = VirtualMorph.objects.get().init()
@@ -187,7 +189,8 @@ class NormalUnit(TestCase):
         og_hp = morph.current_stats.HP
         item_name = "Angelic Robe"
         #with patch("dracogate.models.Morph.use_stat_booster") as MOCK_use_stat_booster:
-        vmorph.use_stat_booster(item_name=item_name)
+        (is_success, _) = vmorph.use_stat_booster(item_name=item_name)
+        self.assertIs(is_success, True)
         self.assertTrue(vmorph.history)
         vmorph.save()
         morph2 = VirtualMorph.objects.get().init()
@@ -201,19 +204,22 @@ class NormalUnit(TestCase):
         vmorph = self.vmorph
         vmorph.init()
         expected = (2, 20)
-        actual = vmorph.level_up(num_levels=0)
+        (is_success, actual) = vmorph.level_up(num_levels=0)
         self.assertTupleEqual(actual, expected)
         expected = []
         actual = vmorph.history
         self.assertListEqual(actual, expected)
+        self.assertIs(is_success, False)
 
     def test_level_up__exceeds_max(self):
         """
         """
         vmorph = self.vmorph
         vmorph.init()
-        vmorph.level_up(num_levels=19)
-        actual = vmorph.level_up(num_levels=1)
+        (is_success, _) = vmorph.level_up(num_levels=19)
+        self.assertIs(is_success, True)
+        (is_success, actual) = vmorph.level_up(num_levels=1)
+        self.assertIs(is_success, False)
         expected = 20
         self.assertEqual(actual, expected)
         expected = [
@@ -227,7 +233,7 @@ class NormalUnit(TestCase):
         """
         vmorph = self.vmorph
         vmorph.init()
-        actual = vmorph.promote(promo_cls=None)
+        (is_success, actual) = vmorph.promote(promo_cls=None)
         expected = ["Master Lord"]
         self.assertListEqual(actual, expected)
         expected = [
@@ -235,6 +241,7 @@ class NormalUnit(TestCase):
         ]
         actual = vmorph.history
         self.assertListEqual(actual, expected)
+        self.assertIs(is_success, True)
 
     def test_use_stat_booster__get_bounds(self):
         """
@@ -242,7 +249,7 @@ class NormalUnit(TestCase):
         vmorph = self.vmorph
         morph = vmorph.init()
         morph.current_stats.HP = 60
-        actual = vmorph.use_stat_booster(item_name="")
+        (is_success, actual) = vmorph.use_stat_booster(item_name="")
         expected = (
             "Angelic Robe",
             "Energy Ring",
@@ -258,6 +265,7 @@ class NormalUnit(TestCase):
         expected = []
         actual = vmorph.history
         self.assertListEqual(actual, expected)
+        self.assertIs(is_success, False)
 
     def test_use_stat_booster__stat_is_maxed(self):
         """
@@ -265,9 +273,10 @@ class NormalUnit(TestCase):
         vmorph = self.vmorph
         morph = vmorph.init()
         morph.current_stats.HP = 60_00
-        actual = vmorph.use_stat_booster(item_name="Angelic Robe")
+        (is_success, actual) = vmorph.use_stat_booster(item_name="Angelic Robe")
         expected = ("HP", 60_00)
         self.assertTupleEqual(actual, expected)
+        self.assertIs(is_success, False)
 
 class FatheredUnit(TestCase):
     """
@@ -488,13 +497,14 @@ class Ninian(TestCase):
         vmorph.init()
         vmorph.morph._set_max_level()
         vmorph.level_up(num_levels=19)
-        actual = vmorph.promote(promo_cls="")
+        (is_success, actual) = vmorph.promote(promo_cls="")
         expected = []
         self.assertListEqual(actual, expected)
         actual = vmorph.history
         expected = [
             ("level_up", {"num_levels": 19}),
         ]
+        self.assertIs(is_success, False)
 
 class Nils(TestCase):
     """
@@ -560,7 +570,8 @@ class CreatureCampaignUnit(TestCase):
         """
         vmorph = self.vmorph
         vmorph.init()
-        vmorph.level_up(num_levels=20 - vmorph.morph.current_lv)
+        (is_success, _) = vmorph.level_up(num_levels=20 - vmorph.morph.current_lv)
+        self.assertIs(is_success, True)
         vmorph.save()
         vmorph2 = VirtualMorph.objects.get()
         morph = vmorph2.init()
@@ -593,7 +604,8 @@ class ThracianUnit(TestCase):
         """
         vmorph = self.vmorph
         vmorph.init()
-        vmorph.equip_scroll(scroll_name="Odo")
+        (is_success, _) = vmorph.equip_scroll(scroll_name="Odo")
+        self.assertIs(is_success, True)
         # check history
         expected = [
             ("equip_scroll", {"scroll_name": "Odo"}),
@@ -604,7 +616,7 @@ class ThracianUnit(TestCase):
         vmorph.save()
         vmorph2 = VirtualMorph.objects.get()
         vmorph2.init()
-        actual = vmorph2.equip_scroll(scroll_name="Odo")
+        (is_success, actual) = vmorph2.equip_scroll(scroll_name="Odo")
         expected = {
             "Odo": False,
             "Baldo": True,
@@ -620,14 +632,17 @@ class ThracianUnit(TestCase):
             "Heim": True,
         }
         self.assertDictEqual(actual, expected)
+        self.assertIs(is_success, False)
 
     def test_unequip_scroll(self):
         """
         """
         vmorph = self.vmorph
         vmorph.init()
-        vmorph.equip_scroll(scroll_name="Odo")
-        vmorph.unequip_scroll(scroll_name="Odo")
+        (is_success, _) = vmorph.equip_scroll(scroll_name="Odo")
+        self.assertIs(is_success, True)
+        (is_success, _) = vmorph.unequip_scroll(scroll_name="Odo")
+        self.assertIs(is_success, True)
         expected = [
             ("equip_scroll", {"scroll_name": "Odo"}),
             ("unequip_scroll", {"scroll_name": "Odo"}),
@@ -650,7 +665,7 @@ class ThracianUnit(TestCase):
         """
         vmorph = self.vmorph
         vmorph.init()
-        actual = vmorph.equip_scroll(scroll_name="")
+        (is_success, actual) = vmorph.equip_scroll(scroll_name="")
         expected = {
             'Baldo': True,
             'Blaggi': True,
@@ -669,6 +684,7 @@ class ThracianUnit(TestCase):
         expected = []
         actual = vmorph.history
         self.assertListEqual(actual, expected)
+        self.assertIs(is_success, False)
 
     #@unittest.skip("I already have a means of determining what scrolls I've got on a unit.")
     def test_unequip_scroll__get_bounds(self):
@@ -676,7 +692,8 @@ class ThracianUnit(TestCase):
         """
         vmorph = self.vmorph
         vmorph.init()
-        actual = vmorph.unequip_scroll(scroll_name="")
+        (is_success, actual) = vmorph.unequip_scroll(scroll_name="")
+        self.assertIs(is_success, False)
         expected = {
             'Baldo': False,
             'Blaggi': False,
@@ -721,25 +738,29 @@ class ElibeanUnit(TestCase):
         """
         vmorph = self.vmorph
         vmorph.init()
-        vmorph.use_afas_drops()
+        (is_success, actual) = vmorph.use_afas_drops()
+        self.assertIs(is_success, True)
         vmorph.save()
         vmorph2 = VirtualMorph.objects.get()
         vmorph2.init()
-        actual = vmorph2.use_afas_drops()
+        (is_success, actual) = vmorph2.use_afas_drops()
         self.assertIsNotNone(actual)
         expected = [
             ["use_afas_drops", {}],
         ]
         actual = vmorph2.history
         self.assertListEqual(actual, expected)
+        self.assertIs(is_success, False)
 
     def test_use_afas_drops__get_bounds(self):
         """
         """
         vmorph = self.vmorph
         vmorph.init()
-        vmorph.use_afas_drops()
-        actual = vmorph.use_afas_drops()
+        (is_success, _) = vmorph.use_afas_drops()
+        self.assertIs(is_success, True)
+        (is_success, actual) = vmorph.use_afas_drops()
+        self.assertIs(is_success, False)
         expected = (1, "Lord")
         self.assertTupleEqual(actual, expected)
         expected = [
@@ -773,25 +794,29 @@ class SacredStonesUnit(TestCase):
         """
         vmorph = self.vmorph
         vmorph.init()
-        vmorph.use_metiss_tome()
+        (is_success, _) = vmorph.use_metiss_tome()
+        self.assertIs(is_success, True)
         vmorph.save()
         vmorph2 = VirtualMorph.objects.get()
         vmorph2.init()
-        actual = vmorph2.use_metiss_tome()
+        (is_success, actual) = vmorph2.use_metiss_tome()
         self.assertIsNotNone(actual)
         expected = [
             ["use_metiss_tome", {}],
         ]
         actual = vmorph2.history
         self.assertListEqual(actual, expected)
+        self.assertIs(is_success, False)
 
     def test_use_metiss_tome__get_bounds(self):
         """
         """
         vmorph = self.vmorph
         vmorph.init()
-        vmorph.use_metiss_tome()
-        actual = vmorph.use_metiss_tome()
+        (is_success, _) = vmorph.use_metiss_tome()
+        self.assertIs(is_success, True)
+        (is_success, actual) = vmorph.use_metiss_tome()
+        self.assertIs(is_success, False)
         expected = (4, "Lord")
         self.assertTupleEqual(actual, expected)
         expected = [
@@ -818,8 +843,9 @@ class TraineeUnit(TestCase):
         """
         vmorph = self.vmorph
         vmorph.init()
-        vmorph.level_up(num_levels=9)
-        actual = vmorph.promote(promo_cls="")
+        (is_success, _) = vmorph.level_up(num_levels=9)
+        self.assertIs(is_success, True)
+        (is_success, actual) = vmorph.promote(promo_cls="")
         expected = ("Fighter", "Pirate", "Journeyman (2)")
         self.assertTupleEqual(actual, expected)
         actual = vmorph.history
@@ -827,13 +853,15 @@ class TraineeUnit(TestCase):
             ("level_up", {'num_levels': 9}),
         ]
         self.assertListEqual(actual, expected)
+        self.assertIs(is_success, False)
 
     def test_promote__level_too_low(self):
         """
         """
         vmorph = self.vmorph
         vmorph.init()
-        actual = vmorph.promote(promo_cls="Pirate")
+        (is_success, actual) = vmorph.promote(promo_cls="Pirate")
+        self.assertIs(is_success, False)
         expected = 10
         self.assertEqual(actual, expected)
         actual = vmorph.history
@@ -865,7 +893,8 @@ class TelliusKnightUnit(TestCase):
         """
         vmorph = self.vmorph
         vmorph.init()
-        vmorph.equip_band(band_name="Sword Band")
+        (is_success, _) = vmorph.equip_band(band_name="Sword Band")
+        self.assertIs(is_success, True)
         # check history
         expected = [
             ("equip_band", {"band_name": "Sword Band"}),
@@ -876,7 +905,7 @@ class TelliusKnightUnit(TestCase):
         vmorph.save()
         vmorph2 = VirtualMorph.objects.get()
         vmorph2.init()
-        actual = vmorph2.equip_band(band_name="Sword Band")
+        (is_success, actual) = vmorph2.equip_band(band_name="Sword Band")
         expected = {
             "Sword Band": False,
             "Soldier Band": True,
@@ -897,8 +926,10 @@ class TelliusKnightUnit(TestCase):
         """
         vmorph = self.vmorph
         vmorph.init()
-        vmorph.equip_band(band_name="Sword Band")
-        vmorph.unequip_band(band_name="Sword Band")
+        (is_success, _) = vmorph.equip_band(band_name="Sword Band")
+        self.assertIs(is_success, True)
+        (is_success, _) = vmorph.unequip_band(band_name="Sword Band")
+        self.assertIs(is_success, True)
         expected = [
             ("equip_band", {"band_name": "Sword Band"}),
             ("unequip_band", {"band_name": "Sword Band"}),
@@ -920,7 +951,7 @@ class TelliusKnightUnit(TestCase):
         """
         vmorph = self.vmorph
         vmorph.init()
-        actual = vmorph.equip_band(band_name="")
+        (is_success, actual) = vmorph.equip_band(band_name="")
         expected = {
             "Sword Band": True,
             "Soldier Band": True,
@@ -938,13 +969,14 @@ class TelliusKnightUnit(TestCase):
         expected = []
         actual = vmorph.history
         self.assertListEqual(actual, expected)
+        self.assertIs(is_success, False)
 
     def test_unequip_band__get_bounds(self):
         """
         """
         vmorph = self.vmorph
         vmorph.init()
-        actual = vmorph.unequip_band(band_name="")
+        (is_success, actual) = vmorph.unequip_band(band_name="")
         expected = {
             "Sword Band": False,
             "Soldier Band": False,
@@ -962,6 +994,7 @@ class TelliusKnightUnit(TestCase):
         expected = []
         actual = vmorph.history
         self.assertListEqual(actual, expected)
+        self.assertIs(is_success, False)
 
     def test_equip_knight_ward__no_inventory_space(self):
         """
@@ -972,7 +1005,7 @@ class TelliusKnightUnit(TestCase):
             morph.equipped_bands[band] = None
             if len(morph.equipped_bands) == 8:
                 break
-        actual = vmorph.equip_knight_ward()
+        (is_success, actual) = vmorph.equip_knight_ward()
         expected = {
             "Sword Band": True,
             "Soldier Band": True,
@@ -990,13 +1023,14 @@ class TelliusKnightUnit(TestCase):
         expected = []
         actual = vmorph.history
         self.assertListEqual(actual, expected)
+        self.assertIs(is_success, False)
 
     def test_equip_knight_ward(self):
         """
         """
         vmorph = self.vmorph
         vmorph.init()
-        actual = vmorph.equip_knight_ward()
+        (is_success, actual) = vmorph.equip_knight_ward()
         self.assertIsNone(actual)
         vmorph.save()
         vmorph2 = VirtualMorph.objects.get()
@@ -1008,18 +1042,20 @@ class TelliusKnightUnit(TestCase):
         ]
         actual = vmorph.history
         self.assertListEqual(actual, expected)
+        self.assertIs(is_success, True)
 
     def test_unequip_knight_ward(self):
         """
         """
         vmorph = self.vmorph
         vmorph.init()
-        actual = vmorph.unequip_knight_ward()
+        (is_success, actual) = vmorph.unequip_knight_ward()
         expected = KnightWardError.Reason.NOT_EQUIPPED
         self.assertEqual(actual, expected)
         expected = []
         actual = vmorph.history
         self.assertListEqual(actual, expected)
+        self.assertIs(is_success, False)
 
 class TelliusNonKnightUnit(TestCase):
     """
@@ -1038,7 +1074,7 @@ class TelliusNonKnightUnit(TestCase):
         """
         vmorph = self.vmorph
         vmorph.init()
-        actual = vmorph.equip_knight_ward()
+        (is_success, actual) = vmorph.equip_knight_ward()
         expected = (
             'Titania',
             'Oscar',
@@ -1056,13 +1092,14 @@ class TelliusNonKnightUnit(TestCase):
         expected = []
         actual = vmorph.history
         self.assertListEqual(actual, expected)
+        self.assertIs(is_success, False)
 
     def test_unequip_knight_ward__get_bounds(self):
         """
         """
         vmorph = self.vmorph
         vmorph.init()
-        actual = vmorph.equip_knight_ward()
+        (is_success, actual) = vmorph.equip_knight_ward()
         expected = (
             'Titania',
             'Oscar',
@@ -1080,4 +1117,5 @@ class TelliusNonKnightUnit(TestCase):
         expected = []
         actual = vmorph.history
         self.assertListEqual(actual, expected)
+        self.assertIs(is_success, False)
 

@@ -46,41 +46,79 @@ class MorphViewSet(viewsets.ViewSet):
         morph_id = request.data.get("morph_id")
         game_no, name, kwargs = MorphSerializer.parse_init_args(request.data)
         morph = get_morph(game_no, name, **kwargs)
-        morph._set_max_level()
+        #morph._set_max_level()
         # name, current, max, absMax
         serializer_queue = MorphSerializer(morph)
         statdicts = serializer_queue.get_current_stats()
         data = serializer_queue.get_morph(*statdicts)
         id = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=kwargs).id
         return Response({
-            "pk": pk,
+            "pk": id,
             "morphId": morph_id,
             "initArgs": {
                 "gameNo": game_no,
                 "unitName": name,
                 "options": options,
             },
-            "stats": data,
+            "morph": data,
         })
 
     def retrieve(self, request, pk):
         """
         """
+        vmorph = VirtualMorph.objects.get(id=pk)
+        morph = vmorph.init()
+        serializer_queue = MorphSerializer(morph)
+        statdicts = serializer_queue.get_current_stats()
+        data = serializer_queue.get_morph(*statdicts)
+        return Response({
+            "morphId": vmorph.morph_id,
+            "initArgs": {
+                "gameNo": vmorph.game_no,
+                "unitName": vmorph.name,
+                "options": vmorph.options,
+            },
+            "morph": data,
+        })
 
-    def partial_update(self, request):
+    def partial_update(self, request, pk):
         """
         Simulates operations on a morph without modifying it.
         """
-        (vmorph, serializer_queue) = self.simulate_operation(request.data)
-        return serializer_queue.get_morph()
+        (vmorph, param_bounds) = self.simulate_operation(request.data)
+        morph = vmorph.init()
+        serializer_queue = MorphSerializer(morph)
+        data = serializer_queue.get_morph()
+        return Response({
+            "morphId": vmorph.morph_id,
+            "initArgs": {
+                "gameNo": vmorph.game_no,
+                "unitName": vmorph.name,
+                "options": vmorph.options,
+            },
+            "morph": data,
+            "paramBounds": param_bounds,
+        })
 
     def update(self, request, pk):
         """
         Performs operations on a morph and modifies it.
         """
-        (vmorph, serializer_queue) = self.simulate_operation(request.data)
+        (vmorph, param_bounds) = self.simulate_operation(request.data)
+        morph = vmorph.init()
+        serializer_queue = MorphSerializer(morph)
+        data = serializer_queue.get_morph()
         vmorph.save()
-        return serializer_queue.get_morph()
+        return Response({
+            "morphId": vmorph.morph_id,
+            "initArgs": {
+                "gameNo": vmorph.game_no,
+                "unitName": vmorph.name,
+                "options": vmorph.options,
+            },
+            "morph": data,
+            "paramBounds": param_bounds,
+        })
 
     def destroy(self, request, pk):
         """
@@ -101,9 +139,10 @@ class MorphViewSet(viewsets.ViewSet):
         morph_id = dictlike.get("morph_id")
         method = dictlike.get("method")
         kwargs = dictlike.get("kwargs")
-        vmorph = VirtualMorph.objects.get(pk=dictlike.get("pk"))
+        pk = int(dictlike.get("pk"))
+        vmorph = VirtualMorph.objects.get(id=pk)
         vmorph.init()
-        morph, param_bounds = {
+        param_bounds = {
             "level_up": vmorph.level_up,
             "promote": vmorph.promote,
             "use_stat_booster": vmorph.use_stat_booster,
@@ -114,6 +153,5 @@ class MorphViewSet(viewsets.ViewSet):
             "equip_scroll": vmorph.equip_scroll,
             "unequip_scroll": vmorph.unequip_scroll,
         }[method](**kwargs)
-        serializer_queue = MorphSerializer(morph)
-        return (vmorph, serializer_queue)
+        return (vmorph, param_bounds)
 
