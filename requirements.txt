@@ -1,5 +1,5 @@
 ## The following requirements were added by pip freeze:
-aenir==0.0.post1.dev1302
+aenir==0.0.post1.dev1306
 asgiref==3.11.0
 certifi==2026.1.4
 charset-normalizer==3.4.4
