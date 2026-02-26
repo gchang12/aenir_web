@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 from django.test import TestCase
 
-from aenir_web._logging import logger
+from dracogate._logging import logger
 
 RESOURCE_URL = "/dracogate/api/morphs/"
 

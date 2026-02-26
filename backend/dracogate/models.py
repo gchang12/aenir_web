@@ -20,7 +20,7 @@ from aenir._exceptions import (
     KnightWardError,
     InitError,
 )
-from aenir_web._logging import logger
+from dracogate._logging import logger
 
 User = get_user_model()
 
@@ -68,10 +68,9 @@ class VirtualMorph(models.Model):
         game_no = self.game_no
         name = self.name
         options = self.options
-        logger.debug("Now calling get_morph(%d, '%s', **%r)", game_no, name, options)
+        logger.debug("get_morph(%d, '%s', **%r)", game_no, name, options)
         morph = get_morph(game_no, name, **options)
         for method, kwargs in self.history:
-            logger.info("%s(**%r)", method, kwargs)
             getattr(morph, method)(**kwargs)
         self.morph = morph
         return morph

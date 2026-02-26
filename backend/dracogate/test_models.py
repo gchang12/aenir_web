@@ -19,7 +19,7 @@ from aenir._exceptions import (
     InitError,
 )
 
-from aenir_web._logging import logger
+from dracogate._logging import logger
 
 from dracogate.models import VirtualMorph
 

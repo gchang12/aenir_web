@@ -134,7 +134,7 @@ LOGGING = {
     "disable_existing_loggers": False,
     "formatters": {
         "simple": {
-            "format": "%(levelname)s:%(name)s.%(module)s.%(funcName)s: %(message)s",
+            "format": "%(levelname)s:%(name)s:%(module)s.%(funcName)s: %(message)s",
             "style": "%",
         },
     },
@@ -144,9 +144,10 @@ LOGGING = {
             "formatter": "simple",
         },
         "file": {
-            "level": "DEBUG",
             "class": "logging.FileHandler",
+            "formatter": "simple",
             "filename": ".aenir_web.log",
+            "mode": "w",
         },
     },
     "loggers": {
@@ -155,7 +156,7 @@ LOGGING = {
             "level": "DEBUG",
         },
         "aenir": {
-            "handlers": [],
+            "handlers": ["file"],
             "level": "NOTSET",
         }
     }
