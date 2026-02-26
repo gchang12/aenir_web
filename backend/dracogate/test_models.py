@@ -209,9 +209,10 @@ class NormalUnit(TestCase):
         """
         vmorph = self.vmorph
         vmorph.init()
-        expected = (2, 20)
-        actual = vmorph.level_up(num_levels=0)
-        self.assertTupleEqual(actual, expected)
+        vmorph.level_up(num_levels=19)
+        actual = vmorph.level_up(num_levels=1)
+        expected = 20
+        self.assertEqual(actual, expected)
 
     def test_promote__get_bounds(self):
         """
@@ -230,26 +231,28 @@ class NormalUnit(TestCase):
         morph.current_stats.HP = 60
         actual = vmorph.use_stat_booster(item_name="")
         #actual = vmorph.use_stat_booster(item_name="Angelic Robe")
-        expected = {
-            "Angelic Robe": ("HP", 7),
-            "Energy Ring": ("Pow", 2),
-            "Secret Book": ("Skl", 2),
-            "Speedwings": ("Spd", 2),
-            "Goddess Icon": ("Lck", 2),
-            "Dragonshield": ("Def", 2),
-            "Talisman": ("Res", 2),
-            "Boots": ("Mov", 2),
-            "Body Ring": ("Con", 3),
-        }
-        self.assertDictEqual(actual, expected)
+        expected = (
+            "Angelic Robe",
+            "Energy Ring",
+            "Secret Book",
+            "Speedwings",
+            "Goddess Icon",
+            "Dragonshield",
+            "Talisman",
+            "Boots",
+            "Body Ring",
+        )
+        self.assertTupleEqual(actual, expected)
 
     def test_use_stat_booster__stat_is_maxed(self):
         """
         """
+        raise NotImplementedError
 
     def test_promote__no_promotions(self):
         """
         """
+        raise NotImplementedError
 
 class FatheredUnit(TestCase):
     """
@@ -556,20 +559,57 @@ class ThracianUnit(TestCase):
     def test_equip_scroll(self):
         """
         """
+        raise NotImplementedError
 
     def test_unequip_scroll(self):
         """
         """
+        raise NotImplementedError
 
     def test_equip_scroll__get_bounds(self):
         """
         """
-        raise NotImplementedError
+        vmorph = self.vmorph
+        vmorph.init()
+        actual = vmorph.equip_scroll(scroll_name="")
+        expected = {
+            'Baldo': True,
+            'Blaggi': True,
+            'Dain': True,
+            'Fala': True,
+            'Heim': True,
+            'Hezul': True,
+            'Neir': True,
+            'Noba': True,
+            'Odo': True,
+            'Sety': True,
+            'Tordo': True,
+            'Ulir': True,
+        }
+        self.assertDictEqual(actual, expected)
 
+    #@unittest.skip("I already have a means of determining what scrolls I've got on a unit.")
     def test_unequip_scroll__get_bounds(self):
         """
         """
-        raise NotImplementedError
+        vmorph = self.vmorph
+        vmorph.init()
+        actual = vmorph.unequip_scroll(scroll_name="")
+        expected = {
+            'Baldo': False,
+            'Blaggi': False,
+            'Dain': False,
+            'Fala': False,
+            'Heim': False,
+            'Hezul': False,
+            'Neir': False,
+            'Noba': False,
+            'Odo': False,
+            'Sety': False,
+            'Tordo': False,
+            'Ulir': False,
+        }
+        self.assertDictEqual(actual, expected)
 
 class ElibeanUnit(TestCase):
     """
@@ -594,11 +634,24 @@ class ElibeanUnit(TestCase):
     def test_use_afas_drops(self):
         """
         """
+        vmorph = self.vmorph
+        vmorph.init()
+        vmorph.use_afas_drops()
+        vmorph.save()
+        vmorph2 = VirtualMorph.objects.get()
+        vmorph2.init()
+        actual = vmorph2.use_afas_drops()
+        self.assertIsNotNone(actual)
 
     def test_use_afas_drops__get_bounds(self):
         """
         """
-        raise NotImplementedError
+        vmorph = self.vmorph
+        vmorph.init()
+        vmorph.use_afas_drops()
+        actual = vmorph.use_afas_drops()
+        expected = (1, "Lord")
+        self.assertTupleEqual(actual, expected)
 
 class SacredStonesUnit(TestCase):
     """
@@ -623,11 +676,24 @@ class SacredStonesUnit(TestCase):
     def test_use_metiss_tome(self):
         """
         """
+        vmorph = self.vmorph
+        vmorph.init()
+        vmorph.use_metiss_tome()
+        vmorph.save()
+        vmorph2 = VirtualMorph.objects.get()
+        vmorph2.init()
+        actual = vmorph2.use_metiss_tome()
+        self.assertIsNotNone(actual)
 
     def test_use_metiss_tome__get_bounds(self):
         """
         """
-        raise NotImplementedError
+        vmorph = self.vmorph
+        vmorph.init()
+        vmorph.use_metiss_tome()
+        actual = vmorph.use_metiss_tome()
+        expected = (4, "Lord")
+        self.assertTupleEqual(actual, expected)
 
 
 class TraineeUnit(TestCase):
@@ -645,10 +711,12 @@ class TraineeUnit(TestCase):
     def test_promote__invalid_promotion(self):
         """
         """
+        raise NotImplementedError
 
     def test_promote__level_too_low(self):
         """
         """
+        raise NotImplementedError
 
 class TelliusKnightUnit(TestCase):
     """
@@ -673,17 +741,9 @@ class TelliusKnightUnit(TestCase):
     def test_equip_band(self):
         """
         """
-
-    def test_unequip_band(self):
-        """
-        """
-
-    def test_unequip_band__get_bounds(self):
-        """
-        """
         raise NotImplementedError
 
-    def test_equip_band__get_bounds(self):
+    def test_unequip_band(self):
         """
         """
         raise NotImplementedError
@@ -691,18 +751,135 @@ class TelliusKnightUnit(TestCase):
     def test_equip_knight_ward(self):
         """
         """
+        raise NotImplementedError
 
     def test_unequip_knight_ward(self):
         """
         """
+        raise NotImplementedError
+
+    def test_equip_band__get_bounds(self):
+        """
+        """
+        vmorph = self.vmorph
+        vmorph.init()
+        actual = vmorph.equip_band(band_name="")
+        expected = {
+            "Sword Band": True,
+            "Soldier Band": True,
+            "Fighter Band": True,
+            "Archer Band": True,
+            "Knight Band": True,
+            "Paladin Band": True,
+            "Pegasus Band": True,
+            "Wyvern Band": True,
+            "Mage Band": True,
+            "Priest Band": True,
+            "Thief Band": True,
+        }
+        self.assertDictEqual(actual, expected)
+
+    def test_unequip_band__get_bounds(self):
+        """
+        """
+        vmorph = self.vmorph
+        vmorph.init()
+        actual = vmorph.unequip_band(band_name="")
+        expected = {
+            "Sword Band": False,
+            "Soldier Band": False,
+            "Fighter Band": False,
+            "Archer Band": False,
+            "Knight Band": False,
+            "Paladin Band": False,
+            "Pegasus Band": False,
+            "Wyvern Band": False,
+            "Mage Band": False,
+            "Priest Band": False,
+            "Thief Band": False,
+        }
+        self.assertDictEqual(actual, expected)
+
+    def test_equip_knight_ward__no_inventory_space(self):
+        """
+        """
+        vmorph = self.vmorph
+        morph = vmorph.init()
+        for i in range(7):
+            morph.equipped_bands.append("")
+        actual = vmorph.equip_knight_ward()
+        expected = None
+        self.assertEqual(actual, expected)
 
     def test_equip_knight_ward__get_bounds(self):
         """
         """
-        raise NotImplementedError
+        vmorph = self.vmorph
+        vmorph.init()
+        actual = vmorph.equip_knight_ward()
+        expected = None
+        self.assertEqual(actual, expected)
 
     def test_unequip_knight_ward__get_bounds(self):
         """
         """
-        raise NotImplementedError
+        vmorph = self.vmorph
+        vmorph.init()
+        actual = vmorph.unequip_knight_ward()
+        expected = None
+        self.assertEqual(actual, expected)
+
+class TelliusNonKnightUnit(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+        morph_id = "TelliusNonKnightUnit"
+        kwargs = {'game_no': 9, "name": "Ike"}
+        self.vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+
+    def test_equip_knight_ward__get_bounds(self):
+        """
+        """
+        vmorph = self.vmorph
+        vmorph.init()
+        actual = vmorph.equip_knight_ward()
+        expected = (
+            'Titania',
+            'Oscar',
+            'Gatrie',
+            'Kieran',
+            'Brom',
+            'Nephenee',
+            'Astrid',
+            'Makalov',
+            'Devdan',
+            'Tauroneo',
+            'Geoffrey',
+        )
+        self.assertTupleEqual(actual, expected)
+
+    def test_unequip_knight_ward__get_bounds(self):
+        """
+        """
+        vmorph = self.vmorph
+        vmorph.init()
+        actual = vmorph.equip_knight_ward()
+        expected = (
+            'Titania',
+            'Oscar',
+            'Gatrie',
+            'Kieran',
+            'Brom',
+            'Nephenee',
+            'Astrid',
+            'Makalov',
+            'Devdan',
+            'Tauroneo',
+            'Geoffrey',
+        )
+        self.assertTupleEqual(actual, expected)
 

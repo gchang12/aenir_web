@@ -89,9 +89,8 @@ class VirtualMorph(models.Model):
         except LevelUpError as err:
             param_bounds = {
                 LevelUpError.Reason.NOT_POSITIVE: err.level_range,
-                LevelUpError.Reason.EXCEEDS_MAX: err.level_range,
+                LevelUpError.Reason.EXCEEDS_MAX: err.level_range[1],
             }[err.reason]
-            is_success = False
         return param_bounds
 
     def promote(self, **kwargs):
@@ -128,7 +127,7 @@ class VirtualMorph(models.Model):
             self.history.append(("use_stat_booster", {"item_name": item_name}))
         except StatBoosterError as err:
             param_bounds = {
-                err.Reason.NOT_FOUND: err.valid_stat_boosters,
+                err.Reason.NOT_FOUND: tuple(err.valid_stat_boosters),
                 err.Reason.STAT_IS_MAXED: err.max_stat,
             }[err.reason]
         return param_bounds
@@ -147,11 +146,12 @@ class VirtualMorph(models.Model):
         except ScrollError as err:
             param_bounds = {
                 err.Reason.NOT_FOUND: err.valid_scrolls,
-                err.Reason.NO_INVENTORY_SPACE: morph.inventory_size,
+                # TODO: Return list of items that can be tossed.
+                err.Reason.NO_INVENTORY_SPACE: err.valid_scrolls,
                 #err.Reason.NOT_EQUIPPED: err.valid_scrolls,
                 err.Reason.ALREADY_EQUIPPED: err.valid_scrolls,
             }[err.reason]
-        return (morph, param_bounds)
+        return param_bounds
 
     def unequip_scroll(self, **kwargs):
         """
@@ -166,11 +166,12 @@ class VirtualMorph(models.Model):
         except ScrollError as err:
             param_bounds = {
                 err.Reason.NOT_FOUND: err.valid_scrolls,
-                err.Reason.NO_INVENTORY_SPACE: morph.inventory_size,
-                #err.Reason.NOT_EQUIPPED: err.valid_scrolls,
-                err.Reason.ALREADY_EQUIPPED: err.valid_scrolls,
+                # TODO: Return list of items that can be tossed.
+                err.Reason.NO_INVENTORY_SPACE: err.valid_scrolls,
+                err.Reason.NOT_EQUIPPED: err.valid_scrolls,
+                #err.Reason.ALREADY_EQUIPPED: err.valid_scrolls,
             }[err.reason]
-        return (morph, param_bounds)
+        return param_bounds
 
     # FE7
     def use_afas_drops(self, **kwargs):
@@ -183,12 +184,10 @@ class VirtualMorph(models.Model):
             param_bounds = None
             self.history.append(("use_afas_drops", {}))
         except GrowthsItemError as err:
-            err.consumption_date = (0, "")
             param_bounds = {
-                # TODO: Insert consumption date.
                 err.Reason.ALREADY_CONSUMED: err.consumption_date,
             }[err.reason]
-        return (morph, param_bounds)
+        return param_bounds
 
     # FE8
     def use_metiss_tome(self, **kwargs):
@@ -197,14 +196,14 @@ class VirtualMorph(models.Model):
         """
         morph = self.morph
         try:
-            morph.use_metiss_drops()
+            morph.use_metiss_tome()
             param_bounds = None
-            self.history.append(("use_afas_drops", {}))
+            self.history.append(("use_metiss_tome", {}))
         except GrowthsItemError as err:
             param_bounds = {
-                err.Reason.ALREADY_CONSUMED: morph._meta["Metis's Tome"],
+                err.Reason.ALREADY_CONSUMED: err.consumption_date,
             }[err.reason]
-        return (morph, param_bounds)
+        return param_bounds
 
     # FE8
     def equip_knight_ward(self, **kwargs):
@@ -216,14 +215,15 @@ class VirtualMorph(models.Model):
             morph.equip_knight_ward()
             param_bounds = None
             self.history.append(("equip_knight_ward", {}))
-        except GrowthsItemError as err:
+        except KnightWardError as err:
             param_bounds = {
                 err.Reason.NOT_A_KNIGHT: err.knights,
                 err.Reason.ALREADY_EQUIPPED: err.valid_bands,
                 #err.Reason.NOT_EQUIPPED: None,
-                err.Reason.NO_INVENTORY_SPACE: morph.inventory_size,
+                # TODO: Return list of items that can be tossed.
+                err.Reason.NO_INVENTORY_SPACE: err.valid_bands,
             }[err.reason]
-        return (morph, param_bounds)
+        return param_bounds
 
     # FE8
     def unequip_knight_ward(self, **kwargs):
@@ -235,14 +235,14 @@ class VirtualMorph(models.Model):
             morph.equip_knight_ward()
             param_bounds = None
             self.history.append(("unequip_knight_ward", {}))
-        except GrowthsItemError as err:
+        except KnightWardError as err:
             param_bounds = {
                 err.Reason.NOT_A_KNIGHT: err.knights,
                 #err.Reason.ALREADY_EQUIPPED: None,
                 err.Reason.NOT_EQUIPPED: err.valid_bands,
-                err.Reason.NO_INVENTORY_SPACE: morph.inventory_size,
+                #err.Reason.NO_INVENTORY_SPACE: morph.equipped_bands,
             }[err.reason]
-        return (morph, param_bounds)
+        return param_bounds
 
     # FE9
     def equip_band(self, **kwargs):
@@ -258,11 +258,11 @@ class VirtualMorph(models.Model):
         except BandError as err:
             param_bounds = {
                 err.Reason.NOT_FOUND: err.valid_bands,
-                err.Reason.NO_INVENTORY_SPACE: morph.inventory_size,
-                #err.Reason.NOT_EQUIPPED: err.valid_scrolls,
+                # TODO: Return list of items that can be tossed.
+                err.Reason.NO_INVENTORY_SPACE: err.valid_bands,
                 err.Reason.ALREADY_EQUIPPED: err.valid_bands,
             }[err.reason]
-        return (morph, param_bounds)
+        return param_bounds
 
     def unequip_band(self, **kwargs):
         """
@@ -277,9 +277,10 @@ class VirtualMorph(models.Model):
         except BandError as err:
             param_bounds = {
                 err.Reason.NOT_FOUND: err.valid_bands,
-                err.Reason.NO_INVENTORY_SPACE: morph.inventory_size,
-                #err.Reason.NOT_EQUIPPED: err.valid_scrolls,
-                err.Reason.ALREADY_EQUIPPED: err.valid_bands,
+                # TODO: Return list of items that can be tossed.
+                err.Reason.NO_INVENTORY_SPACE: err.valid_bands,
+                err.Reason.NOT_EQUIPPED: err.valid_bands,
+                #err.Reason.ALREADY_EQUIPPED: err.valid_bands,
             }[err.reason]
-        return (morph, param_bounds)
+        return param_bounds
 
