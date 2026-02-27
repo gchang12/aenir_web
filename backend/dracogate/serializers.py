@@ -8,6 +8,7 @@ from rest_framework import serializers
 
 class InitArgs(serializers.Serializer):
     """
+    Validates initialization arguments for Morph class.
     """
     game_no = serializers.IntegerField(
         min_value=4,
@@ -57,6 +58,7 @@ class InitArgs(serializers.Serializer):
 
 class LevelUpArgs(serializers.Serializer):
     """
+    Validates argument for `level_up`.
     """
     num_levels = serializers.IntegerField(
         min_value=0,
@@ -65,6 +67,7 @@ class LevelUpArgs(serializers.Serializer):
 
 class PromoteArgs(serializers.Serializer):
     """
+    Validates argument for `promote`.
     """
     promo_cls = serializers.CharField(
         allow_null=True,
@@ -72,6 +75,7 @@ class PromoteArgs(serializers.Serializer):
 
 class UseStatBoosterArgs(serializers.Serializer):
     """
+    Validates argument for `use_stat_booster`.
     """
     item_name = serializers.ChoiceField(
         choices=(
@@ -111,6 +115,7 @@ class UseStatBoosterArgs(serializers.Serializer):
 
 class ScrollEquipmentArgs(serializers.Serializer):
     """
+    Validates argument for `equip_scroll` and `unequip_scroll`.
     """
     scroll_name = serializers.ChoiceField(
         choices=(
@@ -131,6 +136,7 @@ class ScrollEquipmentArgs(serializers.Serializer):
 
 class BandEquipmentArgs(serializers.Serializer):
     """
+    Validates argument for `equip_band` and `unequip_band`.
     """
     band_name = serializers.ChoiceField(
         choices=(
@@ -150,6 +156,7 @@ class BandEquipmentArgs(serializers.Serializer):
 
 class MorphSerializer:#(serializers.Serializer):
     """
+    Methods to serialize stats.
     """
     #unitClass = serializers.CharField()
     #level = serializers.JSONField()
@@ -157,6 +164,7 @@ class MorphSerializer:#(serializers.Serializer):
 
     def __init__(self, morph):
         """
+        Stores 'morph' for future calculations.
         """
         self.morph = morph
         #self.stats = StatsSerializer(morph)
@@ -182,19 +190,19 @@ class MorphSerializer:#(serializers.Serializer):
         max_stats = morph.max_stats.as_dict()
         absmax_stats = dict(zip(morph.Stats.STAT_LIST(), morph.Stats.ABSOLUTE_MAXES()))
         statdicts = (current_stats, max_stats, absmax_stats)
-        return list(map(lambda dictlike: self.divide_by_100(dictlike), statdicts))
+        return map(lambda dictlike: self.divide_by_100(dictlike), statdicts)
 
-    # NOTE: Only for before-after previews of stat-growth enhancements (e.g. Afa's or Metis's).
     def get_growth_rates(self):
         """
         Bundles growth augments for FE5, FE7, FE8, and FE9.
+        For before-after previews of stat-growth enhancements (e.g. Afa's or Metis's).
         """
         morph = self.morph
         old_growths = morph._og_growth_rates.as_dict()
         new_growths = morph.growth_rates.as_dict()
-        growths_diff = morph.get_growth_augment().as_dict()
+        growths_diff = morph.get_growths_augment().as_dict()
         statdicts = (old_growths, new_growths, growths_diff)
-        return list(map(lambda dictlike: self.divide_by_100(dictlike), statdicts))
+        return map(lambda dictlike: self.nullify_zero_growth_stats(dictlike), map(lambda dictlike: self.divide_by_100(dictlike), statdicts))
 
     def get_level_up_bonuses_with_augment(self, num_levels: int):
         """
@@ -202,34 +210,25 @@ class MorphSerializer:#(serializers.Serializer):
         """
         morph = self.morph
         bonus_without_augment = (morph._og_growth_rates * num_levels).as_dict()
-        augment = (morph.get_growth_augment() * -num_levels).as_dict()
-        for stat in morph.Stats.ZERO_GROWTH_STAT_LIST():
-            bonus_without_augment[stat] = None
-            augment[stat] = None
+        augment = (morph.get_growths_augment() * num_levels).as_dict()
         statdicts = (bonus_without_augment, augment)
-        return list(map(lambda dictlike: self.divide_by_100(dictlike), statdicts))
+        return map(lambda dictlike: self.nullify_zero_growth_stats(dictlike), map(lambda dictlike: self.divide_by_100(dictlike), statdicts))
 
-    # NOTE: Can't this calculation be done in the front-end?
-    def get_stat_differences(self, morph2):
+    def nullify_zero_growth_stats(self, dictlike):
         """
-        Bundles stat differences between Morphs into native Python data-type.
+        Nullifies values in a dict that correspond to stats that cannot grow.
         """
-        morph1 = self.morph
-        morph_diff = (morph1.current_stats > morph2.current_stats).as_dict()
-        statdicts = (morph_diff,)
-        return list(map(lambda dictlike: self.divide_by_100(dictlike), statdicts))
+        morph = self.morph
+        zero_growth_stats = morph.Stats.ZERO_GROWTH_STAT_LIST()
+        new_dictlike = dict(map(lambda stat_value: (stat_value[0], None) if stat_value[0] in zero_growth_stats else stat_value, dictlike.items()))
+        return new_dictlike
 
     @staticmethod
     def divide_by_100(dictlike):
         """
+        Divides all non-null values in a dict by 100
         """
-        new_dictlike = {}
-        for stat, value in dictlike.items():
-            if value is None:
-                new_value = None
-            else:
-                new_value = value / 100
-            new_dictlike[stat] = new_value
+        new_dictlike = {stat: (None if value is None else value / 100) for stat, value in dictlike.items()}
         return new_dictlike
 
     @staticmethod

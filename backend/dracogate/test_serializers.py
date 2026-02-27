@@ -121,7 +121,7 @@ class NormalUnit(TestCase):
                 "Mov": 15.0,
             },
         ]
-        actual = serializer.get_current_stats()
+        actual = list(serializer.get_current_stats())
         logger.debug("actual: %r", actual)
         logger.debug("expected: %r", expected)
         self.assertListEqual(actual, expected)
@@ -192,6 +192,7 @@ class GrowthRates(TestCase):
         """
         """
         logger.debug("%s", self.id())
+        self.kwargs = {"game_no": 7, "name": "Eliwood"}
         # Eliwood
         self.stats = {
             "growths": {
@@ -239,6 +240,114 @@ class GrowthRates(TestCase):
                 "Mov": 5_00,
             },
         }
+
+    def test_get_growth_rates(self):
+        """
+        """
+        expected = [
+            {
+                "HP": 0.80,
+                "Pow": 0.45,
+                "Skl": 0.50,
+                "Spd": 0.40,
+                "Lck": 0.45,
+                "Def": 0.30,
+                "Res": 0.35,
+                "Con": None,
+                "Mov": None,
+            },
+            {
+                "HP": 0.85,
+                "Pow": 0.50,
+                "Skl": 0.55,
+                "Spd": 0.45,
+                "Lck": 0.50,
+                "Def": 0.35,
+                "Res": 0.40,
+                "Con": None,
+                "Mov": None,
+            },
+            {
+                "HP": 0.05,
+                "Pow": 0.05,
+                "Skl": 0.05,
+                "Spd": 0.05,
+                "Lck": 0.05,
+                "Def": 0.05,
+                "Res": 0.05,
+                "Con": None,
+                "Mov": None,
+            },
+        ]
+        morph = get_morph(**self.kwargs)
+        morph.use_afas_drops()
+        serializer = MorphSerializer(morph)
+        actual = list(serializer.get_growth_rates())
+        self.assertListEqual(actual, expected)
+
+    def test_get_level_up_bonuses_with_augment(self):
+        """
+        """
+        num_levels = 19
+        expected = [
+            {
+                "HP": 15.20,
+                "Pow": 8.55,
+                "Skl": 9.50,
+                "Spd": 7.60,
+                "Lck": 8.55,
+                "Def": 5.70,
+                "Res": 6.65,
+                "Con": None,
+                "Mov": None,
+            },
+            {
+                "HP": 0.95,
+                "Pow": 0.95,
+                "Skl": 0.95,
+                "Spd": 0.95,
+                "Lck": 0.95,
+                "Def": 0.95,
+                "Res": 0.95,
+                "Con": None,
+                "Mov": None,
+            },
+        ]
+        morph = get_morph(**self.kwargs)
+        morph.use_afas_drops()
+        serializer = MorphSerializer(morph)
+        actual = list(serializer.get_level_up_bonuses_with_augment(num_levels))
+        self.assertListEqual(actual, expected)
+
+    def test_nullify_zero_growth_rates(self):
+        """
+        """
+        morph = get_morph(**self.kwargs)
+        serializer = MorphSerializer(morph)
+        dictlike = {
+            "HP": 0.80,
+            "Pow": 0.45,
+            "Skl": 0.50,
+            "Spd": 0.40,
+            "Lck": 0.45,
+            "Def": 0.30,
+            "Res": 0.35,
+            "Con": 0.0,
+            "Mov": 0.0,
+        }
+        actual = serializer.nullify_zero_growth_stats(dictlike)
+        expected = {
+            "HP": 0.80,
+            "Pow": 0.45,
+            "Skl": 0.50,
+            "Spd": 0.40,
+            "Lck": 0.45,
+            "Def": 0.30,
+            "Res": 0.35,
+            "Con": None,
+            "Mov": None,
+        }
+        self.assertDictEqual(actual, expected)
 
     def test_divide_by_100(self):
         """
