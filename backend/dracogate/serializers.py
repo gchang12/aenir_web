@@ -1,6 +1,9 @@
 """
 """
 
+import io
+
+from rest_framework import serializers
 from rest_framework import serializers
 
 class InitArgs(serializers.Serializer):
@@ -11,100 +14,139 @@ class InitArgs(serializers.Serializer):
         max_value=9,
     )
     name = serializers.CharField(
-        min_length=1,
         max_length=9,
     )
-    father = serializers.CharField(
+    father = serializers.ChoiceField(
         allow_null=True,
-        default=None,
-        min_length=1,
-        max_length=9,
+        required=False,
+        choices=(
+            'Arden',
+            'Azel',
+            'Alec',
+            'Claude',
+            'Jamka',
+            'Dew',
+            'Noish',
+            'Fin',
+            'Beowolf',
+            'Holyn',
+            'Midayle',
+            'Levin',
+            'Lex',
+        ),
     )
-    route = serializers.CharField(
+    route = serializers.ChoiceField(
         allow_null=True,
-        default=None,
-        min_length=5,
-        max_length=6,
+        required=False,
+        choices=("Lalum", "Elphin"),
     )
     number_of_declines = serializers.IntegerField(
         allow_null=True,
-        default=None,
+        required=False,
         min_value=0,
         max_value=3,
     )
-    lyn_mode = serializers.BooleanField(
-        allow_null=True,
-        default=None,
-    )
     hard_mode = serializers.BooleanField(
         allow_null=True,
-        default=None,
+        required=False,
+    )
+    lyn_mode = serializers.BooleanField(
+        allow_null=True,
+        required=False,
     )
 
 class LevelUpArgs(serializers.Serializer):
     """
     """
     num_levels = serializers.IntegerField(
-        min_value=1,
+        min_value=0,
+        max_value=20,
     )
 
 class PromoteArgs(serializers.Serializer):
     """
     """
     promo_cls = serializers.CharField(
-        min_value=1,
         allow_null=True,
     )
 
 class UseStatBoosterArgs(serializers.Serializer):
     """
     """
-    item_name = serializers.CharField(
-        min_value=1,
+    item_name = serializers.ChoiceField(
+        choices=(
+            # FE5
+            "Luck Ring",
+            "Life Ring",
+            "Speed Ring",
+            "Magic Ring",
+            "Power Ring",
+            "Body Ring",
+            "Shield Ring",
+            "Skill Ring",
+            "Leg Ring",
+            # GBA
+            "Angelic Robe",
+            "Energy Ring",
+            "Secret Book",
+            "Speedwings",
+            "Goddess Icon",
+            "Dragonshield",
+            "Talisman",
+            "Boots",
+            "Body Ring",
+            # FE9
+            "Seraph Robe",
+            "Energy Drop",
+            "Spirit Dust",
+            #"Secret Book",
+            "Speedwing",
+            "Ashera Icon",
+            "Dracoshield",
+            #"Talisman",
+            #"Boots",
+            #"Body Ring",
+        ),
     )
 
 class ScrollEquipmentArgs(serializers.Serializer):
     """
     """
-    scroll_name = serializers.CharField(
-        min_value=1,
+    scroll_name = serializers.ChoiceField(
+        choices=(
+            'Baldo',
+            'Blaggi',
+            'Dain',
+            'Fala',
+            'Heim',
+            'Hezul',
+            'Neir',
+            'Noba',
+            'Odo',
+            'Sety',
+            'Tordo',
+            'Ulir',
+        ),
     )
 
 class BandEquipmentArgs(serializers.Serializer):
     """
     """
-    band_name = serializers.CharField(
-        min_value=1,
+    band_name = serializers.ChoiceField(
+        choices=(
+            'Sword Band',
+            'Soldier Band',
+            'Fighter Band',
+            'Archer Band',
+            'Knight Band',
+            'Paladin Band',
+            'Pegasus Band',
+            'Wyvern Band',
+            'Mage Band',
+            'Priest Band',
+            'Thief Band',
+        ),
     )
-
-'''
-# init
-game_no
-name
-## Options
-father
-number_of_declines
-lyn_mode
-hard_mode
-route
-# level_up
-num_levels
-# promote
-promo_cls
-# use_stat_booster
-item_name
-# equip_scroll
-scroll_name
-# unequip_scroll
-scroll_name
-# use_afas_drops
-# use_metiss_tome
-# equip_knight_ward
-# equip_band
-band_name
-# unequip_band
-band_name
-'''
 
 class MorphSerializer:#(serializers.Serializer):
     """
