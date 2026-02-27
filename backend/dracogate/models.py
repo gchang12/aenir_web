@@ -92,7 +92,10 @@ class VirtualMorph(models.Model):
             is_success = True
         except LevelUpError as err:
             param_bounds = {
+                # Invalid range. Please select a valid level.
                 LevelUpError.Reason.NOT_POSITIVE: err.level_range,
+                # Level has been maxed out at: #1! Please select valid level.
+                # TODO: Fix in aenir.
                 LevelUpError.Reason.EXCEEDS_MAX: err.level_range[1],
             }[err.reason]
             is_success = False
@@ -125,7 +128,7 @@ class VirtualMorph(models.Model):
                 ]
             except PromotionError as err2:
                 if err2.reason == PromotionError.Reason.NO_PROMOTIONS:
-                    param_bounds = []
+                    param_bounds = None
                 elif err2.reason == PromotionError.Reason.INVALID_PROMOTION:
                     param_bounds = []
                     for promo_cls2 in err2.promotion_list:
@@ -133,6 +136,7 @@ class VirtualMorph(models.Model):
                         morph._set_min_promo_level()
                         param_bounds.append((morph.min_promo_level, promo_cls2))
             is_success = False
+        # param_bounds: [(minpromolv: int, promocls: str)] | None
         return (is_success, param_bounds)
 
     # FE5,6,7,8,9
@@ -151,7 +155,9 @@ class VirtualMorph(models.Model):
             is_success = True
         except StatBoosterError as err:
             param_bounds = {
+                # (Pass in "" as argument to get stat-booster list)
                 err.Reason.NOT_FOUND: err.valid_stat_boosters,
+                # stat #1 is already maxed at #2!
                 err.Reason.STAT_IS_MAXED: err.max_stat,
             }[err.reason]
             is_success = False
@@ -172,9 +178,12 @@ class VirtualMorph(models.Model):
             is_success = True
         except ScrollError as err:
             param_bounds = {
+                # (Pass in "" as argument to get list of scrolls)
                 err.Reason.NOT_FOUND: err.valid_scrolls,
+                # No inventory space. Please deselect some scrolls.
                 err.Reason.NO_INVENTORY_SPACE: err.valid_scrolls,
                 #err.Reason.NOT_EQUIPPED: err.valid_scrolls,
+                # (scroll_name) is already equipped!
                 err.Reason.ALREADY_EQUIPPED: err.valid_scrolls,
             }[err.reason]
             is_success = False
@@ -194,8 +203,11 @@ class VirtualMorph(models.Model):
             is_success = True
         except ScrollError as err:
             param_bounds = {
+                # That scroll was not found! Here is a list of valid scrolls. (Or you know, just an easy means of getting the scroll list)
                 err.Reason.NOT_FOUND: err.valid_scrolls,
+                # No inventory space! Please unequip some scrolls.
                 err.Reason.NO_INVENTORY_SPACE: err.valid_scrolls,
+                # (scroll_name) is not equipped! List of scrolls that ARE equipped.
                 err.Reason.NOT_EQUIPPED: err.valid_scrolls,
                 #err.Reason.ALREADY_EQUIPPED: err.valid_scrolls,
             }[err.reason]
@@ -216,6 +228,7 @@ class VirtualMorph(models.Model):
             is_success = True
         except GrowthsItemError as err:
             param_bounds = {
+                # (unit) has already consumed the item when they were a Lv#1 #2.
                 err.Reason.ALREADY_CONSUMED: err.consumption_date,
             }[err.reason]
             is_success = False
@@ -235,6 +248,7 @@ class VirtualMorph(models.Model):
             is_success = True
         except GrowthsItemError as err:
             param_bounds = {
+                # (unit) has already consumed the item when they were a Lv#1 #2.
                 err.Reason.ALREADY_CONSUMED: err.consumption_date,
             }[err.reason]
             is_success = False
@@ -254,9 +268,12 @@ class VirtualMorph(models.Model):
             is_success = True
         except KnightWardError as err:
             param_bounds = {
+                # (unit) is not a knight and cannot equip the Knight Ward. List of knights:
                 err.Reason.NOT_A_KNIGHT: err.knights,
+                # Cannot equip Knight Ward. List of gear that CAN be equipped:
                 err.Reason.ALREADY_EQUIPPED: err.valid_bands,
                 #err.Reason.NOT_EQUIPPED: None,
+                # Inventory is full. Please unequip some items.
                 err.Reason.NO_INVENTORY_SPACE: err.valid_bands,
             }[err.reason]
             is_success = False
@@ -276,9 +293,12 @@ class VirtualMorph(models.Model):
             is_success = True
         except KnightWardError as err:
             param_bounds = {
+                # (unit) is not a knight and cannot equip the Knight Ward. List of knights:
                 err.Reason.NOT_A_KNIGHT: err.knights,
                 #err.Reason.ALREADY_EQUIPPED: None,
-                err.Reason.NOT_EQUIPPED: err.reason,
+                # Cannot unequip Knight Ward. List of gear that CAN be unequipped:
+                # TODO: Change this in aenir.
+                err.Reason.NOT_EQUIPPED: {band_name: (band_name in morph.equipped_bands) for band_name in morph.band_dict},
                 #err.Reason.NO_INVENTORY_SPACE: morph.equipped_bands,
             }[err.reason]
             is_success = False
@@ -299,8 +319,11 @@ class VirtualMorph(models.Model):
             is_success = True
         except BandError as err:
             param_bounds = {
+                # (Pass in "" as argument to get list of bands)
                 err.Reason.NOT_FOUND: err.valid_bands,
+                # No inventory space. Please deselect some bands.
                 err.Reason.NO_INVENTORY_SPACE: err.valid_bands,
+                # (band_name) is already equipped!
                 err.Reason.ALREADY_EQUIPPED: err.valid_bands,
             }[err.reason]
             is_success = False
@@ -320,8 +343,11 @@ class VirtualMorph(models.Model):
             is_success = True
         except BandError as err:
             param_bounds = {
+                # That band was not found! Here is a list of valid bands. (Or you know, just an easy means of getting the band list)
                 err.Reason.NOT_FOUND: err.valid_bands,
+                # No inventory space! Please unequip some bands.
                 err.Reason.NO_INVENTORY_SPACE: err.valid_bands,
+                # (band_name) is not equipped! List of bands that ARE equipped.
                 err.Reason.NOT_EQUIPPED: err.valid_bands,
                 #err.Reason.ALREADY_EQUIPPED: err.valid_bands,
             }[err.reason]

@@ -508,13 +508,15 @@ class Ninian(TestCase):
         vmorph.morph._set_max_level()
         vmorph.level_up(num_levels=19)
         (is_success, actual) = vmorph.promote(promo_cls="")
-        expected = []
-        self.assertListEqual(actual, expected)
+        self.assertIs(is_success, False)
+        self.assertIsNone(actual)
+        #expected = []
+        #self.assertListEqual(actual, expected)
         actual = vmorph.history
         expected = [
             ("level_up", {"num_levels": 19}),
         ]
-        self.assertIs(is_success, False)
+        self.assertListEqual(actual, expected)
 
 class Nils(TestCase):
     """
@@ -1072,9 +1074,22 @@ class TelliusKnightUnit(TestCase):
         """
         """
         vmorph = self.vmorph
-        vmorph.init()
+        morph = vmorph.init()
+        morph.equip_band("Sword Band")
         (is_success, actual) = vmorph.unequip_knight_ward()
-        expected = KnightWardError.Reason.NOT_EQUIPPED
+        expected = {
+            "Sword Band": True,
+            "Soldier Band": False,
+            "Fighter Band": False,
+            "Archer Band": False,
+            "Knight Band": False,
+            "Paladin Band": False,
+            "Pegasus Band": False,
+            "Wyvern Band": False,
+            "Mage Band": False,
+            "Priest Band": False,
+            "Thief Band": False,
+        }
         self.assertEqual(actual, expected)
         expected = []
         actual = vmorph.history
