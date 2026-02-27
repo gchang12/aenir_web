@@ -27,6 +27,8 @@ from dracogate.serializers import (
     UseStatBoosterArgs,
     ScrollEquipmentArgs,
     BandEquipmentArgs,
+    # custom
+    MorphSerializer,
 )
 from dracogate._logging import logger
 
@@ -61,6 +63,14 @@ class NormalUnit(TestCase):
         expected = False
         self.assertIs(actual, expected)
 
+    def test_parse_init_args(self):
+        """
+        """
+        expected = (self.kwargs['game_no'], self.kwargs['name'], {})
+        self.kwargs['game_no'] = str(self.kwargs['game_no'])
+        actual = MorphSerializer.parse_init_args(self.kwargs)
+        self.assertTupleEqual(actual, expected)
+
 class FatheredUnit(TestCase):
     """
     """
@@ -91,6 +101,14 @@ class FatheredUnit(TestCase):
         actual = serializer.is_valid()
         expected = False
         self.assertIs(actual, expected)
+
+    def test_parse_init_args(self):
+        """
+        """
+        expected = (self.kwargs['game_no'], self.kwargs['name'], {"father": "Lex"})
+        self.kwargs['game_no'] = str(self.kwargs['game_no'])
+        actual = MorphSerializer.parse_init_args(self.kwargs)
+        self.assertTupleEqual(actual, expected)
 
 class HardModeUnit(TestCase):
     """
@@ -125,6 +143,13 @@ class HardModeUnit(TestCase):
         expected = False
         self.assertIs(actual, expected)
 
+    def test_parse_init_args(self):
+        """
+        """
+        expected = (self.kwargs['game_no'], self.kwargs['name'], {"hard_mode": False})
+        actual = MorphSerializer.parse_init_args(self.kwargs)
+        self.assertTupleEqual(actual, expected)
+
 class DeclinableUnit(TestCase):
     """
     """
@@ -155,6 +180,14 @@ class DeclinableUnit(TestCase):
         actual = serializer.is_valid()
         expected = False
         self.assertIs(actual, expected)
+
+    def test_parse_init_args(self):
+        """
+        """
+        expected = (self.kwargs['game_no'], self.kwargs['name'], {"number_of_declines": 0})
+        self.kwargs['number_of_declines'] = "0"
+        actual = MorphSerializer.parse_init_args(self.kwargs)
+        self.assertTupleEqual(actual, expected)
 
 class Gonzales(TestCase):
     """
@@ -188,6 +221,12 @@ class Gonzales(TestCase):
         expected = False
         self.assertIs(actual, expected)
 
+    def test_parse_init_args(self):
+        """
+        """
+        expected = (self.kwargs['game_no'], self.kwargs['name'], {"hard_mode": False, "route": "Lalum"})
+        actual = MorphSerializer.parse_init_args(self.kwargs)
+        self.assertTupleEqual(actual, expected)
 
 class LyndisLeague(TestCase):
     """
@@ -220,6 +259,13 @@ class LyndisLeague(TestCase):
         actual = serializer.is_valid()
         expected = False
         self.assertIs(actual, expected)
+
+    def test_parse_init_args(self):
+        """
+        """
+        expected = (self.kwargs['game_no'], self.kwargs['name'], {"lyn_mode": False})
+        actual = MorphSerializer.parse_init_args(self.kwargs)
+        self.assertTupleEqual(actual, expected)
 
 class LevelUpIncrements(TestCase):
     """
