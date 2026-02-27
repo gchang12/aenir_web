@@ -41,6 +41,9 @@ class VirtualMorph(models.Model):
         blank=True,
         default=None,
     )
+    creation_date = models.DateField(
+        auto_now_add=True,
+    )
     # initialization
     game_no = models.PositiveSmallIntegerField()
     name = models.CharField(
