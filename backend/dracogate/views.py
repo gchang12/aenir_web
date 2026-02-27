@@ -12,7 +12,10 @@ from aenir._exceptions import InitError, UnitNotFoundError
 from aenir_web._logging import logger
 
 from dracogate.models import VirtualMorph
-from dracogate.serializers import MorphSerializer
+from dracogate.serializers import (
+    InitArgs,
+    MorphSerializer,
+)
 
 class MorphViewSet(viewsets.ViewSet):
     """
@@ -23,9 +26,15 @@ class MorphViewSet(viewsets.ViewSet):
         """
         Creates temporary Morph for the user to preview, returning missing parameters as necessary.
         """
-        game_no, name, kwargs = MorphSerializer.parse_init_args(request.query_params)
+        #init_args_serializer = InitArgs(data=request.query_params)
+        #init_args_serializer.is_valid(raise_exception=True)
+        #options = init_args_serializer.validated_data
+        #logger.debug("options: %r", options)
+        #game_no = options.pop("game_no")
+        #name = options.pop("name")
+        game_no, name, options = MorphSerializer.parse_init_args(request.query_params)
         try:
-            morph = get_morph(game_no, name, **kwargs)
+            morph = get_morph(game_no, name, **options)
             morph._set_max_level()
             # name, current, max, absMax
             serializer = MorphSerializer(morph)

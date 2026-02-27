@@ -7,6 +7,7 @@ from unittest.mock import patch
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
+from aenir import get_morph
 from aenir._exceptions import (
     UnitNotFoundError,
     LevelUpError,
@@ -19,7 +20,6 @@ from aenir._exceptions import (
     InitError,
 )
 
-from dracogate.models import VirtualMorph
 from dracogate.serializers import (
     InitArgs,
     LevelUpArgs,

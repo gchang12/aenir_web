@@ -184,6 +184,7 @@ class MorphSerializer:#(serializers.Serializer):
         statdicts = (current_stats, max_stats, absmax_stats)
         return list(map(lambda dictlike: self.divide_by_100(dictlike), statdicts))
 
+    # NOTE: Only for before-after previews of stat-growth enhancements (e.g. Afa's or Metis's).
     def get_growth_rates(self):
         """
         Bundles growth augments for FE5, FE7, FE8, and FE9.
@@ -208,6 +209,7 @@ class MorphSerializer:#(serializers.Serializer):
         statdicts = (bonus_without_augment, augment)
         return list(map(lambda dictlike: self.divide_by_100(dictlike), statdicts))
 
+    # NOTE: Can't this calculation be done in the front-end?
     def get_stat_differences(self, morph2):
         """
         Bundles stat differences between Morphs into native Python data-type.
