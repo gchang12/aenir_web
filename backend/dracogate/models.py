@@ -106,16 +106,29 @@ class VirtualMorph(models.Model):
         min_promo_level = morph.min_promo_level
         is_success: bool
         try:
-            morph.promote()
-            param_bounds = [morph.current_cls]
+            morph.promote(promo_cls=promo_cls)
             self.history.append(("promote", {"promo_cls": promo_cls}))
+            param_bounds = [
+                (min_promo_level, morph.current_cls),
+            ]
             is_success = True
         except PromotionError as err:
-            param_bounds = {
-                err.Reason.NO_PROMOTIONS: [],
-                err.Reason.LEVEL_TOO_LOW: min_promo_level,
-                err.Reason.INVALID_PROMOTION: err.promotion_list,
-            }[err.reason]
+            if morph.current_lv < morph.max_level:
+                morph.level_up(morph.max_level - morph.current_lv)
+            try:
+                morph.promote(promo_cls=promo_cls)
+                param_bounds = [
+                    (min_promo_level, morph.current_cls),
+                ]
+            except PromotionError as err2:
+                if err2.reason == PromotionError.Reason.NO_PROMOTIONS:
+                    param_bounds = []
+                elif err2.reason == PromotionError.Reason.INVALID_PROMOTION:
+                    param_bounds = []
+                    for promo_cls2 in err2.promotion_list:
+                        morph.promo_cls = promo_cls2
+                        morph._set_min_promo_level()
+                        param_bounds.append((morph.min_promo_level, promo_cls2))
             is_success = False
         return (is_success, param_bounds)
 

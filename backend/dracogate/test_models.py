@@ -140,12 +140,11 @@ class NormalUnit(TestCase):
         """
         vmorph = self.vmorph
         vmorph.init()
-        promo_cls = None
         with patch("aenir.morph.Morph.promote") as MOCK_promote:
-            vmorph.promote(promo_cls=promo_cls)
-        MOCK_promote.assert_called_once_with()
+            vmorph.promote(promo_cls=None)
+        MOCK_promote.assert_called_once_with(promo_cls=None)
         actual = vmorph.history
-        expected = [("promote", {"promo_cls": promo_cls})]
+        expected = [("promote", {"promo_cls": None})]
         self.assertListEqual(actual, expected)
         logger.debug("Checking to see if any errors are raised.")
         morph = vmorph.init()
@@ -156,14 +155,13 @@ class NormalUnit(TestCase):
         vmorph = self.vmorph
         vmorph.init()
         promo_cls = None
-        (is_success, _) = vmorph.promote(promo_cls=promo_cls)
+        (is_success, actual) = vmorph.promote(promo_cls=promo_cls)
         self.assertIs(is_success, True)
+        expected = [(1, "Master Lord")]
+        self.assertEqual(actual, expected)
         self.assertTrue(vmorph.history)
         vmorph.save()
         morph = VirtualMorph.objects.get().init()
-        actual = morph.current_cls
-        expected = "Master Lord"
-        self.assertEqual(actual, expected)
 
     def test_use_stat_booster(self):
         """
@@ -234,7 +232,7 @@ class NormalUnit(TestCase):
         vmorph = self.vmorph
         vmorph.init()
         (is_success, actual) = vmorph.promote(promo_cls=None)
-        expected = ["Master Lord"]
+        expected = [(1, "Master Lord")]
         self.assertListEqual(actual, expected)
         expected = [
             ("promote", {"promo_cls": None}),
@@ -858,8 +856,12 @@ class TraineeUnit(TestCase):
         (is_success, _) = vmorph.level_up(num_levels=9)
         self.assertIs(is_success, True)
         (is_success, actual) = vmorph.promote(promo_cls="")
-        expected = ("Fighter", "Pirate", "Journeyman (2)")
-        self.assertTupleEqual(actual, expected)
+        expected = [
+            (10, "Fighter"),
+            (10, "Pirate"),
+            (10, "Journeyman (2)"),
+        ]
+        self.assertListEqual(actual, expected)
         actual = vmorph.history
         expected = [
             ("level_up", {'num_levels': 9}),
@@ -872,9 +874,12 @@ class TraineeUnit(TestCase):
         """
         vmorph = self.vmorph
         vmorph.init()
+        vmorph.morph._set_max_level()
         (is_success, actual) = vmorph.promote(promo_cls="Pirate")
         self.assertIs(is_success, False)
-        expected = 10
+        expected = [
+            (10, "Pirate"),
+        ]
         self.assertEqual(actual, expected)
         actual = vmorph.history
         expected = []
@@ -1130,4 +1135,82 @@ class TelliusNonKnightUnit(TestCase):
         actual = vmorph.history
         self.assertListEqual(actual, expected)
         self.assertIs(is_success, False)
+
+class Lara(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+        morph_id = "Lara"
+        kwargs = {'game_no': 5, "name": "Lara"}
+        self.vmorph = VirtualMorph.objects.create(morph_id=morph_id, **kwargs)
+
+    def test_promote__get_bounds__short_route(self):
+        """
+        """
+        vmorph = self.vmorph
+        vmorph.init()
+        vmorph.morph._set_max_level()
+        (is_success, actual) = vmorph.promote()
+        self.assertIs(is_success, False)
+        expected = [
+            (10, "Thief Fighter"),
+            (1, "Dancer"),
+        ]
+        self.assertListEqual(actual, expected)
+        (is_success, actual) = vmorph.promote(promo_cls="Dancer")
+        self.assertIs(is_success, True)
+        expected = [
+            (1, "Dancer"),
+        ]
+        self.assertListEqual(actual, expected)
+        logger.debug("Lara is now a Dancer.")
+        vmorph.level_up(num_levels=9)
+        (is_success, actual) = vmorph.promote()
+        self.assertIs(is_success, True)
+        expected = [
+            (10, "Thief Fighter"),
+        ]
+        self.assertListEqual(actual, expected)
+        logger.debug("Lara is now a Thief Fighter.")
+
+    def test_promote__get_bounds__long_route(self):
+        """
+        """
+        vmorph = self.vmorph
+        vmorph.init()
+        vmorph.morph._set_max_level()
+        vmorph.level_up(num_levels=10)
+        (is_success, actual) = vmorph.promote()
+        self.assertIs(is_success, False)
+        expected = [
+            (10, "Thief Fighter"),
+            (1, "Dancer"),
+        ]
+        self.assertListEqual(actual, expected)
+        (is_success, actual) = vmorph.promote(promo_cls="Thief Fighter")
+        self.assertIs(is_success, True)
+        logger.debug("Lara is now a Thief Fighter.")
+        expected = [
+            (10, "Thief Fighter"),
+        ]
+        self.assertListEqual(actual, expected)
+        (is_success, actual) = vmorph.promote()
+        self.assertIs(is_success, True)
+        expected = [
+            (1, "Dancer"),
+        ]
+        self.assertListEqual(actual, expected)
+        logger.debug("Lara is now a Dancer.")
+        vmorph.level_up(num_levels=10)
+        (is_success, actual) = vmorph.promote()
+        self.assertIs(is_success, True)
+        expected = [
+            (10, "Thief Fighter"),
+        ]
+        self.assertListEqual(actual, expected)
+        logger.debug("Lara is now a Thief Fighter.")
 
