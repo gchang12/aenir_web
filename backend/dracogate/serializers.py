@@ -17,7 +17,7 @@ class InitArgs(serializers.Serializer):
         max_length=9,
     )
     father = serializers.ChoiceField(
-        allow_null=True,
+        #allow_null=True,
         required=False,
         choices=(
             'Arden',
@@ -36,22 +36,22 @@ class InitArgs(serializers.Serializer):
         ),
     )
     route = serializers.ChoiceField(
-        allow_null=True,
+        #allow_null=True,
         required=False,
         choices=("Lalum", "Elphin"),
     )
     number_of_declines = serializers.IntegerField(
-        allow_null=True,
+        #allow_null=True,
         required=False,
         min_value=0,
         max_value=3,
     )
     hard_mode = serializers.BooleanField(
-        allow_null=True,
+        #allow_null=True,
         required=False,
     )
     lyn_mode = serializers.BooleanField(
-        allow_null=True,
+        #allow_null=True,
         required=False,
     )
 
@@ -196,7 +196,7 @@ class MorphSerializer:#(serializers.Serializer):
         statdicts = (old_growths, new_growths, growths_diff)
         return list(map(lambda dictlike: self.divide_by_100(dictlike), statdicts))
 
-    def get_level_up_bonuses(self, num_levels: int):
+    def get_level_up_bonuses_with_augment(self, num_levels: int):
         """
         Bundles level-up stats for FE5, FE7, FE8, and FE9.
         """
@@ -228,7 +228,7 @@ class MorphSerializer:#(serializers.Serializer):
             if value is None:
                 new_value = None
             else:
-                new_value = 0.01 * value
+                new_value = value / 100
             new_dictlike[stat] = new_value
         return new_dictlike
 

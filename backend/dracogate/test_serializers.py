@@ -71,6 +71,201 @@ class NormalUnit(TestCase):
         actual = MorphSerializer.parse_init_args(self.kwargs)
         self.assertTupleEqual(actual, expected)
 
+    def test_parse_init_args__nonint_game_no(self):
+        """
+        """
+        self.kwargs['game_no'] = ""
+        expected = (self.kwargs['game_no'], self.kwargs['name'], {})
+        #self.kwargs['game_no'] = str(self.kwargs['game_no'])
+        with self.assertRaises(ValueError):
+            MorphSerializer.parse_init_args(self.kwargs)
+        #self.assertTupleEqual(actual, expected)
+
+    def test_get_current_stats(self):
+        """
+        """
+        morph = get_morph(**self.kwargs)
+        serializer = MorphSerializer(morph)
+        expected = [
+            {
+                "HP": 18.0,
+                "Pow": 5.0,
+                "Skl": 5.0,
+                "Spd": 7.0,
+                "Lck": 7.0,
+                "Def": 5.0,
+                "Res": 0.0,
+                "Con": 6.0,
+                "Mov": 5.0,
+            },
+            {
+                "HP": 60.0,
+                "Pow": 20.0,
+                "Skl": 20.0,
+                "Spd": 20.0,
+                "Lck": 30.0,
+                "Def": 20.0,
+                "Res": 20.0,
+                "Con": 20.0,
+                "Mov": 15.0,
+            },
+            {
+                "HP": 80.0,
+                "Pow": 30.0,
+                "Skl": 30.0,
+                "Spd": 30.0,
+                "Lck": 30.0,
+                "Def": 30.0,
+                "Res": 30.0,
+                "Con": 25.0,
+                "Mov": 15.0,
+            },
+        ]
+        actual = serializer.get_current_stats()
+        logger.debug("actual: %r", actual)
+        logger.debug("expected: %r", expected)
+        self.assertListEqual(actual, expected)
+
+    def test_get_morph(self):
+        """
+        """
+        current_stats = {
+            "HP": 18.0,
+            "Pow": 5.0,
+            "Skl": 5.0,
+            "Spd": 7.0,
+            "Lck": 7.0,
+            "Def": 5.0,
+            "Res": 0.0,
+            "Con": 6.0,
+            "Mov": 5.0,
+        }
+        max_stats = {
+            "HP": 60.0,
+            "Pow": 20.0,
+            "Skl": 20.0,
+            "Spd": 20.0,
+            "Lck": 30.0,
+            "Def": 20.0,
+            "Res": 20.0,
+            "Con": 20.0,
+            "Mov": 15.0,
+        }
+        global_max_stats = {
+            "HP": 80.0,
+            "Pow": 30.0,
+            "Skl": 30.0,
+            "Spd": 30.0,
+            "Lck": 30.0,
+            "Def": 30.0,
+            "Res": 30.0,
+            "Con": 25.0,
+            "Mov": 15.0,
+        }
+        statdicts = (current_stats, max_stats, global_max_stats)
+        morph = get_morph(**self.kwargs)
+        morph._set_max_level()
+        serializer = MorphSerializer(morph)
+        actual = serializer.get_morph(*statdicts)
+        expected = {
+            "stats": [
+                ("HP", 18.0, 60.0, 80.0),
+                ("Pow", 5.0, 20.0, 30.0),
+                ("Skl", 5.0, 20.0, 30.0),
+                ("Spd", 7.0, 20.0, 30.0),
+                ("Lck", 7.0, 30.0, 30.0),
+                ("Def", 5.0, 20.0, 30.0),
+                ("Res", 0.0, 20.0, 30.0),
+                ("Con", 6.0, 20.0, 25.0),
+                ("Mov", 5.0, 15.0, 15.0),
+            ],
+            "level": (1, 20),
+            "unitClass": "Lord",
+        }
+        self.assertDictEqual(actual, expected)
+
+class GrowthRates(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+        # Eliwood
+        self.stats = {
+            "growths": {
+                "HP": 80,
+                "Pow": 45,
+                "Skl": 50,
+                "Spd": 40,
+                "Lck": 45,
+                "Def": 30,
+                "Res": 35,
+                "Con": None,
+                "Mov": None,
+            },
+            1: {
+                "HP": 18_00,
+                "Pow": 5_00,
+                "Skl": 5_00,
+                "Spd": 7_00,
+                "Lck": 7_00,
+                "Def": 5_00,
+                "Res": 0,
+                "Con": 7_00,
+                "Mov": 5_00,
+            },
+            2: {
+                "HP": 18_80,
+                "Pow": 5_45,
+                "Skl": 5_50,
+                "Spd": 7_40,
+                "Lck": 7_45,
+                "Def": 5_30,
+                "Res": 35,
+                "Con": 7_00,
+                "Mov": 5_00,
+            },
+            20: {
+                "HP": 33_20,
+                "Pow": 13_55,
+                "Skl": 14_50,
+                "Spd": 14_60,
+                "Lck": 15_55,
+                "Def": 10_70,
+                "Res": 6_65,
+                "Con": 7_00,
+                "Mov": 5_00,
+            },
+        }
+
+    def test_divide_by_100(self):
+        """
+        """
+        growth_rates = self.stats['growths']
+        expected = {
+            "HP": 0.80,
+            "Pow": 0.45,
+            "Skl": 0.50,
+            "Spd": 0.40,
+            "Lck": 0.45,
+            "Def": 0.30,
+            "Res": 0.35,
+            "Con": None,
+            "Mov": None,
+        }
+        actual = MorphSerializer.divide_by_100(growth_rates)
+        self.assertDictEqual(actual, expected)
+
+    def test_divide_by_100__str_value(self):
+        """
+        """
+        growth_rates = self.stats['growths']
+        growth_rates['HP'] = "100"
+        with self.assertRaises(TypeError):
+            MorphSerializer.divide_by_100(growth_rates)
+
 class FatheredUnit(TestCase):
     """
     """
@@ -188,6 +383,26 @@ class DeclinableUnit(TestCase):
         self.kwargs['number_of_declines'] = "0"
         actual = MorphSerializer.parse_init_args(self.kwargs)
         self.assertTupleEqual(actual, expected)
+
+    def test_parse_init_args(self):
+        """
+        """
+        self.kwargs['game_no'] = ""
+        expected = (self.kwargs['game_no'], self.kwargs['name'], {})
+        #self.kwargs['game_no'] = str(self.kwargs['game_no'])
+        with self.assertRaises(ValueError):
+            MorphSerializer.parse_init_args(self.kwargs)
+        #self.assertTupleEqual(actual, expected)
+
+    def test_parse_init_args__nonint_number_of_declines(self):
+        """
+        """
+        self.kwargs['number_of_declines'] = ""
+        expected = (str(self.kwargs['game_no']), self.kwargs['name'], {"number_of_declines": ""})
+        #self.kwargs['number_of_declines'] = "0"
+        with self.assertRaises(ValueError):
+            actual = MorphSerializer.parse_init_args(self.kwargs)
+        #self.assertTupleEqual(actual, expected)
 
 class Gonzales(TestCase):
     """
