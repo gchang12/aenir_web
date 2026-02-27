@@ -214,8 +214,9 @@ class NormalUnit(TestCase):
         """
         vmorph = self.vmorph
         vmorph.init()
-        (is_success, _) = vmorph.level_up(num_levels=19)
+        (is_success, actual) = vmorph.level_up(num_levels=19)
         self.assertIs(is_success, True)
+        self.assertIsNone(actual)
         (is_success, actual) = vmorph.level_up(num_levels=1)
         self.assertIs(is_success, False)
         expected = 20
@@ -245,8 +246,7 @@ class NormalUnit(TestCase):
         """
         """
         vmorph = self.vmorph
-        morph = vmorph.init()
-        morph.current_stats.HP = 60
+        vmorph.init()
         (is_success, actual) = vmorph.use_stat_booster(item_name="")
         expected = (
             "Angelic Robe",
@@ -612,13 +612,15 @@ class ThracianUnit(TestCase):
     def test_equip_scroll(self):
         """
         """
+        scroll_name = "Odo"
         vmorph = self.vmorph
         vmorph.init()
-        (is_success, _) = vmorph.equip_scroll(scroll_name="Odo")
+        (is_success, actual) = vmorph.equip_scroll(scroll_name=scroll_name)
         self.assertIs(is_success, True)
+        self.assertIsNone(actual)
         # check history
         expected = [
-            ("equip_scroll", {"scroll_name": "Odo"}),
+            ("equip_scroll", {"scroll_name": scroll_name}),
         ]
         actual = vmorph.history
         self.assertListEqual(actual, expected)
@@ -626,7 +628,7 @@ class ThracianUnit(TestCase):
         vmorph.save()
         vmorph2 = VirtualMorph.objects.get()
         vmorph2.init()
-        (is_success, actual) = vmorph2.equip_scroll(scroll_name="Odo")
+        (is_success, actual) = vmorph2.equip_scroll(scroll_name=scroll_name)
         expected = {
             "Odo": False,
             "Baldo": True,
@@ -647,15 +649,16 @@ class ThracianUnit(TestCase):
     def test_unequip_scroll(self):
         """
         """
+        scroll_name = "Odo"
         vmorph = self.vmorph
         vmorph.init()
-        (is_success, _) = vmorph.equip_scroll(scroll_name="Odo")
+        (is_success, _) = vmorph.equip_scroll(scroll_name=scroll_name)
         self.assertIs(is_success, True)
-        (is_success, _) = vmorph.unequip_scroll(scroll_name="Odo")
+        (is_success, _) = vmorph.unequip_scroll(scroll_name=scroll_name)
         self.assertIs(is_success, True)
         expected = [
-            ("equip_scroll", {"scroll_name": "Odo"}),
-            ("unequip_scroll", {"scroll_name": "Odo"}),
+            ("equip_scroll", {"scroll_name": scroll_name}),
+            ("unequip_scroll", {"scroll_name": scroll_name}),
         ]
         actual = vmorph.history
         self.assertListEqual(actual, expected)
@@ -663,8 +666,8 @@ class ThracianUnit(TestCase):
         vmorph2 = VirtualMorph.objects.get()
         vmorph2.init()
         expected = [
-            ["equip_scroll", {"scroll_name": "Odo"}],
-            ["unequip_scroll", {"scroll_name": "Odo"}],
+            ["equip_scroll", {"scroll_name": scroll_name}],
+            ["unequip_scroll", {"scroll_name": scroll_name}],
         ]
         actual = vmorph2.history
         self.assertListEqual(actual, expected)
@@ -908,10 +911,12 @@ class TelliusKnightUnit(TestCase):
     def test_equip_band(self):
         """
         """
+        band_name = "Sword Band"
         vmorph = self.vmorph
         vmorph.init()
-        (is_success, _) = vmorph.equip_band(band_name="Sword Band")
+        (is_success, actual) = vmorph.equip_band(band_name=band_name)
         self.assertIs(is_success, True)
+        self.assertIsNone(actual)
         # check history
         expected = [
             ("equip_band", {"band_name": "Sword Band"}),
@@ -922,7 +927,7 @@ class TelliusKnightUnit(TestCase):
         vmorph.save()
         vmorph2 = VirtualMorph.objects.get()
         vmorph2.init()
-        (is_success, actual) = vmorph2.equip_band(band_name="Sword Band")
+        (is_success, actual) = vmorph2.equip_band(band_name=band_name)
         expected = {
             "Sword Band": False,
             "Soldier Band": True,
@@ -941,15 +946,17 @@ class TelliusKnightUnit(TestCase):
     def test_unequip_band(self):
         """
         """
+        band_name = "Sword Band"
         vmorph = self.vmorph
         vmorph.init()
-        (is_success, _) = vmorph.equip_band(band_name="Sword Band")
+        vmorph.equip_band(band_name=band_name)
+        #self.assertIs(is_success, True)
+        (is_success, actual) = vmorph.unequip_band(band_name=band_name)
         self.assertIs(is_success, True)
-        (is_success, _) = vmorph.unequip_band(band_name="Sword Band")
-        self.assertIs(is_success, True)
+        self.assertIsNone(actual)
         expected = [
-            ("equip_band", {"band_name": "Sword Band"}),
-            ("unequip_band", {"band_name": "Sword Band"}),
+            ("equip_band", {"band_name": band_name}),
+            ("unequip_band", {"band_name": band_name}),
         ]
         actual = vmorph.history
         self.assertListEqual(actual, expected)
