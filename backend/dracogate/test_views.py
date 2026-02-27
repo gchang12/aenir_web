@@ -63,6 +63,11 @@ class NormalUnit(TestCase):
         }
         self.assertDictEqual(actual, expected)
 
+    def test_create(self):
+        """
+        """
+        raise NotImplementedError
+
 class FatheredUnit(TestCase):
     """
     """

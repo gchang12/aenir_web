@@ -13,7 +13,7 @@ from aenir_web._logging import logger
 
 from dracogate.models import VirtualMorph
 from dracogate.serializers import (
-    InitArgs,
+    #InitArgs,
     MorphSerializer,
 )
 
@@ -61,13 +61,14 @@ class MorphViewSet(viewsets.ViewSet):
         pk = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options).id
         return Response({
             "pk": pk,
+            # NOTE: Include only the data to be shown for the brief description.
             "morphId": morph_id,
             "initArgs": {
                 "gameNo": game_no,
                 "unitName": name,
-                "options": options,
             },
-            "morph": data,
+            "level": data["level"],
+            "unitClass": data['unitClass'],
         })
 
     def retrieve(self, request, pk):
@@ -86,24 +87,25 @@ class MorphViewSet(viewsets.ViewSet):
                 "options": vmorph.options,
             },
             "morph": data,
+            "history": vmorph.history,
         })
 
     def partial_update(self, request, pk):
         """
         Simulates operations on a morph without modifying it.
         """
-        (vmorph, param_bounds) = self.simulate_operation(request.data)
+        (is_success, param_bounds) = self.simulate_operation(request.data)
         morph = vmorph.init()
-        serializer_queue = MorphSerializer(morph)
-        data = serializer_queue.get_morph()
+        serializer = MorphSerializer(morph)
+        data = serializer.get_morph()
         return Response({
-            "morphId": vmorph.morph_id,
-            "initArgs": {
-                "gameNo": vmorph.game_no,
-                "unitName": vmorph.name,
-                "options": vmorph.options,
-            },
-            "morph": data,
+            #"morphId": vmorph.morph_id,
+            #"initArgs": {
+                #"gameNo": vmorph.game_no,
+                #"unitName": vmorph.name,
+                #"options": vmorph.options,
+                #},
+            #"morph": data,
             "paramBounds": param_bounds,
         })
 
@@ -111,20 +113,20 @@ class MorphViewSet(viewsets.ViewSet):
         """
         Performs operations on a morph and modifies it.
         """
-        (vmorph, param_bounds) = self.simulate_operation(request.data)
+        (is_success, param_bounds) = self.simulate_operation(request.data)
         morph = vmorph.init()
-        serializer_queue = MorphSerializer(morph)
-        data = serializer_queue.get_morph()
+        serializer = MorphSerializer(morph)
+        data = serializer.get_morph()
         vmorph.save()
         return Response({
-            "morphId": vmorph.morph_id,
-            "initArgs": {
-                "gameNo": vmorph.game_no,
-                "unitName": vmorph.name,
-                "options": vmorph.options,
-            },
+            #"morphId": vmorph.morph_id,
+            #"initArgs": {
+            #"gameNo": vmorph.game_no,
+            #"unitName": vmorph.name,
+            #"options": vmorph.options,
+            #},
             "morph": data,
-            "paramBounds": param_bounds,
+            #"paramBounds": param_bounds,
         })
 
     def destroy(self, request, pk):
