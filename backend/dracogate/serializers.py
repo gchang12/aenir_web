@@ -1,7 +1,110 @@
 """
 """
 
-#from rest_framework import serializers
+from rest_framework import serializers
+
+class InitArgs(serializers.Serializer):
+    """
+    """
+    game_no = serializers.IntegerField(
+        min_value=4,
+        max_value=9,
+    )
+    name = serializers.CharField(
+        min_length=1,
+        max_length=9,
+    )
+    father = serializers.CharField(
+        allow_null=True,
+        default=None,
+        min_length=1,
+        max_length=9,
+    )
+    route = serializers.CharField(
+        allow_null=True,
+        default=None,
+        min_length=5,
+        max_length=6,
+    )
+    number_of_declines = serializers.IntegerField(
+        allow_null=True,
+        default=None,
+        min_value=0,
+        max_value=3,
+    )
+    lyn_mode = serializers.BooleanField(
+        allow_null=True,
+        default=None,
+    )
+    hard_mode = serializers.BooleanField(
+        allow_null=True,
+        default=None,
+    )
+
+class LevelUpArgs(serializers.Serializer):
+    """
+    """
+    num_levels = serializers.IntegerField(
+        min_value=1,
+    )
+
+class PromoteArgs(serializers.Serializer):
+    """
+    """
+    promo_cls = serializers.CharField(
+        min_value=1,
+        allow_null=True,
+    )
+
+class UseStatBoosterArgs(serializers.Serializer):
+    """
+    """
+    item_name = serializers.CharField(
+        min_value=1,
+    )
+
+class ScrollEquipmentArgs(serializers.Serializer):
+    """
+    """
+    scroll_name = serializers.CharField(
+        min_value=1,
+    )
+
+class BandEquipmentArgs(serializers.Serializer):
+    """
+    """
+    band_name = serializers.CharField(
+        min_value=1,
+    )
+
+'''
+# init
+game_no
+name
+## Options
+father
+number_of_declines
+lyn_mode
+hard_mode
+route
+# level_up
+num_levels
+# promote
+promo_cls
+# use_stat_booster
+item_name
+# equip_scroll
+scroll_name
+# unequip_scroll
+scroll_name
+# use_afas_drops
+# use_metiss_tome
+# equip_knight_ward
+# equip_band
+band_name
+# unequip_band
+band_name
+'''
 
 class MorphSerializer:#(serializers.Serializer):
     """
