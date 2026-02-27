@@ -28,9 +28,9 @@ class MorphViewSet(viewsets.ViewSet):
             morph = get_morph(game_no, name, **kwargs)
             morph._set_max_level()
             # name, current, max, absMax
-            serializer_queue = MorphSerializer(morph)
-            statdicts = serializer_queue.get_current_stats()
-            data = serializer_queue.get_morph(*statdicts)
+            serializer = MorphSerializer(morph)
+            statdicts = serializer.get_current_stats()
+            data = serializer.get_morph(*statdicts)
         except InitError as e:
             data = {"missingParams": e.init_params}
         except NotImplementedError:
@@ -44,16 +44,14 @@ class MorphViewSet(viewsets.ViewSet):
         Creates a Morph instance and stores it in the database.
         """
         morph_id = request.data.get("morph_id")
-        game_no, name, kwargs = MorphSerializer.parse_init_args(request.data)
-        morph = get_morph(game_no, name, **kwargs)
-        #morph._set_max_level()
-        # name, current, max, absMax
-        serializer_queue = MorphSerializer(morph)
-        statdicts = serializer_queue.get_current_stats()
-        data = serializer_queue.get_morph(*statdicts)
-        id = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=kwargs).id
+        game_no, name, options = MorphSerializer.parse_init_args(request.data)
+        morph = get_morph(game_no, name, **options)
+        serializer = MorphSerializer(morph)
+        statdicts = serializer.get_current_stats()
+        data = serializer.get_morph(*statdicts)
+        pk = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options).id
         return Response({
-            "pk": id,
+            "pk": pk,
             "morphId": morph_id,
             "initArgs": {
                 "gameNo": game_no,
@@ -68,9 +66,9 @@ class MorphViewSet(viewsets.ViewSet):
         """
         vmorph = VirtualMorph.objects.get(id=pk)
         morph = vmorph.init()
-        serializer_queue = MorphSerializer(morph)
-        statdicts = serializer_queue.get_current_stats()
-        data = serializer_queue.get_morph(*statdicts)
+        serializer = MorphSerializer(morph)
+        statdicts = serializer.get_current_stats()
+        data = serializer.get_morph(*statdicts)
         return Response({
             "morphId": vmorph.morph_id,
             "initArgs": {
@@ -142,7 +140,7 @@ class MorphViewSet(viewsets.ViewSet):
         pk = int(dictlike.get("pk"))
         vmorph = VirtualMorph.objects.get(id=pk)
         vmorph.init()
-        param_bounds = {
+        (is_success, param_bounds) = {
             "level_up": vmorph.level_up,
             "promote": vmorph.promote,
             "use_stat_booster": vmorph.use_stat_booster,
@@ -153,5 +151,5 @@ class MorphViewSet(viewsets.ViewSet):
             "equip_scroll": vmorph.equip_scroll,
             "unequip_scroll": vmorph.unequip_scroll,
         }[method](**kwargs)
-        return (vmorph, param_bounds)
+        return param_bounds
 

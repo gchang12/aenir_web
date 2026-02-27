@@ -25,7 +25,7 @@ class NormalUnit(TestCase):
         kwargs.update(options)
         self.kwargs = kwargs
 
-    def test_get_morph__verify_that_invalid_options_are_ignored(self):
+    def test_list__verify_that_invalid_options_are_ignored(self):
         """
         """
         url = RESOURCE_URL
@@ -36,7 +36,7 @@ class NormalUnit(TestCase):
         actual = set(response.data.keys())
         self.assertSetEqual(actual, expected)
 
-    def test_get_morph__verify_success(self):
+    def test_list__verify_success(self):
         """
         """
         url = RESOURCE_URL
@@ -63,10 +63,13 @@ class NormalUnit(TestCase):
         }
         self.assertDictEqual(actual, expected)
 
+    def test_create(self):
+        """
+        """
+
 class FatheredUnit(TestCase):
     """
     """
-    url = "/dracogate/api/morphs/"
 
     def setUp(self):
         """
@@ -79,7 +82,7 @@ class FatheredUnit(TestCase):
         kwargs.update(options)
         self.kwargs = kwargs
 
-    def test_get_morph__verify_success(self):
+    def test_list__verify_success(self):
         """
         """
         url = RESOURCE_URL
@@ -102,7 +105,7 @@ class FatheredUnit(TestCase):
         }
         self.assertDictEqual(actual, expected)
 
-    def test_get_morph__verify_success_alt(self):
+    def test_list__verify_success_alt(self):
         """
         """
         url = RESOURCE_URL
@@ -126,7 +129,7 @@ class FatheredUnit(TestCase):
         }
         self.assertDictEqual(actual, expected)
 
-    def test_get_morph__verify_error(self):
+    def test_list__verify_error(self):
         """
         """
         url = RESOURCE_URL
@@ -158,7 +161,6 @@ class FatheredUnit(TestCase):
 class HardModeUnit(TestCase):
     """
     """
-    url = "/dracogate/api/morphs/"
 
     def setUp(self):
         """
@@ -171,7 +173,7 @@ class HardModeUnit(TestCase):
         kwargs.update(options)
         self.kwargs = kwargs
 
-    def test_get_morph__verify_success(self):
+    def test_list__verify_success(self):
         """
         """
         url = RESOURCE_URL
@@ -195,7 +197,7 @@ class HardModeUnit(TestCase):
         }
         self.assertDictEqual(actual, expected)
 
-    def test_get_morph__verify_success_alt(self):
+    def test_list__verify_success_alt(self):
         """
         """
         url = RESOURCE_URL
@@ -220,7 +222,7 @@ class HardModeUnit(TestCase):
         }
         self.assertDictEqual(actual, expected)
 
-    def test_get_morph__verify_error(self):
+    def test_list__verify_error(self):
         """
         """
         url = RESOURCE_URL
@@ -238,7 +240,6 @@ class HardModeUnit(TestCase):
 class DeclinableUnit(TestCase):
     """
     """
-    url = "/dracogate/api/morphs/"
 
     def setUp(self):
         """
@@ -251,7 +252,7 @@ class DeclinableUnit(TestCase):
         kwargs.update(options)
         self.kwargs = kwargs
 
-    def test_get_morph__verify_success(self):
+    def test_list__verify_success(self):
         """
         """
         url = RESOURCE_URL
@@ -275,7 +276,7 @@ class DeclinableUnit(TestCase):
         }
         self.assertDictEqual(actual, expected)
 
-    def test_get_morph__verify_success_alt1(self):
+    def test_list__verify_success_alt1(self):
         """
         """
         url = RESOURCE_URL
@@ -300,7 +301,7 @@ class DeclinableUnit(TestCase):
         }
         self.assertDictEqual(actual, expected)
 
-    def test_get_morph__verify_success_alt2(self):
+    def test_list__verify_success_alt2(self):
         """
         """
         url = RESOURCE_URL
@@ -325,7 +326,7 @@ class DeclinableUnit(TestCase):
         }
         self.assertDictEqual(actual, expected)
 
-    def test_get_morph__verify_success_alt3(self):
+    def test_list__verify_success_alt3(self):
         """
         """
         url = RESOURCE_URL
@@ -350,7 +351,7 @@ class DeclinableUnit(TestCase):
         }
         self.assertDictEqual(actual, expected)
 
-    def test_get_morph__verify_error(self):
+    def test_list__verify_error(self):
         """
         """
         url = RESOURCE_URL
@@ -365,7 +366,7 @@ class DeclinableUnit(TestCase):
         expected = (0, 1, 2, 3)
         self.assertTupleEqual(actual, expected)
 
-    def test_get_morph__verify_invalid_values(self):
+    def test_list__verify_invalid_values(self):
         """
         """
         url = RESOURCE_URL
@@ -380,7 +381,6 @@ class DeclinableUnit(TestCase):
 class Gonzales(TestCase):
     """
     """
-    url = "/dracogate/api/morphs/"
 
     def setUp(self):
         """
@@ -393,7 +393,7 @@ class Gonzales(TestCase):
         kwargs.update(options)
         self.kwargs = kwargs
 
-    def test_get_morph__verify_success(self):
+    def test_list__verify_success(self):
         """
         """
         url = RESOURCE_URL
@@ -417,7 +417,7 @@ class Gonzales(TestCase):
         }
         self.assertDictEqual(actual, expected)
 
-    def test_get_morph__verify_success__elphin_no_hm(self):
+    def test_list__verify_success__elphin_no_hm(self):
         """
         """
         url = RESOURCE_URL
@@ -442,7 +442,7 @@ class Gonzales(TestCase):
         }
         self.assertDictEqual(actual, expected)
 
-    def test_get_morph__verify_success__lalum_hm(self):
+    def test_list__verify_success__lalum_hm(self):
         """
         """
         url = RESOURCE_URL
@@ -467,7 +467,7 @@ class Gonzales(TestCase):
         }
         self.assertDictEqual(actual, expected)
 
-    def test_get_morph__verify_success__elphin_hm(self):
+    def test_list__verify_success__elphin_hm(self):
         """
         """
         url = RESOURCE_URL
@@ -492,7 +492,7 @@ class Gonzales(TestCase):
         }
         self.assertDictEqual(actual, expected)
 
-    def test_get_morph__verify_error1(self):
+    def test_list__verify_error1(self):
         """
         """
         url = RESOURCE_URL
@@ -507,7 +507,7 @@ class Gonzales(TestCase):
         expected = ("Lalum", "Elphin")
         self.assertTupleEqual(actual, expected)
 
-    def test_get_morph__verify_error2(self):
+    def test_list__verify_error2(self):
         """
         """
         url = RESOURCE_URL
@@ -525,7 +525,6 @@ class Gonzales(TestCase):
 class LyndisLeague(TestCase):
     """
     """
-    url = "/dracogate/api/morphs/"
 
     def setUp(self):
         """
@@ -538,7 +537,7 @@ class LyndisLeague(TestCase):
         kwargs.update(options)
         self.kwargs = kwargs
 
-    def test_get_morph__verify_error(self):
+    def test_list__verify_error(self):
         """
         """
         url = RESOURCE_URL
@@ -553,7 +552,7 @@ class LyndisLeague(TestCase):
         expected = (False, True)
         self.assertTupleEqual(actual, expected)
 
-    def test_get_morph__verify_success__lyn_mode(self):
+    def test_list__verify_success__lyn_mode(self):
         """
         """
         url = RESOURCE_URL
@@ -578,7 +577,7 @@ class LyndisLeague(TestCase):
         }
         self.assertDictEqual(actual, expected)
 
-    def test_get_morph__verify_success__no_lyn_mode(self):
+    def test_list__verify_success__no_lyn_mode(self):
         """
         """
         url = RESOURCE_URL
@@ -605,7 +604,6 @@ class LyndisLeague(TestCase):
 class Ninian(TestCase):
     """
     """
-    url = "/dracogate/api/morphs/"
 
     def setUp(self):
         """
@@ -618,14 +616,14 @@ class Ninian(TestCase):
         kwargs.update(options)
         self.kwargs = kwargs
 
-    def test_get_morph__verify_success(self):
+    def test_list__verify_success(self):
         """
         """
         url = RESOURCE_URL
         kwargs = self.kwargs
         response = self.client.get(url, data=kwargs)
 
-    def test_get_morph__verify_server_failure(self):
+    def test_list__verify_server_failure(self):
         """
         """
         url = RESOURCE_URL
@@ -638,7 +636,6 @@ class Ninian(TestCase):
 class Nils(TestCase):
     """
     """
-    url = "/dracogate/api/morphs/"
 
     def setUp(self):
         """
@@ -651,7 +648,7 @@ class Nils(TestCase):
         kwargs.update(options)
         self.kwargs = kwargs
 
-    def test_get_morph__verify_success(self):
+    def test_list__verify_success(self):
         """
         """
         url = RESOURCE_URL
@@ -676,7 +673,7 @@ class Nils(TestCase):
         }
         self.assertDictEqual(actual, expected)
 
-    def test_get_morph__verify_success_alt(self):
+    def test_list__verify_success_alt(self):
         """
         """
         url = RESOURCE_URL
@@ -704,7 +701,6 @@ class Nils(TestCase):
 class BonusUnit(TestCase):
     """
     """
-    url = "/dracogate/api/morphs/"
 
     def setUp(self):
         """
@@ -717,7 +713,7 @@ class BonusUnit(TestCase):
         kwargs.update(options)
         self.kwargs = kwargs
 
-    def test_get_morph__verify_success(self):
+    def test_list__verify_success(self):
         """
         """
         url = RESOURCE_URL
@@ -728,7 +724,6 @@ class BonusUnit(TestCase):
 class InvalidGame(TestCase):
     """
     """
-    url = "/dracogate/api/morphs/"
 
     def setUp(self):
         """
@@ -741,7 +736,7 @@ class InvalidGame(TestCase):
         kwargs.update(options)
         self.kwargs = kwargs
 
-    def test_get_morph__verify_error(self):
+    def test_list__verify_error(self):
         """
         """
         url = RESOURCE_URL
@@ -757,7 +752,6 @@ class InvalidGame(TestCase):
 class InvalidUnit(TestCase):
     """
     """
-    url = "/dracogate/api/morphs/"
 
     def setUp(self):
         """
@@ -770,7 +764,7 @@ class InvalidUnit(TestCase):
         kwargs.update(options)
         self.kwargs = kwargs
 
-    def test_get_morph__verify_error(self):
+    def test_list__verify_error(self):
         """
         """
         url = RESOURCE_URL
