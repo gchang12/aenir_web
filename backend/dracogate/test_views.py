@@ -631,8 +631,9 @@ class Ninian(TestCase):
         kwargs = self.kwargs
         kwargs.update({"lyn_mode": "true"})
         response = self.client.get(url, data=kwargs)
-        self.assertIn("error", response.data)
-        self.assertEqual(response.data["error"], "UNIT_DNE")
+        detail = response.data['detail']
+        #self.assertIn("code", detail)
+        self.assertEqual(detail.code, "UNIT_DNE")
 
 class Nils(TestCase):
     """
@@ -743,10 +744,17 @@ class InvalidGame(TestCase):
         url = RESOURCE_URL
         kwargs = self.kwargs
         response = self.client.get(url, data=kwargs)
-        expected = {"error"}
+        # verify status code
+        actual = response.status_code
+        expected = 404
+        self.assertEqual(actual, expected)
+        # verify response data fields
         actual = set(response.data.keys())
+        expected = {"detail"}
         self.assertSetEqual(actual, expected)
-        actual = response.data["error"]
+        # verify response data values
+        detail = response.data["detail"]
+        actual = detail.code
         expected = "INVALID_GAME"
         self.assertEqual(actual, expected)
 
@@ -771,10 +779,37 @@ class InvalidUnit(TestCase):
         url = RESOURCE_URL
         kwargs = self.kwargs
         response = self.client.get(url, data=kwargs)
-        expected = {"error"}
+        # verify status code
+        actual = response.status_code
+        expected = 404
+        self.assertEqual(actual, expected)
+        # verify response data fields
+        expected = {"detail"}
         actual = set(response.data.keys())
         self.assertSetEqual(actual, expected)
-        actual = response.data["error"]
+        # verify response data values
+        detail = response.data["detail"]
+        # 1
+        actual = detail.code
         expected = "UNIT_DNE"
         self.assertEqual(actual, expected)
+        # 2
+        #actual = detail['code']
+        #expected = "UNIT_DNE"
+        #self.assertEqual(actual, expected)
 
+
+'''
+create
+- Does it really create a VirtualMorph object in the database?
+- What happens if bad parameters are put in?
+delete
+- What happens if you try to delete some unit who exists?
+- What happens if you try to delete some unit who doesn't exist?
+partial_update
+- Check that the record hasn't been updated.
+- Have the parameter-bounds been returned?
+Update
+- Check that the record's been updated.
+- Have the right values been returned?
+'''
