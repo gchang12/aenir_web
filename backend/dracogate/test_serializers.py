@@ -28,8 +28,10 @@ from dracogate.serializers import (
     ScrollEquipmentArgs,
     BandEquipmentArgs,
     MorphMethodArgs,
+    MorphIDSerializer,
     # custom
     MorphSerializer,
+    NullDictSerializer,
 )
 from dracogate._logging import logger
 
@@ -71,6 +73,17 @@ class NormalUnit(TestCase):
         self.kwargs['game_no'] = str(self.kwargs['game_no'])
         actual = MorphSerializer.parse_init_args(self.kwargs)
         self.assertTupleEqual(actual, expected)
+
+    def test_init__with_serializer(self):
+        """
+        """
+        serializer = InitArgs(data=self.kwargs)
+        actual = serializer.is_valid()
+        expected = True
+        self.assertIs(actual, expected)
+        actual = serializer.validated_data
+        expected = self.kwargs
+        self.assertDictEqual(actual, expected)
 
     def test_parse_init_args__nonint_game_no(self):
         """
@@ -242,6 +255,17 @@ class GrowthRates(TestCase):
             },
         }
 
+    def test_init__with_serializer(self):
+        """
+        """
+        serializer = InitArgs(data=self.kwargs)
+        actual = serializer.is_valid()
+        expected = True
+        self.assertIs(actual, expected)
+        actual = serializer.validated_data
+        expected = self.kwargs
+        self.assertDictEqual(actual, expected)
+
     def test_get_growth_rates(self):
         """
         """
@@ -398,6 +422,17 @@ class FatheredUnit(TestCase):
         expected = self.kwargs
         self.assertDictEqual(actual, expected)
 
+    def test_init__with_serializer(self):
+        """
+        """
+        serializer = InitArgs(data=self.kwargs)
+        actual = serializer.is_valid()
+        expected = True
+        self.assertIs(actual, expected)
+        actual = serializer.validated_data
+        expected = self.kwargs
+        self.assertDictEqual(actual, expected)
+
     def test_init__fail(self):
         """
         """
@@ -439,6 +474,18 @@ class HardModeUnit(TestCase):
         expected['hard_mode'] = False
         self.assertDictEqual(actual, expected)
 
+    def test_init__with_serializer(self):
+        """
+        """
+        serializer = InitArgs(data=self.kwargs)
+        actual = serializer.is_valid()
+        expected = True
+        self.assertIs(actual, expected)
+        actual = serializer.validated_data
+        expected = self.kwargs
+        expected['hard_mode'] = False
+        self.assertDictEqual(actual, expected)
+
     def test_init__fail(self):
         """
         """
@@ -473,6 +520,17 @@ class DeclinableUnit(TestCase):
         """
         serializer = InitArgs(data=self.kwargs)
         serializer.is_valid()
+        actual = serializer.validated_data
+        expected = self.kwargs
+        self.assertDictEqual(actual, expected)
+
+    def test_init__with_serializer(self):
+        """
+        """
+        serializer = InitArgs(data=self.kwargs)
+        actual = serializer.is_valid()
+        expected = True
+        self.assertIs(actual, expected)
         actual = serializer.validated_data
         expected = self.kwargs
         self.assertDictEqual(actual, expected)
@@ -537,6 +595,18 @@ class Gonzales(TestCase):
         expected['hard_mode'] = False
         self.assertDictEqual(actual, expected)
 
+    def test_init__with_serializer(self):
+        """
+        """
+        serializer = InitArgs(data=self.kwargs)
+        actual = serializer.is_valid()
+        expected = True
+        self.assertIs(actual, expected)
+        actual = serializer.validated_data
+        expected = self.kwargs
+        expected['hard_mode'] = False
+        self.assertDictEqual(actual, expected)
+
     def test_init__fail(self):
         """
         """
@@ -571,6 +641,18 @@ class LyndisLeague(TestCase):
         """
         serializer = InitArgs(data=self.kwargs)
         serializer.is_valid()
+        actual = serializer.validated_data
+        expected = self.kwargs
+        expected['lyn_mode'] = False
+        self.assertDictEqual(actual, expected)
+
+    def test_init__with_serializer(self):
+        """
+        """
+        serializer = InitArgs(data=self.kwargs)
+        actual = serializer.is_valid()
+        expected = True
+        self.assertIs(actual, expected)
         actual = serializer.validated_data
         expected = self.kwargs
         expected['lyn_mode'] = False
@@ -883,6 +965,13 @@ class MorphMethods(TestCase):
         actual = serializer.validated_data
         expected = data
         self.assertDictEqual(actual, expected)
+        null_dict_serializer = NullDictSerializer(data=data.pop("args"))
+        actual = null_dict_serializer.is_valid()
+        expected = True
+        self.assertIs(actual, expected)
+        actual = null_dict_serializer.validated_data
+        expected = {}
+        self.assertDictEqual(actual, expected)
 
     def test_use_metiss_tome(self):
         """
@@ -894,6 +983,13 @@ class MorphMethods(TestCase):
         self.assertIs(actual, expected)
         actual = serializer.validated_data
         expected = data
+        self.assertDictEqual(actual, expected)
+        null_dict_serializer = NullDictSerializer(data=data.pop("args"))
+        actual = null_dict_serializer.is_valid()
+        expected = True
+        self.assertIs(actual, expected)
+        actual = null_dict_serializer.validated_data
+        expected = {}
         self.assertDictEqual(actual, expected)
 
     def test_equip_band(self):
@@ -942,6 +1038,44 @@ class MorphMethods(TestCase):
         actual = serializer.is_valid()
         self.assertIs(actual, expected)
         # expected failure
+        actual = serializer.validated_data
+        expected = {}
+        self.assertDictEqual(actual, expected)
+
+class MorphID(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+        self.data = {"morph_id": None}
+
+    def test_less_than_26_chars(self):
+        """
+        """
+        num_chars = 25
+        morph_id = "".join([letter for letter in ("a" for _ in range(num_chars))])
+        self.data['morph_id'] = morph_id
+        serializer = MorphIDSerializer(data=self.data)
+        actual = serializer.is_valid()
+        expected = True
+        self.assertIs(actual, expected)
+        actual = serializer.validated_data
+        expected = self.data
+        self.assertDictEqual(actual, expected)
+
+    def test_26_or_more_chars(self):
+        """
+        """
+        num_chars = 26
+        morph_id = "".join([letter for letter in ("a" for _ in range(num_chars))])
+        self.data['morph_id'] = morph_id
+        serializer = MorphIDSerializer(data=self.data)
+        actual = serializer.is_valid()
+        expected = False
+        self.assertIs(actual, expected)
         actual = serializer.validated_data
         expected = {}
         self.assertDictEqual(actual, expected)

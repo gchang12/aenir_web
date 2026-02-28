@@ -4,7 +4,16 @@
 import io
 
 from rest_framework import serializers
-from rest_framework import serializers
+
+from dracogate.models import VirtualMorph
+
+class MorphIDSerializer(serializers.ModelSerializer):
+    """
+    """
+
+    class Meta:
+        model = VirtualMorph
+        fields = ["morph_id"]
 
 class InitArgs(serializers.Serializer):
     """
@@ -276,4 +285,19 @@ class MorphSerializer:#(serializers.Serializer):
             if kwarg == "number_of_declines":
                 kwargs[kwarg] = int(kwval)
         return (game_no, name, kwargs)
+
+class NullDictSerializer:
+    """
+    """
+
+    def __init__(self, *, data):
+        """
+        """
+        self.validated_data = {}
+        self.data = data
+
+    def is_valid(self):
+        """
+        """
+        return True
 
