@@ -27,6 +27,7 @@ from dracogate.serializers import (
     UseStatBoosterArgs,
     ScrollEquipmentArgs,
     BandEquipmentArgs,
+    MorphMethodArgs,
     # custom
     MorphSerializer,
 )
@@ -802,4 +803,146 @@ class Bands(TestCase):
         expected = self.kwargs
         self.assertDictEqual(actual, expected)
 
+class MorphMethods(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+
+    def test_level_up(self):
+        """
+        """
+        data = {"method_name": "level_up", "args": {"num_levels": 0}}
+        serializer = MorphMethodArgs(data=data)
+        expected = True
+        actual = serializer.is_valid()
+        self.assertIs(actual, expected)
+        actual = serializer.validated_data
+        expected = data
+        self.assertDictEqual(actual, expected)
+
+    def test_promote(self):
+        """
+        """
+        data = {"method_name": "promote", "args": {"promo_cls": "Master Lord"}}
+        serializer = MorphMethodArgs(data=data)
+        expected = True
+        actual = serializer.is_valid()
+        self.assertIs(actual, expected)
+        actual = serializer.validated_data
+        expected = data
+        self.assertDictEqual(actual, expected)
+
+    def test_use_stat_booster(self):
+        """
+        """
+        data = {"method_name": "use_stat_booster", "args": {"item_name": "Angelic Robe"}}
+        serializer = MorphMethodArgs(data=data)
+        expected = True
+        actual = serializer.is_valid()
+        self.assertIs(actual, expected)
+        actual = serializer.validated_data
+        expected = data
+        self.assertDictEqual(actual, expected)
+
+    def test_equip_scroll(self):
+        """
+        """
+        data = {"method_name": "equip_scroll", "args": {"scroll_name": "Odo"}}
+        serializer = MorphMethodArgs(data=data)
+        expected = True
+        actual = serializer.is_valid()
+        self.assertIs(actual, expected)
+        actual = serializer.validated_data
+        expected = data
+        self.assertDictEqual(actual, expected)
+
+    def test_unequip_scroll(self):
+        """
+        """
+        data = {"method_name": "unequip_scroll", "args": {"scroll_name": "Odo"}}
+        serializer = MorphMethodArgs(data=data)
+        expected = True
+        actual = serializer.is_valid()
+        self.assertIs(actual, expected)
+        actual = serializer.validated_data
+        expected = data
+        self.assertDictEqual(actual, expected)
+
+    def test_use_afas_drops(self):
+        """
+        """
+        data = {"method_name": "use_afas_drops", "args": {}}
+        serializer = MorphMethodArgs(data=data)
+        expected = True
+        actual = serializer.is_valid()
+        self.assertIs(actual, expected)
+        actual = serializer.validated_data
+        expected = data
+        self.assertDictEqual(actual, expected)
+
+    def test_use_metiss_tome(self):
+        """
+        """
+        data = {"method_name": "use_metiss_tome", "args": {}}
+        serializer = MorphMethodArgs(data=data)
+        expected = True
+        actual = serializer.is_valid()
+        self.assertIs(actual, expected)
+        actual = serializer.validated_data
+        expected = data
+        self.assertDictEqual(actual, expected)
+
+    def test_equip_band(self):
+        """
+        """
+        data = {"method_name": "equip_band", "args": {"band_name": "Sword Band"}}
+        serializer = MorphMethodArgs(data=data)
+        expected = True
+        actual = serializer.is_valid()
+        self.assertIs(actual, expected)
+        actual = serializer.validated_data
+        expected = data
+        self.assertDictEqual(actual, expected)
+
+    def test_unequip_band(self):
+        """
+        """
+        data = {"method_name": "unequip_band", "args": {"band_name": "Sword Band"}}
+        serializer = MorphMethodArgs(data=data)
+        expected = True
+        actual = serializer.is_valid()
+        self.assertIs(actual, expected)
+        actual = serializer.validated_data
+        expected = data
+        self.assertDictEqual(actual, expected)
+
+    def test_invalid_method(self):
+        """
+        """
+        data = {"method_name": "levelUp", "args": {"num_levels": 0}}
+        serializer = MorphMethodArgs(data=data)
+        expected = False
+        actual = serializer.is_valid()
+        self.assertIs(actual, expected)
+        # expected failure
+        actual = serializer.validated_data
+        expected = {}
+        self.assertDictEqual(actual, expected)
+
+    def test_invalid_args(self):
+        """
+        """
+        data = {"method_name": "level_up", "args": None}
+        serializer = MorphMethodArgs(data=data)
+        expected = False
+        actual = serializer.is_valid()
+        self.assertIs(actual, expected)
+        # expected failure
+        actual = serializer.validated_data
+        expected = {}
+        self.assertDictEqual(actual, expected)
 

@@ -56,6 +56,27 @@ class InitArgs(serializers.Serializer):
         required=False,
     )
 
+class MorphMethodArgs(serializers.Serializer):
+    """
+    Validates Morph methods passed in as strings, plus their arguments, passed in as dict-like objects.
+    """
+    method_name = serializers.ChoiceField(
+        choices=(
+            "level_up",
+            "promote",
+            "use_stat_booster",
+            "equip_scroll",
+            "unequip_scroll",
+            "use_afas_drops",
+            "use_metiss_tome",
+            "equip_band",
+            "unequip_band",
+        ),
+    )
+    args = serializers.DictField(
+        allow_empty=True,
+    )
+
 class LevelUpArgs(serializers.Serializer):
     """
     Validates argument for `level_up`.
