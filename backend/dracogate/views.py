@@ -8,6 +8,7 @@ from django.shortcuts import (
     get_object_or_404,
 )
 
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import (
     viewsets,
@@ -173,21 +174,13 @@ class MorphViewSet(viewsets.ViewSet):
                 detail="The program was unable to update your Morph somehow.",
             )
 
-    @staticmethod
-    def simulate_operation(vmorph, data):
+    def simulate_operation(self, request, pk, method_name):
         """
         """
-        logger.debug("Attempting to validate raw data: %r", data)
-        raw_data = MorphMethodArgs(data=data)
-        if not raw_data.is_valid():
-            # e.g., method_name == "nonexistent_method" or not isinstance(args, dict)
-            raise exceptions.ParseError(
-                code="BAD_MORPH_METHOD",
-                detail="'%(method_name)s' is not a valid Morph method. %(args)r must be dict-like object." % raw_data.data,
-            )
-        data = raw_data.validated_data
-        logger.debug("The cleaned data is as follows: %r", data)
-        method_name = data.get("method_name")
+        vmorph = get_object_or_404(VirtualMorph, id=pk)
+        morph = vmorph.init()
+        method_serializer = MorphMethodArgs(data={"method_name": method_name})
+        method_serializer.is_valid(raise_exception=True)
         (method, serializer) = {
             "level_up": (vmorph.level_up, LevelUpArgs),
             "promote": (vmorph.promote, PromoteArgs),
@@ -199,18 +192,13 @@ class MorphViewSet(viewsets.ViewSet):
             "equip_scroll": (vmorph.equip_scroll, ScrollEquipmentArgs),
             "unequip_scroll": (vmorph.unequip_scroll, ScrollEquipmentArgs),
         }[method_name]
-        method_args_serializer = serializer(data=data.get("args"))
+        method_args_serializer = serializer(data=request.query_params)
         logger.debug("Attempting to validate argument(s) of '%s'.", method_name)
-        if not method_args_serializer.is_valid():
-            # e.g., Morph5.level_up("five")
-            raise exceptions.ParseError(
-                code="BAD_MORPH_METHOD_ARGS",
-                detail="Bad arguments were supplied for the '%s' method." % method_name,
-            )
-        method_args = method_args_serializer.validated_data
-        logger.debug("Attempting to call `%s(**%r)`.", method_name, method_args)
+        method_args_serializer.is_valid(raise_exception=True)
+        valid_method_args = method_args_serializer.validated_data
+        logger.debug("Attempting to call `%s(**%r)`.", method_name, valid_method_args)
         try:
-            return method(**method_args)
+            (is_success, param_bounds) = method(**valid_method_args)
         except NotImplementedError:
             # e.g., Morph4.use_afas_drops
             logger.debug("`%s` has not been implemented for `%s`.", method_name, vmorph.morph.__class__.__name__)
@@ -225,4 +213,30 @@ class MorphViewSet(viewsets.ViewSet):
                 code="METHOD_INVOCATION_FAILED",
                 detail="%r" % err,
             )
+        if request.method == "PATCH":
+            if is_success is True:
+                serializer = MorphSerializer(morph)
+                statdicts = serializer.get_current_stats()
+                data = serializer.get_morph(*statdicts)
+                vmorph.save()
+                return Response({
+                    "morph": data,
+                })
+            elif is_success is False:
+                raise exceptions.ParseError(
+                    code="UNABLE_TO_UPDATE",
+                    detail="The program was unable to update your Morph somehow.",
+                )
+        elif request.method == "GET":
+            return Response({
+                "paramBounds": param_bounds,
+            })
+
+    @action(detail=True, methods=["patch", "get"])
+    def level_up(self, request, pk):
+        """
+        Simulates operations on a morph without modifying it.
+        """
+        method_name = "level_up"
+        return self.simulate_operation(request, pk, method_name)
 

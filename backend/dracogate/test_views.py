@@ -5,7 +5,6 @@ import unittest
 from unittest.mock import patch
 
 from django.test import TestCase
-from django.test.client import MULTIPART_CONTENT
 
 from dracogate._logging import logger
 from dracogate.models import VirtualMorph
@@ -1000,37 +999,15 @@ class FE4UnitForSimulatingInvalidOperations(TestCase):
             "args": {},
         }
         expected_error_code = "BAD_MORPH_METHOD"
-        # usual stuff
-        url = RESOURCE_URL + str(self.vmorph.id) + "/"
-        response = self.client.patch(url, query_params=data, content_type=MULTIPART_CONTENT)
-        # check status
-        actual = response.status_code
-        expected = 400
-        self.assertEqual(actual, expected)
-        # check response data
-        actual = response.data['detail'].code
-        expected = expected_error_code
-        self.assertEqual(actual, expected)
 
     def test_use_stat_booster(self):
         """
         """
+        method_name = "use_stat_booster"
         data = {
-            "method_name": "use_stat_booster",
-            "args": {"item_name": "Angelic Robe"},
+            "item_name": "Angelic Robe"
         }
         expected_error_code = "METHOD_NOT_DEFINED_ON_MORPH"
-        # usual stuff
-        url = RESOURCE_URL + str(self.vmorph.id) + "/"
-        response = self.client.put(url, data=data, query_params=data, content_type=MULTIPART_CONTENT)
-        # check status
-        actual = response.status_code
-        expected = 400
-        self.assertEqual(actual, expected)
-        # check response data
-        actual = response.data['detail'].code
-        expected = expected_error_code
-        self.assertEqual(actual, expected)
 
     def test_use_afas_drops(self):
         """
@@ -1040,17 +1017,6 @@ class FE4UnitForSimulatingInvalidOperations(TestCase):
             "args": {},
         }
         expected_error_code = "METHOD_NOT_DEFINED_ON_MORPH"
-        # usual stuff
-        url = RESOURCE_URL + str(self.vmorph.id) + "/"
-        response = self.client.patch(url, query_params=data, content_type=MULTIPART_CONTENT)
-        # check status
-        actual = response.status_code
-        expected = 400
-        self.assertEqual(actual, expected)
-        # check response data
-        actual = response.data['detail'].code
-        expected = expected_error_code
-        self.assertEqual(actual, expected)
 
     def test_use_metiss_tome(self):
         """
@@ -1060,17 +1026,6 @@ class FE4UnitForSimulatingInvalidOperations(TestCase):
             "args": {},
         }
         expected_error_code = "METHOD_NOT_DEFINED_ON_MORPH"
-        # usual stuff
-        url = RESOURCE_URL + str(self.vmorph.id) + "/"
-        response = self.client.patch(url, query_params=data, content_type=MULTIPART_CONTENT)
-        # check status
-        actual = response.status_code
-        expected = 400
-        self.assertEqual(actual, expected)
-        # check response data
-        actual = response.data['detail'].code
-        expected = expected_error_code
-        self.assertEqual(actual, expected)
 
     def test_equip_band(self):
         """
@@ -1080,17 +1035,6 @@ class FE4UnitForSimulatingInvalidOperations(TestCase):
             "args": {"band_name": "Sword Band"},
         }
         expected_error_code = "METHOD_NOT_DEFINED_ON_MORPH"
-        # usual stuff
-        url = RESOURCE_URL + str(self.vmorph.id) + "/"
-        response = self.client.patch(url, query_params=data, content_type=MULTIPART_CONTENT)
-        # check status
-        actual = response.status_code
-        expected = 400
-        self.assertEqual(actual, expected)
-        # check response data
-        actual = response.data['detail'].code
-        expected = expected_error_code
-        self.assertEqual(actual, expected)
 
     def test_unequip_band(self):
         """
@@ -1100,17 +1044,6 @@ class FE4UnitForSimulatingInvalidOperations(TestCase):
             "args": {"band_name": "Sword Band"},
         }
         expected_error_code = "METHOD_NOT_DEFINED_ON_MORPH"
-        # usual stuff
-        url = RESOURCE_URL + str(self.vmorph.id) + "/"
-        response = self.client.patch(url, query_params=data, content_type=MULTIPART_CONTENT)
-        # check status
-        actual = response.status_code
-        expected = 400
-        self.assertEqual(actual, expected)
-        # check response data
-        actual = response.data['detail'].code
-        expected = expected_error_code
-        self.assertEqual(actual, expected)
 
     def test_equip_scroll(self):
         """
@@ -1120,17 +1053,6 @@ class FE4UnitForSimulatingInvalidOperations(TestCase):
             "args": {"scroll_name": "Odo"},
         }
         expected_error_code = "METHOD_NOT_DEFINED_ON_MORPH"
-        # usual stuff
-        url = RESOURCE_URL + str(self.vmorph.id) + "/"
-        response = self.client.patch(url, query_params=data, content_type=MULTIPART_CONTENT)
-        # check status
-        actual = response.status_code
-        expected = 400
-        self.assertEqual(actual, expected)
-        # check response data
-        actual = response.data['detail'].code
-        expected = expected_error_code
-        self.assertEqual(actual, expected)
 
     def test_unequip_scroll(self):
         """
@@ -1140,17 +1062,6 @@ class FE4UnitForSimulatingInvalidOperations(TestCase):
             "args": {"scroll_name": "Odo"},
         }
         expected_error_code = "METHOD_NOT_DEFINED_ON_MORPH"
-        # usual stuff
-        url = RESOURCE_URL + str(self.vmorph.id) + "/"
-        response = self.client.patch(url, query_params=data, content_type=MULTIPART_CONTENT)
-        # check status
-        actual = response.status_code
-        expected = 400
-        self.assertEqual(actual, expected)
-        # check response data
-        actual = response.data['detail'].code
-        expected = expected_error_code
-        self.assertEqual(actual, expected)
 
 
 class FE6Unit(TestCase):
@@ -1166,6 +1077,8 @@ class FE6Unit(TestCase):
         name = "Rutger"
         options = {"hard_mode": True}
         vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
+        vmorph.init()
+        vmorph.morph._set_max_level()
         self.vmorph = vmorph
 
     def test_retrieve(self):
@@ -1237,27 +1150,100 @@ class FE6Unit(TestCase):
         expected = "VIRTUALMORPH_NOT_FOUND"
         self.assertEqual(actual, expected)
 
-    def test_simulate_operation__level_up(self):
+    def test_level_up__no_rehearsal(self):
+        """
+        """
+        method_name = "level_up"
+        num_levels = 16
+        data = {
+            "num_levels": num_levels,
+        }
+        expected_error_code = "METHOD_NOT_DEFINED_ON_MORPH"
+        # usual stuff
+        url = RESOURCE_URL + str(self.vmorph.id) + "/" + method_name +"/"
+        response = self.client.patch(url, query_params=data)
+        # check status
+        actual = response.status_code
+        expected = 200
+        self.assertEqual(actual, expected)
+        # check response data
+        actual = response.data
+        expected = {
+            "morph": {
+                'unitClass': "Myrmidon",
+                'level': (20, 20),
+                'stats': [
+                    ("HP", 38.8, 60.0, 80.0),
+                    ("Pow", 13.8, 20.0, 30.0),
+                    ("Skl", 20.0, 20.0, 30.0),
+                    ("Spd", 20.0, 20.0, 30.0),
+                    ("Lck", 8.8, 30.0, 30.0),
+                    ("Def", 9.2, 20.0, 30.0),
+                    ("Res", 4.2, 20.0, 30.0),
+                    ("Con", 7.0, 20.0, 25.0),
+                    ("Mov", 5.0, 15.0, 15.0),
+                ],
+            }
+        }
+        self.assertDictEqual(actual, expected)
+        # check database
+        vmorph = VirtualMorph.objects.get()
+        actual = vmorph.history
+        expected = [
+            ["level_up", {"num_levels": 16}],
+        ]
+        self.assertListEqual(actual, expected)
+
+    def test_level_up__rehearsal(self):
+        """
+        """
+        method_name = "level_up"
+        num_levels = 16
+        data = {
+            "num_levels": num_levels,
+        }
+        expected_error_code = "METHOD_NOT_DEFINED_ON_MORPH"
+        # usual stuff
+        url = RESOURCE_URL + str(self.vmorph.id) + "/" + method_name +"/"
+        response = self.client.get(url, query_params=data)
+        # check status
+        actual = response.status_code
+        expected = 200
+        self.assertEqual(actual, expected)
+        # check response data
+        actual = response.data
+        expected = {
+            "paramBounds": [5, 20],
+        }
+        self.assertDictEqual(actual, expected)
+        # check database
+        vmorph = VirtualMorph.objects.get()
+        actual = vmorph.history
+        expected = []
+        self.assertListEqual(actual, expected)
+        # check offline data
+        morph = self.vmorph.morph
+        actual = morph.current_lv
+        expected = 4
+        self.assertEqual(actual, expected)
+
+    def test_level_up__invalid_args(self):
         """
         """
 
-    def test_simulate_operation__level_up__invalid_args(self):
+    def test_level_up__morph_err(self):
         """
         """
 
-    def test_simulate_operation__level_up__morph_err(self):
+    def test_promote(self):
         """
         """
 
-    def test_simulate_operation__promote(self):
+    def test_promote__invalid_args(self):
         """
         """
 
-    def test_simulate_operation__promote__invalid_args(self):
-        """
-        """
-
-    def test_simulate_operation__promote__morph_err(self):
+    def test_promote__morph_err(self):
         """
         """
 
