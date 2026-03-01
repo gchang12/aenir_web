@@ -149,7 +149,10 @@ class VirtualMorph(models.Model):
         logger.debug("item_name: %r", item_name)
         is_success: bool
         try:
-            morph.use_stat_booster(item_name)
+            try:
+                morph.use_stat_booster(item_name)
+            except NotImplementedError as err:
+                raise err
             param_bounds = None
             self.history.append(("use_stat_booster", {"item_name": item_name}))
             is_success = True
@@ -172,7 +175,10 @@ class VirtualMorph(models.Model):
         scroll_name = kwargs.get("scroll_name")
         is_success: bool
         try:
-            morph.equip_scroll(scroll_name)
+            try:
+                morph.equip_scroll(scroll_name)
+            except AttributeError as err:
+                raise NotImplementedError
             param_bounds = None
             self.history.append(("equip_scroll", {"scroll_name": scroll_name}))
             is_success = True
@@ -197,7 +203,10 @@ class VirtualMorph(models.Model):
         scroll_name = kwargs.get("scroll_name")
         is_success: bool
         try:
-            morph.unequip_scroll(scroll_name)
+            try:
+                morph.unequip_scroll(scroll_name)
+            except AttributeError as err:
+                raise NotImplementedError
             param_bounds = None
             self.history.append(("unequip_scroll", {"scroll_name": scroll_name}))
             is_success = True
@@ -222,7 +231,10 @@ class VirtualMorph(models.Model):
         morph = self.morph
         is_success: bool
         try:
-            morph.use_afas_drops()
+            try:
+                morph.use_afas_drops()
+            except AttributeError as err:
+                raise NotImplementedError
             param_bounds = None
             self.history.append(("use_afas_drops", {}))
             is_success = True
@@ -242,7 +254,10 @@ class VirtualMorph(models.Model):
         morph = self.morph
         is_success: bool
         try:
-            morph.use_metiss_tome()
+            try:
+                morph.use_metiss_tome()
+            except AttributeError as err:
+                raise NotImplementedError
             param_bounds = None
             self.history.append(("use_metiss_tome", {}))
             is_success = True
@@ -262,7 +277,10 @@ class VirtualMorph(models.Model):
         morph = self.morph
         is_success: bool
         try:
-            morph.equip_knight_ward()
+            try:
+                morph.equip_knight_ward()
+            except AttributeError as err:
+                raise NotImplementedError
             param_bounds = None
             self.history.append(("equip_knight_ward", {}))
             is_success = True
@@ -287,7 +305,10 @@ class VirtualMorph(models.Model):
         morph = self.morph
         is_success: bool
         try:
-            morph.unequip_knight_ward()
+            try:
+                morph.unequip_knight_ward()
+            except AttributeError as err:
+                raise NotImplementedError
             param_bounds = None
             self.history.append(("unequip_knight_ward", {}))
             is_success = True
@@ -313,7 +334,10 @@ class VirtualMorph(models.Model):
         band_name = kwargs.get("band_name")
         is_success: bool
         try:
-            morph.equip_band(band_name)
+            try:
+                morph.equip_band(band_name)
+            except AttributeError as err:
+                raise NotImplementedError
             param_bounds = None
             self.history.append(("equip_band", {"band_name": band_name}))
             is_success = True
@@ -337,7 +361,10 @@ class VirtualMorph(models.Model):
         band_name = kwargs.get("band_name")
         is_success: bool
         try:
-            morph.unequip_band(band_name)
+            try:
+                morph.unequip_band(band_name)
+            except AttributeError as err:
+                raise NotImplementedError
             param_bounds = None
             self.history.append(("unequip_band", {"band_name": band_name}))
             is_success = True

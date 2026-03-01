@@ -298,6 +298,79 @@ class FatheredUnit(TestCase):
             vmorph.init()
         MOCK_get_morph.assert_called_once_with("Lakche", father="Lex")
 
+    def test_use_stat_booster(self):
+        """
+        """
+        vmorph = self.vmorph
+        vmorph.init()
+        with self.assertRaises(NotImplementedError):
+            vmorph.use_stat_booster(item_name="Angelic Robe")
+
+    def test_equip_scroll(self):
+        """
+        """
+        vmorph = self.vmorph
+        vmorph.init()
+        with self.assertRaises(NotImplementedError):
+            vmorph.equip_scroll(scroll_name="Odo")
+
+    def test_unequip_scroll(self):
+        """
+        """
+        vmorph = self.vmorph
+        vmorph.init()
+        with self.assertRaises(NotImplementedError):
+            vmorph.unequip_scroll(scroll_name="Odo")
+
+    def test_use_afas_drops(self):
+        """
+        """
+        vmorph = self.vmorph
+        vmorph.init()
+        with self.assertRaises(NotImplementedError):
+            vmorph.use_afas_drops()
+
+    def test_use_metiss_tome(self):
+        """
+        """
+        vmorph = self.vmorph
+        vmorph.init()
+        with self.assertRaises(NotImplementedError):
+            vmorph.use_metiss_tome()
+
+    def test_equip_knight_ward(self):
+        """
+        """
+        vmorph = self.vmorph
+        vmorph.init()
+        with self.assertRaises(NotImplementedError):
+            vmorph.equip_knight_ward()
+
+    def test_unequip_knight_ward(self):
+        """
+        """
+        vmorph = self.vmorph
+        vmorph.init()
+        with self.assertRaises(NotImplementedError):
+            vmorph.unequip_knight_ward()
+
+    def test_equip_band(self):
+        """
+        """
+        vmorph = self.vmorph
+        vmorph.init()
+        with self.assertRaises(NotImplementedError):
+            vmorph.equip_band(band_name="Sword Band")
+
+    def test_unequip_band(self):
+        """
+        """
+        vmorph = self.vmorph
+        vmorph.init()
+        with self.assertRaises(NotImplementedError):
+            vmorph.unequip_band(band_name="Sword Band")
+
+
 class HardModeUnit(TestCase):
     """
     """
