@@ -7,6 +7,9 @@ from unittest.mock import patch
 from django.test import TestCase
 
 from dracogate._logging import logger
+from dracogate.models import VirtualMorph
+
+URL_ENCODED_SOLIDUS = "%2F"
 
 RESOURCE_URL = "/dracogate/api/morphs/"
 
@@ -23,6 +26,7 @@ class NormalUnit(TestCase):
         options = {}
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
+        kwargs['morph_id'] = "NormalUnit"
         self.kwargs = kwargs
 
     def test_list__verify_that_invalid_options_are_ignored(self):
@@ -66,7 +70,38 @@ class NormalUnit(TestCase):
     def test_create(self):
         """
         """
-        raise NotImplementedError
+        url = RESOURCE_URL
+        kwargs = self.kwargs
+        response = self.client.post(url, data=kwargs)
+        # check status code
+        actual = response.status_code
+        expected = 200
+        self.assertEqual(actual, expected)
+        # check pk value
+        actual = response.data.pop('pk')
+        logger.debug("Got a 'pk' value from the response: (%r, %r)", actual, type(actual))
+        expected = VirtualMorph.objects.get().id
+        self.assertEqual(actual, expected)
+
+    def test_create__invalid_morph_id(self):
+        """
+        """
+        url = RESOURCE_URL
+        kwargs = self.kwargs
+        kwargs['morph_id'] = ""
+        response = self.client.post(url, data=kwargs)
+        # check status code
+        actual = response.status_code
+        expected = 400
+        self.assertEqual(actual, expected)
+        # check error code.
+        actual = response.data['detail'].code
+        expected = "INVALID_MORPH_ID"
+        self.assertEqual(actual, expected)
+        # check database.
+        actual = VirtualMorph.objects.exists()
+        expected = False
+        self.assertIs(actual, expected)
 
 class FatheredUnit(TestCase):
     """
@@ -159,6 +194,27 @@ class FatheredUnit(TestCase):
         )
         self.assertTupleEqual(actual, expected)
 
+    def test_create__bastard(self):
+        """
+        """
+        url = RESOURCE_URL
+        kwargs = self.kwargs
+        kwargs.pop("father")
+        kwargs['morph_id'] = "FatheredUnit"
+        response = self.client.post(url, data=kwargs)
+        # check status code
+        actual = response.status_code
+        expected = 404
+        self.assertEqual(actual, expected)
+        # check error code
+        actual = response.data['detail'].code
+        expected = "UNIT_DNE"
+        self.assertEqual(actual, expected)
+        # check database.
+        actual = VirtualMorph.objects.exists()
+        expected = False
+        self.assertIs(actual, expected)
+
 class HardModeUnit(TestCase):
     """
     """
@@ -237,6 +293,29 @@ class HardModeUnit(TestCase):
         actual = response.data["missingParams"]["hard_mode"]
         expected = (False, True)
         self.assertTupleEqual(actual, expected)
+
+    def test_create__validate_options(self):
+        """
+        """
+        url = RESOURCE_URL
+        kwargs = self.kwargs
+        # pre request-send check
+        actual = kwargs['hard_mode']
+        expected = "false"
+        self.assertEqual(actual, expected)
+        # send response
+        kwargs["morph_id"] = "HARD_MODE_UNIT"
+        response = self.client.post(url, data=kwargs)
+        # check status code
+        actual = response.status_code
+        expected = 200
+        self.assertEqual(actual, expected)
+        # check option values
+        pk = response.data.pop('pk')
+        vmorph = VirtualMorph.objects.get(id=pk)
+        actual = vmorph.options['hard_mode']
+        expected = False
+        self.assertIs(actual, expected)
 
 class DeclinableUnit(TestCase):
     """
@@ -758,6 +837,26 @@ class InvalidGame(TestCase):
         expected = "INVALID_GAME"
         self.assertEqual(actual, expected)
 
+    def test_create__unit_from_invalid_game(self):
+        """
+        """
+        url = RESOURCE_URL
+        kwargs = self.kwargs
+        kwargs['morph_id'] = "InvalidGame"
+        response = self.client.post(url, data=kwargs)
+        # check status code
+        actual = response.status_code
+        expected = 404
+        self.assertEqual(actual, expected)
+        # check error code
+        actual = response.data['detail'].code
+        expected = "INVALID_GAME"
+        self.assertEqual(actual, expected)
+        # check database.
+        actual = VirtualMorph.objects.exists()
+        expected = False
+        self.assertIs(actual, expected)
+
 class InvalidUnit(TestCase):
     """
     """
@@ -798,6 +897,26 @@ class InvalidUnit(TestCase):
         #expected = "UNIT_DNE"
         #self.assertEqual(actual, expected)
 
+    def test_create__invalid_unit(self):
+        """
+        """
+        url = RESOURCE_URL
+        kwargs = self.kwargs
+        kwargs['morph_id'] = "InvalidUnit"
+        response = self.client.post(url, data=kwargs)
+        # check status code
+        actual = response.status_code
+        expected = 404
+        self.assertEqual(actual, expected)
+        # check error code
+        actual = response.data['detail'].code
+        expected = "UNIT_DNE"
+        self.assertEqual(actual, expected)
+        # check database.
+        actual = VirtualMorph.objects.exists()
+        expected = False
+        self.assertIs(actual, expected)
+
 
 '''
 create
@@ -813,3 +932,177 @@ Update
 - Check that the record's been updated.
 - Have the right values been returned?
 '''
+
+@unittest.skip("I was doing dumb stuff.")
+class UnitWithSlashedMorphID(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+        morph_id = "Na/me"
+        game_no = 6
+        name = "Marcus"
+        options = {}
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
+        self.vmorph = vmorph
+
+    def test_retrieve__fail1(self):
+        """
+        """
+        url = RESOURCE_URL + self.vmorph.morph_id + "/"
+        response = self.client.get(url)
+        actual = response.status_code
+        expected = 404
+        self.assertEqual(actual, expected)
+
+    def test_retrieve__fail2(self):
+        """
+        """
+        url = RESOURCE_URL + self.vmorph.morph_id
+        response = self.client.get(url)
+        actual = response.status_code
+        expected = 404
+        self.assertEqual(actual, expected)
+
+    def test_retrieve(self):
+        """
+        """
+        url = RESOURCE_URL + self.vmorph.morph_id.replace("/", URL_ENCODED_SOLIDUS)
+        response = self.client.get(url)
+        actual = response.status_code
+        expected = 200
+        self.assertEqual(actual, expected)
+
+class FE7Unit(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+        morph_id = "FE7!Lyn"
+        game_no = 7
+        name = "Lyn"
+        options = {"lyn_mode": True}
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
+        self.vmorph = vmorph
+
+    def test_retrieve(self):
+        """
+        """
+        url = RESOURCE_URL + str(self.vmorph.id) + "/"
+        response = self.client.get(url)
+        actual = response.status_code
+        expected = 200
+        self.assertEqual(actual, expected)
+        logger.debug("response.data: %r", response.data)
+
+    def test_retrieve__fail(self):
+        """
+        """
+        # first, confirm that vmorph.id does not exist.
+        wmorph_id = 9999
+        actual = VirtualMorph.objects.filter(id=wmorph_id).exists()
+        expected = False
+        self.assertIs(actual, expected)
+        # send request to fetch nonexistent data.
+        url = RESOURCE_URL + str(wmorph_id) + "/"
+        response = self.client.get(url)
+        # check status
+        actual = response.status_code
+        expected = 404
+        self.assertEqual(actual, expected)
+        # check response data
+        actual = response.data['detail'].code
+        expected = "not_found"
+        self.assertEqual(actual, expected)
+
+    def test_destroy(self):
+        """
+        """
+        url = RESOURCE_URL + str(self.vmorph.id) + "/"
+        response = self.client.delete(url)
+        # check status
+        actual = response.status_code
+        expected = 200
+        self.assertEqual(actual, expected)
+        # check response data
+        actual = response.data
+        #expected = {}
+        #self.assertDictEqual(actual, expected)
+        self.assertIsNone(actual)
+        # check database
+        actual = VirtualMorph.objects.filter(id=self.vmorph.id).exists()
+        expected = False
+        self.assertIs(actual, expected)
+
+    def test_destroy__fail(self):
+        """
+        """
+        # first, confirm that vmorph.id does not exist.
+        wmorph_id = 9999
+        actual = VirtualMorph.objects.filter(id=wmorph_id).exists()
+        expected = False
+        self.assertIs(actual, expected)
+        # send request to delete nonexistent data.
+        url = RESOURCE_URL + str(wmorph_id) + "/"
+        response = self.client.delete(url)
+        # check status
+        actual = response.status_code
+        expected = 404
+        self.assertEqual(actual, expected)
+        # check response data
+        actual = response.data['detail'].code
+        expected = "VIRTUALMORPH_NOT_FOUND"
+        self.assertEqual(actual, expected)
+
+class FE8Unit(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+        kwargs = {"game_no": 8, "name": "Gerik"}
+        game_no = 6
+        name = "Marcus"
+        options = {}
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
+        self.vmorph = vmorph
+
+class FE5Unit(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+        kwargs = {"game_no": 5, "name": "Mareeta"}
+        game_no = 6
+        name = "Marcus"
+        options = {}
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
+        self.vmorph = vmorph
+
+
+class FE9Unit(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+        kwargs = {"game_no": 5, "name": "Mareeta"}
+        game_no = 6
+        name = "Marcus"
+        options = {}
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
+        self.vmorph = vmorph
+

@@ -4,6 +4,10 @@ Interface to create and play with Morph objects.
 
 import json
 
+from django.shortcuts import (
+    get_object_or_404,
+)
+
 from rest_framework.response import Response
 from rest_framework import (
     viewsets,
@@ -71,13 +75,13 @@ class MorphViewSet(viewsets.ViewSet):
         """
         Creates a Morph instance and stores it in the database.
         """
-        morph_id_serializer = MorphIDSerializer(data={"morph_id": request.data.pop("morph_id")})
+        morph_id_serializer = MorphIDSerializer(data={"morph_id": request.data.get("morph_id")})
         if not morph_id_serializer.is_valid():
             raise exceptions.ParseError(
                 code="INVALID_MORPH_ID",
                 detail="The value provided for 'morph_id' was too long.",
             )
-        morph_id = morph_id.serializer.validated_data.pop("morph_id")
+        morph_id = morph_id_serializer.validated_data.pop("morph_id")
         game_no, name, options = MorphSerializer.parse_init_args(request.data)
         logger.debug("Nothing can be validated until the arguments are used to generate a Morph. Trying it now.")
         try:
@@ -102,10 +106,22 @@ class MorphViewSet(viewsets.ViewSet):
             "pk": pk,
         })
 
+    def destroy(self, request, pk):
+        """
+        For deleting morph objects from the viewset.
+        """
+        (delcount, detail) = VirtualMorph.objects.filter(id=pk).delete()
+        if delcount == 0:
+            raise exceptions.NotFound(
+                code="VIRTUALMORPH_NOT_FOUND",
+                detail="No VirtualMorph with id='%d' was found.",
+            )
+        return Response()
+
     def retrieve(self, request, pk):
         """
         """
-        vmorph = VirtualMorph.objects.get(id=pk)
+        vmorph = get_object_or_404(VirtualMorph, id=pk)
         morph = vmorph.init()
         serializer = MorphSerializer(morph)
         statdicts = serializer.get_current_stats()
@@ -147,18 +163,6 @@ class MorphViewSet(viewsets.ViewSet):
         return Response({
             "morph": data,
         })
-
-    def destroy(self, request, pk):
-        """
-        For deleting morph objects from the viewset.
-        """
-        (delcount, detail) = VirtualMorph.objects.filter(id=pk).delete()
-        if delcount == 0:
-            raise exceptions.NotFound(
-                code="VIRTUALMORPH_NOT_FOUND",
-                detail="No VirtualMorph with id='%d' was found.",
-            )
-        return Response()
 
     @staticmethod
     def simulate_operation(vmorph, dictlike):
