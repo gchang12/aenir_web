@@ -976,7 +976,7 @@ class UnitWithSlashedMorphID(TestCase):
         expected = 200
         self.assertEqual(actual, expected)
 
-class FE7Unit(TestCase):
+class FE6Unit(TestCase):
     """
     """
 
@@ -984,10 +984,10 @@ class FE7Unit(TestCase):
         """
         """
         logger.debug("%s", self.id())
-        morph_id = "FE7!Lyn"
-        game_no = 7
-        name = "Lyn"
-        options = {"lyn_mode": True}
+        morph_id = "FE6!Rutger"
+        game_no = 6
+        name = "Rutger"
+        options = {"hard_mode": True}
         vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
         self.vmorph = vmorph
 
@@ -1059,6 +1059,22 @@ class FE7Unit(TestCase):
         actual = response.data['detail'].code
         expected = "VIRTUALMORPH_NOT_FOUND"
         self.assertEqual(actual, expected)
+
+class FE7Unit(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+        morph_id = "FE7!Lyn"
+        game_no = 7
+        name = "Lyn"
+        options = {"lyn_mode": True}
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
+        self.vmorph = vmorph
+
 
 class FE8Unit(TestCase):
     """

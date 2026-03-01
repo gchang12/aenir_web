@@ -190,7 +190,7 @@ class MorphViewSet(viewsets.ViewSet):
         method_arg_serializer = serializer(data=data.pop("args"))
         if not method_arg_serializer.is_valid():
             raise exceptions.NotFound(
-                code="BAD_MORPH_METHOD_ARGUMENTS",
+                code="BAD_MORPH_METHOD_ARGS",
                 detail="Bad arguments were supplied for the '%s' method." % method_name,
             )
         method_args = method_arg_serializer.validated_data
