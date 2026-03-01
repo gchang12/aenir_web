@@ -13,6 +13,8 @@ URL_ENCODED_SOLIDUS = "%2F"
 
 RESOURCE_URL = "/dracogate/api/morphs/"
 
+# TODO: Fix test_promote* methods
+
 class NormalUnit(TestCase):
     """
     """
@@ -933,49 +935,6 @@ Update
 - Have the right values been returned?
 '''
 
-@unittest.skip("I was doing dumb stuff.")
-class UnitWithSlashedMorphID(TestCase):
-    """
-    """
-
-    def setUp(self):
-        """
-        """
-        logger.debug("%s", self.id())
-        morph_id = "Na/me"
-        game_no = 6
-        name = "Marcus"
-        options = {}
-        vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
-        self.vmorph = vmorph
-
-    def test_retrieve__fail1(self):
-        """
-        """
-        url = RESOURCE_URL + self.vmorph.morph_id + "/"
-        response = self.client.get(url)
-        actual = response.status_code
-        expected = 404
-        self.assertEqual(actual, expected)
-
-    def test_retrieve__fail2(self):
-        """
-        """
-        url = RESOURCE_URL + self.vmorph.morph_id
-        response = self.client.get(url)
-        actual = response.status_code
-        expected = 404
-        self.assertEqual(actual, expected)
-
-    def test_retrieve(self):
-        """
-        """
-        url = RESOURCE_URL + self.vmorph.morph_id.replace("/", URL_ENCODED_SOLIDUS)
-        response = self.client.get(url)
-        actual = response.status_code
-        expected = 200
-        self.assertEqual(actual, expected)
-
 class FE4UnitForSimulatingInvalidOperations(TestCase):
     """
     """
@@ -994,11 +953,29 @@ class FE4UnitForSimulatingInvalidOperations(TestCase):
     def test_invalid_morph_method(self):
         """
         """
+        method_name = ""
+        num_levels = 16
         data = {
-            "method_name": "",
-            "args": {},
+            "num_levels": num_levels,
         }
         expected_error_code = "BAD_MORPH_METHOD"
+        # usual stuff
+        url = RESOURCE_URL + str(self.vmorph.id) + "/" + method_name +"/"
+        response = self.client.get(url, query_params=data)
+        # check status
+        actual = response.status_code
+        expected = 404
+        self.assertEqual(actual, expected)
+        # check database
+        vmorph = VirtualMorph.objects.get()
+        actual = vmorph.history
+        expected = []
+        self.assertListEqual(actual, expected)
+        # check offline data
+        morph = self.vmorph.init()
+        actual = morph.current_lv
+        expected = 5
+        self.assertEqual(actual, expected)
 
     def test_use_stat_booster(self):
         """
@@ -1183,7 +1160,7 @@ class FE6Unit(TestCase):
                     ("Con", 7.0, 20.0, 25.0),
                     ("Mov", 5.0, 15.0, 15.0),
                 ],
-            }
+            },
         }
         self.assertDictEqual(actual, expected)
         # check database
@@ -1196,6 +1173,7 @@ class FE6Unit(TestCase):
 
     def test_level_up__rehearsal(self):
         """
+        Rutger
         """
         method_name = "level_up"
         num_levels = 16
@@ -1213,6 +1191,21 @@ class FE6Unit(TestCase):
         # check response data
         actual = response.data
         expected = {
+            "morph": {
+                'unitClass': "Myrmidon",
+                'level': (20, 20),
+                'stats': [
+                    ("HP", 38.8, 60.0, 80.0),
+                    ("Pow", 13.8, 20.0, 30.0),
+                    ("Skl", 20.0, 20.0, 30.0),
+                    ("Spd", 20.0, 20.0, 30.0),
+                    ("Lck", 8.8, 30.0, 30.0),
+                    ("Def", 9.2, 20.0, 30.0),
+                    ("Res", 4.2, 20.0, 30.0),
+                    ("Con", 7.0, 20.0, 25.0),
+                    ("Mov", 5.0, 15.0, 15.0),
+                ],
+            },
             "paramBounds": [5, 20],
         }
         self.assertDictEqual(actual, expected)
@@ -1230,14 +1223,64 @@ class FE6Unit(TestCase):
     def test_level_up__invalid_args(self):
         """
         """
+        method_name = "level_up"
+        num_levels = 16
+        data = {
+            "numLevels": num_levels,
+        }
+        expected_error_code = "required"
+        # usual stuff
+        url = RESOURCE_URL + str(self.vmorph.id) + "/" + method_name +"/"
+        response = self.client.get(url, query_params=data)
+        # check status
+        actual = response.status_code
+        expected = 400
+        self.assertEqual(actual, expected)
+        # check response data
+        actual = response.data['num_levels'][0].code
+        expected = expected_error_code
+        self.assertEqual(actual, expected)
+        # check database
+        vmorph = VirtualMorph.objects.get()
+        actual = vmorph.history
+        expected = []
+        self.assertListEqual(actual, expected)
+        # check offline data
+        morph = self.vmorph.morph
+        actual = morph.current_lv
+        expected = 4
+        self.assertEqual(actual, expected)
 
     def test_level_up__morph_err(self):
         """
         """
-
-    def test_promote(self):
-        """
-        """
+        method_name = "level_up"
+        num_levels = 17
+        data = {
+            "num_levels": num_levels,
+        }
+        expected_error_code = "UNABLE_TO_UPDATE"
+        # usual stuff
+        url = RESOURCE_URL + str(self.vmorph.id) + "/" + method_name +"/"
+        response = self.client.patch(url, query_params=data)
+        # check status
+        actual = response.status_code
+        expected = 400
+        self.assertEqual(actual, expected)
+        # check response data
+        actual = response.data['detail'].code
+        expected = expected_error_code
+        self.assertEqual(actual, expected)
+        # check database
+        vmorph = VirtualMorph.objects.get()
+        actual = vmorph.history
+        expected = []
+        self.assertListEqual(actual, expected)
+        # check offline data
+        morph = self.vmorph.morph
+        actual = morph.current_lv
+        expected = 4
+        self.assertEqual(actual, expected)
 
     def test_promote__invalid_args(self):
         """
@@ -1266,6 +1309,125 @@ class FE7Unit(TestCase):
         vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
         self.vmorph = vmorph
 
+class FE7PromotionReadyUnit(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+        morph_id = "FE7!Legault"
+        game_no = 7
+        name = "Legault"
+        options = {"hard_mode": True}
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
+        self.vmorph = vmorph
+
+    def test_promote__rehearsal(self):
+        """
+        """
+        method_name = "promote"
+        promo_cls = "Assassin"
+        data = {
+            "promo_cls": promo_cls,
+        }
+        # usual stuff
+        url = RESOURCE_URL + str(self.vmorph.id) + "/" + method_name +"/"
+        response = self.client.get(url, query_params=data)
+        # check status
+        actual = response.status_code
+        expected = 200
+        self.assertEqual(actual, expected)
+        # check response data
+        actual = response.data
+        expected = {
+            "morph": {
+                'unitClass': "Assassin",
+                'level': (1, 20),
+                'stats': [
+                    ("HP", 32.0, 60.0, 80.0),
+                    ("Pow", 9.0, 20.0, 30.0),
+                    ("Skl", 13.0, 30.0, 30.0),
+                    ("Spd", 17.0, 30.0, 30.0),
+                    ("Lck", 10.0, 30.0, 30.0),
+                    ("Def", 10.0, 20.0, 30.0),
+                    ("Res", 6.0, 20.0, 30.0),
+                    ("Con", 9.0, 20.0, 25.0),
+                    ("Mov", 6.0, 15.0, 15.0),
+                ],
+            },
+            "paramBounds": [(10, "Assassin")],
+        }
+        self.assertDictEqual(actual, expected)
+        # check server-side data
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        actual = vmorph.init().current_stats.as_dict()
+        expected = {
+            "HP": 29_00,
+            "Pow": 8_00,
+            "Skl": 13_00,
+            "Spd": 17_00,
+            "Lck": 10_00,
+            "Def": 8_00,
+            "Res": 4_00,
+            "Con": 9_00,
+            "Mov": 6_00,
+        }
+        self.assertDictEqual(actual, expected)
+        # check database
+        actual = vmorph.history
+        expected = []
+        self.assertListEqual(actual, expected)
+
+    def test_promote__no_rehearsal(self):
+        """
+        """
+        method_name = "promote"
+        promo_cls = "Assassin"
+        data = {
+            "promo_cls": promo_cls,
+        }
+        # usual stuff
+        url = RESOURCE_URL + str(self.vmorph.id) + "/" + method_name +"/"
+        response = self.client.patch(url, query_params=data)
+        # check status
+        actual = response.status_code
+        expected = 200
+        self.assertEqual(actual, expected)
+        # check server-side data
+        vmorph = VirtualMorph.objects.get()
+        morph = vmorph.init()
+        actual = morph.current_lv
+        expected = 1
+        self.assertEqual(actual, expected)
+        # check database
+        actual = vmorph.history
+        expected = [
+            ["promote", {"promo_cls": "Assassin"}],
+        ]
+        self.assertListEqual(actual, expected)
+        # check response data
+        actual = response.data
+        expected = {
+            "morph": {
+                'unitClass': "Assassin",
+                'level': (1, 20),
+                'stats': [
+                    ("HP", 32.0, 60.0, 80.0),
+                    ("Pow", 9.0, 20.0, 30.0),
+                    ("Skl", 13.0, 30.0, 30.0),
+                    ("Spd", 17.0, 30.0, 30.0),
+                    ("Lck", 10.0, 30.0, 30.0),
+                    ("Def", 10.0, 20.0, 30.0),
+                    ("Res", 6.0, 20.0, 30.0),
+                    ("Con", 9.0, 20.0, 25.0),
+                    ("Mov", 6.0, 15.0, 15.0),
+                ],
+            },
+            #"paramBounds": [(10, "Assassin")],
+        }
+        self.assertDictEqual(actual, expected)
 
 class FE8Unit(TestCase):
     """
@@ -1281,6 +1443,89 @@ class FE8Unit(TestCase):
         options = {}
         vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
         self.vmorph = vmorph
+
+
+class FE8UnitWithBranchedPromotion(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+        morph_id = "FE8!Gerik"
+        game_no = 8
+        name = "Gerik"
+        options = {}
+        vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
+        self.vmorph = vmorph
+
+    def test_promote__rehearsal__fail(self):
+        """
+        """
+        method_name = "promote"
+        promo_cls = "Gerik"
+        data = {
+            "promo_cls": promo_cls,
+        }
+        # usual stuff
+        url = RESOURCE_URL + str(self.vmorph.id) + "/" + method_name +"/"
+        response = self.client.get(url, query_params=data)
+        # check status
+        actual = response.status_code
+        expected = 200
+        self.assertEqual(actual, expected)
+        # check server-side data
+        vmorph = VirtualMorph.objects.get()
+        morph = vmorph.init()
+        actual = morph.current_lv
+        expected = 10
+        self.assertEqual(actual, expected)
+        # check database
+        vmorph = VirtualMorph.objects.get()
+        actual = vmorph.history
+        expected = []
+        self.assertListEqual(actual, expected)
+        # check response data
+        actual = response.data
+        expected = {
+            "paramBounds": [
+                (10, "Hero"),
+                (10, "Ranger (M)"),
+            ],
+        }
+        self.assertDictEqual(actual, expected)
+
+    def test_promote__no_rehearsal__fail(self):
+        """
+        """
+        method_name = "promote"
+        promo_cls = "Gerik"
+        data = {
+            "promo_cls": promo_cls,
+        }
+        # usual stuff
+        url = RESOURCE_URL + str(self.vmorph.id) + "/" + method_name +"/"
+        response = self.client.patch(url, query_params=data)
+        # check status
+        actual = response.status_code
+        expected = 400
+        self.assertEqual(actual, expected)
+        # check server-side data
+        vmorph = VirtualMorph.objects.get()
+        morph = vmorph.init()
+        actual = morph.current_lv
+        expected = 10
+        self.assertEqual(actual, expected)
+        # check database
+        vmorph = VirtualMorph.objects.get()
+        actual = vmorph.history
+        expected = []
+        self.assertListEqual(actual, expected)
+        # check response data
+        actual = response.data['detail'].code
+        expected = "UNABLE_TO_UPDATE"
+        self.assertEqual(actual, expected)
 
 class FE5Unit(TestCase):
     """

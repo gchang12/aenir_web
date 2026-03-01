@@ -143,6 +143,8 @@ class MorphViewSet(viewsets.ViewSet):
         """
         vmorph = get_object_or_404(VirtualMorph, id=pk)
         morph = vmorph.init()
+        morph._set_max_level()
+        logger.debug("Attempting to validate 'method_name': '%s'.", method_name)
         method_serializer = MorphMethodArgs(data={"method_name": method_name})
         method_serializer.is_valid(raise_exception=True)
         (method, serializer) = {
@@ -163,6 +165,7 @@ class MorphViewSet(viewsets.ViewSet):
         logger.debug("Attempting to call `%s(**%r)`.", method_name, valid_method_args)
         try:
             (is_success, param_bounds) = method(**valid_method_args)
+            logger.debug("vmorph.morph is morph: %r. morph.current_stats: %r", vmorph.morph is morph, morph.current_stats.as_dict())
         except NotImplementedError:
             # e.g., Morph4.use_afas_drops
             logger.debug("`%s` has not been implemented for `%s`.", method_name, vmorph.morph.__class__.__name__)
@@ -172,29 +175,42 @@ class MorphViewSet(viewsets.ViewSet):
             )
         except Exception as err:
             # e.g., Morph5.level_up(99)
-            logger.debug("Calling `%s.%s(**%r)` has resulted in an error.", vmorph.morph.__class__.__name__, method_name, method_args)
+            logger.debug("Calling `%s.%s(**%r)` has resulted in an error: %r.", vmorph.morph.__class__.__name__, method_name, valid_method_args, err)
             raise exceptions.ParseError(
                 code="METHOD_INVOCATION_FAILED",
                 detail="%r" % err,
             )
+        serializer = MorphSerializer(morph)
+        statdicts = serializer.get_current_stats()
+        data = serializer.get_morph(*statdicts)
         if request.method == "PATCH":
             if is_success is True:
-                serializer = MorphSerializer(morph)
-                statdicts = serializer.get_current_stats()
-                data = serializer.get_morph(*statdicts)
+                logger.debug("PATCH method was successful. Updating Morph object.")
                 vmorph.save()
                 return Response({
                     "morph": data,
                 })
             elif is_success is False:
+                logger.debug("PATCH method was unsuccessful. Not updating Morph object.")
                 raise exceptions.ParseError(
                     code="UNABLE_TO_UPDATE",
                     detail="The program was unable to update your Morph.",
                 )
         elif request.method == "GET":
-            return Response({
-                "paramBounds": param_bounds,
-            })
+            if is_success is True:
+                #if method_name == "promote": raise Exception
+                logger.debug("GET method was successful. Returning preview and parameter bounds.")
+                return Response({
+                    "paramBounds": param_bounds,
+                    "morph": data,
+                })
+            elif is_success is False:
+                #raise Exception
+                logger.debug("GET method was unsuccessful. Returning parameter bounds.")
+                return Response({
+                    "paramBounds": param_bounds,
+                    #"morph": data,
+                })
 
     @action(detail=True, methods=["patch", "get"])
     def level_up(self, request, pk):
@@ -202,5 +218,13 @@ class MorphViewSet(viewsets.ViewSet):
         Simulates operations on a morph without modifying it.
         """
         method_name = "level_up"
+        return self.simulate_operation(request, pk, method_name)
+
+    @action(detail=True, methods=["patch", "get"])
+    def promote(self, request, pk):
+        """
+        Simulates operations on a morph without modifying it.
+        """
+        method_name = "promote"
         return self.simulate_operation(request, pk, method_name)
 
