@@ -83,7 +83,7 @@ class MorphMethodArgs(serializers.Serializer):
         ),
     )
     args = serializers.DictField(
-        allow_empty=True,
+        #allow_empty=True,
     )
 
 class LevelUpArgs(serializers.Serializer):

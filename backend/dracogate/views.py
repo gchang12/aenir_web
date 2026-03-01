@@ -141,11 +141,13 @@ class MorphViewSet(viewsets.ViewSet):
         """
         Simulates operations on a morph without modifying it.
         """
+        logger.debug("partial_update(%r, %r)", request, pk)
         vmorph = VirtualMorph.objects.get(id=pk)
         morph = vmorph.init()
-        (is_success, param_bounds) = self.simulate_operation(vmorph, request.data)
-        serializer = MorphSerializer(morph)
-        data = serializer.get_morph()
+        logger.debug("request.data: %r", request.data)
+        logger.debug("request.query_params: %r", request.query_params)
+        #raise Exception
+        (_, param_bounds) = self.simulate_operation(vmorph, request.query_params)
         return Response({
             "paramBounds": param_bounds,
         })
@@ -154,28 +156,38 @@ class MorphViewSet(viewsets.ViewSet):
         """
         Performs operations on a morph and modifies it.
         """
+        logger.debug("update(%r, %r)", request, pk)
         vmorph = VirtualMorph.objects.get(id=pk)
         morph = vmorph.init()
-        (is_success, param_bounds) = self.simulate_operation(vmorph, request.data)
-        serializer = MorphSerializer(morph)
-        data = serializer.get_morph()
-        vmorph.save()
-        return Response({
-            "morph": data,
-        })
+        (is_success, param_bounds) = self.simulate_operation(vmorph, request.query_params)
+        if is_success is True:
+            serializer = MorphSerializer(morph)
+            data = serializer.get_morph()
+            vmorph.save()
+            return Response({
+                "morph": data,
+            })
+        elif is_success is False:
+            raise exceptions.ParseError(
+                code="UNABLE_TO_UPDATE",
+                detail="The program was unable to update your Morph somehow.",
+            )
 
     @staticmethod
-    def simulate_operation(vmorph, dictlike):
+    def simulate_operation(vmorph, data):
         """
         """
-        raw_data = MorphMethodArgs(dictlike)
+        logger.debug("Attempting to validate raw data: %r", data)
+        raw_data = MorphMethodArgs(data=data)
         if not raw_data.is_valid():
-            raise exceptions.NotFound(
+            # e.g., method_name == "nonexistent_method" or not isinstance(args, dict)
+            raise exceptions.ParseError(
                 code="BAD_MORPH_METHOD",
                 detail="'%(method_name)s' is not a valid Morph method. %(args)r must be dict-like object." % raw_data.data,
             )
         data = raw_data.validated_data
-        method_name = data.pop("method_name")
+        logger.debug("The cleaned data is as follows: %r", data)
+        method_name = data.get("method_name")
         (method, serializer) = {
             "level_up": (vmorph.level_up, LevelUpArgs),
             "promote": (vmorph.promote, PromoteArgs),
@@ -187,12 +199,30 @@ class MorphViewSet(viewsets.ViewSet):
             "equip_scroll": (vmorph.equip_scroll, ScrollEquipmentArgs),
             "unequip_scroll": (vmorph.unequip_scroll, ScrollEquipmentArgs),
         }[method_name]
-        method_arg_serializer = serializer(data=data.pop("args"))
-        if not method_arg_serializer.is_valid():
-            raise exceptions.NotFound(
+        method_args_serializer = serializer(data=data.get("args"))
+        logger.debug("Attempting to validate argument(s) of '%s'.", method_name)
+        if not method_args_serializer.is_valid():
+            # e.g., Morph5.level_up("five")
+            raise exceptions.ParseError(
                 code="BAD_MORPH_METHOD_ARGS",
                 detail="Bad arguments were supplied for the '%s' method." % method_name,
             )
-        method_args = method_arg_serializer.validated_data
-        return method(**method_args)
+        method_args = method_args_serializer.validated_data
+        logger.debug("Attempting to call `%s(**%r)`.", method_name, method_args)
+        try:
+            return method(**method_args)
+        except NotImplementedError:
+            # e.g., Morph4.use_afas_drops
+            logger.debug("`%s` has not been implemented for `%s`.", method_name, vmorph.morph.__class__.__name__)
+            raise exceptions.ParseError(
+                code="METHOD_NOT_DEFINED_ON_MORPH",
+                detail="The '%s' method is not defined on %s." % (method_name, vmorph.morph.__class__.__name__),
+            )
+        except Exception as err:
+            # e.g., Morph5.level_up(99)
+            logger.debug("Calling `%s.%s(**%r)` has resulted in an error.", vmorph.morph.__class__.__name__, method_name, method_args)
+            raise exceptions.ParseError(
+                code="METHOD_INVOCATION_FAILED",
+                detail="%r" % err,
+            )
 
