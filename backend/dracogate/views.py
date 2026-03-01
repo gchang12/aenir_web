@@ -138,42 +138,6 @@ class MorphViewSet(viewsets.ViewSet):
             "history": vmorph.history,
         })
 
-    def partial_update(self, request, pk):
-        """
-        Simulates operations on a morph without modifying it.
-        """
-        logger.debug("partial_update(%r, %r)", request, pk)
-        vmorph = VirtualMorph.objects.get(id=pk)
-        morph = vmorph.init()
-        logger.debug("request.data: %r", request.data)
-        logger.debug("request.query_params: %r", request.query_params)
-        #raise Exception
-        (_, param_bounds) = self.simulate_operation(vmorph, request.query_params)
-        return Response({
-            "paramBounds": param_bounds,
-        })
-
-    def update(self, request, pk):
-        """
-        Performs operations on a morph and modifies it.
-        """
-        logger.debug("update(%r, %r)", request, pk)
-        vmorph = VirtualMorph.objects.get(id=pk)
-        morph = vmorph.init()
-        (is_success, param_bounds) = self.simulate_operation(vmorph, request.query_params)
-        if is_success is True:
-            serializer = MorphSerializer(morph)
-            data = serializer.get_morph()
-            vmorph.save()
-            return Response({
-                "morph": data,
-            })
-        elif is_success is False:
-            raise exceptions.ParseError(
-                code="UNABLE_TO_UPDATE",
-                detail="The program was unable to update your Morph somehow.",
-            )
-
     def simulate_operation(self, request, pk, method_name):
         """
         """
@@ -225,7 +189,7 @@ class MorphViewSet(viewsets.ViewSet):
             elif is_success is False:
                 raise exceptions.ParseError(
                     code="UNABLE_TO_UPDATE",
-                    detail="The program was unable to update your Morph somehow.",
+                    detail="The program was unable to update your Morph.",
                 )
         elif request.method == "GET":
             return Response({
