@@ -47,21 +47,3 @@ export function createMorph(morph_id, game_no, name, options) {
     .catch(err => console.log(err));
   return fetchTask;
 };
-
-export function levelUp(morph_id, num_levels) {
-};
-
-export function promote(morph_id, promoClass) {
-};
-
-export function useStatBooster(morph_id, itemName) {
-};
-
-export function equipScroll(morph_id, itemName) {
-};
-
-export function useGrowthsBooster(morph_id) {
-};
-
-export function equipBand(morph_id, itemName) {
-};

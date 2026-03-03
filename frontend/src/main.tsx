@@ -47,35 +47,44 @@ const router = createBrowserRouter([
                   const {morph, missingParams} = await previewMorph(game_no, name, kwargs);
                   return {morph, missingParams, unitName, gameId};
                 },
-                action: ({params, request}) => {
+                action: async ({params, request}) => {
+                  // Get parameters for 'createMorph'
                   const {gameId, unitName} = params;
                   const gameNo = gameId.replace("fe", "");
+                  const formData = await request.formData();
+                  const morphId = formData.get("morph_id");
                   const options = {};
-                  let morph;
-                  let morph_id;
-                  request.formData()
+                  for (const [key, value] of formData) {
+                    if (key !== "morph_id") {
+                      options[key] = value;
+                    }
+                  };
+                  const response = createMorph(morphId, gameNo, unitName, options)
                     .then(data => {
-                      morph_id = data['morph_id'];
-                      for (const [key, value] of data) {
-                        options[key] = value;
+                      const pk = data.pk;
+                      if (localStorage.getItem("morphs") === "") {
+                        localStorage.setItem("morphs", '[]');
                       };
+                      const morphs = JSON.parse(localStorage.getItem('morphs'));
+                      morphs.push(pk);
+                      localStorage.setItem("morphs", JSON.stringify(morphs));
+                      return redirect("/morphs/");
                     })
-                    .catch(err => console.log(err));
-                  createMorph(morph_id, gameNo, unitName, options)
-                    .then(data => {
-                      morph = data;
-                    })
-                    .catch(err => console.log(err));
-                  if (morph != undefined) {
-                    throw redirect("/morphs/");
-                  }
-                  return;
+                    .catch(err => {
+                      console.log(err);
+                      //throw redirect("/morphs/");
+                    });
+                  return redirect("/morphs/");
                 },
                 Component: UnitConfirm,
               }
             ],
           },
         ],
+      },
+      {
+        path: "morphs/",
+        Component: Root,
       },
     ],
   },

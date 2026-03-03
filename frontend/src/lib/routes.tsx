@@ -1,6 +1,7 @@
 import {
   useState,
   useEffect,
+  useContext,
 } from 'react'
 import {
   useLoaderData,
@@ -41,7 +42,7 @@ export function Root() {
       <nav>
         <menu>
           <li><NavLink to="/create-morph/">Create Morph</NavLink></li>
-          <li><NavLink to="/evolve-morphs/">Evolve Morphs</NavLink></li>
+          <li><NavLink to="/morphs/">Morphs</NavLink></li>
           <li><NavLink to="/compare-morphs/">Compare Morphs</NavLink></li>
           <li><NavLink to="/calculate-stat-differences/">Calculate Stat Differences</NavLink></li>
         </menu>
