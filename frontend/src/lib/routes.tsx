@@ -41,10 +41,9 @@ export function Root() {
       </figure>
       <nav>
         <menu>
-          <li><NavLink to="/create-morph/">Create Morph</NavLink></li>
+          <li><NavLink to="/create-morph/">Create</NavLink></li>
           <li><NavLink to="/morphs/">Morphs</NavLink></li>
-          <li><NavLink to="/compare-morphs/">Compare Morphs</NavLink></li>
-          <li><NavLink to="/calculate-stat-differences/">Calculate Stat Differences</NavLink></li>
+          <li><NavLink to="/compare/">Compare</NavLink></li>
         </menu>
       </nav>
     </header>
@@ -132,19 +131,16 @@ export function UnitSelect() {
 
 export function UnitConfirm() {
   const {morph, missingParams, unitName, gameId} = useLoaderData();
-  const fetcher = useFetcher();
-  const [kishuna, setKishuna] = useState(morph);
   // Fixes the data-reloading problem.
+  const gameNo = gameId.replace("fe", "");
   useEffect(() => {
-    const game_no = gameId.replace("fe", "");
-    const name = unitName;
-    //console.log(game_no, name);
-    previewMorph(game_no, name, {})
+    previewMorph(gameNo, unitName, {})
       .then(resp => setKishuna(resp.morph))
       .catch(err => console.log(err))
   }, [unitName]);
-  const gameName = GAMES.find(game => gameId === "fe" + game.no)?.name;
+  const [kishuna, setKishuna] = useState(morph);
   const {stats, unitClass, level} = kishuna;
+  const gameName = GAMES.find(game => gameId === "fe" + game.no)?.name;
   const imgSuffix = gameId === "fe8" ? ".gif" : ".png";
   function toggleButtonAbility(value) {
     const createMorphButton = document.querySelector("#create-morph-button");
@@ -156,7 +152,10 @@ export function UnitConfirm() {
     // Test to see if this works.
     toggleButtonAbility(true);
     const formData = new FormData(e.currentTarget);
-    const kwargs = {};
+    const kwargs = {
+      game_no: gameNo,
+      name: unitName,
+    };
     for (const [key, value] of formData) {
       switch(value) {
         case "on":
@@ -170,12 +169,8 @@ export function UnitConfirm() {
           break;
       };
     };
-    // console.log(Object.entries(kwargs));
-    const game_no = kwargs["game_no"];
-    const name = kwargs["name"];
-    setKishuna((await previewMorph(game_no, name, kwargs)).morph);
+    setKishuna((await previewMorph(gameNo, unitName, kwargs)).morph);
   };
-  //const morphId = "Morph-" + new Date().toISOString().replaceAll(/[.:-]/g, "").replace("T", "_");
   const morphId = gameId.toUpperCase() + "!" + unitName;
   toggleButtonAbility(false);
   return (
