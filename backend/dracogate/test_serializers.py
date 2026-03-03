@@ -1042,6 +1042,32 @@ class MorphMethods(TestCase):
         expected = {}
         self.assertDictEqual(actual, expected)
 
+    def test_equip_knight_ward(self):
+        """
+        """
+        data = {"method_name": "equip_knight_ward", "args": {}}
+        serializer = MorphMethodArgs(data=data)
+        expected = True
+        actual = serializer.is_valid()
+        self.assertIs(actual, expected)
+        # expected failure
+        actual = serializer.validated_data
+        expected = data
+        self.assertDictEqual(actual, expected)
+
+    def test_unequip_knight_ward(self):
+        """
+        """
+        data = {"method_name": "unequip_knight_ward", "args": {}}
+        serializer = MorphMethodArgs(data=data)
+        expected = True
+        actual = serializer.is_valid()
+        self.assertIs(actual, expected)
+        # expected failure
+        actual = serializer.validated_data
+        expected = data
+        self.assertDictEqual(actual, expected)
+
 class MorphID(TestCase):
     """
     """

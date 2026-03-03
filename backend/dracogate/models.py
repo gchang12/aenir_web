@@ -83,12 +83,12 @@ class VirtualMorph(models.Model):
         Levels up a morph.
         """
         morph = self.morph
+        previous_lv = morph.current_lv
         num_levels = int(kwargs.get("num_levels"))
         is_success: bool
         try:
-            prev_level = morph.current_lv
             morph.level_up(num_levels)
-            param_bounds = [prev_level + 1, morph.max_level]
+            param_bounds = (previous_lv + 1, morph.max_level)
             self.history.append(("level_up", {"num_levels": num_levels}))
             is_success = True
         except LevelUpError as err:

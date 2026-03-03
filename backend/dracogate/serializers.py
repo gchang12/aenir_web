@@ -80,6 +80,8 @@ class MorphMethodArgs(serializers.Serializer):
             "use_metiss_tome",
             "equip_band",
             "unequip_band",
+            "equip_knight_ward",
+            "unequip_knight_ward",
         ),
     )
     args = serializers.DictField(
@@ -297,7 +299,7 @@ class NullDictSerializer:
         self.validated_data = {}
         self.data = data
 
-    def is_valid(self):
+    def is_valid(self, raise_exception: bool = False):
         """
         """
         return True

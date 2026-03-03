@@ -103,9 +103,11 @@ class MorphViewSet(viewsets.ViewSet):
                 detail="%r" % err,
             )
         pk = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options).id
-        return Response({
-            "pk": pk,
-        })
+        return Response(
+            {
+                "pk": pk,
+            }
+        )
 
     def destroy(self, request, pk):
         """
@@ -127,16 +129,18 @@ class MorphViewSet(viewsets.ViewSet):
         serializer = MorphSerializer(morph)
         statdicts = serializer.get_current_stats()
         data = serializer.get_morph(*statdicts)
-        return Response({
-            "morphId": vmorph.morph_id,
-            "initArgs": {
-                "gameNo": vmorph.game_no,
-                "unitName": vmorph.name,
-                "options": vmorph.options,
-            },
-            "morph": data,
-            "history": vmorph.history,
-        })
+        return Response(
+            {
+                "morphId": vmorph.morph_id,
+                "initArgs": {
+                    "gameNo": vmorph.game_no,
+                    "unitName": vmorph.name,
+                    "options": vmorph.options,
+                },
+                "morph": data,
+                "history": vmorph.history,
+            }
+        )
 
     def simulate_operation(self, request, pk, method_name):
         """
@@ -151,12 +155,14 @@ class MorphViewSet(viewsets.ViewSet):
             "level_up": (vmorph.level_up, LevelUpArgs),
             "promote": (vmorph.promote, PromoteArgs),
             "use_stat_booster": (vmorph.use_stat_booster, UseStatBoosterArgs),
+            "equip_scroll": (vmorph.equip_scroll, ScrollEquipmentArgs),
+            "unequip_scroll": (vmorph.unequip_scroll, ScrollEquipmentArgs),
             "use_afas_drops": (vmorph.use_afas_drops, NullDictSerializer),
             "use_metiss_tome": (vmorph.use_metiss_tome, NullDictSerializer),
             "equip_band": (vmorph.equip_band, BandEquipmentArgs),
             "unequip_band": (vmorph.unequip_band, BandEquipmentArgs),
-            "equip_scroll": (vmorph.equip_scroll, ScrollEquipmentArgs),
-            "unequip_scroll": (vmorph.unequip_scroll, ScrollEquipmentArgs),
+            "equip_knight_ward": (vmorph.equip_knight_ward, NullDictSerializer),
+            "unequip_knight_ward": (vmorph.unequip_knight_ward, NullDictSerializer),
         }[method_name]
         method_args_serializer = serializer(data=request.query_params)
         logger.debug("Attempting to validate argument(s) of '%s'.", method_name)
@@ -173,9 +179,9 @@ class MorphViewSet(viewsets.ViewSet):
                 code="METHOD_NOT_DEFINED_ON_MORPH",
                 detail="The '%s' method is not defined on %s." % (method_name, vmorph.morph.__class__.__name__),
             )
-        except Exception as err:
+        except Exception as err: # NOTE: Wasn't this caught back at the model layer..,?
             # e.g., Morph5.level_up(99)
-            logger.debug("Calling `%s.%s(**%r)` has resulted in an error: %r.", vmorph.morph.__class__.__name__, method_name, valid_method_args, err)
+            logger.critical("Calling `%s.%s(**%r)` has resulted in an unforeseen error: %r.", vmorph.morph.__class__.__name__, method_name, valid_method_args, err)
             raise exceptions.ParseError(
                 code="METHOD_INVOCATION_FAILED",
                 detail="%r" % err,
@@ -187,9 +193,11 @@ class MorphViewSet(viewsets.ViewSet):
             if is_success is True:
                 logger.debug("PATCH method was successful. Updating Morph object.")
                 vmorph.save()
-                return Response({
-                    "morph": data,
-                })
+                return Response(
+                    {
+                        "morph": data,
+                    }
+                )
             elif is_success is False:
                 logger.debug("PATCH method was unsuccessful. Not updating Morph object.")
                 raise exceptions.ParseError(
@@ -200,17 +208,21 @@ class MorphViewSet(viewsets.ViewSet):
             if is_success is True:
                 #if method_name == "promote": raise Exception
                 logger.debug("GET method was successful. Returning preview and parameter bounds.")
-                return Response({
-                    "paramBounds": param_bounds,
-                    "morph": data,
-                })
+                return Response(
+                    {
+                        "paramBounds": param_bounds,
+                        "morph": data,
+                    }
+                )
             elif is_success is False:
                 #raise Exception
                 logger.debug("GET method was unsuccessful. Returning parameter bounds.")
-                return Response({
-                    "paramBounds": param_bounds,
-                    #"morph": data,
-                })
+                return Response(
+                    {
+                        "paramBounds": param_bounds,
+                        #"morph": data,
+                    }
+                )
 
     @action(detail=True, methods=["patch", "get"])
     def level_up(self, request, pk):
@@ -226,5 +238,77 @@ class MorphViewSet(viewsets.ViewSet):
         Simulates operations on a morph without modifying it.
         """
         method_name = "promote"
+        return self.simulate_operation(request, pk, method_name)
+
+    @action(detail=True, methods=["patch", "get"])
+    def use_stat_booster(self, request, pk):
+        """
+        Simulates operations on a morph without modifying it.
+        """
+        method_name = "use_stat_booster"
+        return self.simulate_operation(request, pk, method_name)
+
+    @action(detail=True, methods=["patch", "get"])
+    def equip_scroll(self, request, pk):
+        """
+        Simulates operations on a morph without modifying it.
+        """
+        method_name = "equip_scroll"
+        return self.simulate_operation(request, pk, method_name)
+
+    @action(detail=True, methods=["patch", "get"])
+    def unequip_scroll(self, request, pk):
+        """
+        Simulates operations on a morph without modifying it.
+        """
+        method_name = "unequip_scroll"
+        return self.simulate_operation(request, pk, method_name)
+
+    @action(detail=True, methods=["patch", "get"])
+    def use_afas_drops(self, request, pk):
+        """
+        Simulates operations on a morph without modifying it.
+        """
+        method_name = "use_afas_drops"
+        return self.simulate_operation(request, pk, method_name)
+
+    @action(detail=True, methods=["patch", "get"])
+    def use_metiss_tome(self, request, pk):
+        """
+        Simulates operations on a morph without modifying it.
+        """
+        method_name = "use_metiss_tome"
+        return self.simulate_operation(request, pk, method_name)
+
+    @action(detail=True, methods=["patch", "get"])
+    def equip_band(self, request, pk):
+        """
+        Simulates operations on a morph without modifying it.
+        """
+        method_name = "equip_band"
+        return self.simulate_operation(request, pk, method_name)
+
+    @action(detail=True, methods=["patch", "get"])
+    def unequip_band(self, request, pk):
+        """
+        Simulates operations on a morph without modifying it.
+        """
+        method_name = "unequip_band"
+        return self.simulate_operation(request, pk, method_name)
+
+    @action(detail=True, methods=["patch", "get"])
+    def equip_knight_ward(self, request, pk):
+        """
+        Simulates operations on a morph without modifying it.
+        """
+        method_name = "equip_knight_ward"
+        return self.simulate_operation(request, pk, method_name)
+
+    @action(detail=True, methods=["patch", "get"])
+    def unequip_knight_ward(self, request, pk):
+        """
+        Simulates operations on a morph without modifying it.
+        """
+        method_name = "unequip_knight_ward"
         return self.simulate_operation(request, pk, method_name)
 
