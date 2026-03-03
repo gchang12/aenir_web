@@ -137,21 +137,11 @@ export function UnitConfirm() {
   useEffect(() => {
     const game_no = gameId.replace("fe", "");
     const name = unitName;
-    console.log(game_no, name);
+    //console.log(game_no, name);
     previewMorph(game_no, name, {})
       .then(resp => setKishuna(resp.morph))
       .catch(err => console.log(err))
   }, [unitName]);
-  /*
-  useEffect(async () => {
-    previewMorph(game_no, name, {})
-      .then(resp => resp.data)
-      .then(data => setKishuna(data.morph))
-      .catch(err => console.log(err))
-  }, [unitName]);
-  */
-  // const fetcher = useFetcher();
-  // console.log(gameId, unitName, missingParams);
   const gameName = GAMES.find(game => gameId === "fe" + game.no)?.name;
   const {stats, unitClass, level} = kishuna;
   const imgSuffix = gameId === "fe8" ? ".gif" : ".png";
@@ -184,8 +174,8 @@ export function UnitConfirm() {
     const name = kwargs["name"];
     setKishuna((await previewMorph(game_no, name, kwargs)).morph);
   };
-  const morphId = "Morph-" + new Date().toISOString().replaceAll(/[.:-]/g, "").replace("T", "_");
-  // const morphId = "";
+  //const morphId = "Morph-" + new Date().toISOString().replaceAll(/[.:-]/g, "").replace("T", "_");
+  const morphId = gameId.toUpperCase() + "!" + unitName;
   toggleButtonAbility(false);
   return (
     <>
@@ -194,18 +184,14 @@ export function UnitConfirm() {
       <table>
         <tbody>
         <ProfileLevelAndClass {...{unitClass, level}} />
-        <Form onChange={refetchMorph} method="post" className="create-morph">
-          <input id="game_no" name="game_no" value={gameId.replace("fe", "")} type="hidden" />
-          <input name="name" value={unitName} type="hidden" />
-          <OptionSelect {...{missingParams}} />
-          {/* TODO: Reinsert this if the user is logged in. */}
-          <label htmlFor="morph_id">Morph ID</label>
-          <input id="morph_id" name="morph_id" type="text" defaultValue={morphId} required maxlength="25" />
-          {/* <input name="morph_id" type="hidden" defaultValue={morphId} required maxLength="25" /> */}
-          <button type="submit" id="create-morph-button">Create!</button>
-        </Form>
         </tbody>
       </table>
+      <Form onChange={refetchMorph} method="post" className="create-morph">
+        <OptionSelect {...{missingParams}} />
+        <label htmlFor="morph_id">Morph ID</label>
+        <input id="morph_id" name="morph_id" type="text" defaultValue={morphId} required maxLength="25" />
+        <button type="submit" id="create-morph-button">Create!</button>
+      </Form>
     </ProfileHead>
     <table>
       <tbody>
