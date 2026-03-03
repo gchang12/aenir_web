@@ -29,15 +29,15 @@ const router = createBrowserRouter([
     Component: Root,
     children: [
       {
-        path: "/create-morph/",
+        path: "create-morph",
         Component: GameSelect,
         children: [
           {
-            path: ":gameId/",
+            path: ":gameId",
             Component: UnitSelect,
             children: [
               {
-                path: "/create-morph/:gameId/:unitName",
+                path: ":unitName",
                 loader: async ({params}) => {
                   const {gameId, unitName} = params;
                   const game_no = gameId.replace("fe", "");
@@ -83,7 +83,7 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "morphs/",
+        path: "morphs",
         Component: Root,
       },
     ],
