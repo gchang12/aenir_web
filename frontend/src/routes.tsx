@@ -17,14 +17,14 @@ import {
   ProfileLevelAndClass,
   StatTable,
   OptionSelect,
-} from "./Components";
+} from "./lib/Components";
 import {
   GAMES,
   UNITS,
-} from "./constants";
+} from "./lib/constants";
 import {
   previewMorph,
-} from "./functions";
+} from "./lib/functions";
 
 export function Root() {
   return (
@@ -194,6 +194,15 @@ export function UnitConfirm() {
       <StatTable {...{stats, highlight: true}} />
       </tbody>
     </table>
+    </>
+  );
+};
+
+export function Morphs() {
+  // TODO: List created morphs here.
+  return (
+    <>
+    <h1>Morphs</h1>
     </>
   );
 };

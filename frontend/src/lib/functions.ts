@@ -47,3 +47,30 @@ export function createMorph(morph_id, game_no, name, options) {
     .catch(err => console.log(err));
   return fetchTask;
 };
+
+export function retrieveMorph(pk) {
+  const RESOURCE_URL: string = "http://localhost:8000/dracogate/api/morphs/" + [pk, ""].join("/");
+  const fetchTask = axios
+    .get(RESOURCE_URL)
+    .then(resp => resp.data)
+    .catch(err => console.log(err));
+  return fetchTask;
+};
+
+export function simulateMorphMethod(pk, method_name, args) {
+  const RESOURCE_URL: string = "http://localhost:8000/dracogate/api/morphs/" + [pk, method_name, ""].join("/");
+  const fetchTask = axios
+    .get(RESOURCE_URL, {params: args})
+    .then(resp => resp.data)
+    .catch(err => console.log(err));
+  return fetchTask;
+};
+
+export function executeMorphMethod(pk, method_name, args) {
+  const RESOURCE_URL: string = "http://localhost:8000/dracogate/api/morphs/" + [pk, method_name, ""].join("/");
+  const fetchTask = axios
+    .patch(RESOURCE_URL, {params: args})
+    .then(resp => resp.data)
+    .catch(err => console.log(err));
+  return fetchTask;
+};

@@ -17,7 +17,8 @@ import {
   GameSelect,
   UnitSelect,
   UnitConfirm,
-} from "./lib/routes";
+  Morphs,
+} from "./routes";
 import {
   previewMorph,
   createMorph,
@@ -84,7 +85,7 @@ const router = createBrowserRouter([
       },
       {
         path: "morphs",
-        Component: Root,
+        Component: Morphs,
       },
     ],
   },
