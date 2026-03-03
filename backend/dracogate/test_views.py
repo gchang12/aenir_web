@@ -839,7 +839,7 @@ class BonusUnit(TestCase):
         game_no = 8
         name = "Lyon"
         options = {}
-        kwargs = {"game_no": game_no, "name": name}
+        kwargs = {"game_no": game_no, "name": name, "morph_id": "BonusUnit"}
         kwargs.update(options)
         self.kwargs = kwargs
 
@@ -849,8 +849,25 @@ class BonusUnit(TestCase):
         """
         url = RESOURCE_URL
         kwargs = self.kwargs
-        response = self.client.get(url, data=kwargs)
+        response = self.client.get(url, query_params=kwargs)
         self.assertNotIn("missingParams", response.data)
+
+    def test_create__morph_limit_exceeded(self):
+        """
+        FE8 Lyon
+        """
+        url = RESOURCE_URL
+        for i in range(5):
+            kwargs = self.kwargs.copy()
+            kwargs['morph_id'] += str(i)
+            self.client.post(url, data=kwargs)
+        response = self.client.post(url, data=kwargs)
+        actual = response.status_code
+        expected = 400
+        self.assertEqual(actual, expected)
+        actual = response.data['detail'].code
+        expected = "MORPH_LIMIT_EXCEEDED"
+        self.assertEqual(actual, expected)
 
 class InvalidGame(TestCase):
     """
@@ -1230,6 +1247,11 @@ class FE6Unit(TestCase):
         """
         FE6 (HardMode)!Rutger
         """
+        # set up session['morphs']
+        session = self.client.session
+        session['morphs'] = [self.vmorph.id]
+        session.save()
+        # usual
         url = RESOURCE_URL + str(self.vmorph.id) + "/"
         response = self.client.get(url)
         actual = response.status_code
@@ -1241,6 +1263,10 @@ class FE6Unit(TestCase):
         """
         FE6 (HardMode)!Rutger
         """
+        # set up session['morphs']
+        #session = self.client.session
+        #session['morphs'] = [self.vmorph.id]
+        #session.save()
         # first, confirm that vmorph.id does not exist.
         wmorph_id = 9999
         actual = VirtualMorph.objects.filter(id=wmorph_id).exists()
@@ -1255,7 +1281,7 @@ class FE6Unit(TestCase):
         self.assertEqual(actual, expected)
         # check response data
         actual = response.data['detail'].code
-        expected = "not_found"
+        expected = "VIRTUALMORPH_NOT_IN_SESSION"
         self.assertEqual(actual, expected)
 
     def test_destroy(self):
