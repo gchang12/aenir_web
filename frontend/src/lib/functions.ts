@@ -1,7 +1,8 @@
 import axios from 'axios';
 
+const RESOURCE_URL: string = "http://localhost:8000/dracogate/api/morphs/";
+
 export function getMorph(game_no, name, kwargs) {
-  const RESOURCE_URL: string = "http://localhost:8000/dracogate/api/morphs/";
   const params = {
     game_no,
     name,
@@ -34,7 +35,6 @@ export async function previewMorph(game_no, name, kwargs) {
 };
 
 export function createMorph(morph_id, game_no, name, options) {
-  const RESOURCE_URL: string = "http://localhost:8000/dracogate/api/morphs/";
   const data = {
     morph_id,
     game_no,
@@ -49,16 +49,16 @@ export function createMorph(morph_id, game_no, name, options) {
 };
 
 export function retrieveMorph(pk) {
-  const RESOURCE_URL: string = "http://localhost:8000/dracogate/api/morphs/" + [pk, ""].join("/");
+  const url: string = RESOURCE_URL + [pk, ""].join("/");
   const fetchTask = axios
-    .get(RESOURCE_URL)
+    .get(url)
     .then(resp => resp.data)
     .catch(err => console.log(err));
   return fetchTask;
 };
 
 export function simulateMorphMethod(pk, method_name, args) {
-  const RESOURCE_URL: string = "http://localhost:8000/dracogate/api/morphs/" + [pk, method_name, ""].join("/");
+  const url = RESOURCE_URL + [pk, method_name, ""].join("/");
   const fetchTask = axios
     .get(RESOURCE_URL, {params: args})
     .then(resp => resp.data)
@@ -67,10 +67,11 @@ export function simulateMorphMethod(pk, method_name, args) {
 };
 
 export function executeMorphMethod(pk, method_name, args) {
-  const RESOURCE_URL: string = "http://localhost:8000/dracogate/api/morphs/" + [pk, method_name, ""].join("/");
+  const url = RESOURCE_URL + [pk, method_name, ""].join("/");
   const fetchTask = axios
     .patch(RESOURCE_URL, {params: args})
     .then(resp => resp.data)
     .catch(err => console.log(err));
   return fetchTask;
 };
+

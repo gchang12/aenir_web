@@ -24,6 +24,7 @@ import {
 } from "./lib/constants";
 import {
   previewMorph,
+  retrieveMorph,
 } from "./lib/functions";
 
 export function Root() {
@@ -200,9 +201,64 @@ export function UnitConfirm() {
 
 export function Morphs() {
   // TODO: List created morphs here.
+  /*
+    {
+      "morphId": vmorph.morph_id,
+      "initArgs": {
+        "gameNo": vmorph.game_no,
+        "unitName": vmorph.name,
+        "options": vmorph.options,
+      },
+      "morph": data,
+      "history": vmorph.history,
+    }
+  */
+  // TODO: Shouldn't this be in the 'loader' function?
+  const fetchTasks = localStorage.getItem("morphs")?.map(pk => retrieveMorph(pk));
+  const morphs = [];
   return (
     <>
     <h1>Morphs</h1>
+    <menu>
+    {morphs.map(morph => {
+      const {level, initArgs} = morph.morph;
+      const [currentLv, maxLv] = level;
+      return (
+        <li key={morph.pk}>
+        <h2>{morph.morphId}</h2>
+        <table>
+          <tbody>
+            <tr>
+              <th>Game</th>
+              <td>{"FE" + initArgs.gameNo}</td>
+            </tr>
+            <tr>
+              <th>Name</th>
+              <td>{initArgs.unitName}</td>
+            </tr>
+            <>
+            {initArgs.options.map(keyVal => {
+              const [key, value] = keyVal;
+              return (
+                <tr key={key}>
+                  <th>{key}</th>
+                  <td>{value}</td>
+                </tr>
+              );
+            })
+            }
+            </>
+            <tr>
+              <th>Level</th>
+              <td>{currentLv} / {maxLv}</td>
+            </tr>
+          </tbody>
+        </table>
+        </li>
+      );
+    })
+    }
+    </menu>
     </>
   );
 };
