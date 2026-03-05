@@ -44,7 +44,6 @@ class MorphViewSet(viewsets.ViewSet):
         """
         Creates temporary Morph for the user to preview, returning missing parameters as necessary.
         """
-        # NOTE: This results in many errors that cannot be verified before taking the leap, so to speak. Some errors include: Morph subclasses receiving unexpected arguments.
         game_no, name, options = MorphSerializer.parse_init_args(request.query_params)
         '''
         serializer = InitArgs(data=request.query_params)
@@ -150,7 +149,6 @@ class MorphViewSet(viewsets.ViewSet):
         vmorph = get_object_or_404(VirtualMorph, id=pk)
         morph = vmorph.init()
         serializer = MorphSerializer(morph)
-        # TODO: get growths
         statdicts = serializer.get_current_stats()
         data = serializer.get_morph(*statdicts)
         return Response(
@@ -220,7 +218,10 @@ class MorphViewSet(viewsets.ViewSet):
             )
         serializer = MorphSerializer(morph)
         # TODO: Send growth rates for certain methods.
-        statdicts = serializer.get_current_stats()
+        if method_name in self.GROWTH_RATES_MODIFIERS():
+            statdicts = serializer.get_growth_rates()
+        else:
+            statdicts = serializer.get_current_stats()
         data = serializer.get_morph(*statdicts)
         if request.method == "PATCH":
             if is_success is True:

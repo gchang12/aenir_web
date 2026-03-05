@@ -235,7 +235,7 @@ class MorphSerializer:#(serializers.Serializer):
         new_growths = morph.growth_rates.as_dict()
         growths_diff = morph.get_growths_augment().as_dict()
         statdicts = (old_growths, new_growths, growths_diff)
-        return map(lambda dictlike: self.nullify_zero_growth_stats(dictlike), map(lambda dictlike: self.divide_by_100(dictlike), statdicts))
+        return map(lambda dictlike: self.nullify_zero_growth_stats(dictlike), statdicts)
 
     def get_level_up_bonuses_with_augment(self, num_levels: int):
         """
@@ -269,6 +269,7 @@ class MorphSerializer:#(serializers.Serializer):
         """
         Parses default values from response and converts them for interpretation by program.
         """
+        # NOTE: This results in many errors that cannot be verified before taking the leap, so to speak. Some errors include: Morph subclasses receiving unexpected arguments.
         game_no = int(dictlike.get("game_no"))
         name = dictlike.get("name")
         morph_options = (
