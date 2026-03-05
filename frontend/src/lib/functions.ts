@@ -54,13 +54,14 @@ export function retrieveMorph(pk) {
     .get(url)
     .then(resp => resp.data)
     .catch(err => console.log(err));
+  // console.log(url);
   return fetchTask;
 };
 
 export function simulateMorphMethod(pk, method_name, args) {
   const url = RESOURCE_URL + [pk, method_name, ""].join("/");
   const fetchTask = axios
-    .get(RESOURCE_URL, {params: args})
+    .get(url, {params: args})
     .then(resp => resp.data)
     .catch(err => console.log(err));
   return fetchTask;
@@ -69,7 +70,7 @@ export function simulateMorphMethod(pk, method_name, args) {
 export function executeMorphMethod(pk, method_name, args) {
   const url = RESOURCE_URL + [pk, method_name, ""].join("/");
   const fetchTask = axios
-    .patch(RESOURCE_URL, {params: args})
+    .patch(url, {params: args})
     .then(resp => resp.data)
     .catch(err => console.log(err));
   return fetchTask;

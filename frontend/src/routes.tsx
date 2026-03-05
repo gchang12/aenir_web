@@ -12,16 +12,17 @@ import {
   Form,
   Link,
 } from "react-router";
+
+import {
+  GAMES,
+  UNITS,
+} from "./constants";
 import {
   ProfileHead,
   ProfileLevelAndClass,
   StatTable,
   OptionSelect,
 } from "./lib/Components";
-import {
-  GAMES,
-  UNITS,
-} from "./lib/constants";
 import {
   previewMorph,
   retrieveMorph,
@@ -213,17 +214,26 @@ export function Morphs() {
     }
   */
   const {morphs} = useLoaderData();
-  console.log(morphs);
+  //console.log(morphs);
   return (
     <>
     <h1>Morphs</h1>
     <menu>
-    {morphs.map(morph => {
-      const {level, initArgs} = morph.morph;
+    {Object.entries(morphs).map(([indexNo, morph]) => {
+      console.log("morph:", Object.entries(morph));
+      const {initArgs} = morph;
+      const {level} = morph.morph;
+      //console.log(Object.entries(initArgs));
       const [currentLv, maxLv] = level;
+      //console.log("Morphs: ", morph, Array.isArray(morph));
+      const imgSuffix = morph.initArgs.gameNo === 8 ? ".gif" : ".png";
+      const gameName = GAMES.find(game => game.no === morph.initArgs.gameNo)?.name;
       return (
         <li key={morph.pk}>
-        <h2>{morph.morphId}</h2>
+        <img src={["", "images", gameName, "characters", initArgs.unitName + imgSuffix].join("/")} />
+        <Link to={"/morphs/" + indexNo}>
+          <h2>{morph.morphId}</h2>
+        </Link>
         <table>
           <tbody>
             <tr>
@@ -235,7 +245,7 @@ export function Morphs() {
               <td>{initArgs.unitName}</td>
             </tr>
             <>
-            {initArgs.options.map(keyVal => {
+            {Object.entries(initArgs.options).map(keyVal => {
               const [key, value] = keyVal;
               return (
                 <tr key={key}>
