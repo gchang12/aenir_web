@@ -150,6 +150,7 @@ class MorphViewSet(viewsets.ViewSet):
         vmorph = get_object_or_404(VirtualMorph, id=pk)
         morph = vmorph.init()
         serializer = MorphSerializer(morph)
+        # TODO: get growths
         statdicts = serializer.get_current_stats()
         data = serializer.get_morph(*statdicts)
         return Response(
@@ -163,6 +164,21 @@ class MorphViewSet(viewsets.ViewSet):
                 "morph": data,
                 "history": vmorph.history,
             }
+        )
+
+    @staticmethod
+    def GROWTH_RATES_MODIFIERS():
+        """
+        """
+        return (
+            "equip_scroll",
+            "unequip_scroll",
+            "use_afas_drops",
+            "use_metiss_tome",
+            "equip_band",
+            "unequip_band",
+            "equip_knight_ward",
+            "unequip_knight_ward",
         )
 
     def simulate_operation(self, request, pk, method_name):
@@ -202,14 +218,8 @@ class MorphViewSet(viewsets.ViewSet):
                 code="METHOD_NOT_DEFINED_ON_MORPH",
                 detail="The '%s' method is not defined on %s." % (method_name, vmorph.morph.__class__.__name__),
             )
-        except Exception as err: # NOTE: Wasn't this caught back at the model layer..,?
-            # e.g., Morph5.level_up(99)
-            logger.critical("Calling `%s.%s(**%r)` has resulted in an unforeseen error: %r.", vmorph.morph.__class__.__name__, method_name, valid_method_args, err)
-            raise exceptions.ParseError(
-                code="METHOD_INVOCATION_FAILED",
-                detail="%r" % err,
-            )
         serializer = MorphSerializer(morph)
+        # TODO: Send growth rates for certain methods.
         statdicts = serializer.get_current_stats()
         data = serializer.get_morph(*statdicts)
         if request.method == "PATCH":
