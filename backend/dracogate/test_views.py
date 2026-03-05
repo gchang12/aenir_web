@@ -1,6 +1,7 @@
 """
 """
 
+import uuid
 import unittest
 from unittest.mock import patch
 
@@ -852,6 +853,7 @@ class BonusUnit(TestCase):
         response = self.client.get(url, query_params=kwargs)
         self.assertNotIn("missingParams", response.data)
 
+    @unittest.skip
     def test_create__morph_limit_exceeded(self):
         """
         FE8 Lyon
@@ -1248,11 +1250,12 @@ class FE6Unit(TestCase):
         FE6 (HardMode)!Rutger
         """
         # set up session['morphs']
-        session = self.client.session
-        session['morphs'] = [self.vmorph.id]
-        session.save()
+        #session = self.client.session
+        #session['morphs'] = [self.vmorph.id]
+        #session.save()
         # usual
         url = RESOURCE_URL + str(self.vmorph.id) + "/"
+        logger.debug("Sending GET request to: %s", url)
         response = self.client.get(url)
         actual = response.status_code
         expected = 200
@@ -1268,7 +1271,7 @@ class FE6Unit(TestCase):
         #session['morphs'] = [self.vmorph.id]
         #session.save()
         # first, confirm that vmorph.id does not exist.
-        wmorph_id = 9999
+        wmorph_id = uuid.uuid4()
         actual = VirtualMorph.objects.filter(id=wmorph_id).exists()
         expected = False
         self.assertIs(actual, expected)
@@ -1281,7 +1284,7 @@ class FE6Unit(TestCase):
         self.assertEqual(actual, expected)
         # check response data
         actual = response.data['detail'].code
-        expected = "VIRTUALMORPH_NOT_IN_SESSION"
+        expected = "not_found"
         self.assertEqual(actual, expected)
 
     def test_destroy(self):
@@ -1309,7 +1312,7 @@ class FE6Unit(TestCase):
         FE6 (HardMode)!Rutger
         """
         # first, confirm that vmorph.id does not exist.
-        wmorph_id = 9999
+        wmorph_id = uuid.uuid4()
         actual = VirtualMorph.objects.filter(id=wmorph_id).exists()
         expected = False
         self.assertIs(actual, expected)

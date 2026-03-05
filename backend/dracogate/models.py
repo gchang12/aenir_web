@@ -27,8 +27,9 @@ User = get_user_model()
 class VirtualMorph(models.Model):
     """
     """
-    id = models.AutoField(
+    id = models.UUIDField(
         primary_key=True,
+        default=uuid.uuid4,
     )
     # meta: composite pk
     morph_id = models.CharField(

@@ -76,6 +76,7 @@ class MorphViewSet(viewsets.ViewSet):
         """
         Creates a Morph instance and stores it in the database.
         """
+        '''
         if 'morphs' not in request.session:
             request.session['morphs'] = []
         if len(request.session['morphs']) >= 5:
@@ -83,6 +84,7 @@ class MorphViewSet(viewsets.ViewSet):
                 code="MORPH_LIMIT_EXCEEDED",
                 detail="The morph limit of cannot be exceeded.",
             )
+        '''
         morph_id_serializer = MorphIDSerializer(data={"morph_id": request.data.get("morph_id")})
         if not morph_id_serializer.is_valid():
             raise exceptions.ParseError(
@@ -110,9 +112,9 @@ class MorphViewSet(viewsets.ViewSet):
                 detail="%r" % err,
             )
         pk = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options).id
-        morphs = request.session['morphs']
-        morphs.append(pk)
-        request.session.save()
+        #morphs = request.session['morphs']
+        #morphs.append(pk)
+        #request.session.save()
         return Response(
             {
                 "pk": pk,
@@ -134,15 +136,17 @@ class MorphViewSet(viewsets.ViewSet):
     def retrieve(self, request, pk):
         """
         """
-        if 'morphs' not in request.session:
-            request.session['morphs'] = []
-        if int(pk) not in request.session['morphs']:
-            logger.debug("pk = %r", pk)
-            logger.debug("request.session['morphs'] = %r", request.session['morphs'])
-            raise exceptions.NotFound(
-                code="VIRTUALMORPH_NOT_IN_SESSION",
-                detail="No VirtualMorph object with pk='%s' was associated with this session." % pk,
-            )
+        #if 'morphs' not in request.session:
+            #request.session['morphs'] = []
+        #if pk not in request.session['morphs']:
+        logger.debug("pk = %r", pk)
+        #logger.debug("request.session['morphs'] = %r", request.session['morphs'])
+        '''
+        raise exceptions.NotFound(
+            code="VIRTUALMORPH_NOT_IN_SESSION",
+            detail="No VirtualMorph object with pk='%s' was associated with this session." % pk,
+        )
+        '''
         vmorph = get_object_or_404(VirtualMorph, id=pk)
         morph = vmorph.init()
         serializer = MorphSerializer(morph)
