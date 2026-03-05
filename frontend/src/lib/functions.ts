@@ -75,3 +75,15 @@ export function executeMorphMethod(pk, method_name, args) {
   return fetchTask;
 };
 
+export function setLocalMorphs(value) {
+  const morphsAsString = JSON.stringify(value);
+  console.log("localStorage.setItem('morphs'," + morphsAsString + ");");
+  return localStorage.setItem("morphs", morphsAsString);
+};
+
+export function getLocalMorphs() {
+  const rawMorphs = localStorage.getItem("morphs");
+  console.log("localStorage.getItem('morphs') = " + rawMorphs);
+  return JSON.parse(rawMorphs);
+};
+

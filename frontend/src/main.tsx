@@ -22,6 +22,9 @@ import {
 import {
   previewMorph,
   createMorph,
+  retrieveMorph,
+  setLocalMorphs,
+  getLocalMorphs,
 } from "./lib/functions";
 
 const router = createBrowserRouter([
@@ -86,6 +89,16 @@ const router = createBrowserRouter([
       {
         path: "morphs",
         Component: Morphs,
+        loader: async () => {
+          if (!getLocalMorphs()) {
+            setLocalMorphs([]);
+          };
+          const localMorphs = getLocalMorphs();
+          //console.log(localMorphs, typeof localMorphs);
+          const fetchTasks = localMorphs.map(pk => retrieveMorph(pk));
+          const morphs = await Promise.all(fetchTasks);
+          return {morphs};
+        },
       },
     ],
   },

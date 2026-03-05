@@ -200,7 +200,6 @@ export function UnitConfirm() {
 };
 
 export function Morphs() {
-  // TODO: List created morphs here.
   /*
     {
       "morphId": vmorph.morph_id,
@@ -213,9 +212,8 @@ export function Morphs() {
       "history": vmorph.history,
     }
   */
-  // TODO: Shouldn't this be in the 'loader' function?
-  const fetchTasks = localStorage.getItem("morphs")?.map(pk => retrieveMorph(pk));
-  const morphs = [];
+  const {morphs} = useLoaderData();
+  console.log(morphs);
   return (
     <>
     <h1>Morphs</h1>
@@ -256,8 +254,7 @@ export function Morphs() {
         </table>
         </li>
       );
-    })
-    }
+    })}
     </menu>
     </>
   );
