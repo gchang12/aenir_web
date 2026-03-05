@@ -88,3 +88,5 @@ export function getLocalMorphs() {
   return JSON.parse(rawMorphs);
 };
 
+export function getGrowths(pk) {
+};

@@ -231,9 +231,9 @@ export function Morphs() {
       return (
         <li key={morph.pk}>
         <img src={["", "images", gameName, "characters", initArgs.unitName + imgSuffix].join("/")} />
-        <Link to={"/morphs/" + indexNo}>
+        <NavLink to={"/morphs/" + indexNo}>
           <h2>{morph.morphId}</h2>
-        </Link>
+        </NavLink>
         <table>
           <tbody>
             <tr>
@@ -270,3 +270,9 @@ export function Morphs() {
   );
 };
 
+export function EvolveMorph() {
+  return (
+    <>
+    </>
+  );
+};

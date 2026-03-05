@@ -18,11 +18,13 @@ import {
   UnitSelect,
   UnitConfirm,
   Morphs,
+  EvolveMorph,
 } from "./routes";
 import {
   previewMorph,
   createMorph,
   retrieveMorph,
+  // TODO: Test these functions.
   setLocalMorphs,
   getLocalMorphs,
 } from "./lib/functions";
@@ -66,12 +68,20 @@ const router = createBrowserRouter([
                   const response = createMorph(morphId, gameNo, unitName, options)
                     .then(data => {
                       const pk = data.pk;
+                      // TODO: Refactor to leverage getLocalMorphs and setLocalMorphs
+                      {/*
                       if (localStorage.getItem("morphs") === "") {
                         localStorage.setItem("morphs", '[]');
                       };
-                      const morphs = JSON.parse(localStorage.getItem('morphs'));
+                      */}
+                      if (!getLocalMorphs()) {
+                        setLocalMorphs([]);
+                      };
+                      const morphs = getLocalMorphs();// JSON.parse(localStorage.getItem('morphs'));
                       morphs.push(pk);
-                      localStorage.setItem("morphs", JSON.stringify(morphs));
+                      // TODO: If morphs.length >= 5, then erase 'til optimal.
+                      // localStorage.setItem("morphs", JSON.stringify(morphs));
+                      setLocalMorphs(morphs);
                       return redirect("/morphs/");
                     })
                     .catch(err => {
@@ -99,6 +109,16 @@ const router = createBrowserRouter([
           const morphs = await Promise.all(fetchTasks);
           return {morphs};
         },
+        children: [
+          {
+            path: ":pkLoc",
+            Component: EvolveMorph,
+            loader: async ({params}) => {
+              const {pkLoc} = params;
+              return {};
+            },
+          },
+        ],
       },
     ],
   },
