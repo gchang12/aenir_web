@@ -292,17 +292,6 @@ class GrowthRates(TestCase):
                 "Con": None,
                 "Mov": None,
             },
-            {
-                "HP": 5,
-                "Pow": 5,
-                "Skl": 5,
-                "Spd": 5,
-                "Lck": 5,
-                "Def": 5,
-                "Res": 5,
-                "Con": None,
-                "Mov": None,
-            },
         ]
         morph = get_morph(**self.kwargs)
         morph.use_afas_drops()

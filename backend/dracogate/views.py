@@ -30,6 +30,8 @@ from dracogate.serializers import (
     ScrollEquipmentArgs,
     BandEquipmentArgs,
     MorphIDSerializer,
+    ScrollSetSerializer,
+    BandSetSerializer,
     # own
     MorphSerializer,
     NullDictSerializer,
@@ -177,8 +179,8 @@ class MorphViewSet(viewsets.ViewSet):
             "unequip_band",
             "equip_knight_ward",
             "unequip_knight_ward",
-            #"set_bands",
-            #"set_scrolls",
+            "set_bands",
+            "set_scrolls",
         )
 
     def simulate_operation(self, request, pk, method_name):
@@ -202,8 +204,8 @@ class MorphViewSet(viewsets.ViewSet):
             "unequip_band": (vmorph.unequip_band, BandEquipmentArgs),
             "equip_knight_ward": (vmorph.equip_knight_ward, NullDictSerializer),
             "unequip_knight_ward": (vmorph.unequip_knight_ward, NullDictSerializer),
-            #"set_bands": (vmorph.set_bands, BandSetSerializer),
-            #"set_scrolls": (vmorph.set_scrolls, ScrollSetSerializer),
+            "set_bands": (vmorph.set_bands, BandSetSerializer),
+            "set_scrolls": (vmorph.set_scrolls, ScrollSetSerializer),
         }[method_name]
         method_args_serializer = serializer(data=request.query_params)
         logger.debug("Attempting to validate argument(s) of '%s'.", method_name)
@@ -350,18 +352,17 @@ class MorphViewSet(viewsets.ViewSet):
         method_name = "unequip_knight_ward"
         return self.simulate_operation(request, pk, method_name)
 
-    # TODO: Implement!
+    @action(detail=True, methods=["patch", "get"])
     def set_bands(self, request, pk):
         """
         """
-        raise NotImplementedError
         method_name = "set_bands"
         return self.simulate_operation(request, pk, method_name)
 
+    @action(detail=True, methods=["patch", "get"])
     def set_scrolls(self, request, pk):
         """
         """
-        raise NotImplementedError
         method_name = "set_scrolls"
         return self.simulate_operation(request, pk, method_name)
 

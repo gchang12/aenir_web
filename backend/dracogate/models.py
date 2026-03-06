@@ -97,8 +97,7 @@ class VirtualMorph(models.Model):
                 # Invalid range. Please select a valid level.
                 LevelUpError.Reason.NOT_POSITIVE: err.level_range,
                 # Level has been maxed out at: #1! Please select valid level.
-                # TODO: Fix in aenir.
-                LevelUpError.Reason.EXCEEDS_MAX: err.level_range[1],
+                LevelUpError.Reason.EXCEEDS_MAX: err.level_range, # TODO: Change this back to (min, max) format
             }[err.reason]
             is_success = False
         return (is_success, param_bounds)
@@ -383,14 +382,59 @@ class VirtualMorph(models.Model):
             is_success = False
         return (is_success, param_bounds)
 
-    # TODO: Implement!
+    # TODO: Test this!
     def set_bands(self, **kwargs):
         """
         """
-        raise NotImplementedError
+        morph = self.morph
+        bands = kwargs.get("bands")
+        is_success: bool
+        try:
+            try:
+                morph.set_bands(bands)
+            except AttributeError as err:
+                raise NotImplementedError
+            param_bounds = None
+            self.history.append(("set_bands", {"bands": bands}))
+            is_success = True
+        except BandError as err:
+            param_bounds = {
+                # That band was not found! Here is a list of valid bands. (Or you know, just an easy means of getting the band list)
+                BandError.Reason.NOT_FOUND: None,
+                # No inventory space! Please unequip some bands.
+                BandError.Reason.NO_INVENTORY_SPACE: None,
+                # (band_name) is not equipped! List of bands that ARE equipped.
+                #BandError.Reason.NOT_EQUIPPED: err.valid_bands,
+                #err.Reason.ALREADY_EQUIPPED: err.valid_bands,
+            }[err.reason]
+            is_success = False
+        return (is_success, param_bounds)
 
+    # TODO: Test this!
     def set_scrolls(self, **kwargs):
         """
         """
-        raise NotImplementedError
+        morph = self.morph
+        scrolls = kwargs.get("scrolls")
+        is_success: bool
+        try:
+            try:
+                morph.set_scrolls(scrolls)
+            except AttributeError as err:
+                raise NotImplementedError
+            param_bounds = None
+            self.history.append(("set_scrolls", {"scrolls": scrolls}))
+            is_success = True
+        except ScrollError as err:
+            param_bounds = {
+                # That band was not found! Here is a list of valid bands. (Or you know, just an easy means of getting the band list)
+                ScrollError.Reason.NOT_FOUND: None,
+                # No inventory space! Please unequip some bands.
+                ScrollError.Reason.NO_INVENTORY_SPACE: None,
+                # (band_name) is not equipped! List of bands that ARE equipped.
+                #BandError.Reason.NOT_EQUIPPED: err.valid_bands,
+                #err.Reason.ALREADY_EQUIPPED: err.valid_bands,
+            }[err.reason]
+            is_success = False
+        return (is_success, param_bounds)
 

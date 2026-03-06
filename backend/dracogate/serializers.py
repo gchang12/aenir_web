@@ -233,8 +233,7 @@ class MorphSerializer:#(serializers.Serializer):
         morph = self.morph
         old_growths = morph._og_growth_rates.as_dict()
         new_growths = morph.growth_rates.as_dict()
-        growths_diff = morph.get_growths_augment().as_dict()
-        statdicts = (old_growths, new_growths, growths_diff)
+        statdicts = (old_growths, new_growths)
         return map(lambda dictlike: self.nullify_zero_growth_stats(dictlike), statdicts)
 
     def get_level_up_bonuses_with_augment(self, num_levels: int):
@@ -305,10 +304,42 @@ class NullDictSerializer:
         """
         return True
 
-# TODO: Implement!
+class BandSetSerializer(serializers.Serializer):
+    """
+    """
+    bands = serializers.MultipleChoiceField(
+        choices=(
+            'Sword Band',
+            'Soldier Band',
+            'Fighter Band',
+            'Archer Band',
+            'Knight Band',
+            'Paladin Band',
+            'Pegasus Band',
+            'Wyvern Band',
+            'Mage Band',
+            'Priest Band',
+            'Thief Band',
+        ),
+    )
 
-class BandSetSerializer:
-    pass
+class ScrollSetSerializer(serializers.Serializer):
+    """
+    """
+    scrolls = serializers.MultipleChoiceField(
+        choices=(
+            'Baldo',
+            'Blaggi',
+            'Dain',
+            'Fala',
+            'Heim',
+            'Hezul',
+            'Neir',
+            'Noba',
+            'Odo',
+            'Sety',
+            'Tordo',
+            'Ulir',
+        ),
+    )
 
-class ScrollSetSerializer:
-    pass
