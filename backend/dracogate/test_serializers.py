@@ -1120,6 +1120,30 @@ class MorphMethods(TestCase):
         expected = data
         self.assertDictEqual(actual, expected)
 
+    def test_set_bands(self):
+        """
+        """
+        data = {"method_name": "set_bands", "args": {}}
+        serializer = MorphMethodArgs(data=data)
+        expected = True
+        actual = serializer.is_valid()
+        self.assertIs(actual, expected)
+        actual = serializer.validated_data
+        expected = data
+        self.assertDictEqual(actual, expected)
+
+    def test_set_scrolls(self):
+        """
+        """
+        data = {"method_name": "set_scrolls", "args": {}}
+        serializer = MorphMethodArgs(data=data)
+        expected = True
+        actual = serializer.is_valid()
+        self.assertIs(actual, expected)
+        actual = serializer.validated_data
+        expected = data
+        self.assertDictEqual(actual, expected)
+
 class MorphID(TestCase):
     """
     """

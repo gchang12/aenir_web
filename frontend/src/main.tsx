@@ -24,7 +24,6 @@ import {
   previewMorph,
   createMorph,
   retrieveMorph,
-  // TODO: Test these functions.
   setLocalMorphs,
   getLocalMorphs,
 } from "./lib/functions";
@@ -68,19 +67,11 @@ const router = createBrowserRouter([
                   const response = createMorph(morphId, gameNo, unitName, options)
                     .then(data => {
                       const pk = data.pk;
-                      // TODO: Refactor to leverage getLocalMorphs and setLocalMorphs
-                      {/*
-                      if (localStorage.getItem("morphs") === "") {
-                        localStorage.setItem("morphs", '[]');
-                      };
-                      */}
                       if (!getLocalMorphs()) {
                         setLocalMorphs([]);
                       };
-                      const morphs = getLocalMorphs();// JSON.parse(localStorage.getItem('morphs'));
+                      const morphs = getLocalMorphs();
                       morphs.push(pk);
-                      // TODO: If morphs.length >= 5, then erase 'til optimal.
-                      // localStorage.setItem("morphs", JSON.stringify(morphs));
                       setLocalMorphs(morphs);
                       return redirect("/morphs/");
                     })

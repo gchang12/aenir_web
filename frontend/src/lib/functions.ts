@@ -34,6 +34,20 @@ export async function previewMorph(game_no, name, kwargs) {
   return {morph, missingParams};
 };
 
+export function setLocalMorphs(value) {
+  const morphsAsString = JSON.stringify(value);
+  console.log("localStorage.setItem('morphs'," + morphsAsString + ");");
+  return localStorage.setItem("morphs", morphsAsString);
+};
+
+export function getLocalMorphs() {
+  const rawMorphs = localStorage.getItem("morphs");
+  console.log("localStorage.getItem('morphs') = " + rawMorphs);
+  return JSON.parse(rawMorphs);
+};
+
+// TODO: Test these for the love of criminy. These sort of rely on database data. Consider using mocks?
+
 export function createMorph(morph_id, game_no, name, options) {
   const data = {
     morph_id,
@@ -48,15 +62,12 @@ export function createMorph(morph_id, game_no, name, options) {
   return fetchTask;
 };
 
-// TODO: Test these for the love of criminy.
-
 export function retrieveMorph(pk) {
   const url: string = RESOURCE_URL + [pk, ""].join("/");
   const fetchTask = axios
     .get(url)
     .then(resp => resp.data)
     .catch(err => console.log(err));
-  // console.log(url);
   return fetchTask;
 };
 
@@ -78,14 +89,3 @@ export function executeMorphMethod(pk, method_name, args) {
   return fetchTask;
 };
 
-export function setLocalMorphs(value) {
-  const morphsAsString = JSON.stringify(value);
-  console.log("localStorage.setItem('morphs'," + morphsAsString + ");");
-  return localStorage.setItem("morphs", morphsAsString);
-};
-
-export function getLocalMorphs() {
-  const rawMorphs = localStorage.getItem("morphs");
-  console.log("localStorage.getItem('morphs') = " + rawMorphs);
-  return JSON.parse(rawMorphs);
-};

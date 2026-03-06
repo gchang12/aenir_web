@@ -382,7 +382,6 @@ class VirtualMorph(models.Model):
             is_success = False
         return (is_success, param_bounds)
 
-    # TODO: Test this!
     def set_bands(self, **kwargs):
         """
         """
@@ -410,7 +409,6 @@ class VirtualMorph(models.Model):
             is_success = False
         return (is_success, param_bounds)
 
-    # TODO: Test this!
     def set_scrolls(self, **kwargs):
         """
         """

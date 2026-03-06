@@ -15,7 +15,9 @@ import {
 import {
   getMorph,
   previewMorph,
-  createMorph,
+  //createMorph,
+  getLocalMorphs,
+  setLocalMorphs,
 } from "../lib/functions";
 import {
   FE4Roster,
@@ -59,6 +61,13 @@ describe("FE6 Roy", () => {
         ["Mov", 5, 15, 15],
       ]
     );
+  });
+
+  test("createMorph: Upon successful request-processing, pk is returned.", async () => {
+    const kwargs = {};
+    const morph = await createMorph(game_no, name, kwargs);
+    const {pk} = morph;
+    expect(pk).toBe("");
   });
 
   test("getMorph: input of invalid options and that they are ignored.", async () => {
@@ -161,6 +170,13 @@ describe("FE4 Lakche", () => {
       "Lex",
     ];
     expect(missingParams["father"]).toEqual(fatherList);
+  });
+
+  test("createMorph: Upon unsuccessful request-processing...", async () => {
+    const kwargs = {};
+    const morph = await createMorph(game_no, name, kwargs);
+    expect(morph.pk).toBeUndefined();
+    // TODO: Figure out what happens next.
   });
 
   test("previewMorph: if return-value matches the expected when no kwargs are provided.", async () => {
@@ -797,4 +813,68 @@ describe("FE7 Lyn", () => {
     expect(stats).not.toBeUndefined();
   });
 
+});
+
+describe("localMorphs", () => {
+
+  test("getLocalMorphs", () => {
+    localStorage.setItem("morphs", JSON.stringify([]));
+    const morphs = getLocalMorphs();
+    expect(morphs).toEqual([]);
+  });
+
+  test("setLocalMorphs", () => {
+    const morph = {
+      game_no: 6,
+      name: "Roy",
+    };
+    setLocalMorphs(morph);
+    const fetchedMorph = JSON.parse(localStorage.getItem("morphs"));
+    expect(fetchedMorph).toEqual(morph);
+  });
+
+});
+
+describe("level_up", async () => {
+  const method_name = "level_up";
+});
+
+describe("promote", async () => {
+  const method_name = "promote";
+});
+
+describe("use_stat_booster", async () => {
+  const method_name = "use_stat_booster";
+});
+
+describe("FE5: equip_scroll", async () => {
+  const method_name = "equip_scroll";
+});
+
+describe("FE5: set_scrolls", async () => {
+  const method_name = "set_scrolls";
+});
+
+describe("FE8: use_metiss_tome", async () => {
+  const method_name = "use_metiss_tome";
+});
+
+describe("FE7: use_afas_drops", async () => {
+  const method_name = "use_afas_drops";
+});
+
+describe("FE9: equip_knight_ward", async () => {
+  const method_name = "equip_knight_ward";
+});
+
+describe("FE9: unequip_knight_ward", async () => {
+  const method_name = "unequip_knight_ward";
+});
+
+describe("FE9: equip_band", async () => {
+  const method_name = "equip_band";
+});
+
+describe("FE9: set_bands", async () => {
+  const method_name = "set_bands";
 });

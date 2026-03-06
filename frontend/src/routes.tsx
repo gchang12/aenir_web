@@ -223,9 +223,7 @@ export function Morphs() {
       console.log("morph:", Object.entries(morph));
       const {initArgs} = morph;
       const {level} = morph.morph;
-      //console.log(Object.entries(initArgs));
       const [currentLv, maxLv] = level;
-      //console.log("Morphs: ", morph, Array.isArray(morph));
       const imgSuffix = morph.initArgs.gameNo === 8 ? ".gif" : ".png";
       const gameName = GAMES.find(game => game.no === morph.initArgs.gameNo)?.name;
       return (
@@ -245,8 +243,7 @@ export function Morphs() {
               <td>{initArgs.unitName}</td>
             </tr>
             <>
-            {Object.entries(initArgs.options).map(keyVal => {
-              const [key, value] = keyVal;
+            {Object.entries(initArgs.options).map(([key, value]) => {
               return (
                 <tr key={key}>
                   <th>{key}</th>
