@@ -196,6 +196,7 @@ class MorphViewSet(viewsets.ViewSet):
             "level_up": (vmorph.level_up, LevelUpArgs),
             "promote": (vmorph.promote, PromoteArgs),
             "use_stat_booster": (vmorph.use_stat_booster, UseStatBoosterArgs),
+            # all these methods modify growths
             "equip_scroll": (vmorph.equip_scroll, ScrollEquipmentArgs),
             "unequip_scroll": (vmorph.unequip_scroll, ScrollEquipmentArgs),
             "use_afas_drops": (vmorph.use_afas_drops, NullDictSerializer),
@@ -223,7 +224,6 @@ class MorphViewSet(viewsets.ViewSet):
                 detail="The '%s' method is not defined on %s." % (method_name, vmorph.morph.__class__.__name__),
             )
         serializer = MorphSerializer(morph)
-        # TODO: Send growth rates for certain methods.
         if method_name in self.GROWTH_RATES_MODIFIERS():
             statdicts = serializer.get_growth_rates()
         else:
@@ -246,7 +246,6 @@ class MorphViewSet(viewsets.ViewSet):
                 )
         elif request.method == "GET":
             if is_success is True:
-                #if method_name == "promote": raise Exception
                 logger.debug("GET method was successful. Returning preview and parameter bounds.")
                 return Response(
                     {

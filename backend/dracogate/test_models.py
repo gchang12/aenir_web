@@ -685,6 +685,36 @@ class ThracianUnit(TestCase):
             vmorph.init()
         MOCK_get_morph.assert_called_once_with("Leaf")
 
+    def test_set_scrolls(self):
+        """
+        """
+        scrolls = [
+            "Odo",
+            "Baldo",
+            "Hezul",
+            "Dain",
+            "Noba",
+        ]
+        vmorph = self.vmorph
+        vmorph.init()
+        (is_success, actual) = vmorph.set_scrolls(scrolls=scrolls)
+        self.assertIs(is_success, True)
+        self.assertIsNone(actual)
+        # check history
+        expected = [
+            ("set_scrolls", {"scrolls": scrolls}),
+        ]
+        actual = vmorph.history
+        self.assertListEqual(actual, expected)
+        # refetch
+        vmorph.save()
+        vmorph2 = VirtualMorph.objects.get()
+        actual = vmorph2.history
+        expected = [
+            ["set_scrolls", {"scrolls": list(scrolls)}],
+        ]
+        self.assertListEqual(actual, expected)
+
     def test_equip_scroll(self):
         """
         """
@@ -983,6 +1013,35 @@ class TelliusKnightUnit(TestCase):
         with patch("aenir.morph.Morph9") as MOCK_get_morph:
             vmorph.init()
         MOCK_get_morph.assert_called_once_with("Kieran")
+
+    def test_set_bands(self):
+        """
+        """
+        bands = [
+            "Sword Band",
+            'Soldier Band',
+            'Fighter Band',
+            'Archer Band',
+        ]
+        vmorph = self.vmorph
+        vmorph.init()
+        (is_success, actual) = vmorph.set_bands(bands=bands)
+        self.assertIs(is_success, True)
+        self.assertIsNone(actual)
+        # check history
+        expected = [
+            ("set_bands", {"bands": bands}),
+        ]
+        actual = vmorph.history
+        self.assertListEqual(actual, expected)
+        # refetch
+        vmorph.save()
+        vmorph2 = VirtualMorph.objects.get()
+        actual = vmorph2.history
+        expected = [
+            ["set_bands", {"bands": list(bands)}],
+        ]
+        self.assertListEqual(actual, expected)
 
     def test_equip_band(self):
         """

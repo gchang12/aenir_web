@@ -29,6 +29,8 @@ from dracogate.serializers import (
     BandEquipmentArgs,
     MorphMethodArgs,
     MorphIDSerializer,
+    BandSetSerializer,
+    ScrollSetSerializer,
     # custom
     MorphSerializer,
     NullDictSerializer,
@@ -872,6 +874,67 @@ class Bands(TestCase):
         serializer.is_valid()
         actual = serializer.validated_data
         expected = self.kwargs
+        self.assertDictEqual(actual, expected)
+
+class BandSet(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+        self.kwargs = {"bands": None}
+
+    def test_bands(self):
+        """
+        """
+        data = self.kwargs
+        data['bands'] = (
+            'Sword Band',
+            'Soldier Band',
+            'Fighter Band',
+            'Archer Band',
+            'Knight Band',
+        )
+        serializer = BandSetSerializer(data=data)
+        actual = serializer.is_valid()
+        expected = True
+        self.assertIs(actual, expected)
+        actual = serializer.validated_data
+        expected = self.kwargs
+        expected['bands'] = set(expected['bands'])
+        self.assertDictEqual(actual, expected)
+
+class ScrollSet(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+        self.kwargs = {"scrolls": None}
+
+    def test_bands(self):
+        """
+        """
+        data = self.kwargs
+        data['scrolls'] = (
+            'Baldo',
+            'Blaggi',
+            'Dain',
+            'Fala',
+            'Heim',
+            'Hezul',
+        )
+        serializer = ScrollSetSerializer(data=data)
+        actual = serializer.is_valid()
+        expected = True
+        self.assertIs(actual, expected)
+        actual = serializer.validated_data
+        expected = self.kwargs
+        expected['scrolls'] = set(expected['scrolls'])
         self.assertDictEqual(actual, expected)
 
 class MorphMethods(TestCase):

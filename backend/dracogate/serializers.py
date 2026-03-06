@@ -82,6 +82,8 @@ class MorphMethodArgs(serializers.Serializer):
             "unequip_band",
             "equip_knight_ward",
             "unequip_knight_ward",
+            "set_scrolls",
+            "set_bands",
         ),
     )
     args = serializers.DictField(

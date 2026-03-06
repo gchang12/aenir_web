@@ -1949,6 +1949,33 @@ class FE5Unit(TestCase):
         vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
         self.vmorph = vmorph
 
+    def test_set_scrolls(self):
+        """
+        """
+        method_name = "set_scrolls"
+        scrolls = [
+            'Baldo',
+            'Blaggi',
+            'Dain',
+            'Fala',
+        ]
+        data = {"scrolls": scrolls}
+        # usual stuff
+        url = RESOURCE_URL + str(self.vmorph.id) + "/" + method_name +"/"
+        response = self.client.patch(url, query_params=data)
+        # check status
+        actual = response.status_code
+        expected = 200
+        self.assertEqual(actual, expected)
+        # check server-side data
+        vmorph = VirtualMorph.objects.get()
+        actual = vmorph.history
+        actual[0][1]['scrolls'] = set(actual[0][1]['scrolls'])
+        expected = [
+            ["set_scrolls", {"scrolls": set(scrolls)}],
+        ]
+        self.assertListEqual(actual, expected)
+
     def test_equip_scroll__no_rehearsal(self):
         """
         FE5 Evayle
@@ -2122,6 +2149,33 @@ class FE9KnightUnit(TestCase):
         expected = [
             ["equip_knight_ward", {}],
             ["unequip_knight_ward", {}],
+        ]
+        self.assertListEqual(actual, expected)
+
+    def test_set_bands(self):
+        """
+        """
+        method_name = "set_bands"
+        bands = [
+            'Sword Band',
+            'Soldier Band',
+            'Fighter Band',
+            'Archer Band',
+        ]
+        data = {"bands": bands}
+        # usual stuff
+        url = RESOURCE_URL + str(self.vmorph.id) + "/" + method_name +"/"
+        response = self.client.patch(url, query_params=data)
+        # check status
+        actual = response.status_code
+        expected = 200
+        self.assertEqual(actual, expected)
+        # check server-side data
+        vmorph = VirtualMorph.objects.get()
+        actual = vmorph.history
+        actual[0][1]['bands'] = set(actual[0][1]['bands'])
+        expected = [
+            ["set_bands", {"bands": set(bands)}],
         ]
         self.assertListEqual(actual, expected)
 
