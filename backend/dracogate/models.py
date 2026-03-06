@@ -383,3 +383,14 @@ class VirtualMorph(models.Model):
             is_success = False
         return (is_success, param_bounds)
 
+    # TODO: Implement!
+    def set_bands(self, **kwargs):
+        """
+        """
+        raise NotImplementedError
+
+    def set_scrolls(self, **kwargs):
+        """
+        """
+        raise NotImplementedError
+

@@ -48,6 +48,8 @@ export function createMorph(morph_id, game_no, name, options) {
   return fetchTask;
 };
 
+// TODO: Test these for the love of criminy.
+
 export function retrieveMorph(pk) {
   const url: string = RESOURCE_URL + [pk, ""].join("/");
   const fetchTask = axios
@@ -86,7 +88,4 @@ export function getLocalMorphs() {
   const rawMorphs = localStorage.getItem("morphs");
   console.log("localStorage.getItem('morphs') = " + rawMorphs);
   return JSON.parse(rawMorphs);
-};
-
-export function getGrowths(pk) {
 };

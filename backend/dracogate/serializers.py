@@ -305,3 +305,10 @@ class NullDictSerializer:
         """
         return True
 
+# TODO: Implement!
+
+class BandSetSerializer:
+    pass
+
+class ScrollSetSerializer:
+    pass
