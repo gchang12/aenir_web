@@ -689,11 +689,11 @@ class ThracianUnit(TestCase):
         """
         """
         scrolls = [
-            "Odo",
             "Baldo",
-            "Hezul",
             "Dain",
+            "Hezul",
             "Noba",
+            "Odo",
         ]
         vmorph = self.vmorph
         vmorph.init()
@@ -1018,10 +1018,10 @@ class TelliusKnightUnit(TestCase):
         """
         """
         bands = [
-            "Sword Band",
-            'Soldier Band',
-            'Fighter Band',
             'Archer Band',
+            'Fighter Band',
+            'Soldier Band',
+            "Sword Band",
         ]
         vmorph = self.vmorph
         vmorph.init()

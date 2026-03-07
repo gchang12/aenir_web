@@ -45,10 +45,11 @@ class InitArgs(serializers.Serializer):
             'Lex',
         ),
     )
-    route = serializers.ChoiceField(
+    chapter = serializers.CharField(
         #allow_null=True,
         required=False,
-        choices=("Lalum", "Elphin"),
+        max_length=3,
+        #choices=("Lalum", "Elphin"),
     )
     number_of_declines = serializers.IntegerField(
         #allow_null=True,
@@ -277,7 +278,7 @@ class MorphSerializer:#(serializers.Serializer):
             "father",
             "hard_mode",
             "number_of_declines",
-            "route",
+            "chapter",
             "lyn_mode",
         )
         kwargs = {key: dictlike.get(key) for key in morph_options if dictlike.get(key) is not None}

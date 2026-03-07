@@ -97,7 +97,7 @@ class VirtualMorph(models.Model):
                 # Invalid range. Please select a valid level.
                 LevelUpError.Reason.NOT_POSITIVE: err.level_range,
                 # Level has been maxed out at: #1! Please select valid level.
-                LevelUpError.Reason.EXCEEDS_MAX: err.level_range, # TODO: Change this back to (min, max) format
+                LevelUpError.Reason.EXCEEDS_MAX: err.level_range[1],
             }[err.reason]
             is_success = False
         return (is_success, param_bounds)

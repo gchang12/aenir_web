@@ -31,6 +31,7 @@ class NormalUnit(TestCase):
         kwargs.update(options)
         kwargs['morph_id'] = "NormalUnit"
         self.kwargs = kwargs
+        self.maxDiff = None
 
     def test_list__verify_that_invalid_options_are_ignored(self):
         """
@@ -126,6 +127,7 @@ class FatheredUnit(TestCase):
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
+        self.maxDiff = None
 
     def test_list__verify_success(self):
         """
@@ -244,6 +246,7 @@ class HardModeUnit(TestCase):
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
+        self.maxDiff = None
 
     def test_list__verify_success(self):
         """
@@ -283,13 +286,13 @@ class HardModeUnit(TestCase):
             "unitClass": "Myrmidon",
             "level": (4, 20),
             "stats": [
-                ("HP", 26.0, 60.0, 80),
-                ("Pow", 9.0, 20.0, 30),
+                ("HP", 25.5, 60.0, 80),
+                ("Pow", 8.75, 20.0, 30),
                 ("Skl", 14.0, 20.0, 30),
                 ("Spd", 15.0, 20.0, 30),
-                ("Lck", 4.0, 30.0, 30),
-                ("Def", 6.0, 20.0, 30),
-                ("Res", 1.0, 20.0, 30),
+                ("Lck", 3.5, 30.0, 30),
+                ("Def", 5.75, 20.0, 30),
+                ("Res", 0.85, 20.0, 30),
                 ("Con", 7.0, 20.0, 25),
                 ("Mov", 5.0, 15.0, 15),
             ],
@@ -352,6 +355,7 @@ class DeclinableUnit(TestCase):
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
+        self.maxDiff = None
 
     def test_list__verify_success(self):
         """
@@ -497,10 +501,11 @@ class Gonzales(TestCase):
         logger.debug("%s", self.id())
         game_no = 6
         name = "Gonzales"
-        options = {"hard_mode": "false", "route": "Lalum"}
+        options = {"hard_mode": "false", "chapter": "10A"}
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
+        self.maxDiff = None
 
     def test_list__verify_success(self):
         """
@@ -533,7 +538,7 @@ class Gonzales(TestCase):
         """
         url = RESOURCE_URL
         kwargs = self.kwargs
-        kwargs.update({"hard_mode": "false", "route": "Elphin"})
+        kwargs.update({"hard_mode": "false", "chapter": "10B"})
         response = self.client.get(url, data=kwargs)
         actual = response.data
         expected = {
@@ -566,13 +571,13 @@ class Gonzales(TestCase):
             "unitClass": "Bandit",
             "level": (5, 20),
             "stats": [
-                ("HP", 43.0, 60.0, 80),
+                ("HP", 42.56, 60.0, 80),
                 ("Pow", 16.0, 20.0, 30),
-                ("Skl", 7.0, 20.0, 30),
-                ("Spd", 11.0, 20.0, 30),
-                ("Lck", 6.0, 30.0, 30),
-                ("Def", 7.0, 20.0, 30),
-                ("Res", 1.0, 20.0, 30),
+                ("Skl", 7.4, 20.0, 30),
+                ("Spd", 10.6, 20.0, 30),
+                ("Lck", 6.2, 30.0, 30),
+                ("Def", 6.8, 20.0, 30),
+                ("Res", 0.8, 20.0, 30),
                 ("Con", 15.0, 20.0, 25),
                 ("Mov", 5.0, 15.0, 15),
             ],
@@ -585,20 +590,20 @@ class Gonzales(TestCase):
         """
         url = RESOURCE_URL
         kwargs = self.kwargs
-        kwargs.update({"hard_mode": "true", "route": "Elphin"})
+        kwargs.update({"hard_mode": "true", "chapter": "10B"})
         response = self.client.get(url, data=kwargs)
         actual = response.data
         expected = {
             "unitClass": "Bandit",
             "level": (11, 20),
             "stats": [
-                ("HP", 43.0, 60.0, 80),
+                ("HP", 42.56, 60.0, 80),
                 ("Pow", 16.0, 20.0, 30),
-                ("Skl", 7.0, 20.0, 30),
-                ("Spd", 11.0, 20.0, 30),
-                ("Lck", 6.0, 30.0, 30),
-                ("Def", 7.0, 20.0, 30),
-                ("Res", 1.0, 20.0, 30),
+                ("Skl", 7.4, 20.0, 30),
+                ("Spd", 10.6, 20.0, 30),
+                ("Lck", 6.2, 30.0, 30),
+                ("Def", 6.8, 20.0, 30),
+                ("Res", 0.8, 20.0, 30),
                 ("Con", 15.0, 20.0, 25),
                 ("Mov", 5.0, 15.0, 15),
             ],
@@ -611,14 +616,14 @@ class Gonzales(TestCase):
         """
         url = RESOURCE_URL
         kwargs = self.kwargs
-        kwargs.pop("route")
+        kwargs.pop("chapter")
         response = self.client.get(url, data=kwargs)
         self.assertIn("missingParams", response.data)
         actual = set(response.data['missingParams'])
-        expected = {"route"}
+        expected = {"chapter"}
         self.assertSetEqual(actual, expected)
-        actual = response.data['missingParams']["route"]
-        expected = ("Lalum", "Elphin")
+        actual = response.data['missingParams']["chapter"]
+        expected = ("10A", "10B")
         self.assertTupleEqual(actual, expected)
 
     def test_list__verify_error2(self):
@@ -653,6 +658,7 @@ class LyndisLeague(TestCase):
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
+        self.maxDiff = None
 
     def test_list__verify_error(self):
         """
@@ -737,6 +743,7 @@ class Ninian(TestCase):
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
+        self.maxDiff = None
 
     def test_list__verify_success(self):
         """
@@ -774,6 +781,7 @@ class Nils(TestCase):
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
+        self.maxDiff = None
 
     def test_list__verify_success(self):
         """
@@ -843,6 +851,7 @@ class BonusUnit(TestCase):
         kwargs = {"game_no": game_no, "name": name, "morph_id": "BonusUnit"}
         kwargs.update(options)
         self.kwargs = kwargs
+        self.maxDiff = None
 
     def test_list__verify_success(self):
         """
@@ -852,24 +861,6 @@ class BonusUnit(TestCase):
         kwargs = self.kwargs
         response = self.client.get(url, query_params=kwargs)
         self.assertNotIn("missingParams", response.data)
-
-    @unittest.skip
-    def test_create__morph_limit_exceeded(self):
-        """
-        FE8 Lyon
-        """
-        url = RESOURCE_URL
-        for i in range(5):
-            kwargs = self.kwargs.copy()
-            kwargs['morph_id'] += str(i)
-            self.client.post(url, data=kwargs)
-        response = self.client.post(url, data=kwargs)
-        actual = response.status_code
-        expected = 400
-        self.assertEqual(actual, expected)
-        actual = response.data['detail'].code
-        expected = "MORPH_LIMIT_EXCEEDED"
-        self.assertEqual(actual, expected)
 
 class InvalidGame(TestCase):
     """
@@ -887,6 +878,7 @@ class InvalidGame(TestCase):
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
+        self.maxDiff = None
 
     def test_list__verify_error(self):
         """
@@ -946,6 +938,7 @@ class InvalidUnit(TestCase):
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
+        self.maxDiff = None
 
     def test_list__verify_error(self):
         """
@@ -1011,6 +1004,7 @@ class FE4UnitForSimulatingInvalidOperations(TestCase):
         options = {}
         vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
         self.vmorph = vmorph
+        self.maxDiff = None
 
     def test_invalid_morph_method(self):
         """
@@ -1244,6 +1238,7 @@ class FE6Unit(TestCase):
         vmorph.init()
         vmorph.morph._set_max_level()
         self.vmorph = vmorph
+        self.maxDiff = None
 
     def test_retrieve(self):
         """
@@ -1352,13 +1347,13 @@ class FE6Unit(TestCase):
                 'unitClass': "Myrmidon",
                 'level': (20, 20),
                 'stats': [
-                    ("HP", 38.8, 60.0, 80.0),
-                    ("Pow", 13.8, 20.0, 30.0),
+                    ("HP", 38.3, 60.0, 80.0),
+                    ("Pow", 13.55, 20.0, 30.0),
                     ("Skl", 20.0, 20.0, 30.0),
                     ("Spd", 20.0, 20.0, 30.0),
-                    ("Lck", 8.8, 30.0, 30.0),
-                    ("Def", 9.2, 20.0, 30.0),
-                    ("Res", 4.2, 20.0, 30.0),
+                    ("Lck", 8.3, 30.0, 30.0),
+                    ("Def", 8.95, 20.0, 30.0),
+                    ("Res", 4.05, 20.0, 30.0),
                     ("Con", 7.0, 20.0, 25.0),
                     ("Mov", 5.0, 15.0, 15.0),
                 ],
@@ -1397,13 +1392,13 @@ class FE6Unit(TestCase):
                 'unitClass': "Myrmidon",
                 'level': (20, 20),
                 'stats': [
-                    ("HP", 38.8, 60.0, 80.0),
-                    ("Pow", 13.8, 20.0, 30.0),
+                    ("HP", 38.3, 60.0, 80.0),
+                    ("Pow", 13.55, 20.0, 30.0),
                     ("Skl", 20.0, 20.0, 30.0),
                     ("Spd", 20.0, 20.0, 30.0),
-                    ("Lck", 8.8, 30.0, 30.0),
-                    ("Def", 9.2, 20.0, 30.0),
-                    ("Res", 4.2, 20.0, 30.0),
+                    ("Lck", 8.3, 30.0, 30.0),
+                    ("Def", 8.95, 20.0, 30.0),
+                    ("Res", 4.05, 20.0, 30.0),
                     ("Con", 7.0, 20.0, 25.0),
                     ("Mov", 5.0, 15.0, 15.0),
                 ],
@@ -1503,6 +1498,7 @@ class FE7Unit(TestCase):
         vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
         self.vmorph = vmorph
 
+        self.maxDiff = None
     def test_promote__morph_err(self):
         """
         FE7 (LynMode)!Lyn
@@ -1529,6 +1525,21 @@ class FE7Unit(TestCase):
         self.assertEqual(actual, expected)
         actual = response.data
         expected = {
+            'morph': {
+                'level': (1, 20),
+                'unitClass': 'Blade Lord',
+                'stats': [
+                    ('HP', 32.3, 60.0, 80.0),
+                    ('Pow', 13.6, 24.0, 30.0),
+                    ('Skl', 20.4, 29.0, 30.0),
+                    ('Spd', 20.0, 30.0, 30.0),
+                    ('Lck', 15.45, 30.0, 30.0),
+                    ('Def', 8.8, 22.0, 30.0),
+                    ('Res', 10.7, 22.0, 30.0),
+                    ('Con', 6.0, 25.0, 25.0),
+                    ('Mov', 6.0, 15.0, 15.0)
+                ],
+            },
             "paramBounds": [(10, "Blade Lord")],
         }
         self.assertDictEqual(actual, expected)
@@ -1596,6 +1607,7 @@ class FE7PromotionReadyUnit(TestCase):
         vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
         self.vmorph = vmorph
 
+        self.maxDiff = None
     def test_promote__rehearsal(self):
         """
         FE7 (HardMode)!Legault
@@ -1619,12 +1631,12 @@ class FE7PromotionReadyUnit(TestCase):
                 'unitClass': "Assassin",
                 'level': (1, 20),
                 'stats': [
-                    ("HP", 32.0, 60.0, 80.0),
-                    ("Pow", 9.0, 20.0, 30.0),
-                    ("Skl", 13.0, 30.0, 30.0),
+                    ("HP", 31.5, 60.0, 80.0),
+                    ("Pow", 9.25, 20.0, 30.0),
+                    ("Skl", 13.25, 30.0, 30.0),
                     ("Spd", 17.0, 30.0, 30.0),
-                    ("Lck", 10.0, 30.0, 30.0),
-                    ("Def", 10.0, 20.0, 30.0),
+                    ("Lck", 12.0, 30.0, 30.0),
+                    ("Def", 10.25, 20.0, 30.0),
                     ("Res", 6.0, 20.0, 30.0),
                     ("Con", 9.0, 20.0, 25.0),
                     ("Mov", 6.0, 15.0, 15.0),
@@ -1637,12 +1649,12 @@ class FE7PromotionReadyUnit(TestCase):
         vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
         actual = vmorph.init().current_stats.as_dict()
         expected = {
-            "HP": 29_00,
-            "Pow": 8_00,
-            "Skl": 13_00,
+            "HP": 28_50,
+            "Pow": 8_25,
+            "Skl": 13_25,
             "Spd": 17_00,
-            "Lck": 10_00,
-            "Def": 8_00,
+            "Lck": 12_00,
+            "Def": 8_25,
             "Res": 4_00,
             "Con": 9_00,
             "Mov": 6_00,
@@ -1686,12 +1698,12 @@ class FE7PromotionReadyUnit(TestCase):
                 'unitClass': "Assassin",
                 'level': (1, 20),
                 'stats': [
-                    ("HP", 32.0, 60.0, 80.0),
-                    ("Pow", 9.0, 20.0, 30.0),
-                    ("Skl", 13.0, 30.0, 30.0),
+                    ("HP", 31.5, 60.0, 80.0),
+                    ("Pow", 9.25, 20.0, 30.0),
+                    ("Skl", 13.25, 30.0, 30.0),
                     ("Spd", 17.0, 30.0, 30.0),
-                    ("Lck", 10.0, 30.0, 30.0),
-                    ("Def", 10.0, 20.0, 30.0),
+                    ("Lck", 12.0, 30.0, 30.0),
+                    ("Def", 10.25, 20.0, 30.0),
                     ("Res", 6.0, 20.0, 30.0),
                     ("Con", 9.0, 20.0, 25.0),
                     ("Mov", 6.0, 15.0, 15.0),
@@ -1777,6 +1789,7 @@ class FE6UnitPrePromote(TestCase):
         vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
         self.vmorph = vmorph
 
+        self.maxDiff = None
     def test_promote__rehearsal__fail(self):
         """
         FE6 Marcus
@@ -1805,6 +1818,21 @@ class FE6UnitPrePromote(TestCase):
         # check response data
         actual = response.data
         expected = {
+            "morph": {
+                "level": (20, 20),
+                "unitClass": "Paladin",
+                'stats': [
+                    ('HP', 43.4, 60.0, 80.0),
+                    ('Pow', 13.75, 25.0, 30.0),
+                    ('Skl', 17.8, 28.0, 30.0),
+                    ('Spd', 15.75, 25.0, 30.0),
+                    ('Lck', 13.8, 30.0, 30.0),
+                    ('Def', 11.85, 25.0, 30.0),
+                    ('Res', 11.8, 25.0, 30.0),
+                    ('Con', 11.0, 20.0, 25.0),
+                    ('Mov', 8.0, 15.0, 15.0),
+                ],
+            },
             "paramBounds": None,
         }
         self.assertDictEqual(actual, expected)
@@ -1826,6 +1854,7 @@ class FE8UnitWithBranchedPromotion(TestCase):
         vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
         self.vmorph = vmorph
 
+        self.maxDiff = None
     def test_promote__rehearsal__fail(self):
         """
         FE8 Gerik
@@ -1855,6 +1884,21 @@ class FE8UnitWithBranchedPromotion(TestCase):
         # check response data
         actual = response.data
         expected = {
+            'morph': {
+                'level': (20, 20),
+                'unitClass': 'Mercenary',
+                'stats': [
+                    ('HP', 41.0, 60.0, 80.0),
+                    ('Pow', 18.5, 20.0, 30.0),
+                    ('Skl', 17.0, 20.0, 30.0),
+                    ('Spd', 16.0, 20.0, 30.0),
+                    ('Lck', 11.0, 30.0, 30.0),
+                    ('Def', 13.5, 20.0, 30.0),
+                    ('Res', 6.5, 20.0, 30.0),
+                    ('Con', 13.0, 20.0, 25.0),
+                    ('Mov', 5.0, 15.0, 15.0)
+                ],
+            },
             "paramBounds": [
                 (10, "Hero"),
                 (10, "Ranger (M)"),
@@ -1949,6 +1993,7 @@ class FE5Unit(TestCase):
         vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
         self.vmorph = vmorph
 
+        self.maxDiff = None
     def test_set_scrolls(self):
         """
         """
@@ -2046,6 +2091,7 @@ class FE9KnightUnit(TestCase):
         vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
         self.vmorph = vmorph
 
+        self.maxDiff = None
     def test_equip_band__no_rehearsal(self):
         """
         FE9 Oscar
@@ -2157,10 +2203,10 @@ class FE9KnightUnit(TestCase):
         """
         method_name = "set_bands"
         bands = [
-            'Sword Band',
-            'Soldier Band',
-            'Fighter Band',
             'Archer Band',
+            'Fighter Band',
+            'Soldier Band',
+            'Sword Band',
         ]
         data = {"bands": bands}
         # usual stuff

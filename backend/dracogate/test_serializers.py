@@ -572,7 +572,7 @@ class Gonzales(TestCase):
         """
         logger.debug("%s", self.id())
         kwargs = {"game_no": 6, "name": "Gonzales"}
-        options = {"hard_mode": "false", "route": "Lalum"}
+        options = {"hard_mode": "false", "chapter": "10A"}
         kwargs.update(options)
         self.kwargs = kwargs
 
@@ -601,7 +601,7 @@ class Gonzales(TestCase):
     def test_init__fail(self):
         """
         """
-        self.kwargs['route'] = "A"
+        self.kwargs['chapter'] = "Lalum"
         serializer = InitArgs(data=self.kwargs)
         actual = serializer.is_valid()
         expected = False
@@ -610,7 +610,7 @@ class Gonzales(TestCase):
     def test_parse_init_args(self):
         """
         """
-        expected = (self.kwargs['game_no'], self.kwargs['name'], {"hard_mode": False, "route": "Lalum"})
+        expected = (self.kwargs['game_no'], self.kwargs['name'], {"hard_mode": False, "chapter": "10A"})
         actual = MorphSerializer.parse_init_args(self.kwargs)
         self.assertTupleEqual(actual, expected)
 
