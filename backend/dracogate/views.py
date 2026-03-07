@@ -259,7 +259,7 @@ class MorphViewSet(viewsets.ViewSet):
                 return Response(
                     {
                         "paramBounds": param_bounds,
-                        #"morph": data,
+                        "morph": data,
                     }
                 )
 

@@ -394,7 +394,7 @@ class VirtualMorph(models.Model):
             except AttributeError as err:
                 raise NotImplementedError
             param_bounds = None
-            self.history.append(("set_bands", {"bands": list(bands)}))
+            self.history.append(("set_bands", {"bands": sorted(bands)}))
             is_success = True
         except BandError as err:
             param_bounds = {
@@ -421,7 +421,7 @@ class VirtualMorph(models.Model):
             except AttributeError as err:
                 raise NotImplementedError
             param_bounds = None
-            self.history.append(("set_scrolls", {"scrolls": list(scrolls)}))
+            self.history.append(("set_scrolls", {"scrolls": sorted(scrolls)}))
             is_success = True
         except ScrollError as err:
             param_bounds = {

@@ -1970,9 +1970,9 @@ class FE5Unit(TestCase):
         # check server-side data
         vmorph = VirtualMorph.objects.get()
         actual = vmorph.history
-        actual[0][1]['scrolls'] = set(actual[0][1]['scrolls'])
+        #actual[0][1]['scrolls'] = set(actual[0][1]['scrolls'])
         expected = [
-            ["set_scrolls", {"scrolls": set(scrolls)}],
+            ["set_scrolls", {"scrolls": scrolls}],
         ]
         self.assertListEqual(actual, expected)
 
@@ -2173,9 +2173,9 @@ class FE9KnightUnit(TestCase):
         # check server-side data
         vmorph = VirtualMorph.objects.get()
         actual = vmorph.history
-        actual[0][1]['bands'] = set(actual[0][1]['bands'])
+        #actual[0][1]['bands'] = set(actual[0][1]['bands'])
         expected = [
-            ["set_bands", {"bands": set(bands)}],
+            ["set_bands", {"bands": bands}],
         ]
         self.assertListEqual(actual, expected)
 
