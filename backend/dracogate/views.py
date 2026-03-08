@@ -47,12 +47,6 @@ class MorphViewSet(viewsets.ViewSet):
         Creates temporary Morph for the user to preview, returning missing parameters as necessary.
         """
         game_no, name, options = MorphSerializer.parse_init_args(request.query_params)
-        '''
-        serializer = InitArgs(data=request.query_params)
-        if not serializer.is_valid():
-            raise Exception
-        kwargs = serializer.validated_data
-        '''
         try:
             morph = get_morph(game_no, name, **options)
             morph._set_max_level()
@@ -77,15 +71,6 @@ class MorphViewSet(viewsets.ViewSet):
         """
         Creates a Morph instance and stores it in the database.
         """
-        '''
-        if 'morphs' not in request.session:
-            request.session['morphs'] = []
-        if len(request.session['morphs']) >= 5:
-            raise exceptions.ParseError(
-                code="MORPH_LIMIT_EXCEEDED",
-                detail="The morph limit of cannot be exceeded.",
-            )
-        '''
         morph_id_serializer = MorphIDSerializer(data={"morph_id": request.data.get("morph_id")})
         if not morph_id_serializer.is_valid():
             raise exceptions.ParseError(

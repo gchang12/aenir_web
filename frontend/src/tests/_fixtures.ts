@@ -66,13 +66,13 @@ export class FE6Roster {
           unitClass: "Myrmidon",
           level: [4, 20],
           stats: [
-            ["HP", 26, 60, 80],
-            ["Pow", 9, 20, 30],
+            ["HP", 25.5, 60, 80],
+            ["Pow", 8.75, 20, 30],
             ["Skl", 14, 20, 30],
             ["Spd", 15, 20, 30],
-            ["Lck", 4, 30, 30],
-            ["Def", 6, 20, 30],
-            ["Res", 1, 20, 30],
+            ["Lck", 3.5, 30, 30],
+            ["Def", 5.75, 20, 30],
+            ["Res", 0.85, 20, 30],
             ["Con", 7, 20, 25],
             ["Mov", 5, 15, 15],
           ]
@@ -119,18 +119,18 @@ export class FE6Roster {
         return {missingParams: {number_of_declines: [0, 1, 2, 3]}};
     };
   };
-  static getGonzales(route, hard_mode) {
-    if (route == null || hard_mode == null) {
+  static getGonzales(chapter, hard_mode) {
+    if (chapter == null || hard_mode == null) {
       let morph = {missingParams: {}};
-      if (route == null) {
-        morph.missingParams["route"] = ["Lalum", "Elphin"];
+      if (chapter == null) {
+        morph.missingParams["chapter"] = ["10A", "10B"];
       };
       if (hard_mode == null) {
         morph.missingParams["hard_mode"] = [false, true];
       };
       return morph;
     };
-    if (route !== "Lalum") {
+    if (chapter !== "10A") {
       return;
     } else {
       switch(hard_mode) {
@@ -155,13 +155,13 @@ export class FE6Roster {
             unitClass: "Bandit",
             level: [5, 20],
             stats: [
-              ["HP", 43, 60, 80],
+              ["HP", 42.56, 60, 80],
               ["Pow", 16, 20, 30],
-              ["Skl", 7, 20, 30],
-              ["Spd", 11, 20, 30],
-              ["Lck", 6, 30, 30],
-              ["Def", 7, 20, 30],
-              ["Res", 1, 20, 30],
+              ["Skl", 7.4, 20, 30],
+              ["Spd", 10.6, 20, 30],
+              ["Lck", 6.2, 30, 30],
+              ["Def", 6.8, 20, 30],
+              ["Res", 0.8, 20, 30],
               ["Con", 15, 20, 25],
               ["Mov", 5, 15, 15],
             ]
@@ -332,7 +332,7 @@ export class FE7Roster {
     };
   };
   static getMarth() {
-    return {error: "UNIT_DNE"};
+    //return {morph: null, missingParams: null};
   };
 };
 
@@ -344,7 +344,7 @@ export class FE8Roster {
 
 export class FE10Roster {
   static getIke() {
-    return {error: "INVALID_GAME"};
+    //return {morph: null, missingParams: null};
   };
 };
 

@@ -17,6 +17,9 @@ export function getMorph(game_no, name, kwargs) {
 
 export async function previewMorph(game_no, name, kwargs) {
   let morph = await getMorph(game_no, name, {});
+  if (morph === undefined) {
+    return {morph: null, missingParams: null};
+  };
   const {missingParams} = morph;
   if (typeof missingParams === 'object') {
     const newKwargs = {};
