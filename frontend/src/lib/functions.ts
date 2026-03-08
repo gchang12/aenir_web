@@ -49,8 +49,6 @@ export function getLocalMorphs() {
   return JSON.parse(rawMorphs);
 };
 
-// TODO: Test these for the love of criminy. These sort of rely on database data. Consider using mocks?
-
 export function createMorph(morph_id, game_no, name, options) {
   const data = {
     morph_id,
@@ -64,6 +62,8 @@ export function createMorph(morph_id, game_no, name, options) {
     .catch(err => console.log(err));
   return fetchTask;
 };
+
+// TODO: Test these for the love of criminy. These sort of rely on database data. Consider using mocks?
 
 export function retrieveMorph(pk) {
   const url: string = RESOURCE_URL + [pk, ""].join("/");

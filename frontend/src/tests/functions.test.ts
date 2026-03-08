@@ -40,7 +40,7 @@ describe("FE6 Roy", () => {
     })
   );
 
-  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
+  // beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   test("getMorph: successful request for stat-data with stat-validation.", async () => {
     const kwargs = {};
@@ -65,12 +65,10 @@ describe("FE6 Roy", () => {
 
   test("createMorph: Upon successful request-processing, pk is returned.", async () => {
     const kwargs = {};
-    const morph = await createMorph(game_no, name, kwargs);
-    expect(morph).toBeUndefined();
-    /*
+    const morph_id = "FE6 Roy";
+    const morph = await createMorph(morph_id, game_no, name, kwargs);
     const {pk} = morph;
-    expect(pk).toBe("");
-    */
+    expect(pk).toBeTypeOf("string");
   });
 
   test("getMorph: input of invalid options and that they are ignored.", async () => {
@@ -111,7 +109,7 @@ describe("FE4 Lakche", () => {
     })
   );
 
-  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
+  // beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   test("getMorph: successful request for stat-data with {father:'Lex'}, with stat-validation.", async () => {
     const kwargs = {"father": "Lex"};
@@ -176,10 +174,11 @@ describe("FE4 Lakche", () => {
   });
 
   test("createMorph: Upon unsuccessful request-processing...", async () => {
-    const kwargs = {};
-    const morph = await createMorph(game_no, name, kwargs);
-    expect(morph.pk).toBeUndefined();
-    // TODO: Figure out what happens next.
+    const kwargs = {"father": "Lex"};
+    const morph_id = "Lex!Lakche";
+    const morph = await createMorph(morph_id, game_no, name, kwargs);
+    const {pk} = morph;
+    expect(pk).toBeTypeOf("string");
   });
 
   test("previewMorph: if return-value matches the expected when no kwargs are provided.", async () => {
@@ -235,7 +234,7 @@ describe("FE6 Rutger", () => {
     })
   );
 
-  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
+  // beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 6;
   const name = "Rutger";
@@ -327,7 +326,7 @@ describe("FE6 Hugh", () => {
     })
   );
 
-  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
+  // beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 6;
   const name = "Hugh";
@@ -427,7 +426,7 @@ describe("FE6 Gonzales", () => {
     })
   );
 
-  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
+  // beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 6;
   const name = "Gonzales";
@@ -533,7 +532,7 @@ describe("FE7 Ninian", () => {
     })
   );
 
-  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
+  // beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 7;
   const name = "Ninian";
@@ -559,7 +558,7 @@ describe("FE7 Nils", () => {
     })
   );
 
-  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
+  // beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 7;
   const name = "Nils";
@@ -649,7 +648,7 @@ describe("FE8 Lyon", () => {
     })
   );
 
-  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
+  // beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 8;
   const name = "Lyon";
@@ -673,7 +672,7 @@ describe("FE10 Ike (DNE)", () => {
     })
   );
 
-  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
+  // beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 10;
   const name = "Ike";
@@ -694,10 +693,13 @@ describe("FE10 Ike (DNE)", () => {
     const {morph, missingParams} = await previewMorph(game_no, name, kwargs);
     expect(morph).toBeNull();
     expect(missingParams).toBeNull();
-    /*
-    const {error} = morph;
-    expect(error).toBe("INVALID_GAME");
-    */
+  });
+
+  test("createMorph: Upon successful request-processing, pk is returned.", async () => {
+    const kwargs = {};
+    const morph_id = "FE10 Ike"
+    const morph = await createMorph(morph_id, game_no, name, kwargs);
+    expect(morph).toBeUndefined();
   });
 
 });
@@ -712,10 +714,17 @@ describe("FE7 Marth (DNE)", () => {
     })
   );
 
-  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
+  // beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 7;
   const name = "Marth";
+
+  test("createMorph: Upon successful request-processing, pk is returned.", async () => {
+    const kwargs = {};
+    const morph_id = "FE7 Marth";
+    const morph = await createMorph(morph_id, game_no, name, kwargs);
+    expect(morph).toBeUndefined();
+  });
 
   test("previewMorph: if morph contains an error if bad game_no-name pair was provided.", async () => {
     const kwargs = {};
@@ -751,10 +760,18 @@ describe("FE7 Lyn", () => {
     })
   );
 
-  beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
+  // beforeAll(() => server.listen()); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
   const game_no = 7;
   const name = "Lyn";
+
+  test("createMorph: Upon successful request-processing, pk is returned.", async () => {
+    const kwargs = {"lyn_mode": "false"};
+    const morph_id = "FE7 Lyn";
+    const morph = await createMorph(morph_id, game_no, name, kwargs);
+    const {pk} = morph;
+    expect(pk).toBeTypeOf("string");
+  });
 
   test("getMorph: unsuccessful request for stat-data, with 'lyn_mode' parameter missing..", async () => {
     const kwargs = {};

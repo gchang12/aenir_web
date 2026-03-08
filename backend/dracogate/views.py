@@ -98,9 +98,6 @@ class MorphViewSet(viewsets.ViewSet):
                 detail="%r" % err,
             )
         pk = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options).id
-        #morphs = request.session['morphs']
-        #morphs.append(pk)
-        #request.session.save()
         return Response(
             {
                 "pk": pk,
@@ -122,17 +119,7 @@ class MorphViewSet(viewsets.ViewSet):
     def retrieve(self, request, pk):
         """
         """
-        #if 'morphs' not in request.session:
-            #request.session['morphs'] = []
-        #if pk not in request.session['morphs']:
         logger.debug("pk = %r", pk)
-        #logger.debug("request.session['morphs'] = %r", request.session['morphs'])
-        '''
-        raise exceptions.NotFound(
-            code="VIRTUALMORPH_NOT_IN_SESSION",
-            detail="No VirtualMorph object with pk='%s' was associated with this session." % pk,
-        )
-        '''
         vmorph = get_object_or_404(VirtualMorph, id=pk)
         morph = vmorph.init()
         serializer = MorphSerializer(morph)
