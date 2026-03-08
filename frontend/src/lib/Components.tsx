@@ -2,21 +2,17 @@
 function FatherSelect({choices}) {
   // choices: ['Arden', 'Azel', 'Alec', 'Claude', 'Jamka', 'Dew', 'Noish', 'Fin', 'Beowolf', 'Holyn', 'Midayle', 'Levin', 'Lex']
   return (
-    <>
-    <tr>
-      <th><label htmlFor="father">Father Select</label></th>
-      <td>
-        <select required name="father">
-        {choices.map(choice => {
-          return (
-            <option key={choice} value={choice}>{choice}</option>
-          );
-        })
-        }
-        </select>
-      </td>
-    </tr>
-    </>
+    <div className="FatherSelect">
+      <label htmlFor="father">Father</label>
+      <select id="father" required name="father">
+      {choices.map(choice => {
+        return (
+          <option key={choice} value={choice}>{choice}</option>
+        );
+      })
+      }
+      </select>
+    </div>
   );
 };
 
@@ -25,14 +21,10 @@ function HardModeToggle({choices}) {
   const [defaultChecked] = choices;
   // const [checked, setChecked] = React.useState(defaultChecked);
   return (
-    <>
-    <tr>
-      <th><label htmlFor="hard_mode">Hard Mode</label></th>
-      <td><input required name="hard_mode" {...{defaultChecked}} type="checkbox" />
-      {/* <input name="hard_mode" value={!checked} type="hidden" /> */}
-      </td>
-    </tr>
-    </>
+    <div className="HardModeToggle">
+      <label htmlFor="hard_mode">Hard Mode</label>
+      <input id="hard_mode" required name="hard_mode" {...{defaultChecked}} type="checkbox" />
+    </div>
   );
 };
 
@@ -41,14 +33,10 @@ function LynModeToggle({choices}) {
   const [defaultChecked] = choices;
   // const [checked, setChecked] = React.useState(defaultChecked);
   return (
-    <>
-    <tr>
-      <th><label htmlFor="lyn_mode">Lyn Mode</label></th>
-      <td><input required name="lyn_mode" {...{defaultChecked}} type="checkbox" />
-      {/* <input name="lyn_mode" value={!checked} type="hidden" /> */}
-      </td>
-    </tr>
-    </>
+    <div className="LynModeToggle">
+      <label htmlFor="lyn_mode">Lyn Mode</label>
+      <input id="lyn_mode" required name="lyn_mode" {...{defaultChecked}} type="checkbox" />
+    </div>
   );
 };
 
@@ -62,22 +50,18 @@ function MageDecliner({choices}) {
     3: 5_000,
   };
   return (
-    <>
-    <tr>
-      <th><label htmlFor="number_of_declines">Gold Tendered</label></th>
-      <td>
-        <select required name="number_of_declines">
-        {choices.map(choice => {
-          const price = priceByDeclineCount[choice];
-          return (
-            <option key={choice} value={choice}>{price.toLocaleString() + " G"}</option>
-          );
-        })
-        }
-        </select>
-      </td>
-    </tr>
-    </>
+    <div className="MageDecliner">
+      <label htmlFor="number_of_declines">Gold Tendered</label>
+      <select id="number_of_declines" required name="number_of_declines">
+      {choices.map(choice => {
+        const price = priceByDeclineCount[choice];
+        return (
+          <option key={choice} value={choice}>{price.toLocaleString() + " G"}</option>
+        );
+      })
+      }
+      </select>
+    </div>
   );
 };
 
@@ -85,9 +69,9 @@ function ChapterSelect({choices}) {
   // choices: ['Lalum', 'Elphin']
   const [defaultValue] = choices;
   return (
-    <tr>
-      <th>Chapter</th>
-      <td>
+    <div className="ChapterSelect">
+      <fieldset>
+      <legend>Chapter</legend>
       {choices.map(choice => {
         return (
           <div className="chapter-choice" key={choice}>
@@ -97,8 +81,8 @@ function ChapterSelect({choices}) {
         );
       })
       }
-      </td>
-    </tr>
+      </fieldset>
+    </div>
   );
 };
 
@@ -106,9 +90,7 @@ export function OptionSelect({missingParams}) {
   return (
     <>
     {Object.entries(missingParams ?? {}).map(missingParamSet => {
-      // console.log(missingParamSet);
       const [key, choices] = missingParamSet;
-      // console.log(key, choices);
       switch(key) {
         case "father":
           return <FatherSelect key={key} {...{choices}} />;
