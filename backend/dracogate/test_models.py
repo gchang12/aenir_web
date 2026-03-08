@@ -220,7 +220,7 @@ class NormalUnit(TestCase):
         self.assertTupleEqual(actual, expected)
         (is_success, actual) = vmorph.level_up(num_levels=1)
         self.assertIs(is_success, False)
-        expected = 20
+        expected = (None, 20)
         self.assertEqual(actual, expected)
         expected = [
             ("level_up", {"num_levels": 19}),
