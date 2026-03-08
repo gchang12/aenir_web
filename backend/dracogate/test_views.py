@@ -31,7 +31,6 @@ class NormalUnit(TestCase):
         kwargs.update(options)
         kwargs['morph_id'] = "NormalUnit"
         self.kwargs = kwargs
-        self.maxDiff = None
 
     def test_list__verify_that_invalid_options_are_ignored(self):
         """
@@ -127,7 +126,6 @@ class FatheredUnit(TestCase):
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
-        self.maxDiff = None
 
     def test_list__verify_success(self):
         """
@@ -246,7 +244,6 @@ class HardModeUnit(TestCase):
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
-        self.maxDiff = None
 
     def test_list__verify_success(self):
         """
@@ -355,7 +352,6 @@ class DeclinableUnit(TestCase):
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
-        self.maxDiff = None
 
     def test_list__verify_success(self):
         """
@@ -505,7 +501,6 @@ class Gonzales(TestCase):
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
-        self.maxDiff = None
 
     def test_list__verify_success(self):
         """
@@ -658,7 +653,6 @@ class LyndisLeague(TestCase):
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
-        self.maxDiff = None
 
     def test_list__verify_error(self):
         """
@@ -743,7 +737,6 @@ class Ninian(TestCase):
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
-        self.maxDiff = None
 
     def test_list__verify_success(self):
         """
@@ -781,7 +774,6 @@ class Nils(TestCase):
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
-        self.maxDiff = None
 
     def test_list__verify_success(self):
         """
@@ -851,7 +843,6 @@ class BonusUnit(TestCase):
         kwargs = {"game_no": game_no, "name": name, "morph_id": "BonusUnit"}
         kwargs.update(options)
         self.kwargs = kwargs
-        self.maxDiff = None
 
     def test_list__verify_success(self):
         """
@@ -878,7 +869,6 @@ class InvalidGame(TestCase):
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
-        self.maxDiff = None
 
     def test_list__verify_error(self):
         """
@@ -938,7 +928,6 @@ class InvalidUnit(TestCase):
         kwargs = {"game_no": game_no, "name": name}
         kwargs.update(options)
         self.kwargs = kwargs
-        self.maxDiff = None
 
     def test_list__verify_error(self):
         """
@@ -1004,7 +993,6 @@ class FE4UnitForSimulatingInvalidOperations(TestCase):
         options = {}
         vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
         self.vmorph = vmorph
-        self.maxDiff = None
 
     def test_invalid_morph_method(self):
         """
@@ -1238,7 +1226,6 @@ class FE6Unit(TestCase):
         vmorph.init()
         vmorph.morph._set_max_level()
         self.vmorph = vmorph
-        self.maxDiff = None
 
     def test_retrieve(self):
         """
@@ -1498,7 +1485,6 @@ class FE7Unit(TestCase):
         vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
         self.vmorph = vmorph
 
-        self.maxDiff = None
     def test_promote__morph_err(self):
         """
         FE7 (LynMode)!Lyn
@@ -1607,7 +1593,6 @@ class FE7PromotionReadyUnit(TestCase):
         vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
         self.vmorph = vmorph
 
-        self.maxDiff = None
     def test_promote__rehearsal(self):
         """
         FE7 (HardMode)!Legault
@@ -1789,7 +1774,6 @@ class FE6UnitPrePromote(TestCase):
         vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
         self.vmorph = vmorph
 
-        self.maxDiff = None
     def test_promote__rehearsal__fail(self):
         """
         FE6 Marcus
@@ -1854,7 +1838,6 @@ class FE8UnitWithBranchedPromotion(TestCase):
         vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
         self.vmorph = vmorph
 
-        self.maxDiff = None
     def test_promote__rehearsal__fail(self):
         """
         FE8 Gerik
@@ -1993,7 +1976,6 @@ class FE5Unit(TestCase):
         vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
         self.vmorph = vmorph
 
-        self.maxDiff = None
     def test_set_scrolls(self):
         """
         """
@@ -2091,7 +2073,6 @@ class FE9KnightUnit(TestCase):
         vmorph = VirtualMorph.objects.create(morph_id=morph_id, game_no=game_no, name=name, options=options)
         self.vmorph = vmorph
 
-        self.maxDiff = None
     def test_equip_band__no_rehearsal(self):
         """
         FE9 Oscar

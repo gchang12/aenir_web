@@ -332,6 +332,7 @@ export class FE7Roster {
     };
   };
   static getMarth() {
+    throw new Error();
     //return {morph: null, missingParams: null};
   };
 };
@@ -344,6 +345,7 @@ export class FE8Roster {
 
 export class FE10Roster {
   static getIke() {
+    throw new Error();
     //return {morph: null, missingParams: null};
   };
 };
