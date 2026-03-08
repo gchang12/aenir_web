@@ -21,6 +21,7 @@ export async function previewMorph(game_no, name, kwargs) {
     return {morph: null, missingParams: null};
   };
   const {missingParams} = morph;
+  console.log(Object.keys(missingParams));
   if (typeof missingParams === 'object') {
     const newKwargs = {};
     Object.entries(missingParams).forEach(([key, values]) => {

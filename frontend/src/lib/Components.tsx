@@ -81,18 +81,18 @@ function MageDecliner({choices}) {
   );
 };
 
-function RouteSelect({choices}) {
+function ChapterSelect({choices}) {
   // choices: ['Lalum', 'Elphin']
   const [defaultValue] = choices;
   return (
     <tr>
-      <th>Route</th>
+      <th>Chapter</th>
       <td>
       {choices.map(choice => {
         return (
-          <div className="route-choice" key={choice}>
+          <div className="chapter-choice" key={choice}>
             <label htmlFor={choice} required>{choice}</label>
-            <input required name="route" id={choice} value={choice} type="radio" defaultChecked={choice === defaultValue} />
+            <input required name="chapter" id={choice} value={choice} type="radio" defaultChecked={choice === defaultValue} />
           </div>
         );
       })
@@ -112,8 +112,8 @@ export function OptionSelect({missingParams}) {
       switch(key) {
         case "father":
           return <FatherSelect key={key} {...{choices}} />;
-        case "route":
-          return <RouteSelect key={key} {...{choices}} />;
+        case "chapter":
+          return <ChapterSelect key={key} {...{choices}} />;
         case "number_of_declines":
           return <MageDecliner key={key} {...{choices}} />;
         case "hard_mode":
