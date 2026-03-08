@@ -135,13 +135,10 @@ export function UnitConfirm() {
   const {morph, missingParams, unitName, gameId} = useLoaderData();
   // Fixes the data-reloading problem.
   const gameNo = gameId.replace("fe", "");
-  const [morphId, setMorphId] = useState(gameId.toUpperCase() + " " + unitName);
   useEffect(() => {
     previewMorph(gameNo, unitName, {})
       .then(resp => {
         setKishuna(resp.morph);
-        setMorphId(gameId.toUpperCase() + " " + unitName);
-        // setMorphId(unitName);
       })
       .catch(err => console.log(err))
   }, [unitName]);
@@ -188,7 +185,7 @@ export function UnitConfirm() {
   };
   toggleButtonAbility(false);
   //toggleCheckbox(false);
-  console.log("morphId: " + morphId);
+  const morphId = gameId.toUpperCase() + " " + unitName;
   return (
     <>
     <ProfileHead imgSrc={["", "images", gameName, "characters", unitName + imgSuffix].join("/")}>
@@ -233,7 +230,7 @@ export function Morphs() {
     <h1>Morphs</h1>
     <menu>
     {Object.entries(morphs).map(([indexNo, morph]) => {
-      console.log("morph:", Object.entries(morph));
+      //console.log("morph:", Object.entries(morph));
       const {initArgs} = morph;
       const {level} = morph.morph;
       const [currentLv, maxLv] = level;

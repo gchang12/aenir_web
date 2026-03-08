@@ -7,7 +7,7 @@ function FatherSelect({choices}) {
       <select id="father" required name="father">
       {choices.map(choice => {
         return (
-          <option key={choice} value={choice}>{choice}</option>
+          <option key={choice} defaultValue={choice}>{choice}</option>
         );
       })
       }
@@ -23,7 +23,7 @@ function HardModeToggle({choices}) {
   return (
     <div className="HardModeToggle">
       <label htmlFor="hard_mode">Hard Mode</label>
-      <input id="hard_mode" required name="hard_mode" {...{defaultChecked}} type="checkbox" />
+      <input id="hard_mode" name="hard_mode" {...{defaultChecked}} type="checkbox" />
     </div>
   );
 };
@@ -56,7 +56,7 @@ function MageDecliner({choices}) {
       {choices.map(choice => {
         const price = priceByDeclineCount[choice];
         return (
-          <option key={choice} value={choice}>{price.toLocaleString() + " G"}</option>
+          <option key={choice} defaultValue={choice}>{price.toLocaleString() + " G"}</option>
         );
       })
       }
@@ -76,7 +76,7 @@ function ChapterSelect({choices}) {
         return (
           <div className="chapter-choice" key={choice}>
             <label htmlFor={choice} required>{choice}</label>
-            <input required name="chapter" id={choice} value={choice} type="radio" defaultChecked={choice === defaultValue} />
+            <input name="chapter" id={choice} type="radio" value={choice} defaultChecked={defaultValue === choice} />
           </div>
         );
       })
