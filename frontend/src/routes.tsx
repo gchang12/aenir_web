@@ -137,7 +137,9 @@ export function UnitConfirm() {
   const gameNo = gameId.replace("fe", "");
   useEffect(() => {
     previewMorph(gameNo, unitName, {})
-      .then(resp => setKishuna(resp.morph))
+      .then(resp => {
+        setKishuna(resp.morph);
+      })
       .catch(err => console.log(err))
   }, [unitName]);
   const [kishuna, setKishuna] = useState(morph);
@@ -148,6 +150,12 @@ export function UnitConfirm() {
     const createMorphButton = document.querySelector("#create-morph-button");
     if (createMorphButton != null) {
       createMorphButton.disabled = value;
+    };
+  };
+  function toggleCheckbox(value) {
+    const checkbox = document.querySelector("form.create-morph > input[type='checkbox']");
+    if (checkbox != null) {
+      checkbox.checked = false;
     };
   };
   async function refetchMorph(e) {
@@ -172,9 +180,12 @@ export function UnitConfirm() {
       };
     };
     setKishuna((await previewMorph(gameNo, unitName, kwargs)).morph);
+    // NOTE: Patch!
+    toggleButtonAbility(false);
   };
   const morphId = gameId.toUpperCase() + "!" + unitName;
   toggleButtonAbility(false);
+  //toggleCheckbox(false);
   return (
     <>
     <ProfileHead imgSrc={["", "images", gameName, "characters", unitName + imgSuffix].join("/")}>

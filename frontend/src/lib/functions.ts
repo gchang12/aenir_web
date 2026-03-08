@@ -17,11 +17,10 @@ export function getMorph(game_no, name, kwargs) {
 
 export async function previewMorph(game_no, name, kwargs) {
   let morph = await getMorph(game_no, name, {});
-  if (morph === undefined) {
+  if (morph == null) {
     return {morph: null, missingParams: null};
   };
   const {missingParams} = morph;
-  console.log(Object.keys(missingParams));
   if (typeof missingParams === 'object') {
     const newKwargs = {};
     Object.entries(missingParams).forEach(([key, values]) => {
