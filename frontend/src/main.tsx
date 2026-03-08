@@ -95,7 +95,6 @@ const router = createBrowserRouter([
             setLocalMorphs([]);
           };
           const localMorphs = getLocalMorphs();
-          //console.log(localMorphs, typeof localMorphs);
           const fetchTasks = localMorphs.map(pk => retrieveMorph(pk));
           const morphs = await Promise.all(fetchTasks);
           return {morphs};

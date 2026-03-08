@@ -131,6 +131,12 @@ export function UnitSelect() {
   );
 };
 
+/* TODO
+- Insert button to preview.
+- Disable submit-button 'til the stats are clean.
+- Hide stats for units who need more parameters.
+*/
+
 export function UnitConfirm() {
   const {morph, missingParams, unitName, gameId} = useLoaderData();
   // Fixes the data-reloading problem.
