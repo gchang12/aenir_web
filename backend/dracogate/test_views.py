@@ -41,7 +41,7 @@ class NormalUnit(TestCase):
         kwargs.update({"invalid": "option"})
         response = self.client.get(url, data=kwargs)
         expected = {"unitClass", "level", "stats"}
-        actual = set(response.data.keys())
+        actual = set(response.data['preview'].keys())
         self.assertSetEqual(actual, expected)
 
     def test_list__verify_success(self):
@@ -52,9 +52,9 @@ class NormalUnit(TestCase):
         kwargs = self.kwargs
         response = self.client.get(url, data=kwargs)
         expected = {"unitClass", "level", "stats"}
-        actual = set(response.data.keys())
+        actual = set(response.data['preview'].keys())
         self.assertSetEqual(actual, expected)
-        actual = response.data
+        actual = response.data['preview']
         expected = {
             "unitClass": "Lord",
             "level": (1, 20),
@@ -134,7 +134,7 @@ class FatheredUnit(TestCase):
         url = RESOURCE_URL
         kwargs = self.kwargs
         response = self.client.get(url, data=kwargs)
-        actual = response.data
+        actual = response.data['preview']
         expected = {
             "unitClass": "Swordfighter",
             "level": (1, 20),
@@ -159,7 +159,7 @@ class FatheredUnit(TestCase):
         kwargs = self.kwargs
         kwargs.update({"father": "Claude"})
         response = self.client.get(url, data=kwargs)
-        actual = response.data
+        actual = response.data['preview']
         expected = {
             "unitClass": "Swordfighter",
             "level": (1, 20),
@@ -252,7 +252,7 @@ class HardModeUnit(TestCase):
         url = RESOURCE_URL
         kwargs = self.kwargs
         response = self.client.get(url, data=kwargs)
-        actual = response.data
+        actual = response.data['preview']
         expected = {
             "unitClass": "Myrmidon",
             "level": (4, 20),
@@ -278,7 +278,7 @@ class HardModeUnit(TestCase):
         kwargs = self.kwargs
         kwargs.update({'hard_mode': 'true'})
         response = self.client.get(url, data=kwargs)
-        actual = response.data
+        actual = response.data['preview']
         expected = {
             "unitClass": "Myrmidon",
             "level": (4, 20),
@@ -360,7 +360,7 @@ class DeclinableUnit(TestCase):
         url = RESOURCE_URL
         kwargs = self.kwargs
         response = self.client.get(url, data=kwargs)
-        actual = response.data
+        actual = response.data['preview']
         expected = {
             "unitClass": "Mage",
             "level": (15, 20),
@@ -386,7 +386,7 @@ class DeclinableUnit(TestCase):
         kwargs = self.kwargs
         kwargs.update({"number_of_declines": 1})
         response = self.client.get(url, data=kwargs)
-        actual = response.data
+        actual = response.data['preview']
         expected = {
             "unitClass": "Mage",
             "level": (15, 20),
@@ -412,7 +412,7 @@ class DeclinableUnit(TestCase):
         kwargs = self.kwargs
         kwargs.update({"number_of_declines": 2})
         response = self.client.get(url, data=kwargs)
-        actual = response.data
+        actual = response.data['preview']
         expected = {
             "unitClass": "Mage",
             "level": (15, 20),
@@ -438,7 +438,7 @@ class DeclinableUnit(TestCase):
         kwargs = self.kwargs
         kwargs.update({"number_of_declines": 3})
         response = self.client.get(url, data=kwargs)
-        actual = response.data
+        actual = response.data['preview']
         expected = {
             "unitClass": "Mage",
             "level": (15, 20),
@@ -509,7 +509,7 @@ class Gonzales(TestCase):
         url = RESOURCE_URL
         kwargs = self.kwargs
         response = self.client.get(url, data=kwargs)
-        actual = response.data
+        actual = response.data['preview']
         expected = {
             "unitClass": "Bandit",
             "level": (5, 20),
@@ -535,7 +535,7 @@ class Gonzales(TestCase):
         kwargs = self.kwargs
         kwargs.update({"hard_mode": "false", "chapter": "10B"})
         response = self.client.get(url, data=kwargs)
-        actual = response.data
+        actual = response.data['preview']
         expected = {
             "unitClass": "Bandit",
             "level": (11, 20),
@@ -561,7 +561,7 @@ class Gonzales(TestCase):
         kwargs = self.kwargs
         kwargs.update({"hard_mode": "true"})
         response = self.client.get(url, data=kwargs)
-        actual = response.data
+        actual = response.data['preview']
         expected = {
             "unitClass": "Bandit",
             "level": (5, 20),
@@ -587,7 +587,7 @@ class Gonzales(TestCase):
         kwargs = self.kwargs
         kwargs.update({"hard_mode": "true", "chapter": "10B"})
         response = self.client.get(url, data=kwargs)
-        actual = response.data
+        actual = response.data['preview']
         expected = {
             "unitClass": "Bandit",
             "level": (11, 20),
@@ -678,7 +678,7 @@ class LyndisLeague(TestCase):
         kwargs = self.kwargs
         kwargs.update({"lyn_mode": "true"})
         response = self.client.get(url, data=kwargs)
-        actual = response.data
+        actual = response.data['preview']
         expected = {
             "unitClass": "Lord",
             "level": (1, 20),
@@ -703,7 +703,7 @@ class LyndisLeague(TestCase):
         url = RESOURCE_URL
         kwargs = self.kwargs
         response = self.client.get(url, data=kwargs)
-        actual = response.data
+        actual = response.data['preview']
         expected = {
             "unitClass": "Lord",
             "level": (4, 20),
@@ -783,7 +783,7 @@ class Nils(TestCase):
         kwargs = self.kwargs
         kwargs.update({"lyn_mode": "true"})
         response = self.client.get(url, data=kwargs)
-        actual = response.data
+        actual = response.data['preview']
         expected = {
             "unitClass": "Bard",
             "level": (1, 20),
@@ -809,7 +809,7 @@ class Nils(TestCase):
         kwargs = self.kwargs
         kwargs.update({"lyn_mode": "false"})
         response = self.client.get(url, data=kwargs)
-        actual = response.data
+        actual = response.data['preview']
         expected = {
             "unitClass": "Bard",
             "level": (1, 20),

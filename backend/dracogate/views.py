@@ -52,7 +52,7 @@ class MorphViewSet(viewsets.ViewSet):
             morph._set_max_level()
             serializer = MorphSerializer(morph)
             statdicts = serializer.get_current_stats()
-            data = serializer.get_morph(*statdicts)
+            data = {"preview": serializer.get_morph(*statdicts)}
         except InitError as err:
             data = {"missingParams": err.init_params}
         except NotImplementedError as err:
