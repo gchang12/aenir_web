@@ -80,18 +80,17 @@ function ChapterSelect({choices}) {
   const [defaultValue] = choices;
   return (
     <div className="ChapterSelect">
-      <fieldset>
-      <legend>Chapter</legend>
+      <label htmlFor="chapter">Chapter</label>
+      <select required name="chapter" id="chapter">
       {choices.map(choice => {
         return (
-          <div className="chapter-choice" key={choice}>
-            <label htmlFor={choice} required>{choice}</label>
-            <input name="chapter" id={choice} type="radio" value={choice} defaultChecked={defaultValue === choice} />
-          </div>
+          <option key={choice} name="chapter" id={choice} type="radio" value={choice} defaultChecked={defaultValue === choice}>
+            {choice}
+          </option>
         );
       })
       }
-      </fieldset>
+      </select>
     </div>
   );
 };
