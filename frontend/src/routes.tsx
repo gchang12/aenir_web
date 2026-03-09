@@ -136,11 +136,11 @@ export function UnitConfirm() {
       queryList.push(key + "=" + value);
     };
     fetcher.load(`/create-morph/${gameId}/${unitName}/?` + queryList.join("&"));
-    console.log(queryList);
-    setPreviewMode(false);
+    console.log("UnitConfirm.refetchMorph:", queryList);
+    //setPreviewMode(false);
   }, [unitName]);
   const message = previewMode ? `Please provide extra parameters for ${unitName}.` : "Please confirm the selection.";
-  console.log("preview:", preview);
+  console.log("UnitConfirm.preview:", preview);
   //console.log("missingParams:", missingParams);
   return (
     <div id="UnitConfirm">

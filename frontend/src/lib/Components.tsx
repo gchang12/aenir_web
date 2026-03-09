@@ -1,6 +1,9 @@
 import {
   GAMES,
 } from "../constants";
+import {
+  useState,
+} from "react";
 
 function FatherSelect({choices}) {
   // choices: ['Arden', 'Azel', 'Alec', 'Claude', 'Jamka', 'Dew', 'Noish', 'Fin', 'Beowolf', 'Holyn', 'Midayle', 'Levin', 'Lex']
@@ -23,10 +26,12 @@ function HardModeToggle({choices}) {
   // choices: [false, true]
   const [defaultChecked] = choices;
   // const [checked, setChecked] = React.useState(defaultChecked);
+  const [value, setValue] = useState(defaultChecked);
   return (
     <div className="HardModeToggle">
-      <label htmlFor="hard_mode">Hard Mode</label>
-      <input id="hard_mode" name="hard_mode" {...{defaultChecked}} type="checkbox" />
+      <label htmlFor="_hard_mode">Hard Mode</label>
+      <input id="_hard_mode" name="_hard_mode" {...{defaultChecked}} type="checkbox" onChange={() => setValue(!value)} />
+      <input id="hard_mode" name="hard_mode" value={value} type="hidden" />
     </div>
   );
 };
@@ -35,10 +40,12 @@ function LynModeToggle({choices}) {
   // choices: [false, true]
   const [defaultChecked] = choices;
   // const [checked, setChecked] = React.useState(defaultChecked);
+  const [value, setValue] = useState(defaultChecked);
   return (
     <div className="LynModeToggle">
-      <label htmlFor="lyn_mode">Lyn Mode</label>
-      <input id="lyn_mode" required name="lyn_mode" {...{defaultChecked}} type="checkbox" />
+      <label htmlFor="_lyn_mode">Lyn Mode</label>
+      <input id="_lyn_mode" name="_lyn_mode" {...{defaultChecked}} type="checkbox" onChange={() => setValue(!value)} />
+      <input id="lyn_mode" name="lyn_mode" value={value} type="hidden" />
     </div>
   );
 };

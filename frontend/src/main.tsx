@@ -46,13 +46,22 @@ const router = createBrowserRouter([
                   const game_no = Number(gameId.replace("fe", ""));
                   const name = unitName;
                   const options = {};
-                  console.log("loader:", request.url);
+                  console.log("UnitConfirm.loader:", request.url);
                   const queryString = new URLSearchParams(request.url.split('?')[1]);
                   for (const [key, value] of queryString.entries()) {
-                    options[key] = value;
+                    switch (value) {
+                      case "on":
+                        options[key] = true;
+                        break;
+                      case "off":
+                        options[key] = false;
+                        break;
+                      default:
+                        options[key] = value;
+                    };
                   };
                   const data = await getMorph(game_no, name, options);
-                  console.log(Object.entries(data));
+                  console.log("UnitConfirm.getMorph", Object.entries(data));
                   return {data, gameId, unitName};
                 },
                 action: async ({params, request}) => {
