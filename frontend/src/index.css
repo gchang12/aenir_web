@@ -69,47 +69,54 @@ button:focus-visible {
 
 /* MY CODE */
 
+* {
+  border: 1px dotted red;
+}
+
 #root {
   width: 100%;
 }
 
-#create-morph {
-  display: flex;
-  &> .create-morph {
-    max-height: 40rem;
-    overflow-y: scroll;
-  };
-  & figure {
-  };
-  & menu {
-    list-style-type: none;
-  };
-  & li:hover {
-    background-color: navy;
-  };
-}
-
-a.active figcaption {
-  background-color: yellow;
-}
-
-.maxed-stat {
-  color: green;
-}
-
-header > figure {
-  display: flex;
-}
-
-#top-banner {
+header {
   display: flex;
   justify-content: space-between;
 }
 
-#top-banner figure {
+#GameSelect figure {
   display: flex;
 }
 
-body {
-  display: revert;
+#GameSelect li:hover {
+  background-color: skyblue;
+}
+
+a.active figcaption {
+  background-color: skyblue;
+}
+
+#create-morph > * {
+  height: 40rem;
+  width: 37rem;
+  overflow-y: scroll;
+}
+
+#create-morph {
+  display: flex;
+  justify-content: start;
+}
+
+menu {
+  list-style-type: none;
+}
+
+#UnitSelect a {
+  display: flex;
+}
+
+#UnitSelect a:hover {
+  background-color: skyblue;
+}
+
+#UnitSelect a.active {
+  background-color: skyblue;
 }

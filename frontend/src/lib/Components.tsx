@@ -1,6 +1,6 @@
 import {
   GAMES,
-} from "./constants";
+} from "../constants";
 
 function FatherSelect({choices}) {
   // choices: ['Arden', 'Azel', 'Alec', 'Claude', 'Jamka', 'Dew', 'Noish', 'Fin', 'Beowolf', 'Holyn', 'Midayle', 'Levin', 'Lex']

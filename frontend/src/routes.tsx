@@ -20,24 +20,22 @@ import {
 import {
   OptionSelect,
   CurrentStatsTable,
+  ProfileIcon,
+  ClassLevelInfo,
+  OptionsMenu,
+  ConfirmationMenu,
 } from "./lib/Components";
 import {
-  retrieveMorph,
+  getMorph,
 } from "./lib/functions";
 
 export function Root() {
   return (
     <>
-    <header id="top-banner">
-      <figure>
-        <Link to="/">
-          <img src="/logo.png" />
-        </Link>
-        <figcaption>
-          <h1>aenir</h1>
-          <h2>A Fire Emblem stats calculator and comparison tool</h2>
-        </figcaption>
-      </figure>
+    <header>
+      <Link to="/">
+        <img src="/logo.png" width="300" />
+      </Link>
       <nav>
         <menu>
           <li><NavLink to="/create-morph/">Create</NavLink></li>
@@ -57,28 +55,28 @@ export function GameSelect() {
   return (
     <>
     <div id="create-morph">
-    <nav className="create-morph">
-      <menu>
-      {GAMES.map(game => {
-        const imgSrc = ["", "images", game.name, "cover-art.png"].join('/');
-        return (
-          <li key={game.no}>
-            <NavLink to={["", 'create-morph', 'fe' + game.no, ''].join('/')}>
-              <figure>
-                <img src={imgSrc} alt={imgSrc} />
-                <figcaption>
-                  <h2>{"FE" + game.no}</h2>
-                  <h3>{game.title}</h3>
-                </figcaption>
-              </figure>
-            </NavLink>
-          </li>
-        );
-      })
-      }
-      </menu>
-    </nav>
-    <Outlet />
+      <nav id="GameSelect">
+        <menu>
+        {GAMES.map(game => {
+          const imgSrc = ["", "images", game.name, "cover-art.png"].join('/');
+          return (
+            <li key={game.no}>
+              <NavLink to={["", 'create-morph', 'fe' + game.no, ''].join('/')}>
+                <figure>
+                  <img src={imgSrc} alt={imgSrc} height="100" />
+                  <figcaption>
+                    <h2>{"FE" + game.no}</h2>
+                    <h3>{game.title}</h3>
+                  </figcaption>
+                </figure>
+              </NavLink>
+            </li>
+          );
+        })
+        }
+        </menu>
+      </nav>
+      <Outlet />
     </div>
     </>
   );
@@ -91,7 +89,7 @@ export function UnitSelect() {
   const imgSuffix = gameId === "fe8" ? ".gif" : ".png";
   return (
     <>
-    <nav className="create-morph">
+    <nav id="UnitSelect">
       <menu>
       {unitListForGame.map(unit => {
         const unitName = unit.name;
@@ -127,10 +125,9 @@ export function UnitConfirm() {
       <ProfileIcon {...{gameId, unitName}} />
       <ClassLevelInfo {...{morph}} />
       <OptionsMenu {...{disabled, onClick, morph}} />
-      <></>
+      {/* */}
       <CurrentStatsTable {...{morph}} />
       <ConfirmationMenu {...{message, disabled}} />
     </div>
-    </>
-  ); */}
+  );
 };
