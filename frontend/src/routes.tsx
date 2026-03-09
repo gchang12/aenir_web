@@ -121,8 +121,8 @@ export function UnitSelect() {
 export function UnitConfirm() {
   const {data, gameId, unitName} = useLoaderData();
   const {preview, missingParams} = data;
-  //const morph = preview;
-  const [morph, setMorph] = useState(preview);
+  const morph = preview;
+  //const [morph, setMorph] = useState(preview);
   const [previewMode, setPreviewMode] = useState(false);
   const fetcher = useFetcher();
   const formRef = useRef(null);
