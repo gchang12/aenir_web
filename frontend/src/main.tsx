@@ -46,11 +46,13 @@ const router = createBrowserRouter([
                   const game_no = Number(gameId.replace("fe", ""));
                   const name = unitName;
                   const options = {};
+                  console.log("loader:", request.url);
                   const queryString = new URLSearchParams(request.url.split('?')[1]);
                   for (const [key, value] of queryString.entries()) {
                     options[key] = value;
                   };
                   const data = await getMorph(game_no, name, options);
+                  console.log(Object.entries(data));
                   return {data, gameId, unitName};
                 },
                 action: async ({params, request}) => {

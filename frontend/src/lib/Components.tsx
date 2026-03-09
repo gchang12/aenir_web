@@ -161,14 +161,14 @@ export function ClassLevelInfo({morph}) {
   );
 };
 
-export function ConfirmationMenu({disabled, onClick, message, children}) {
+export function ConfirmationMenu({previewMode, refetchMorph, message, children}) {
   return (
     <div className="ConfirmationMenu">
       <p>{message}</p>
       {children}
       <div className="buttons">
-        <button disabled={!disabled} onClick={onClick} type="button">Preview</button>
-        <button type="submit" disabled={disabled}>Create</button>
+        <button disabled={!previewMode} onClick={refetchMorph} type="button">Preview</button>
+        <button type="submit" disabled={previewMode}>Create</button>
       </div>
     </div>
   );

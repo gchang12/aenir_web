@@ -121,33 +121,39 @@ export function UnitSelect() {
 export function UnitConfirm() {
   const {data, gameId, unitName} = useLoaderData();
   const {preview, missingParams} = data;
-  const morph = preview;
+  //const morph = preview;
+  const [morph, setMorph] = useState(preview);
   const [previewMode, setPreviewMode] = useState(false);
   const fetcher = useFetcher();
   const formRef = useRef(null);
   useEffect(() => {
     setPreviewMode(missingParams != null);
   }, [unitName]);
-  const refetchMorph = useCallback((e) => {
+  const refetchMorph = useCallback(() => {
+    const queryList = [];
+    const formData = new FormData(formRef.current);
+    for (const [key, value] of formData.entries()) {
+      queryList.push(key + "=" + value);
+    };
+    fetcher.load(`/create-morph/${gameId}/${unitName}/?` + queryList.join("&"));
+    console.log(queryList);
     setPreviewMode(false);
-    const game_no = Number(gameId.replace("fe", ""));
-    const name = unitName;
-    // TODO: populate this with form data.
-    const options = {};
-    // TODO: fetcher.load(`/create-morph/${gameId}/${unitName}/?`./?searchParam1=k&sesarchParam2=...)
   }, [unitName]);
   const message = previewMode ? `Please provide extra parameters for ${unitName}.` : "Please confirm the selection.";
+  console.log("preview:", preview);
+  //console.log("missingParams:", missingParams);
   return (
     <div id="UnitConfirm">
       <ProfileIcon {...{gameId, unitName}} />
       <ClassLevelInfo {...{morph}} />
-      <fetcher.Form onChange={() => setPreviewMode(true)} ref={formRef}>
-        <ConfirmationMenu onClick={refetchMorph} {...{message, disabled: previewMode}}>
+      <Form onChange={() => setPreviewMode(true)} ref={formRef}>
+        <ConfirmationMenu {...{message, previewMode, refetchMorph}}>
           <OptionSelect {...{missingParams}} />
         </ConfirmationMenu>
-      </fetcher.Form>
+      </Form>
       {/* */}
       <CurrentStatsTable {...{morph}} />
     </div>
   );
-s};
+};
+
