@@ -112,20 +112,15 @@ export function UnitSelect() {
 };
 
 
-/* TODO
-- Insert button to preview.
-- Disable submit-button 'til the stats are clean.
-- Hide stats for units who need more parameters.
-*/
-
 export function UnitConfirm() {
   const {morph, gameId, unitName} = useLoaderData();
-  //const [morph, setMorph] = useState(preview);
+  const [preview, setPreview] = useState(morph.preview);
   const [previewMode, setPreviewMode] = useState(false);
   const fetcher = useFetcher();
   const formRef = useRef(null);
   useEffect(() => {
     setPreviewMode(morph.missingParams != null);
+    setPreview(morph.preview);
   }, [unitName]);
   const refetchMorph = useCallback(() => {
     const queryList = [];
