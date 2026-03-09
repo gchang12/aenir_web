@@ -19,6 +19,7 @@ import {
 } from "./constants";
 import {
   OptionSelect,
+  CurrentStatsTable,
 } from "./lib/Components";
 import {
   retrieveMorph,
@@ -127,65 +128,6 @@ export function UnitSelect() {
   );
 };
 
-export function UnitConfirm() {
-  // TODO: Two routes: Need extra info, and no extra info needed.
-  const {data, gameId, unitName} = useLoaderData();
-  const {preview, missingParams} = data;
-  const imgSuffix = gameId === "fe8" ? ".gif" :".png";
-  const gameName = GAMES.find(game => "fe" + game.no === gameId).name;
-  const [isUpdated, setIsUpdated] = useState(true);
-  const [morph, setMorph] = useState(preview);
-  useEffect(() => {
-    setIsUpdated(false);
-    setMorph
-  }, [unitName]);
-  return (
-    <>
-    <figure>
-      <img src={["", "images", gameName, "characters", unitName + imgSuffix].join("/")} />
-      <figcaption>
-        <h1>{unitName}</h1>
-        <table>
-          <tbody>
-            <tr>
-              <th>Class</th>
-              <td>{preview == null ? "???" : preview.unitClass}</td>
-            </tr>
-            <tr>
-              <th>Level</th>
-              <td>{preview == null ? "? / ?" : preview.level[0] + " / " + preview.level[1]}</td>
-            </tr>
-          </tbody>
-        </table>
-      </figcaption>
-    </figure>
-    <form onChange={() => setIsUpdated(isUpdated)}>
-      <OptionSelect {...{missingParams}} />
-      <button onClick={e => console.log(e.currentTarget)} disabled={isUpdated} type="button">Preview</button>
-      <button type="submit">Create</button>
-    </form>
-    <table>
-      <tbody>
-        <>
-        {preview == null || preview.stats.map(statBundle => {
-          const [stat, currentVal, localMax, absMax] = statBundle;
-          return (
-            <tr key={stat} className={currentVal === localMax ? "maxed-stat" : undefined}>
-              <th>{stat}</th>
-              <td>{currentVal}</td>
-              <td>
-                <meter min="0" max={absMax} value={currentVal} optimum={localMax}></meter>
-              </td>
-            </tr>
-          );
-        })
-        }
-        </>
-      </tbody>
-    </table>
-    </>
-  );
-};
 
 /* TODO
 - Insert button to preview.
@@ -193,3 +135,17 @@ export function UnitConfirm() {
 - Hide stats for units who need more parameters.
 */
 
+export function UnitConfirm() {
+  const {data, gameId, unitName} = useLoaderData();
+  const {preview, missingParams} = data;
+  return (
+    <>
+    <ProfileIcon {...{gameId, unitName}} />
+    <ClassLevelInfo {...{morph}} />
+    <OptionsMenu {...{disabled, onClick, morph}} />
+
+    <CurrentStatsTable {...{morph}} />
+    <ConfirmationMenu {...{message, disabled}} />
+    </>
+  );
+};

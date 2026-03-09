@@ -1,3 +1,6 @@
+import {
+  GAMES,
+} from "./constants";
 
 function FatherSelect({choices}) {
   // choices: ['Arden', 'Azel', 'Alec', 'Claude', 'Jamka', 'Dew', 'Noish', 'Fin', 'Beowolf', 'Holyn', 'Midayle', 'Levin', 'Lex']
@@ -109,22 +112,69 @@ export function OptionSelect({missingParams}) {
   );
 };
 
-export function CurrentStatsTable({stats}) {
+export function CurrentStatsTable({morph}) {
   return (
-    <>
-    {stats.map(([stat, currentValue, localMax, absMax]) => {
-      return (
-        <tr key={stat} className={currentValue === localMax ? "maxed-stat" : undefined}>
-          <th>{stat}</th>
-          <td>{currentValue}</td>
-          <td>
-            <meter min="0" value={currentValue} max={absMax} high={localMax}></meter>
-          </td>
-        </tr>
-      );
-    })
-    }
-    </>
+    <table className="CurrentStatsTable">
+      <tbody>
+      {morph == null || morph.stats.map(([stat, currentValue, localMax, absMax]) => {
+        return (
+          <tr key={stat} className={currentValue === localMax ? "maxed-stat" : undefined}>
+            <th>{stat}</th>
+            <td>{currentValue}</td>
+            <td>
+              <meter min="0" value={currentValue} max={absMax} optimum={localMax}></meter>
+            </td>
+          </tr>
+        );
+      })
+      }
+      </tbody>
+    </table>
   );
 };
 
+export function ProfileIcon({gameId, unitName}) {
+  const gameName = GAMES.find(game => "fe" + game.no === gameId).name;
+  const imgSuffix = gameId === "fe8" ? ".gif" :".png";
+  return (
+    <figure className={["ProfileIcon", gameId.toUpperCase()].join(" ")}>
+      <img src={["", "images", gameName, "characters", unitName + imgSuffix].join("/")} />
+      <figcaption>{unitName}</figcaption>
+    </figure>
+  );
+};
+
+export function ClassLevelInfo({morph}) {
+  return (
+    <table className="ClassLevelInfo">
+      <tbody>
+        <tr>
+          <th>Class</th>
+          <td>{morph == null ? "???" : morph.unitClass}</td>
+        </tr>
+        <tr>
+          <th>Level</th>
+          <td>{morph == null ? "???" : morph.level[0]}</td>
+        </tr>
+      </tbody>
+    </table>
+  );
+};
+
+export function OptionsMenu({disabled, onClick, children}) {
+  return (
+    <div className="OptionsMenu">
+      {children}
+      <button disabled={disabled} onClick={onClick} type="button">Preview</button>
+    </div>
+  );
+};
+
+export function ConfirmationMenu({message, disabled}) {
+  return (
+    <div className="ConfirmationMenu">
+      <p>{message}</p>
+      <button type="submit" disabled={disabled}>Create</button>
+    </div>
+  );
+};
