@@ -46,8 +46,8 @@ const router = createBrowserRouter([
                   const game_no = Number(gameId.replace("fe", ""));
                   const name = unitName;
                   const kwargs = {};
-                  const morph = await getMorph(game_no, name, kwargs);
-                  return {data: morph, gameId, unitName};
+                  const data = await getMorph(game_no, name, kwargs);
+                  return {data, gameId, unitName};
                 },
                 action: async ({params, request}) => {
                 },

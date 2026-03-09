@@ -120,3 +120,35 @@ menu {
 #UnitSelect a.active {
   background-color: skyblue;
 }
+
+#UnitConfirm {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  grid-template-areas:
+    "ProfileIcon CurrentStatsTable"
+    "ClassLevelInfo CurrentStatsTable"
+    "OptionsMenu ConfirmationMenu";
+}
+
+#UnitConfirm {
+  &> * {
+    width: 100%;
+    height: 100%;
+  };
+  &> .ProfileIcon {
+    grid-area: ProfileIcon;
+  }
+  &> .ClassLevelInfo {
+    grid-area: ClassLevelInfo;
+  }
+  &> .OptionsMenu {
+    grid-area: OptionsMenu;
+  }
+  &> .CurrentStatsTable {
+    grid-area: CurrentStatsTable;
+  }
+  &> .ConfirmationMenu {
+    grid-area: ConfirmationMenu;
+  }
+}

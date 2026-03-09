@@ -120,13 +120,18 @@ export function UnitSelect() {
 export function UnitConfirm() {
   const {data, gameId, unitName} = useLoaderData();
   const {preview, missingParams} = data;
+  const disabled = false;
+  const message = "Please confirm the selection.";
+  const onClick = function () {
+    console.log("Hello world.");
+  };
   return (
     <div id="UnitConfirm">
       <ProfileIcon {...{gameId, unitName}} />
-      <ClassLevelInfo {...{morph}} />
-      <OptionsMenu {...{disabled, onClick, morph}} />
+      <ClassLevelInfo {...{morph: preview}} />
+      <OptionsMenu {...{disabled, onClick, morph: preview}} />
       {/* */}
-      <CurrentStatsTable {...{morph}} />
+      <CurrentStatsTable {...{morph: preview}} />
       <ConfirmationMenu {...{message, disabled}} />
     </div>
   );
