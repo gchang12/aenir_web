@@ -161,21 +161,15 @@ export function ClassLevelInfo({morph}) {
   );
 };
 
-export function OptionsMenu({disabled, onClick, children}) {
-  return (
-    <div className="OptionsMenu">
-      <h2>Options</h2>
-      {children}
-      <button disabled={disabled} onClick={onClick} type="button">Preview</button>
-    </div>
-  );
-};
-
-export function ConfirmationMenu({message, disabled}) {
+export function ConfirmationMenu({disabled, onClick, message, children}) {
   return (
     <div className="ConfirmationMenu">
       <p>{message}</p>
-      <button type="submit" disabled={disabled}>Create</button>
+      {children}
+      <div className="buttons">
+        <button disabled={!disabled} onClick={onClick} type="button">Preview</button>
+        <button type="submit" disabled={disabled}>Create</button>
+      </div>
     </div>
   );
 };

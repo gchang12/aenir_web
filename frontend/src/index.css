@@ -128,7 +128,7 @@ menu {
   grid-template-areas:
     "ProfileIcon CurrentStatsTable"
     "ClassLevelInfo CurrentStatsTable"
-    "OptionsMenu ConfirmationMenu";
+    "ConfirmationMenu CurrentStatsTable";
 }
 
 #UnitConfirm {
@@ -141,9 +141,6 @@ menu {
   }
   &> .ClassLevelInfo {
     grid-area: ClassLevelInfo;
-  }
-  &> .OptionsMenu {
-    grid-area: OptionsMenu;
   }
   &> .CurrentStatsTable {
     grid-area: CurrentStatsTable;

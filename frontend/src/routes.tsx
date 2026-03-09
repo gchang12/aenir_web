@@ -2,6 +2,8 @@ import {
   useState,
   useEffect,
   useContext,
+  useCallback,
+  useRef,
 } from 'react'
 import {
   useLoaderData,
@@ -22,7 +24,6 @@ import {
   CurrentStatsTable,
   ProfileIcon,
   ClassLevelInfo,
-  OptionsMenu,
   ConfirmationMenu,
 } from "./lib/Components";
 import {
@@ -120,19 +121,33 @@ export function UnitSelect() {
 export function UnitConfirm() {
   const {data, gameId, unitName} = useLoaderData();
   const {preview, missingParams} = data;
-  const disabled = false;
-  const message = "Please confirm the selection.";
-  const onClick = function () {
-    console.log("Hello world.");
-  };
+  const morph = preview;
+  const [previewMode, setPreviewMode] = useState(false);
+  const fetcher = useFetcher();
+  const formRef = useRef(null);
+  useEffect(() => {
+    setPreviewMode(missingParams != null);
+  }, [unitName]);
+  const refetchMorph = useCallback((e) => {
+    setPreviewMode(false);
+    const game_no = Number(gameId.replace("fe", ""));
+    const name = unitName;
+    // TODO: populate this with form data.
+    const options = {};
+    // TODO: fetcher.load(`/create-morph/${gameId}/${unitName}/?`./?searchParam1=k&sesarchParam2=...)
+  }, [unitName]);
+  const message = previewMode ? `Please provide extra parameters for ${unitName}.` : "Please confirm the selection.";
   return (
     <div id="UnitConfirm">
       <ProfileIcon {...{gameId, unitName}} />
-      <ClassLevelInfo {...{morph: preview}} />
-      <OptionsMenu {...{disabled, onClick, morph: preview}} />
+      <ClassLevelInfo {...{morph}} />
+      <fetcher.Form onChange={() => setPreviewMode(true)} ref={formRef}>
+        <ConfirmationMenu onClick={refetchMorph} {...{message, disabled: previewMode}}>
+          <OptionSelect {...{missingParams}} />
+        </ConfirmationMenu>
+      </fetcher.Form>
       {/* */}
-      <CurrentStatsTable {...{morph: preview}} />
-      <ConfirmationMenu {...{message, disabled}} />
+      <CurrentStatsTable {...{morph}} />
     </div>
   );
-};
+s};
