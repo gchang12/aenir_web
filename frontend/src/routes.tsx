@@ -67,8 +67,8 @@ export function GameSelect() {
               <figure>
                 <img src={imgSrc} alt={imgSrc} />
                 <figcaption>
-                    <h2>{"FE" + game.no}</h2>
-                    <h3>{game.title}</h3>
+                  <h2>{"FE" + game.no}</h2>
+                  <h3>{game.title}</h3>
                 </figcaption>
               </figure>
             </NavLink>
@@ -94,28 +94,12 @@ export function UnitSelect() {
     <nav className="create-morph">
       <menu>
       {unitListForGame.map(unit => {
-        const imgSrc = ["", "images", gameName, "characters", unit.name + imgSuffix].join('/');
+        const unitName = unit.name;
         return (
-          <li key={unit.name}>
-            <NavLink to={["", "create-morph", gameId, unit.name, ""].join("/")}>
-              <figure>
-                <img src={imgSrc} alt={imgSrc} />
-                <figcaption>
-                  <h2>{unit.name}</h2>
-                  <table>
-                    <tbody>
-                      <tr>
-                        <th>Class</th>
-                        <td>{unit.class}</td>
-                      </tr>
-                      <tr>
-                        <th>Lv</th>
-                        <td>{unit.lv}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </figcaption>
-              </figure>
+          <li key={unitName}>
+            <NavLink to={["", "create-morph", gameId, unitName, ""].join("/")}>
+              <ProfileIcon {...{gameId, unitName: unitName}} />
+              <ClassLevelInfo morph={unit} />
             </NavLink>
           </li>
         );
@@ -139,13 +123,14 @@ export function UnitConfirm() {
   const {data, gameId, unitName} = useLoaderData();
   const {preview, missingParams} = data;
   return (
-    <>
-    <ProfileIcon {...{gameId, unitName}} />
-    <ClassLevelInfo {...{morph}} />
-    <OptionsMenu {...{disabled, onClick, morph}} />
-
-    <CurrentStatsTable {...{morph}} />
-    <ConfirmationMenu {...{message, disabled}} />
+    <div id="UnitConfirm">
+      <ProfileIcon {...{gameId, unitName}} />
+      <ClassLevelInfo {...{morph}} />
+      <OptionsMenu {...{disabled, onClick, morph}} />
+      <></>
+      <CurrentStatsTable {...{morph}} />
+      <ConfirmationMenu {...{message, disabled}} />
+    </div>
     </>
-  );
+  ); */}
 };
