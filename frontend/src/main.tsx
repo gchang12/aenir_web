@@ -60,9 +60,9 @@ const router = createBrowserRouter([
                         options[key] = value;
                     };
                   };
-                  const data = await getMorph(game_no, name, options);
-                  console.log("UnitConfirm.getMorph", Object.entries(data));
-                  return {data, gameId, unitName};
+                  const morph = await getMorph(game_no, name, options);
+                  console.log("UnitConfirm.getMorph", Object.entries(morph));
+                  return {morph, gameId, unitName};
                 },
                 action: async ({params, request}) => {
                 },

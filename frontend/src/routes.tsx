@@ -119,15 +119,13 @@ export function UnitSelect() {
 */
 
 export function UnitConfirm() {
-  const {data, gameId, unitName} = useLoaderData();
-  const {preview, missingParams} = data;
-  const morph = preview;
+  const {morph, gameId, unitName} = useLoaderData();
   //const [morph, setMorph] = useState(preview);
   const [previewMode, setPreviewMode] = useState(false);
   const fetcher = useFetcher();
   const formRef = useRef(null);
   useEffect(() => {
-    setPreviewMode(missingParams != null);
+    setPreviewMode(morph.missingParams != null);
   }, [unitName]);
   const refetchMorph = useCallback(() => {
     const queryList = [];
@@ -140,19 +138,19 @@ export function UnitConfirm() {
     //setPreviewMode(false);
   }, [unitName]);
   const message = previewMode ? `Please provide extra parameters for ${unitName}.` : "Please confirm the selection.";
-  console.log("UnitConfirm.preview:", preview);
+  console.log("UnitConfirm.preview:", morph.preview);
   //console.log("missingParams:", missingParams);
   return (
     <div id="UnitConfirm">
       <ProfileIcon {...{gameId, unitName}} />
-      <ClassLevelInfo {...{morph}} />
+      <ClassLevelInfo {...{morph: morph.preview}} />
       <Form onChange={() => setPreviewMode(true)} ref={formRef}>
         <ConfirmationMenu {...{message, previewMode, refetchMorph}}>
-          <OptionSelect {...{missingParams}} />
+          <OptionSelect {...{missingParams: morph.missingParams}} />
         </ConfirmationMenu>
       </Form>
       {/* */}
-      <CurrentStatsTable {...{morph}} />
+      <CurrentStatsTable {...{morph: morph.preview}} />
     </div>
   );
 };
