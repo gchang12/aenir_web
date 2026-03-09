@@ -109,43 +109,12 @@ export function OptionSelect({missingParams}) {
   );
 };
 
-export function ProfileHead({imgSrc, children}) {
-  return (
-    <>
-    <figure>
-      <img src={imgSrc} alt={imgSrc} />
-      <figcaption>
-      {children}
-      </figcaption>
-    </figure>
-    </>
-  );
-};
-
-export function ProfileLevelAndClass({unitClass, level}) {
-  const [currentLv, maxLv] = level;
-  return (
-    <>
-    <tr>
-      <th>Class</th>
-      <td>{unitClass}</td>
-    </tr>
-    <tr>
-      <th>Lv</th>
-      <td>{currentLv} / {maxLv}</td>
-    </tr>
-    </>
-  );
-};
-
-// TODO: Modify highlight-option
-export function StatTable({stats, highlight}) {
-  const className = highlight === true ? "maxed-stat" : undefined;
+export function CurrentStatsTable({stats}) {
   return (
     <>
     {stats.map(([stat, currentValue, localMax, absMax]) => {
       return (
-        <tr key={stat} className={currentValue === localMax ? className : undefined}>
+        <tr key={stat} className={currentValue === localMax ? "maxed-stat" : undefined}>
           <th>{stat}</th>
           <td>{currentValue}</td>
           <td>

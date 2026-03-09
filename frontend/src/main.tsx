@@ -17,11 +17,9 @@ import {
   GameSelect,
   UnitSelect,
   UnitConfirm,
-  Morphs,
-  EvolveMorph,
 } from "./routes";
 import {
-  previewMorph,
+  getMorph,
   createMorph,
   retrieveMorph,
   setLocalMorphs,
@@ -45,68 +43,17 @@ const router = createBrowserRouter([
                 path: ":unitName",
                 loader: async ({params}) => {
                   const {gameId, unitName} = params;
-                  const game_no = gameId.replace("fe", "");
+                  const game_no = Number(gameId.replace("fe", ""));
                   const name = unitName;
                   const kwargs = {};
-                  // console.log(game_no, name, kwargs);
-                  const {morph, missingParams} = await previewMorph(game_no, name, kwargs);
-                  return {morph, missingParams, unitName, gameId};
+                  const morph = await getMorph(game_no, name, kwargs);
+                  return {data: morph, gameId, unitName};
                 },
                 action: async ({params, request}) => {
-                  // Get parameters for 'createMorph'
-                  const {gameId, unitName} = params;
-                  const gameNo = gameId.replace("fe", "");
-                  const formData = await request.formData();
-                  const morphId = formData.get("morph_id");
-                  const options = {};
-                  for (const [key, value] of formData) {
-                    if (key !== "morph_id") {
-                      options[key] = value;
-                    }
-                  };
-                  const response = createMorph(morphId, gameNo, unitName, options)
-                    .then(data => {
-                      const pk = data.pk;
-                      if (!getLocalMorphs()) {
-                        setLocalMorphs([]);
-                      };
-                      const morphs = getLocalMorphs();
-                      morphs.push(pk);
-                      setLocalMorphs(morphs);
-                      return redirect("/morphs/");
-                    })
-                    .catch(err => {
-                      console.log(err);
-                      //throw redirect("/morphs/");
-                    });
-                  return redirect("/morphs/");
                 },
                 Component: UnitConfirm,
               }
             ],
-          },
-        ],
-      },
-      {
-        path: "morphs",
-        Component: Morphs,
-        loader: async () => {
-          if (!getLocalMorphs()) {
-            setLocalMorphs([]);
-          };
-          const localMorphs = getLocalMorphs();
-          const fetchTasks = localMorphs.map(pk => retrieveMorph(pk));
-          const morphs = await Promise.all(fetchTasks);
-          return {morphs};
-        },
-        children: [
-          {
-            path: ":pkLoc",
-            Component: EvolveMorph,
-            loader: async ({params}) => {
-              const {pkLoc} = params;
-              return {};
-            },
           },
         ],
       },

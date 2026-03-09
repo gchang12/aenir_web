@@ -18,13 +18,9 @@ import {
   UNITS,
 } from "./constants";
 import {
-  ProfileHead,
-  ProfileLevelAndClass,
-  StatTable,
   OptionSelect,
 } from "./lib/Components";
 import {
-  previewMorph,
   retrieveMorph,
 } from "./lib/functions";
 
@@ -70,8 +66,8 @@ export function GameSelect() {
               <figure>
                 <img src={imgSrc} alt={imgSrc} />
                 <figcaption>
-                  <h2>{"FE" + game.no}</h2>
-                  <h3>{game.title}</h3>
+                    <h2>{"FE" + game.no}</h2>
+                    <h3>{game.title}</h3>
                 </figcaption>
               </figure>
             </NavLink>
@@ -131,161 +127,69 @@ export function UnitSelect() {
   );
 };
 
-/* TODO
-- Insert button to preview.
-- Disable submit-button 'til the stats are clean.
-- Hide stats for units who need more parameters.
-*/
-
 export function UnitConfirm() {
-  const {morph, missingParams, unitName, gameId} = useLoaderData();
-  // Fixes the data-reloading problem.
-  const gameNo = gameId.replace("fe", "");
+  // TODO: Two routes: Need extra info, and no extra info needed.
+  const {data, gameId, unitName} = useLoaderData();
+  const {preview, missingParams} = data;
+  const imgSuffix = gameId === "fe8" ? ".gif" :".png";
+  const gameName = GAMES.find(game => "fe" + game.no === gameId).name;
+  const [isUpdated, setIsUpdated] = useState(true);
+  const [morph, setMorph] = useState(preview);
   useEffect(() => {
-    previewMorph(gameNo, unitName, {})
-      .then(resp => {
-        setKishuna(resp.morph);
-      })
-      .catch(err => console.log(err))
+    setIsUpdated(false);
+    setMorph
   }, [unitName]);
-  const [kishuna, setKishuna] = useState(morph);
-  const {stats, unitClass, level} = kishuna;
-  const gameName = GAMES.find(game => gameId === "fe" + game.no)?.name;
-  const imgSuffix = gameId === "fe8" ? ".gif" : ".png";
-  function toggleButtonAbility(value) {
-    const createMorphButton = document.querySelector("#create-morph-button");
-    if (createMorphButton != null) {
-      createMorphButton.disabled = value;
-    };
-  };
-  function toggleCheckbox(value) {
-    const checkbox = document.querySelector("form.create-morph > input[type='checkbox']");
-    if (checkbox != null) {
-      checkbox.checked = false;
-    };
-  };
-  async function refetchMorph(e) {
-    // Test to see if this works.
-    toggleButtonAbility(true);
-    const formData = new FormData(e.currentTarget);
-    const kwargs = {
-      game_no: gameNo,
-      name: unitName,
-    };
-    for (const [key, value] of formData) {
-      switch(value) {
-        case "on":
-          kwargs[key] = "true";
-          break;
-        case "off":
-          kwargs[key] = "false";
-          break;
-        default:
-          kwargs[key] = value;
-          break;
-      };
-    };
-    setKishuna((await previewMorph(gameNo, unitName, kwargs)).morph);
-    // NOTE: Patch!
-    toggleButtonAbility(false);
-  };
-  toggleButtonAbility(false);
-  //toggleCheckbox(false);
-  const morphId = gameId.toUpperCase() + " " + unitName;
   return (
     <>
-    <ProfileHead imgSrc={["", "images", gameName, "characters", unitName + imgSuffix].join("/")}>
-      <h2>{unitName}</h2>
-      <table>
-        <tbody>
-        <ProfileLevelAndClass {...{unitClass, level}} />
-        </tbody>
-      </table>
-      <Form onChange={refetchMorph} method="post" className="create-morph">
-        <OptionSelect {...{missingParams}} />
-        <label htmlFor="morph_id">Morph ID</label>
-        <input id="morph_id" name="morph_id" type="text" defaultValue={morphId} required maxLength="25" />
-        <button type="submit" id="create-morph-button">Create!</button>
-      </Form>
-    </ProfileHead>
+    <figure>
+      <img src={["", "images", gameName, "characters", unitName + imgSuffix].join("/")} />
+      <figcaption>
+        <h1>{unitName}</h1>
+        <table>
+          <tbody>
+            <tr>
+              <th>Class</th>
+              <td>{preview == null ? "???" : preview.unitClass}</td>
+            </tr>
+            <tr>
+              <th>Level</th>
+              <td>{preview == null ? "? / ?" : preview.level[0] + " / " + preview.level[1]}</td>
+            </tr>
+          </tbody>
+        </table>
+      </figcaption>
+    </figure>
+    <form onChange={() => setIsUpdated(isUpdated)}>
+      <OptionSelect {...{missingParams}} />
+      <button onClick={e => console.log(e.currentTarget)} disabled={isUpdated} type="button">Preview</button>
+      <button type="submit">Create</button>
+    </form>
     <table>
       <tbody>
-      <StatTable {...{stats, highlight: true}} />
+        <>
+        {preview == null || preview.stats.map(statBundle => {
+          const [stat, currentVal, localMax, absMax] = statBundle;
+          return (
+            <tr key={stat} className={currentVal === localMax ? "maxed-stat" : undefined}>
+              <th>{stat}</th>
+              <td>{currentVal}</td>
+              <td>
+                <meter min="0" max={absMax} value={currentVal} optimum={localMax}></meter>
+              </td>
+            </tr>
+          );
+        })
+        }
+        </>
       </tbody>
     </table>
     </>
   );
 };
 
-export function Morphs() {
-  /*
-    {
-      "morphId": vmorph.morph_id,
-      "initArgs": {
-        "gameNo": vmorph.game_no,
-        "unitName": vmorph.name,
-        "options": vmorph.options,
-      },
-      "morph": data,
-      "history": vmorph.history,
-    }
-  */
-  const {morphs} = useLoaderData();
-  return (
-    <>
-    <h1>Morphs</h1>
-    <menu>
-    {Object.entries(morphs).map(([indexNo, morph]) => {
-      //console.log("morph:", Object.entries(morph));
-      const {initArgs} = morph;
-      const {level} = morph.morph;
-      const [currentLv, maxLv] = level;
-      const imgSuffix = morph.initArgs.gameNo === 8 ? ".gif" : ".png";
-      const gameName = GAMES.find(game => game.no === morph.initArgs.gameNo)?.name;
-      return (
-        <li key={morph.pk}>
-        <img src={["", "images", gameName, "characters", initArgs.unitName + imgSuffix].join("/")} />
-        <NavLink to={"/morphs/" + indexNo}>
-          <h2>{morph.morphId}</h2>
-        </NavLink>
-        <table>
-          <tbody>
-            <tr>
-              <th>Game</th>
-              <td>{"FE" + initArgs.gameNo}</td>
-            </tr>
-            <tr>
-              <th>Name</th>
-              <td>{initArgs.unitName}</td>
-            </tr>
-            <>
-            {Object.entries(initArgs.options).map(([key, value]) => {
-              return (
-                <tr key={key}>
-                  <th>{key}</th>
-                  <td>{value}</td>
-                </tr>
-              );
-            })
-            }
-            </>
-            <tr>
-              <th>Level</th>
-              <td>{currentLv} / {maxLv}</td>
-            </tr>
-          </tbody>
-        </table>
-        </li>
-      );
-    })}
-    </menu>
-    </>
-  );
-};
+/* TODO
+- Insert button to preview.
+- Disable submit-button 'til the stats are clean.
+- Hide stats for units who need more parameters.
+*/
 
-export function EvolveMorph() {
-  return (
-    <>
-    </>
-  );
-};
