@@ -167,6 +167,29 @@ export function CurrentStatsTable({stats}) {
   );
 };
 
+export function GrowthsStatsTable({stats, showNew}) {
+  return (
+    <table className="StatsTable">
+      <tbody>
+      {stats.map(stat => {
+        const [statName, oldGrowth, newGrowth] = stat;
+        const statValue = showNew ? newGrowth : oldGrowth;
+        return (
+          <tr key={statName}>
+            <th>{statName}</th>
+            <td>{statValue}</td>
+            <td>
+              <meter min="0" value="100"></meter>
+            </td>
+          </tr>
+        );
+      })
+      }
+      </tbody>
+    </table>
+  );
+};
+
 export function ProfileIcon({gameId, unitName, children}) {
   const gameName = GAMES.find(game => "fe" + game.no === gameId).name;
   const imgSuffix = gameId === "fe8" ? ".gif" :".png";

@@ -25,6 +25,7 @@ import {
   OptionSelect,
   CurrentStatsTable,
   BlankStatsTable,
+  GrowthsStatsTable,
   ProfileIcon,
   ClassLevelInfo,
   BlankClassLevelInfo,
