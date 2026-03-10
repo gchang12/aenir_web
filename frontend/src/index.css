@@ -160,9 +160,7 @@ menu {
 }
 
 .ProfileIcon {
-  display: flex;
+  /*display: flex;*/
 }
 
-.ProfileIcon img {
-  width: auto;
-}
+

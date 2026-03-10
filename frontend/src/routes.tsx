@@ -22,8 +22,10 @@ import {
 import {
   OptionSelect,
   CurrentStatsTable,
+  BlankStatsTable,
   ProfileIcon,
   ClassLevelInfo,
+  BlankClassLevelInfo,
   ConfirmationMenu,
 } from "./lib/Components";
 import {
@@ -158,14 +160,14 @@ export function UnitConfirm() {
       <ProfileIcon {...{gameId, unitName}}>
       {unitName}
       </ProfileIcon>
-      <ClassLevelInfo {...{morph: preview}} />
+      {preview == null ? <BlankClassLevelInfo /> : <ClassLevelInfo {...{morph: preview}} />}
       <Form onChange={() => setPreviewMode(true)} ref={formRef} className="ConfirmationMenu" method="post">
         <ConfirmationMenu {...{message, previewMode, refetchMorph}}>
           <OptionSelect {...{missingParams: morph.missingParams}} />
         </ConfirmationMenu>
       </Form>
       {/* */}
-      <CurrentStatsTable {...{morph: preview}} />
+      {preview == null ? <BlankStatsTable {...{gameId}} /> : <CurrentStatsTable {...{stats: preview.stats}} />}
     </div>
     </>
   );
@@ -221,7 +223,7 @@ export function EvolveMorph() {
         </Form>
       </ProfileIcon>
       <ClassLevelInfo {...{morph}} />
-      <CurrentStatsTable {...{morph}} />
+      {morph == null ? <BlankStatsTable {...{gameId}} /> : <CurrentStatsTable {...{stats: morph.stats}} />}
     </div>
   );
 }
