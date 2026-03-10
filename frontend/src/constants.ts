@@ -1896,3 +1896,14 @@ export const STAT_LIST = {
     "Res",
   ],
 };
+
+export const MORPH_METHOD_NAMES = {
+  "level_up": "Level Up",
+  "promote": "Promote",
+  "use_stat_booster": "Use Stat Booster",
+  "set_scrolls": "Equip Scrolls",
+  "use_afas_drops": "Afa's Drops",
+  "use_metiss_tome": "Metis's Tome",
+  "set_bands": "Equip Bands",
+  "set_knight_ward": "Knight Ward",
+};

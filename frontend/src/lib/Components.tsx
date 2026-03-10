@@ -1,5 +1,6 @@
 import {
   GAMES,
+  MORPH_METHOD_NAMES,
 } from "../constants";
 import {
   getStatList,
@@ -249,14 +250,14 @@ export function ConfirmationMenu({previewMode, refetchMorph, message, children})
   );
 };
 
-export function UnitHub({gameId, unitName, morph, onChange, formRef, children}) {
+export function UnitHub({gameId, unitName, morph, onFormChange, formRef, children}) {
   return (
     <>
     <ProfileIcon {...{gameId, unitName}}>
     {unitName}
     </ProfileIcon>
     {morph == null ? <BlankClassLevelInfo {...{gameId}} /> : <ClassLevelInfo {...{morph}} />}
-    <Form onChange={onChange} ref={formRef} className="ConfirmationMenu" method="post">
+    <Form onChange={onFormChange} ref={formRef} className="ConfirmationMenu" method="post">
       {children}
     </Form>
     {/* */}
@@ -265,25 +266,15 @@ export function UnitHub({gameId, unitName, morph, onChange, formRef, children}) 
   );
 };
 
-export function MorphMethodSelect({gameId, onChange}) {
+export function MorphMethodSelect({gameId, onMethodSelect}) {
   const morphMethods = listMorphMethods(gameId);
-  const displayNameMap = {
-    "level_up": "Level Up",
-    "promote": "Promote",
-    "use_stat_booster": "Use Stat Booster",
-    "set_scrolls": "Equip Scrolls",
-    "use_afas_drops": "Afa's Drops",
-    "use_metiss_tome": "Metis's Tome",
-    "set_bands": "Equip Bands",
-    "set_knight_ward": "Knight Ward",
-  };
   return (
     <div className="SelectMorphMethod">
       <label htmlFor="morphMethod">Morph Methods</label>
-      <select required name="morphMethod" id="morphMethod" onChange={onChange}>
+      <select required name="morphMethod" id="morphMethod" onChange={onMethodSelect}>
         <option name="morphMethod" value="" defaultChecked>---</option>
         {morphMethods.map(method => {
-          const displayName = displayNameMap[method];
+          const displayName = MORPH_METHOD_NAMES[method];
           return (
             <option name="morphMethod" key={method} value={method}>
               {displayName}
@@ -296,15 +287,13 @@ export function MorphMethodSelect({gameId, onChange}) {
   );
 };
 
-export function OperationMenu({gameNo}) {
-  return (
-    <>
-    </>
-  );
+function LevelUpMenu({pk}) {
+  // preview.
+  // list options.
+  // alert user if operation is invalid.
+  // NO submit-button!
 }
-function LevelUpMenu() {
-}
-function PromotionMenu() {
+function PromoteMenu() {
 }
 function UseStatBoosterMenu() {
 }
@@ -316,8 +305,29 @@ function UseAfasDropsMenu() {
 }
 function UseMetissTomeMenu() {
 }
-function KnightWardMenu() {
+function SetKnightWardMenu() {
 }
-export function MorphEvolutionMenu() {
+
+export function MorphMethodMenu({methodName, pk}) {
+  switch (methodName) {
+    case "level_up":
+      return <LevelUpMenu {...{pk}} />
+    case "promote":
+      return <PromoteMenu {...{pk}} />
+    case "use_stat_booster":
+      return <UseStatBoosterMenu {...{pk}} />
+    case "set_scrolls":
+      return <SetScrollsMenu {...{pk}} />
+    case "use_afas_drops":
+      return <UseAfasDropsMenu {...{pk}} />
+    case "use_metiss_tome":
+      return <UseMetissTomeMenu {...{pk}} />
+    case "set_bands":
+      return <SetBandsMenu {...{pk}} />
+    case "set_knight_ward":
+      return <SetKnightWardMenu {...{pk}} />
+    default:
+      throw new Error(`Unrecgonized method: '${methodName}'`);
+  };
 }
 

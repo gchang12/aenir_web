@@ -22,6 +22,7 @@ import {
   UNITS,
 } from "./constants";
 import {
+  MorphMethodMenu,
   MorphMethodSelect,
   OptionSelect,
   CurrentStatsTable,
@@ -152,12 +153,12 @@ export function UnitConfirm() {
   }, [unitName]);
   const message = previewMode ? "Please update your morph." : "Please confirm the selection.";
   console.log("UnitConfirm.preview:", preview);
-  const onChange = useCallback(() => {
+  const onFormChange = useCallback(() => {
     setPreviewMode(true);
   }, []);
   return (
     <div id="UnitConfirm" className="unit-hub">
-    <UnitHub {...{gameId, unitName, morph: preview, formRef, onChange}}>
+    <UnitHub {...{gameId, unitName, morph: preview, formRef, onFormChange}}>
       <ConfirmationMenu {...{message, previewMode, refetchMorph}}>
         <OptionSelect {...{missingParams: morph.missingParams}} />
       </ConfirmationMenu>
@@ -194,27 +195,43 @@ export function Morphs() {
 }
 
 export function EvolveMorph() {
-  const {fullMorph} = useLoaderData();
+  const {pk, fullMorph} = useLoaderData();
   const {initArgs, morph} = fullMorph;
   const {gameNo, unitName} = initArgs;
   const gameId = "fe" + gameNo;
-  const [preview, setPreview] = useState(morph);
+  const [current, setCurrent] = useState(morph);
+  const [preview, setPreview] = useState(null);
   const formRef = useRef(null);
+  const [methodName, setMethodName] = useState("");
   //const [previewMode, setPreviewMode] = useState(false);
   useEffect(() => {
     ///setPreviewMode(true);
-    setPreview(fullMorph.morph);
+    setCurrent(fullMorph.morph);
   }, [unitName]);
-  const onChange = useCallback(() => {
-    console.log("onChange");
+  const onMethodSelect = useCallback((e) => {
+    //console.log("onChange");
+    //setPreviewMode(true);
+    setMethodName(e.currentTarget.value);
+  }, []);
+  const onFormChange = useCallback((e) => {
+    console.log("onFormChange:", e);
     //setPreviewMode(true);
   }, []);
   return (
+    <>
     <div id="EvolveMorph" className="unit-hub">
-    <UnitHub {...{gameId, unitName, morph: preview, formRef, onChange}}>
-      <MorphMethodSelect {...{gameId, onChange}} />
+    <UnitHub {...{gameId, unitName, morph: current, formRef, onFormChange}}>
+      <MorphMethodSelect {...{gameId, onMethodSelect}} />
+      {methodName === "" ? <p>Please select a Morph method.</p> : <MorphMethodMenu {...{methodName, pk}} />}
       <button onClick={(e) => console.log(e.currentTarget)} type="button">Preview</button>
     </UnitHub>
     </div>
+    <div id="MorphPreview" className="unit-hub">
+    <UnitHub {...{gameId, unitName, morph: preview, formRef, onFormChange}}>
+      {methodName === "" && <p>Please confirm your selection.</p>}
+      <button onClick={(e) => console.log(e.currentTarget)} type="button">Confirm</button>
+    </UnitHub>
+    </div>
+    </>
   );
 }

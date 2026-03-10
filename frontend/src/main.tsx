@@ -110,7 +110,7 @@ const router = createBrowserRouter([
               const pk = getLocalMorphs()[pkLoc].pk;
               const fullMorph = await retrieveMorph(pk);
               console.log("fullMorph:", Object.entries(fullMorph));
-              return {fullMorph};
+              return {pk, fullMorph};
             },
           },
         ],
