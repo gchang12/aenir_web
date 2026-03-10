@@ -5,6 +5,8 @@ import {
 import {
   getStatList,
   listMorphMethods,
+  simulateMorphMethod,
+  executeMorphMethod,
 } from "./functions";
 import {
   useState,
@@ -288,16 +290,30 @@ export function MorphMethodSelect({gameId, onMethodSelect}) {
 };
 
 function LevelUpMenu({pk}) {
+  const method_name = "level_up";
+  const args = {
+    num_levels: 0,
+  };
+  let paramBounds, morph;
+  simulateMorphMethod(pk, method_name, args)
+    .then(data => {
+      ({paramBounds, morph} = data);
+      console.log("(Inside) Promise has been resolved. Data:" + Object.entries(data));
+      return (
+        <div className="LevelUpMenu">
+          <label htmlFor="level_up">Level Up</label>
+          <input id="level_up" disabled={paramBounds[0] == null} type="number" name="level_up" min={morph.level[0] + 1} max={paramBounds[1]} />
+        </div>
+      );
+    })
+    .catch(err => console.log(err));
   // preview.
   // list options.
   // alert user if operation is invalid.
   // NO submit-button!
-  return (
-    <h1>
-    Level Up
-    </h1>
-  );
+  console.log("(Outside) Promise has been resolved. Data:", Object.entries(paramBounds ?? {}), Object.entries(morph ?? {}));
 }
+
 function PromoteMenu() {
   return (
     <h1>
