@@ -121,6 +121,7 @@ export function UnitConfirm() {
   // fetcher.data does not work.
   //const fetcher = useFetcher();
   const formRef = useRef(null);
+  console.log(Object.entries(preview ?? {}));
   useEffect(() => {
     setPreviewMode(morph.missingParams != null);
     setPreview(morph.preview);
@@ -141,19 +142,19 @@ export function UnitConfirm() {
       });
   }, [unitName]);
   const message = previewMode ? `Please provide extra parameters for ${unitName}.` : "Please confirm the selection.";
-  console.log("UnitConfirm.preview:", morph.preview);
+  console.log("UnitConfirm.preview:", preview);
   //console.log("missingParams:", missingParams);
   return (
     <div id="UnitConfirm">
       <ProfileIcon {...{gameId, unitName}} />
-      <ClassLevelInfo {...{morph: morph.preview}} />
+      <ClassLevelInfo {...{morph: preview}} />
       <Form onChange={() => setPreviewMode(true)} ref={formRef}>
         <ConfirmationMenu {...{message, previewMode, refetchMorph}}>
           <OptionSelect {...{missingParams: morph.missingParams}} />
         </ConfirmationMenu>
       </Form>
       {/* */}
-      <CurrentStatsTable {...{morph: morph.preview}} />
+      <CurrentStatsTable {...{morph: preview}} />
     </div>
   );
 };
