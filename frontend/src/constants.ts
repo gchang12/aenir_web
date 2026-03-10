@@ -1845,3 +1845,54 @@ export const UNITS = [
     "level": [20]
   }
 ]
+
+export const STAT_LIST = {
+  RADIANT: [
+    "HP",
+    "Str",
+    "Mag",
+    "Skl",
+    "Spd",
+    "Lck",
+    "Def",
+    "Res",
+    "Mov",
+    "Con",
+    "Wt",
+  ],
+  GBA: [
+    "HP",
+    "Pow",
+    "Skl",
+    "Spd",
+    "Lck",
+    "Def",
+    "Res",
+    "Con",
+    "Mov",
+  ],
+  THRACIA: [
+    "HP",
+    "Str",
+    "Mag",
+    "Skl",
+    "Spd",
+    "Lck",
+    "Def",
+    "Con",
+    "Mov",
+    "Lead",
+    "MS",
+    "PC",
+  ],
+  GENEALOGY: [
+    "HP",
+    "Str",
+    "Mag",
+    "Skl",
+    "Spd",
+    "Lck",
+    "Def",
+    "Res",
+  ],
+};
