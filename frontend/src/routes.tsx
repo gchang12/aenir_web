@@ -113,7 +113,8 @@ export function UnitSelect() {
 
 
 export function UnitConfirm() {
-  const {morph, gameId, unitName} = useLoaderData();
+  const {gameId, unitName} = useParams();
+  const {morph} = useLoaderData();
   const [preview, setPreview] = useState(morph.preview);
   const [previewMode, setPreviewMode] = useState(false);
   const fetcher = useFetcher();
@@ -140,6 +141,7 @@ export function UnitConfirm() {
         //setPreviewMode(false);
         return morph;
       })
+    //setPreview(morph.preview);
     // Shouldn't this always be defined?
   }, [unitName]);
   const message = previewMode ? `Please provide extra parameters for ${unitName}.` : "Please confirm the selection.";
