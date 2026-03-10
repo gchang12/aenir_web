@@ -97,3 +97,48 @@ export function executeMorphMethod(pk, method_name, args) {
   return fetchTask;
 };
 
+export function listMorphMethods(gameId) {
+  // universal to FE{4..9}.
+  const morphMethods = [
+    "level_up",
+    "promote",
+  ];
+  // set stat boosters
+  switch (gameId) {
+    case "fe4":
+      break;
+    case "fe5":
+    case "fe6":
+    case "fe7":
+    case "fe8":
+    case "fe9":
+      morphMethods.push("use_stat_booster");
+    default:
+      throw new Error("Unrecognized game: " + gameId);
+  };
+  // set game-specific methods.
+  switch (gameId) {
+    case "fe4":
+      break;
+    case "fe5":
+      morphMethods.push("set_scrolls");
+      break;
+    case "fe6":
+      break;
+    case "fe7":
+      morphMethods.push("use_afas_drops");
+      break;
+    case "fe8":
+      morphMethods.push("use_metiss_tome");
+      break;
+    case "fe9":
+      morphMethods.push("equip_knight_ward");
+      morphMethods.push("unequip_knight_ward");
+      morphMethods.push("set_bands");
+      break;
+    default:
+      throw new Error("Unrecognized game: " + gameId);
+  };
+  return morphMethods;
+}
+
