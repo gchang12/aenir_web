@@ -22,6 +22,7 @@ import {
   UNITS,
 } from "./constants";
 import {
+  MorphMethodSelect,
   OptionSelect,
   CurrentStatsTable,
   BlankStatsTable,
@@ -199,24 +200,20 @@ export function EvolveMorph() {
   const gameId = "fe" + gameNo;
   const [preview, setPreview] = useState(morph);
   const formRef = useRef(null);
-  const [previewMode, setPreviewMode] = useState(false);
+  //const [previewMode, setPreviewMode] = useState(false);
   useEffect(() => {
-    setPreviewMode(true);
+    ///setPreviewMode(true);
     setPreview(fullMorph.morph);
   }, [unitName]);
-  // TODO: Select operation.
-  // TODO: Upon selection of operation, show right widget to carry it out.
   const onChange = useCallback(() => {
-    setPreviewMode(true);
+    console.log("onChange");
+    //setPreviewMode(true);
   }, []);
   return (
     <div id="EvolveMorph" className="unit-hub">
-    <UnitHub onChange={() => setPreviewMode(true)} {...{gameId, unitName, morph: preview, formRef, onChange}}>
-      <select>
-        <option>1</option>
-        <option>2</option>
-      </select>
-      <button>Blegh</button>
+    <UnitHub {...{gameId, unitName, morph: preview, formRef, onChange}}>
+      <MorphMethodSelect {...{gameId, onChange}} />
+      <button onClick={(e) => console.log(e.currentTarget)} type="button">Preview</button>
     </UnitHub>
     </div>
   );

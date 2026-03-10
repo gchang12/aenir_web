@@ -113,6 +113,7 @@ export function listMorphMethods(gameId) {
     case "fe8":
     case "fe9":
       morphMethods.push("use_stat_booster");
+      break;
     default:
       throw new Error("Unrecognized game: " + gameId);
   };

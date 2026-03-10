@@ -3,6 +3,7 @@ import {
 } from "../constants";
 import {
   getStatList,
+  listMorphMethods,
 } from "./functions";
 import {
   useState,
@@ -264,7 +265,7 @@ export function UnitHub({gameId, unitName, morph, onChange, formRef, children}) 
   );
 };
 
-export function SelectMorphMethod({gameId, onChange}) {
+export function MorphMethodSelect({gameId, onChange}) {
   const morphMethods = listMorphMethods(gameId);
   const displayNameMap = {
     "level_up": "Level Up",
