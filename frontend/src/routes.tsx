@@ -140,9 +140,6 @@ export function UnitConfirm() {
         //setPreviewMode(false);
         return morph;
       })
-    morph.then(() => {
-      console.log("fetcher.data is undefined:", fetcher.data == undefined);
-    });
     // Shouldn't this always be defined?
   }, [unitName]);
   const message = previewMode ? `Please provide extra parameters for ${unitName}.` : "Please confirm the selection.";
@@ -152,11 +149,11 @@ export function UnitConfirm() {
     <div id="UnitConfirm">
       <ProfileIcon {...{gameId, unitName}} />
       <ClassLevelInfo {...{morph: morph.preview}} />
-      <Form onChange={() => setPreviewMode(true)} ref={formRef}>
+      <fetcher.Form onChange={() => setPreviewMode(true)} ref={formRef}>
         <ConfirmationMenu {...{message, previewMode, refetchMorph}}>
           <OptionSelect {...{missingParams: morph.missingParams}} />
         </ConfirmationMenu>
-      </Form>
+      </fetcher.Form>
       {/* */}
       <CurrentStatsTable {...{morph: morph.preview}} />
     </div>
