@@ -112,6 +112,19 @@ const router = createBrowserRouter([
               console.log("fullMorph:", Object.entries(fullMorph));
               return {pk, fullMorph};
             },
+            children: [
+              {
+                path: ":methodName",
+                Component: EvolveMorph,
+                loader: async ({params}) => {
+                  const {pkLoc} = params;
+                  const pk = getLocalMorphs()[pkLoc].pk;
+                  const fullMorph = await retrieveMorph(pk);
+                  console.log("fullMorph:", Object.entries(fullMorph));
+                  return {pk, fullMorph};
+                },
+              },
+            ],
           },
         ],
       },
