@@ -126,9 +126,9 @@ menu {
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(3, 1fr);
   grid-template-areas:
-    "ProfileIcon CurrentStatsTable"
-    "ClassLevelInfo CurrentStatsTable"
-    "ConfirmationMenu CurrentStatsTable";
+    "ProfileIcon StatsTable"
+    "ClassLevelInfo StatsTable"
+    "ConfirmationMenu StatsTable";
 }
 
 #UnitConfirm {
@@ -142,8 +142,8 @@ menu {
   &> .ClassLevelInfo {
     grid-area: ClassLevelInfo;
   }
-  &> .CurrentStatsTable {
-    grid-area: CurrentStatsTable;
+  &> .StatsTable {
+    grid-area: StatsTable;
   }
   &> .ConfirmationMenu {
     grid-area: ConfirmationMenu;

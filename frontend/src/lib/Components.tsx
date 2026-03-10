@@ -120,7 +120,7 @@ export function OptionSelect({missingParams}) {
 
 export function CurrentStatsTable({morph}) {
   return (
-    <table className="CurrentStatsTable">
+    <table className="StatsTable">
       <tbody>
       {morph == null || morph.stats.map(([stat, currentValue, localMax, absMax]) => {
         return (
