@@ -153,14 +153,13 @@ export function UnitConfirm() {
   console.log("UnitConfirm.preview:", preview);
   //console.log("missingParams:", missingParams);
   return (
-    <>
-    <div id="UnitConfirm">
+    <div id="UnitConfirm" className="unit-hub">
     {/* <label htmlFor="_morph_id">Name this Morph!</label> <input disabled={previewMode} name="_morph_id" required id="_morph_id" maxLength="25" onChange={(e) => setMorphId(e.currentTarget.value)} />
       */}
       <ProfileIcon {...{gameId, unitName}}>
       {unitName}
       </ProfileIcon>
-      {preview == null ? <BlankClassLevelInfo /> : <ClassLevelInfo {...{morph: preview}} />}
+      {preview == null ? <BlankClassLevelInfo {...{gameId}} /> : <ClassLevelInfo {...{morph: preview}} />}
       <Form onChange={() => setPreviewMode(true)} ref={formRef} className="ConfirmationMenu" method="post">
         <ConfirmationMenu {...{message, previewMode, refetchMorph}}>
           <OptionSelect {...{missingParams: morph.missingParams}} />
@@ -169,7 +168,6 @@ export function UnitConfirm() {
       {/* */}
       {preview == null ? <BlankStatsTable {...{gameId}} /> : <CurrentStatsTable {...{stats: preview.stats}} />}
     </div>
-    </>
   );
 };
 
@@ -211,20 +209,36 @@ export function EvolveMorph() {
   // TODO: Select operation.
   // TODO: Upon selection of operation, show right widget to carry it out.
   return (
-    <div id="EvolveMorph">
+    <div id="EvolveMorph" className="unit-hub">
       <ProfileIcon {...{gameId, unitName}}>
         {unitName}
-        <Form>
-          <select>
-            <option>1</option>
-            <option>2</option>
-          </select>
-          <button>Blegh</button>
-        </Form>
       </ProfileIcon>
-      <ClassLevelInfo {...{morph}} />
+      {morph == null ? <BlankClassLevelInfo {...{gameId}} /> : <ClassLevelInfo {...{morph}} /> }
+      <Form>
+        <select>
+          <option>1</option>
+          <option>2</option>
+        </select>
+        <button>Blegh</button>
+      </Form>
       {morph == null ? <BlankStatsTable {...{gameId}} /> : <CurrentStatsTable {...{stats: morph.stats}} />}
     </div>
   );
 }
 
+{/* 
+    <div id="UnitConfirm">
+    <label htmlFor="_morph_id">Name this Morph!</label> <input disabled={previewMode} name="_morph_id" required id="_morph_id" maxLength="25" onChange={(e) => setMorphId(e.currentTarget.value)} />
+      
+      <ProfileIcon {...{gameId, unitName}}>
+      {unitName}
+      </ProfileIcon>
+      {preview == null ? <BlankClassLevelInfo /> : <ClassLevelInfo {...{morph: preview}} />}
+      <Form onChange={() => setPreviewMode(true)} ref={formRef} className="ConfirmationMenu" method="post">
+        <ConfirmationMenu {...{message, previewMode, refetchMorph}}>
+          <OptionSelect {...{missingParams: morph.missingParams}} />
+        </ConfirmationMenu>
+      </Form>
+      {preview == null ? <BlankStatsTable {...{gameId}} /> : <CurrentStatsTable {...{stats: preview.stats}} />}
+    </div>
+*/}
