@@ -149,3 +149,7 @@ menu {
     grid-area: ConfirmationMenu;
   }
 }
+
+.maxed-stat {
+  color: green;
+}

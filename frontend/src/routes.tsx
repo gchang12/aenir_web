@@ -113,6 +113,7 @@ export function UnitSelect() {
 
 
 export function UnitConfirm() {
+  {/* const [morphId, setMorphId] = useState(""); */}
   const {gameId, unitName} = useParams();
   const {morph} = useLoaderData();
   const [preview, setPreview] = useState(morph.preview);
@@ -139,16 +140,20 @@ export function UnitConfirm() {
       .then(morph => {
         console.log("morph:", Object.entries(morph));
         setPreview(morph.preview);
+        setPreviewMode(false);
       });
   }, [unitName]);
-  const message = previewMode ? `Please provide extra parameters for ${unitName}.` : "Please confirm the selection.";
+  const message = previewMode ? "Please update your morph." : "Please confirm the selection.";
   console.log("UnitConfirm.preview:", preview);
   //console.log("missingParams:", missingParams);
   return (
+    <>
     <div id="UnitConfirm">
+    {/* <label htmlFor="_morph_id">Name this Morph!</label> <input disabled={previewMode} name="_morph_id" required id="_morph_id" maxLength="25" onChange={(e) => setMorphId(e.currentTarget.value)} />
+      */}
       <ProfileIcon {...{gameId, unitName}} />
       <ClassLevelInfo {...{morph: preview}} />
-      <Form onChange={() => setPreviewMode(true)} ref={formRef}>
+      <Form onChange={() => setPreviewMode(true)} ref={formRef} className="ConfirmationMenu" method="post">
         <ConfirmationMenu {...{message, previewMode, refetchMorph}}>
           <OptionSelect {...{missingParams: morph.missingParams}} />
         </ConfirmationMenu>
@@ -156,6 +161,7 @@ export function UnitConfirm() {
       {/* */}
       <CurrentStatsTable {...{morph: preview}} />
     </div>
+    </>
   );
 };
 

@@ -173,7 +173,7 @@ export function ConfirmationMenu({previewMode, refetchMorph, message, children})
       <p>{message}</p>
       {children}
       <div className="buttons">
-        <button disabled={!previewMode} onClick={refetchMorph} type="button">Preview</button>
+        <button disabled={!previewMode} onClick={refetchMorph} type="button">Update</button>
         <button type="submit" disabled={previewMode}>Create</button>
       </div>
     </div>

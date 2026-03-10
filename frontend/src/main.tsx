@@ -64,7 +64,10 @@ const router = createBrowserRouter([
                   console.log("UnitConfirm.getMorph", Object.entries(morph));
                   return {morph};
                 },
-                action: async ({params, request}) => {
+                action: ({params, request}) => {
+                  console.log(request);
+                  console.log('request');
+                  throw redirect("/morphs/");
                 },
                 Component: UnitConfirm,
               }
