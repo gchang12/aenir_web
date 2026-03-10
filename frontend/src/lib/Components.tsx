@@ -7,6 +7,9 @@ import {
 import {
   useState,
 } from "react";
+import {
+  Form,
+} from "react-router";
 
 function FatherSelect({choices}) {
   // choices: ['Arden', 'Azel', 'Alec', 'Claude', 'Jamka', 'Dew', 'Noish', 'Fin', 'Beowolf', 'Holyn', 'Midayle', 'Levin', 'Lex']
@@ -219,6 +222,22 @@ export function ConfirmationMenu({previewMode, refetchMorph, message, children})
         <button type="submit" disabled={previewMode}>Create</button>
       </div>
     </div>
+  );
+};
+
+export function UnitHub({gameId, unitName, morph, onChange, formRef, children}) {
+  return (
+    <>
+    <ProfileIcon {...{gameId, unitName}}>
+    {unitName}
+    </ProfileIcon>
+    {morph == null ? <BlankClassLevelInfo {...{gameId}} /> : <ClassLevelInfo {...{morph}} />}
+    <Form onChange={onChange} ref={formRef} className="ConfirmationMenu" method="post">
+      {children}
+    </Form>
+    {/* */}
+    {morph == null ? <BlankStatsTable {...{gameId}} /> : <CurrentStatsTable {...{stats: morph.stats}} />}
+    </>
   );
 };
 
