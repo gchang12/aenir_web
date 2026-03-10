@@ -229,9 +229,9 @@ export function EvolveMorph() {
     </UnitHub>
     </div>
     <div id="MorphPreview" className="unit-hub">
-    <UnitHub {...{gameId, unitName, morph: preview, formRef, onFormChange}}>
-      {methodName === "" && <p>Please confirm your selection.</p>}
-      <button onClick={(e) => console.log(e.currentTarget)} type="button">Confirm</button>
+    <UnitHub {...{gameId, unitName, morph: preview, formRef, onFormChange, fillValue: "---"}}>
+    {/* {methodName !== "" && <p>Please confirm your selection.</p>} */}
+      <button disabled onClick={(e) => console.log(e.currentTarget)} type="button">Confirm</button>
     </UnitHub>
     </div>
     </>

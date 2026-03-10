@@ -126,7 +126,7 @@ export function OptionSelect({missingParams}) {
   );
 };
 
-export function BlankStatsTable({gameId}) {
+export function BlankStatsTable({gameId, fillValue}) {
   const statList = getStatList(gameId);
   return (
     <table className="StatsTable">
@@ -135,7 +135,7 @@ export function BlankStatsTable({gameId}) {
         return (
           <tr key={stat}>
             <th>{stat}</th>
-            <td>???</td>
+            <td>{fillValue}</td>
             <td>
               <meter min="0" value="0"></meter>
             </td>
@@ -220,17 +220,17 @@ export function ClassLevelInfo({morph}) {
   );
 };
 
-export function BlankClassLevelInfo() {
+export function BlankClassLevelInfo({fillValue}) {
   return (
     <table className="ClassLevelInfo">
       <tbody>
         <tr>
           <th>Class</th>
-          <td>???</td>
+          <td>{fillValue}</td>
         </tr>
         <tr>
           <th>Level</th>
-          <td>???</td>
+          <td>{fillValue}</td>
         </tr>
       </tbody>
     </table>
@@ -250,18 +250,18 @@ export function ConfirmationMenu({previewMode, refetchMorph, message, children})
   );
 };
 
-export function UnitHub({gameId, unitName, morph, onFormChange, formRef, children}) {
+export function UnitHub({gameId, unitName, morph, onFormChange, formRef, fillValue, children}) {
   return (
     <>
     <ProfileIcon {...{gameId, unitName}}>
     {unitName}
     </ProfileIcon>
-    {morph == null ? <BlankClassLevelInfo {...{gameId}} /> : <ClassLevelInfo {...{morph}} />}
+    {morph == null ? <BlankClassLevelInfo {...{gameId, fillValue}} /> : <ClassLevelInfo {...{morph}} />}
     <Form onChange={onFormChange} ref={formRef} className="ConfirmationMenu" method="post">
       {children}
     </Form>
     {/* */}
-    {morph == null ? <BlankStatsTable {...{gameId}} /> : <CurrentStatsTable {...{stats: morph.stats}} />}
+    {morph == null ? <BlankStatsTable {...{gameId, fillValue}} /> : <CurrentStatsTable {...{stats: morph.stats}} />}
     </>
   );
 };
