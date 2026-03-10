@@ -121,6 +121,7 @@ export function UnitConfirm() {
   useEffect(() => {
     setPreviewMode(morph.missingParams != null);
     setPreview(morph.preview);
+    console.log("useEffect.fetcher:", fetcher);
   }, [unitName]);
   const refetchMorph = useCallback(() => {
     const queryList = [];
@@ -128,9 +129,21 @@ export function UnitConfirm() {
     for (const [key, value] of formData.entries()) {
       queryList.push(key + "=" + value);
     };
-    fetcher.load(`/create-morph/${gameId}/${unitName}/?` + queryList.join("&"));
-    console.log("UnitConfirm.refetchMorph:", queryList);
-    //setPreviewMode(false);
+    const url = `/create-morph/${gameId}/${unitName}/?` + queryList.join("&")
+    console.log("Loading data from:", url);
+    const morph = fetcher.load(url)
+      .then(() => {
+        console.log("Done loading data!")
+        const {morph} = fetcher.data;
+        console.log("fetcher.data.morph:", morph);
+        console.log("UnitConfirm.refetchMorph:", queryList);
+        //setPreviewMode(false);
+        return morph;
+      })
+    morph.then(() => {
+      console.log("fetcher.data is undefined:", fetcher.data == undefined);
+    });
+    // Shouldn't this always be defined?
   }, [unitName]);
   const message = previewMode ? `Please provide extra parameters for ${unitName}.` : "Please confirm the selection.";
   console.log("UnitConfirm.preview:", morph.preview);
