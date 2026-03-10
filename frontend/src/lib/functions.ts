@@ -132,9 +132,8 @@ export function listMorphMethods(gameId) {
       morphMethods.push("use_metiss_tome");
       break;
     case "fe9":
-      morphMethods.push("equip_knight_ward");
-      morphMethods.push("unequip_knight_ward");
       morphMethods.push("set_bands");
+      morphMethods.push("set_knight_ward");
       break;
     default:
       throw new Error("Unrecognized game: " + gameId);

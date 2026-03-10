@@ -90,7 +90,7 @@ function ChapterSelect({choices}) {
       <select required name="chapter" id="chapter">
       {choices.map(choice => {
         return (
-          <option key={choice} name="chapter" id={choice} type="radio" value={choice} defaultChecked={defaultValue === choice}>
+          <option key={choice} name="chapter" id={choice} value={choice} defaultChecked={defaultValue === choice}>
             {choice}
           </option>
         );
@@ -261,6 +261,37 @@ export function UnitHub({gameId, unitName, morph, onChange, formRef, children}) 
     {/* */}
     {morph == null ? <BlankStatsTable {...{gameId}} /> : <CurrentStatsTable {...{stats: morph.stats}} />}
     </>
+  );
+};
+
+export function SelectMorphMethod({gameId, onChange}) {
+  const morphMethods = listMorphMethods(gameId);
+  const displayNameMap = {
+    "level_up": "Level Up",
+    "promote": "Promote",
+    "use_stat_booster": "Use Stat Booster",
+    "set_scrolls": "Equip Scrolls",
+    "use_afas_drops": "Afa's Drops",
+    "use_metiss_tome": "Metis's Tome",
+    "set_bands": "Equip Bands",
+    "set_knight_ward": "Knight Ward",
+  };
+  return (
+    <div className="SelectMorphMethod">
+      <label htmlFor="morphMethod">Morph Methods</label>
+      <select required name="morphMethod" id="morphMethod" onChange={onChange}>
+        <option name="morphMethod" value="" defaultChecked>---</option>
+        {morphMethods.map(method => {
+          const displayName = displayNameMap[method];
+          return (
+            <option name="morphMethod" key={method} value={method}>
+              {displayName}
+            </option>
+          );
+        })
+        }
+      </select>
+    </div>
   );
 };
 
