@@ -7,7 +7,7 @@ import {
 } from 'react'
 import {
   useLoaderData,
-  useFetcher,
+  //useFetcher,
   useParams,
   NavLink,
   Outlet,
@@ -28,6 +28,8 @@ import {
 } from "./lib/Components";
 import {
   getMorph,
+  getLocalMorphs,
+  setLocalMorphs,
 } from "./lib/functions";
 
 export function Root() {
@@ -97,7 +99,9 @@ export function UnitSelect() {
         return (
           <li key={unitName}>
             <NavLink to={["", "create-morph", gameId, unitName, ""].join("/")}>
-              <ProfileIcon {...{gameId, unitName: unitName}} />
+              <ProfileIcon {...{gameId, unitName}}>
+              {unitName}
+              </ProfileIcon>
               <ClassLevelInfo morph={unit} />
             </NavLink>
           </li>
@@ -151,7 +155,9 @@ export function UnitConfirm() {
     <div id="UnitConfirm">
     {/* <label htmlFor="_morph_id">Name this Morph!</label> <input disabled={previewMode} name="_morph_id" required id="_morph_id" maxLength="25" onChange={(e) => setMorphId(e.currentTarget.value)} />
       */}
-      <ProfileIcon {...{gameId, unitName}} />
+      <ProfileIcon {...{gameId, unitName}}>
+      {unitName}
+      </ProfileIcon>
       <ClassLevelInfo {...{morph: preview}} />
       <Form onChange={() => setPreviewMode(true)} ref={formRef} className="ConfirmationMenu" method="post">
         <ConfirmationMenu {...{message, previewMode, refetchMorph}}>
@@ -166,8 +172,57 @@ export function UnitConfirm() {
 };
 
 export function Morphs() {
+  if (!getLocalMorphs()) {
+    setLocalMorphs([]);
+  };
+  const localMorphs = getLocalMorphs();
   return (
-    <>
-    </>
+    <div id="Morphs">
+      <menu>
+      {Object.entries(localMorphs).map(([indexNo, morphKey]) => {
+        const {pk, morphId, gameId, unitName} = morphKey;
+        return (
+          <li key={pk}>
+            <NavLink to={"/morphs/" + indexNo}>
+              <ProfileIcon {...{gameId, unitName}}>
+                <h2>{morphId}</h2>
+                <h3>{gameId.toUpperCase()}</h3>
+                <h4>{unitName}</h4>
+              </ProfileIcon>
+            </NavLink>
+          </li>
+        );
+      })
+      }
+      </menu>
+      <Outlet />
+    </div>
   );
 }
+
+export function EvolveMorph() {
+  const {fullMorph} = useLoaderData();
+  const {initArgs, morph} = fullMorph;
+  const {gameNo, unitName} = initArgs;
+  const gameId = "fe" + gameNo;
+  //console.log(gameNo, unitName);
+  // TODO: Select operation.
+  // TODO: Upon selection of operation, show right widget to carry it out.
+  return (
+    <div id="EvolveMorph">
+      <ProfileIcon {...{gameId, unitName}}>
+        {unitName}
+        <Form>
+          <select>
+            <option>1</option>
+            <option>2</option>
+          </select>
+          <button>Blegh</button>
+        </Form>
+      </ProfileIcon>
+      <ClassLevelInfo {...{morph}} />
+      <CurrentStatsTable {...{morph}} />
+    </div>
+  );
+}
+

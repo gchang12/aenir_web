@@ -153,3 +153,16 @@ menu {
 .maxed-stat {
   color: green;
 }
+
+#Morphs {
+  display: flex;
+  justify-content: space-between;
+}
+
+.ProfileIcon {
+  display: flex;
+}
+
+.ProfileIcon img {
+  width: auto;
+}

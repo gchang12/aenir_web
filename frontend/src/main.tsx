@@ -17,6 +17,8 @@ import {
   GameSelect,
   UnitSelect,
   UnitConfirm,
+  Morphs,
+  EvolveMorph,
 } from "./routes";
 import {
   getMorph,
@@ -68,7 +70,7 @@ const router = createBrowserRouter([
                   // prepare to make morph
                   const {gameId, unitName} = params;
                   const nowAsString = (new Date()).toISOString();
-                  const morphId = gameId.toUpperCase() + "-" + unitName + nowAsString.slice(0, nowAsString.indexOf('.')).replace("T", "_").replaceAll(":", "").replaceAll("-", "");
+                  const morphId = gameId.toUpperCase() + "-" + unitName + "-" + nowAsString.slice(4, nowAsString.indexOf('.')).replace("T", "_").replaceAll(":", "").replaceAll("-", "");
                   const game_no = Number(gameId.replace("fe", ""));
                   const options = {};
                   const formData = await request.formData();
@@ -82,7 +84,7 @@ const router = createBrowserRouter([
                     setLocalMorphs([]);
                   };
                   const localMorphs = getLocalMorphs();
-                  localMorphs.unshift({pk, gameId, unitName});
+                  localMorphs.unshift({pk, morphId, gameId, unitName});
                   while (localMorphs.length > 5) {
                     localMorphs.pop();
                   };
@@ -96,6 +98,23 @@ const router = createBrowserRouter([
           },
         ],
       },
+      {
+        path: "morphs",
+        Component: Morphs,
+        children: [
+          {
+            path: ":pkLoc",
+            Component: EvolveMorph,
+            loader: async ({params}) => {
+              const {pkLoc} = params;
+              const pk = getLocalMorphs()[pkLoc].pk;
+              const fullMorph = await retrieveMorph(pk);
+              console.log("fullMorph:", Object.entries(fullMorph));
+              return {fullMorph};
+            },
+          },
+        ],
+      },
     ],
   },
 ]);
@@ -105,4 +124,4 @@ createRoot(document.getElementById('root')!).render(
     <RouterProvider router={router} />
   </StrictMode>,
 )
-
+ 

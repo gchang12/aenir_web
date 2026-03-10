@@ -44,6 +44,16 @@ export function createMorph(morph_id, game_no, name, options) {
 // TODO: Test these for the love of criminy. These sort of rely on database data. Consider using mocks?
 
 export function retrieveMorph(pk) {
+  /*
+    "morphId",
+    "initArgs": {
+      "gameNo",
+      "unitName",
+      "options",
+    },
+    "morph",
+    "history",
+  */
   const url: string = RESOURCE_URL + [pk, ""].join("/");
   const fetchTask = axios
     .get(url)

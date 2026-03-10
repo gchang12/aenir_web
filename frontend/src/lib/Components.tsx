@@ -139,13 +139,13 @@ export function CurrentStatsTable({morph}) {
   );
 };
 
-export function ProfileIcon({gameId, unitName}) {
+export function ProfileIcon({gameId, unitName, children}) {
   const gameName = GAMES.find(game => "fe" + game.no === gameId).name;
   const imgSuffix = gameId === "fe8" ? ".gif" :".png";
   return (
     <figure className={["ProfileIcon", gameId.toUpperCase()].join(" ")}>
       <img src={["", "images", gameName, "characters", unitName + imgSuffix].join("/")} />
-      <figcaption>{unitName}</figcaption>
+      <figcaption>{children}</figcaption>
     </figure>
   );
 };
@@ -179,3 +179,37 @@ export function ConfirmationMenu({previewMode, refetchMorph, message, children})
     </div>
   );
 };
+
+export function OperationMenu({gameNo}) {
+  return (
+    <>
+    </>
+  );
+}
+
+function LevelUpMenu() {
+}
+
+function PromotionMenu() {
+}
+
+function UseStatBoosterMenu() {
+}
+
+function SetBandsMenu() {
+}
+
+function SetScrollsMenu() {
+}
+
+function UseAfasDropsMenu() {
+}
+
+function UseMetissTomeMenu() {
+}
+
+function KnightWardMenu() {
+}
+
+export function MorphEvolutionMenu() {
+}
