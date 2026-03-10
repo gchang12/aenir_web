@@ -70,7 +70,7 @@ const router = createBrowserRouter([
                   // prepare to make morph
                   const {gameId, unitName} = params;
                   const nowAsString = (new Date()).toISOString();
-                  const morphId = gameId.toUpperCase() + "-" + unitName + "-" + nowAsString.slice(4, nowAsString.indexOf('.')).replace("T", "_").replaceAll(":", "").replaceAll("-", "");
+                  const morphId = gameId.toUpperCase() + "-" + unitName + "_" + nowAsString.slice(4, nowAsString.indexOf('.')).replaceAll("-", "").replace("T", "-").replaceAll(":", "");
                   const game_no = Number(gameId.replace("fe", ""));
                   const options = {};
                   const formData = await request.formData();
