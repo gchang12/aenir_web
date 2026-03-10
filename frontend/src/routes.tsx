@@ -117,32 +117,28 @@ export function UnitConfirm() {
   const {morph} = useLoaderData();
   const [preview, setPreview] = useState(morph.preview);
   const [previewMode, setPreviewMode] = useState(false);
-  const fetcher = useFetcher();
+  // NOTE: https://github.com/remix-run/react-router/issues/11184
+  // fetcher.data does not work.
+  //const fetcher = useFetcher();
   const formRef = useRef(null);
   useEffect(() => {
     setPreviewMode(morph.missingParams != null);
     setPreview(morph.preview);
-    console.log("useEffect.fetcher:", fetcher);
   }, [unitName]);
   const refetchMorph = useCallback(() => {
-    const queryList = [];
+    const game_no = Number(gameId.replace("fe", ""));
+    const name = unitName;
+    const options = {};
     const formData = new FormData(formRef.current);
     for (const [key, value] of formData.entries()) {
-      queryList.push(key + "=" + value);
+      options[key] = value;
     };
-    const url = `/create-morph/${gameId}/${unitName}/?` + queryList.join("&")
-    console.log("Loading data from:", url);
-    const morph = fetcher.load(url)
-      .then(() => {
-        console.log("Done loading data!")
-        const {morph} = fetcher.data;
-        console.log("fetcher.data.morph:", morph);
-        console.log("UnitConfirm.refetchMorph:", queryList);
-        //setPreviewMode(false);
-        return morph;
-      })
-    //setPreview(morph.preview);
-    // Shouldn't this always be defined?
+    console.log(`getMorph(${game_no}, ${name}, ${Object.entries(options)})`);
+    getMorph(game_no, name, options)
+      .then(morph => {
+        console.log("morph:", Object.entries(morph));
+        setPreview(morph.preview);
+      });
   }, [unitName]);
   const message = previewMode ? `Please provide extra parameters for ${unitName}.` : "Please confirm the selection.";
   console.log("UnitConfirm.preview:", morph.preview);
@@ -151,11 +147,11 @@ export function UnitConfirm() {
     <div id="UnitConfirm">
       <ProfileIcon {...{gameId, unitName}} />
       <ClassLevelInfo {...{morph: morph.preview}} />
-      <fetcher.Form onChange={() => setPreviewMode(true)} ref={formRef}>
+      <Form onChange={() => setPreviewMode(true)} ref={formRef}>
         <ConfirmationMenu {...{message, previewMode, refetchMorph}}>
           <OptionSelect {...{missingParams: morph.missingParams}} />
         </ConfirmationMenu>
-      </fetcher.Form>
+      </Form>
       {/* */}
       <CurrentStatsTable {...{morph: morph.preview}} />
     </div>
