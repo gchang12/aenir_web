@@ -1,4 +1,7 @@
 import axios from 'axios';
+import {
+  STAT_LIST,
+} from "../constants";
 
 const RESOURCE_URL: string = "http://localhost:8000/dracogate/api/morphs/";
 
@@ -41,7 +44,21 @@ export function createMorph(morph_id, game_no, name, options) {
   return fetchTask;
 };
 
-// TODO: Test these for the love of criminy. These sort of rely on database data. Consider using mocks?
+export function getStatList(gameId) {
+  const gameNo = Number(gameId.replace("fe", ""));
+  switch (gameNo) {
+    case 4:
+      return STAT_LIST.GENEALOGY;
+    case 5:
+      return STAT_LIST.THRACIA;
+    case 6:
+    case 7:
+    case 8:
+      return STAT_LIST.GBA;
+    case 9:
+      return STAT_LIST.RADIANT;
+  };
+};
 
 export function retrieveMorph(pk) {
   /*
