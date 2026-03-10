@@ -64,10 +64,31 @@ const router = createBrowserRouter([
                   console.log("UnitConfirm.getMorph", Object.entries(morph));
                   return {morph};
                 },
-                action: ({params, request}) => {
-                  console.log(request);
-                  console.log('request');
-                  throw redirect("/morphs/");
+                action: async ({params, request}) => {
+                  // prepare to make morph
+                  const {gameId, unitName} = params;
+                  const nowAsString = (new Date()).toISOString();
+                  const morphId = gameId.toUpperCase() + "-" + unitName + nowAsString.slice(0, nowAsString.indexOf('.')).replace("T", "_").replaceAll(":", "").replaceAll("-", "");
+                  const game_no = Number(gameId.replace("fe", ""));
+                  const options = {};
+                  const formData = await request.formData();
+                  for (const [key, value] of formData.entries()) {
+                    options[key] = value;
+                  };
+                  console.log(`createMorph(${morphId}, ${game_no}, ${unitName}, ${Object.entries(options)})`);
+                  const {pk} = await createMorph(morphId, game_no, unitName, options);
+                  // store morph.
+                  if (!getLocalMorphs()) {
+                    setLocalMorphs([]);
+                  };
+                  const localMorphs = getLocalMorphs();
+                  localMorphs.unshift({pk, gameId, unitName});
+                  while (localMorphs.length > 5) {
+                    localMorphs.pop();
+                  };
+                  setLocalMorphs(localMorphs);
+                  console.log("UnitConfirm.action:", formData);
+                  return redirect("/morphs/");
                 },
                 Component: UnitConfirm,
               }
