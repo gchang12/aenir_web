@@ -2,6 +2,9 @@ import {
   GAMES,
 } from "../constants";
 import {
+  getStatList,
+} from "./functions";
+import {
   useState,
 } from "react";
 
@@ -118,11 +121,33 @@ export function OptionSelect({missingParams}) {
   );
 };
 
-export function CurrentStatsTable({morph}) {
+export function BlankStatsTable({gameId}) {
+  const statList = getStatList(gameId);
   return (
     <table className="StatsTable">
       <tbody>
-      {morph == null || morph.stats.map(([stat, currentValue, localMax, absMax]) => {
+      {statList.map(stat => {
+        return (
+          <tr key={stat}>
+            <th>{stat}</th>
+            <td>???</td>
+            <td>
+              <meter min="0" value="0"></meter>
+            </td>
+          </tr>
+        );
+      })
+      }
+      </tbody>
+    </table>
+  );
+};
+
+export function CurrentStatsTable({stats}) {
+  return (
+    <table className="StatsTable">
+      <tbody>
+      {stats.map(([stat, currentValue, localMax, absMax]) => {
         return (
           <tr key={stat} className={currentValue === localMax ? "maxed-stat" : undefined}>
             <th>{stat}</th>
@@ -156,11 +181,28 @@ export function ClassLevelInfo({morph}) {
       <tbody>
         <tr>
           <th>Class</th>
-          <td>{morph == null ? "???" : morph.unitClass}</td>
+          <td>{morph.unitClass}</td>
         </tr>
         <tr>
           <th>Level</th>
-          <td>{morph == null ? "???" : morph.level[0]}</td>
+          <td>{morph.level[0]}</td>
+        </tr>
+      </tbody>
+    </table>
+  );
+};
+
+export function BlankClassLevelInfo() {
+  return (
+    <table className="ClassLevelInfo">
+      <tbody>
+        <tr>
+          <th>Class</th>
+          <td>???</td>
+        </tr>
+        <tr>
+          <th>Level</th>
+          <td>???</td>
         </tr>
       </tbody>
     </table>
@@ -186,30 +228,22 @@ export function OperationMenu({gameNo}) {
     </>
   );
 }
-
 function LevelUpMenu() {
 }
-
 function PromotionMenu() {
 }
-
 function UseStatBoosterMenu() {
 }
-
 function SetBandsMenu() {
 }
-
 function SetScrollsMenu() {
 }
-
 function UseAfasDropsMenu() {
 }
-
 function UseMetissTomeMenu() {
 }
-
 function KnightWardMenu() {
 }
-
 export function MorphEvolutionMenu() {
 }
+
