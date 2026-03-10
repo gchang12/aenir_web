@@ -292,20 +292,60 @@ function LevelUpMenu({pk}) {
   // list options.
   // alert user if operation is invalid.
   // NO submit-button!
+  return (
+    <h1>
+    Level Up
+    </h1>
+  );
 }
 function PromoteMenu() {
+  return (
+    <h1>
+    Promote
+    </h1>
+  );
 }
 function UseStatBoosterMenu() {
+  return (
+    <h1>
+    Promote
+    </h1>
+  );
 }
 function SetBandsMenu() {
+  return (
+    <h1>
+    Equip Bands
+    </h1>
+  );
 }
 function SetScrollsMenu() {
+  return (
+    <h1>
+    Equip Scrolls
+    </h1>
+  );
 }
 function UseAfasDropsMenu() {
+  return (
+    <h1>
+    Use Afas's Drops
+    </h1>
+  );
 }
 function UseMetissTomeMenu() {
+  return (
+    <h1>
+    Use Metis's Tome
+    </h1>
+  );
 }
 function SetKnightWardMenu() {
+  return (
+    <h1>
+    Equip Knight Ward
+    </h1>
+  );
 }
 
 export function MorphMethodMenu({methodName, pk}) {

@@ -211,6 +211,8 @@ export function EvolveMorph() {
   const onMethodSelect = useCallback((e) => {
     //console.log("onChange");
     //setPreviewMode(true);
+    console.log(e.currentTarget);
+    console.log(e.currentTarget.value);
     setMethodName(e.currentTarget.value);
   }, []);
   const onFormChange = useCallback((e) => {
