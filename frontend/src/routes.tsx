@@ -231,7 +231,7 @@ export function MorphHub({methodName = null}) {
 export function MorphMethodExecute() {
   const {methodName} = useParams();
   const {pk, fullMorph, paramBounds} = useLoaderData();
-  const [paramBounds2, setParamBounds2] = useState(paramBounds);
+  //const [paramBounds2, setParamBounds2] = useState(paramBounds);
   const {gameNo, unitName} = fullMorph.initArgs;
   const gameId = "fe" + gameNo;
   const [current, setCurrent] = useState(fullMorph.morph);
@@ -245,7 +245,7 @@ export function MorphMethodExecute() {
   }, [pk]);
   const onMethodSelect = useCallback((e) => {
     //console.log(e.currentTarget);
-    const action = e.currentTarget.value ?? "";
+    const action = e.currentTarget.value;
     navigate(`/morphs/${pkLoc}/${action}`);
   }, [pkLoc]);
   const onFormChange = useCallback((e) => {
@@ -259,9 +259,10 @@ export function MorphMethodExecute() {
       .then((response) => {
         setPreview(response.morph);
         // TODO: Come up with a better patch.
-        console.log("response.paramBounds:", response.paramBounds, "paramBounds:", paramBounds);
-        setPreviewMode(response.paramBounds != null && paramBounds != null && Object.keys(response.paramBounds)[0] == Object.keys(paramBounds)[0]);
-        setParamBounds2(response.paramBounds ?? []);
+        //console.log("response.paramBounds:", response.paramBounds, "paramBounds:", paramBounds);
+        //setPreviewMode(response.paramBounds != null && paramBounds != null && Object.keys(response.paramBounds)[0] == Object.keys(paramBounds)[0]);
+        setPreviewMode(false);
+        //setParamBounds2(response.paramBounds ?? []);
       });
   }, [pk, methodName]);
   const highlightMap = calculateStatsDelta(current, preview);
@@ -270,8 +271,8 @@ export function MorphMethodExecute() {
     <MorphHub {...{methodName}} />
     <div id="MorphPreview" className="unit-hub">
       <UnitHub {...{gameId, unitName, morph: preview, onFormChange, formRef, highlightMap}}>
-        <MorphMethodMenu {...{methodName, paramBounds: paramBounds2, morph: current, gameNo}} />
-        <button disabled={previewMode !== true} onClick={onPreviewButtonClick} type="button">Preview</button>
+      <MorphMethodMenu {...{methodName, paramBounds, morph: current, gameNo}} />
+      <button disabled={previewMode !== true} onClick={onPreviewButtonClick} type="button">Preview</button>
         <button disabled={previewMode !== false} type="submit">Confirm</button>
       </UnitHub>
     </div>

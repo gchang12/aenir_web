@@ -124,6 +124,21 @@ const router = createBrowserRouter([
             Component: MorphMethodExecute,
             loader: async ({params}) => {
               const {pkLoc, methodName} = params;
+              switch (methodName) {
+                case "level_up":
+                case "promote":
+                case "use_stat_booster":
+                  break;
+                case "set_scrolls":
+                case "use_afas_drops":
+                case "use_metiss_tome":
+                case "set_bands":
+                case "set_knight_ward":
+                  return redirect(`/morphs/${pkLoc}/alter-growths/${methodName}`);
+                  break;
+                default:
+                  throw new Error("Unrecognized action: " + methodName);
+              };
               const nullArgs = getNullArgs(methodName);
               const morphRecord = getLocalMorphs()[pkLoc];
               const {pk, gameId, unitName} = morphRecord;

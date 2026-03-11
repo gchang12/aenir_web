@@ -358,6 +358,7 @@ function PromoteMenu({paramBounds, morph}) {
 }
 
 function UseStatBoosterMenu({paramBounds, gameNo}) {
+  // TODO: Forbid user from submitting button if paramBounds are invalid.
   const [itemName, setItemName] = useState('');
   const [stat, statValue] = paramBounds;
   const statBoosters = listStatBoosters(gameNo);
