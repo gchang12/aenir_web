@@ -195,7 +195,7 @@ export function Morphs() {
   );
 }
 
-export function MorphHub({paramBounds}) {
+export function MorphHub({onFormChange, onPreviewButtonClick, methodName, paramBounds}) {
   const {pk, fullMorph} = useLoaderData();
   const {initArgs, morph} = fullMorph;
   const {gameNo, unitName} = initArgs;
@@ -209,15 +209,9 @@ export function MorphHub({paramBounds}) {
     setCurrent(fullMorph.morph);
   }, [pk]);
   const onMethodSelect = useCallback((e) => {
-    console.log(e.currentTarget);
     const action = e.currentTarget.value ?? "";
     navigate(`/morphs/${pkLoc}/${action}`);
   }, []);
-  const onFormChange = useCallback((e) => {
-    console.log(e.currentTarget);
-  }, []);
-  // NOTE: This is for all children of morphs/:pkLoc/
-  const {methodName} = useParams();
   return (
     <>
     <div id="EvolveMorph" className="unit-hub">
