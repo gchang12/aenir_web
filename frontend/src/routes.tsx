@@ -253,32 +253,18 @@ export function MorphMethodExecute() {
     setPreviewMode(true);
   }, []);
   const onPreviewButtonClick = useCallback((e) => {
-    console.log(e.currentTarget);
-    console.log(formRef.current);
     const formData = new FormData(formRef.current)
     const args = normalizeArgValues(formData);
-    console.log("args:", Object.entries(args));
     simulateMorphMethod(pk, methodName, args)
       .then((response) => {
         setPreview(response.morph);
         // TODO: Come up with a better patch.
-        setPreviewMode(Object.keys(response.paramBounds)[0] == Object.keys(paramBounds)[0]);
-        setParamBounds2(response.paramBounds);
+        console.log("response.paramBounds:", response.paramBounds, "paramBounds:", paramBounds);
+        setPreviewMode(response.paramBounds != null && paramBounds != null && Object.keys(response.paramBounds)[0] == Object.keys(paramBounds)[0]);
+        setParamBounds2(response.paramBounds ?? []);
       });
   }, [pk, methodName]);
   const highlightMap = calculateStatsDelta(current, preview);
-  console.log(current, preview);
-  /*
-  let morph;
-  switch (methodName) {
-    case "set_scrolls":
-    case "set_bands":
-    case "use_metiss_tome":
-    case "use_afas_drops":
-      morph = preview
-      break;
-  };
-  */
   return (
     <>
     <MorphHub {...{methodName}} />
@@ -317,3 +303,15 @@ export function MorphHubForGrowths({methodName = null}) {
     </div>
   );
 }
+
+  /*
+  let morph;
+  switch (methodName) {
+    case "set_scrolls":
+    case "set_bands":
+    case "use_metiss_tome":
+    case "use_afas_drops":
+      morph = preview
+      break;
+  };
+  */

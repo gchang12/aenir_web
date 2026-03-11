@@ -21,13 +21,11 @@ export function getMorph(game_no, name, kwargs) {
 
 export function setLocalMorphs(value) {
   const morphsAsString = JSON.stringify(value);
-  console.log("localStorage.setItem('morphs'," + morphsAsString + ");");
   return localStorage.setItem("morphs", morphsAsString);
 };
 
 export function getLocalMorphs() {
   const rawMorphs = localStorage.getItem("morphs");
-  console.log("localStorage.getItem('morphs') = " + rawMorphs);
   return JSON.parse(rawMorphs);
 };
 
@@ -91,7 +89,6 @@ export function simulateMorphMethod(pk, method_name, args) {
 
 export function executeMorphMethod(pk, method_name, args) {
   const url = RESOURCE_URL + [pk, method_name, ""].join("/");
-  console.log("executeMorphMethod.args:", Object.entries(args));
   const fetchTask = axios
     .patch(url, args)
     .then(resp => resp.data)
@@ -168,7 +165,6 @@ export function getNullArgs(methodName) {
 export function normalizeArgValues(formData) {
   const args = {};
   for (const [key, value] of formData.entries()) {
-    console.log("key:", key, "value:", value);
     switch (key) {
       case "num_levels":
       case "promo_cls":
@@ -211,6 +207,5 @@ export function calculateStatsDelta(morph1, morph2) {
     stat2 = morph2 == null ? null : morph2.stats[i][1];
     statsDelta[statName] = stat2 == null ? null : stat2 > stat1;
   };
-  console.log(Object.entries(statsDelta));
   return statsDelta;
 }

@@ -176,7 +176,6 @@ export function CurrentStatsTable({stats, highlightMap}) {
       <tbody>
       {stats.map(([stat, currentValue, localMax, absMax]) => {
         const className = shouldHighlight(stat, currentValue, localMax);
-        //console.log(stat, className);
         return (
           <tr key={stat} className={className}>
             <th>{stat}</th>
