@@ -272,9 +272,9 @@ export function MorphMethodSelect({gameId, onMethodSelect}) {
   const morphMethods = listMorphMethods(gameId);
   return (
     <div className="SelectMorphMethod">
-      <label htmlFor="morphMethod">Morph Methods</label>
+      <label htmlFor="morphMethod">Actions</label>
       <select required name="morphMethod" id="morphMethod" onChange={onMethodSelect}>
-        <option name="morphMethod" value="" defaultChecked>---</option>
+        <option name="morphMethod" value="" defaultChecked></option>
         {morphMethods.map(method => {
           const displayName = MORPH_METHOD_NAMES[method];
           return (

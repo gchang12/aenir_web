@@ -203,39 +203,35 @@ export function EvolveMorph() {
   const [preview, setPreview] = useState(null);
   const formRef = useRef(null);
   useEffect(() => {
-    ///setPreviewMode(true);
     setCurrent(fullMorph.morph);
-  }, [unitName]);
+  }, [pk]);
   const onMethodSelect = useCallback((e) => {
-    //console.log("onChange");
-    //setPreviewMode(true);
     console.log(e.currentTarget);
-    console.log(e.currentTarget.value);
-    //setMethodName(e.currentTarget.value);
   }, []);
   const onFormChange = useCallback((e) => {
-    console.log("onFormChange:", e);
-    //setPreviewMode(true);
+    console.log(e.currentTarget);
   }, []);
   // NOTE: This is for all children of morphs/:pkLoc/
   const {methodName} = useParams();
-  console.log("methodName:", methodName);
-  //const [methodName, setMethodName] = useState("");
-  //const [previewMode, setPreviewMode] = useState(false);
   return (
     <>
     <div id="EvolveMorph" className="unit-hub">
     <UnitHub {...{gameId, unitName, morph: current, formRef, onFormChange}}>
       <MorphMethodSelect {...{gameId, onMethodSelect}} />
-      {methodName === "" ? <p>Please select a Morph method.</p> : <MorphMethodMenu {...{methodName, pk}} />}
-      <button onClick={(e) => console.log(e.currentTarget)} type="button">Preview</button>
+      {methodName == null || (
+        <>
+        <MorphMethodMenu {...{methodName, pk}} />
+        <button onClick={(e) => console.log(e.currentTarget)} type="button">Preview</button>
+        </>
+      )}
     </UnitHub>
     </div>
     <div id="MorphPreview" className="unit-hub">
-    <UnitHub {...{gameId, unitName, morph: preview, formRef, onFormChange, fillValue: "-"}}>
-    {/* {methodName !== "" && <p>Please confirm your selection.</p>} */}
+    {methodName == null || (
+      <UnitHub {...{gameId, unitName, morph: preview, formRef, onFormChange, fillValue: "-"}}>
       <button disabled onClick={(e) => console.log(e.currentTarget)} type="button">Confirm</button>
-    </UnitHub>
+      </UnitHub>
+    )}
     </div>
     </>
   );
