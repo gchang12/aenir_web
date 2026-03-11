@@ -1207,6 +1207,28 @@ class FE4UnitForSimulatingInvalidOperations(TestCase):
         actual = response.data['detail'].code
         self.assertEqual(actual, expected)
 
+    def test_level_up__30(self):
+        """
+        FE4 Sigurd
+        """
+        method_name = "level_up"
+        data = {
+            "num_levels": 25,
+        }
+        # usual stuff
+        url = RESOURCE_URL + str(self.vmorph.id) + "/" + method_name +"/"
+        response = self.client.patch(url, query_params=data)
+        actual = response.status_code
+        expected = 200
+        self.assertEqual(actual, expected)
+        # check offline data
+        vmorph = VirtualMorph.objects.get()
+        actual = vmorph.history
+        expected = [
+            ["level_up", {'num_levels': 25}],
+        ]
+        self.assertListEqual(actual, expected)
+        morph = self.vmorph.init()
 
 class FE6Unit(TestCase):
     """

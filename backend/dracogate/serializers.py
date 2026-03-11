@@ -98,7 +98,7 @@ class LevelUpArgs(serializers.Serializer):
     """
     num_levels = serializers.IntegerField(
         min_value=0,
-        max_value=20,
+        max_value=30,
     )
 
 class PromoteArgs(serializers.Serializer):

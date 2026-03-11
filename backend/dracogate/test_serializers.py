@@ -700,7 +700,7 @@ class LevelUpIncrements(TestCase):
         self.kwargs['num_levels'] = 21
         serializer = LevelUpArgs(data=self.kwargs)
         actual = serializer.is_valid()
-        expected = False
+        expected = True
         self.assertIs(actual, expected)
 
     def test_null_data(self):
