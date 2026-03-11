@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {
   STAT_LIST,
-} from "../constants";
+} from "./constants";
 
 const RESOURCE_URL: string = "http://localhost:8000/dracogate/api/morphs/";
 

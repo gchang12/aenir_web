@@ -1,7 +1,7 @@
 import {
   GAMES,
   MORPH_METHOD_NAMES,
-} from "../constants";
+} from "./constants";
 import {
   getStatList,
   listMorphMethods,

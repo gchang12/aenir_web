@@ -34,14 +34,14 @@ import {
   BlankClassLevelInfo,
   ConfirmationMenu,
   UnitHub,
-} from "./lib/Components";
+} from "./Components";
 import {
   getMorph,
   getLocalMorphs,
   setLocalMorphs,
   simulateMorphMethod,
   executeMorphMethod,
-} from "./lib/functions";
+} from "./functions";
 
 export function Root() {
   return (
