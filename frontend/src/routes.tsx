@@ -4,6 +4,7 @@ import {
   useContext,
   useCallback,
   useRef,
+  useMemo,
 } from 'react'
 import {
   useLoaderData,
@@ -216,17 +217,21 @@ export function MorphHub({methodName = null}) {
     navigate(`/morphs/${pkLoc}/${action}`);
   }, [pkLoc]);
   return (
+    <>
     <div id="MorphHub" className="unit-hub">
       <UnitHub {...{gameId, unitName, morph: current}}>
         <MorphMethodSelect {...{gameId, onMethodSelect, currentMethod: methodName}} />
       </UnitHub>
     </div>
+    <Outlet />
+    </>
   );
 }
 
 export function MorphMethodExecute() {
   const {methodName} = useParams();
   const {pk, fullMorph, paramBounds} = useLoaderData();
+  const [paramBounds2, setParamBounds2] = useState(paramBounds);
   const {gameNo, unitName} = fullMorph.initArgs;
   const gameId = "fe" + gameNo;
   const [current, setCurrent] = useState(fullMorph.morph);
@@ -254,10 +259,11 @@ export function MorphMethodExecute() {
     const args = normalizeArgValues(formData);
     console.log("args:", Object.entries(args));
     simulateMorphMethod(pk, methodName, args)
-      .then(({morph}) => {
-        console.log(Object.entries(morph));
-        setPreview(morph);
-        setPreviewMode(false);
+      .then((response) => {
+        setPreview(response.morph);
+        // TODO: Come up with a better patch.
+        setPreviewMode(Object.keys(response.paramBounds)[0] == Object.keys(paramBounds)[0]);
+        setParamBounds2(response.paramBounds);
       });
   }, [pk, methodName]);
   const highlightMap = calculateStatsDelta(current, preview);
@@ -278,7 +284,7 @@ export function MorphMethodExecute() {
     <MorphHub {...{methodName}} />
     <div id="MorphPreview" className="unit-hub">
       <UnitHub {...{gameId, unitName, morph: preview, onFormChange, formRef, highlightMap}}>
-        <MorphMethodMenu {...{methodName, paramBounds, morph: current, gameNo}} />
+        <MorphMethodMenu {...{methodName, paramBounds: paramBounds2, morph: current, gameNo}} />
         <button disabled={previewMode !== true} onClick={onPreviewButtonClick} type="button">Preview</button>
         <button disabled={previewMode !== false} type="submit">Confirm</button>
       </UnitHub>
@@ -287,3 +293,27 @@ export function MorphMethodExecute() {
   );
 }
 
+export function MorphHubForGrowths({methodName = null}) {
+  const {pk, fullMorph} = useLoaderData();
+  const {initArgs, morph} = fullMorph;
+  const {gameNo, unitName} = initArgs;
+  const gameId = "fe" + gameNo;
+  const [current, setCurrent] = useState(morph);
+  const [preview, setPreview] = useState(null);
+  const navigate = useNavigate();
+  const {pkLoc} = useParams();
+  useEffect(() => {
+    setCurrent(fullMorph.morph);
+  }, [pk]);
+  const onMethodSelect = useCallback((e) => {
+    const action = e.currentTarget.value ?? "";
+    navigate(`/morphs/${pkLoc}/${action}`);
+  }, [pkLoc]);
+  return (
+    <div id="MorphHub" className="unit-hub">
+      <UnitHub {...{gameId, unitName, morph: current}}>
+        <MorphMethodSelect {...{gameId, onMethodSelect, currentMethod: methodName}} />
+      </UnitHub>
+    </div>
+  );
+}

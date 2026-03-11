@@ -376,7 +376,7 @@ function UseStatBoosterMenu({paramBounds, gameNo}) {
       })
       }
       </select>
-      {typeof statValue === "number" && <p>{`'${stat}' is maxed out at '${statValue}`}</p>}
+      {typeof statValue === "number" && <p>{`'${stat}' is maxed out at '${statValue / 100}'`}</p>}
     </div>
   );
 }
