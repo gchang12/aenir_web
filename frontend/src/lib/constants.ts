@@ -1944,3 +1944,33 @@ export const STAT_BOOSTERS = {
     "Body Ring",
   ],
 }; 
+
+export const CRUSADER_SCROLLS = [
+  'Baldo',
+  'Blaggi',
+  'Dain',
+  'Fala',
+  'Heim',
+  'Hezul',
+  'Neir',
+  'Noba',
+  'Odo',
+  'Sety',
+  'Tordo',
+  'Ulir',
+];
+
+export const RADIANT_BANDS = [
+  'Sword Band',
+  'Soldier Band',
+  'Fighter Band',
+  'Archer Band',
+  'Knight Band',
+  'Paladin Band',
+  'Pegasus Band',
+  'Wyvern Band',
+  'Mage Band',
+  'Priest Band',
+  'Thief Band',
+];
+

@@ -262,6 +262,17 @@ export function MorphMethodExecute() {
   }, [pk, methodName]);
   const highlightMap = calculateStatsDelta(current, preview);
   console.log(current, preview);
+  /*
+  let morph;
+  switch (methodName) {
+    case "set_scrolls":
+    case "set_bands":
+    case "use_metiss_tome":
+    case "use_afas_drops":
+      morph = preview
+      break;
+  };
+  */
   return (
     <>
     <MorphHub {...{methodName}} />

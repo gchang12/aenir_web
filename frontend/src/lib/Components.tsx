@@ -1,6 +1,8 @@
 import {
   GAMES,
   MORPH_METHOD_NAMES,
+  CRUSADER_SCROLLS,
+  RADIANT_BANDS,
 } from "./constants";
 import {
   getStatList,
@@ -364,7 +366,7 @@ function UseStatBoosterMenu({paramBounds, gameNo}) {
     <div className="UseStatBoosterMenu">
       <label htmlFor="use_stat_booster">Item</label>
       <select disabled={paramBounds == null} id="use_stat_booster" name="item_name" onChange={(e) => setItemName(e.currentTarget.value)}>
-      <option value=""></option> 
+      <option value=""></option>
       {statBoosters.map(statBooster => {
         return (
           <option key={statBooster} value={statBooster}>
@@ -379,17 +381,28 @@ function UseStatBoosterMenu({paramBounds, gameNo}) {
   );
 }
 
+function SetScrollsMenu({paramBounds}) {
+  return (
+    <div className="SetScrollsMenu">
+      <label htmlFor="set_scrolls">Item</label>
+      <select multiple id="set_scrolls" name="scrolls">
+      {CRUSADER_SCROLLS.map(crusaderScroll => {
+        return (
+          <option key={crusaderScroll} value={crusaderScroll}>
+          {crusaderScroll}
+          </option>
+        );
+      })
+      }
+      </select>
+    </div>
+  );
+}
+
 function SetBandsMenu() {
   return (
     <h1>
     Equip Bands
-    </h1>
-  );
-}
-function SetScrollsMenu() {
-  return (
-    <h1>
-    Equip Scrolls
     </h1>
   );
 }
