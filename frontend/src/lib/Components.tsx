@@ -381,8 +381,6 @@ export function MorphMethodMenu({methodName, pk}) {
       return <UseMetissTomeMenu {...{pk}} />
     case "set_bands":
       return <SetBandsMenu {...{pk}} />
-    case "set_knight_ward":
-      return <SetKnightWardMenu {...{pk}} />
     default:
       throw new Error(`Unrecgonized method: '${methodName}'`);
   };
