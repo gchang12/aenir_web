@@ -202,8 +202,6 @@ export function EvolveMorph() {
   const [current, setCurrent] = useState(morph);
   const [preview, setPreview] = useState(null);
   const formRef = useRef(null);
-  const [methodName, setMethodName] = useState("");
-  //const [previewMode, setPreviewMode] = useState(false);
   useEffect(() => {
     ///setPreviewMode(true);
     setCurrent(fullMorph.morph);
@@ -213,12 +211,17 @@ export function EvolveMorph() {
     //setPreviewMode(true);
     console.log(e.currentTarget);
     console.log(e.currentTarget.value);
-    setMethodName(e.currentTarget.value);
+    //setMethodName(e.currentTarget.value);
   }, []);
   const onFormChange = useCallback((e) => {
     console.log("onFormChange:", e);
     //setPreviewMode(true);
   }, []);
+  // NOTE: This is for all children of morphs/:pkLoc/
+  const {methodName} = useParams();
+  console.log("methodName:", methodName);
+  //const [methodName, setMethodName] = useState("");
+  //const [previewMode, setPreviewMode] = useState(false);
   return (
     <>
     <div id="EvolveMorph" className="unit-hub">
@@ -229,7 +232,7 @@ export function EvolveMorph() {
     </UnitHub>
     </div>
     <div id="MorphPreview" className="unit-hub">
-    <UnitHub {...{gameId, unitName, morph: preview, formRef, onFormChange, fillValue: "---"}}>
+    <UnitHub {...{gameId, unitName, morph: preview, formRef, onFormChange, fillValue: "-"}}>
     {/* {methodName !== "" && <p>Please confirm your selection.</p>} */}
       <button disabled onClick={(e) => console.log(e.currentTarget)} type="button">Confirm</button>
     </UnitHub>
