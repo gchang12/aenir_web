@@ -116,20 +116,21 @@ const router = createBrowserRouter([
               console.log("loader.fullMorph:", Object.entries(fullMorph));
               return {pk, fullMorph};
             },
-            children: [
-              {
-                path: ":methodName",
-                Component: MorphMethodExecute,
-                loader: async ({params}) => {
-                  const {pkLoc, methodName} = params;
-                  const pk = getLocalMorphs()[pkLoc].pk;
-                  const nullArgs = getNullArgs(methodName);
-                  const {morph, paramBounds} = await simulateMorphMethod(pk, methodName, nullArgs);
-                  console.log("loader.paramBounds:", Object.entries(paramBounds));
-                  return {pk, fullMorph: morph, paramBounds};
-                },
-              },
-            ],
+          },
+          {
+            path: ":pkLoc/:methodName",
+            Component: MorphMethodExecute,
+            loader: async ({params}) => {
+              const {pkLoc, methodName} = params;
+              const pk = getLocalMorphs()[pkLoc].pk;
+              const nullArgs = getNullArgs(methodName);
+              const {morph, paramBounds} = await simulateMorphMethod(pk, methodName, nullArgs);
+              const fullMorph = await retrieveMorph(pk);
+              console.log("MorphMethodExecute.loader.paramBounds:", Object.entries(paramBounds));
+              console.log("MorphMethodExecute.loader.morph:", Object.entries(morph));
+              console.log("MorphMethodExecute.loader.fullMorph:", Object.entries(fullMorph));
+              return {pk, fullMorph, paramBounds};
+            },
           },
         ],
       },

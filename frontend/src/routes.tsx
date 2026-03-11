@@ -213,11 +213,10 @@ export function MorphHub({onFormChange, onPreviewButtonClick, methodName, paramB
     navigate(`/morphs/${pkLoc}/${action}`);
   }, []);
   return (
-    <>
-    <div id="EvolveMorph" className="unit-hub">
+    <div id="MorphHub" className="unit-hub">
     <UnitHub {...{gameId, unitName, morph: current, formRef, onFormChange}}>
       <MorphMethodSelect {...{gameId, onMethodSelect, currentMethod: methodName}} />
-      {methodName == null || (
+      {(methodName == null && paramBounds == null) || (
         <>
         <MorphMethodMenu {...{methodName, paramBounds, morph: current}} />
         <button onClick={(e) => console.log(e.currentTarget)} type="button">Preview</button>
@@ -225,12 +224,14 @@ export function MorphHub({onFormChange, onPreviewButtonClick, methodName, paramB
       )}
     </UnitHub>
     </div>
-    </>
   );
 }
 
 export function MorphMethodExecute() {
-  const {pk, fullMorph} = useLoaderData();
+  const {pkLoc, methodName} = useParams();
+  console.log("MorphMethodExecute.pkLoc:", pkLoc);
+  console.log("MorphMethodExecute.methodName:", methodName);
+  const {pk, fullMorph, paramBounds} = useLoaderData();
   console.log("MorphMethodExecute.paramBounds:", Object.entries(paramBounds ?? {}));
   const {initArgs, morph} = fullMorph;
   const {gameNo, unitName} = initArgs;
@@ -239,7 +240,7 @@ export function MorphMethodExecute() {
   const [preview, setPreview] = useState(null);
   const formRef = useRef(null);
   const navigate = useNavigate();
-  const {pkLoc} = useParams();
+  //const {pkLoc} = useParams();
   useEffect(() => {
     setCurrent(fullMorph.morph);
   }, [pk]);
@@ -252,33 +253,17 @@ export function MorphMethodExecute() {
     console.log(e.currentTarget);
   }, []);
   // NOTE: This is for all children of morphs/:pkLoc/
-  const {methodName} = useParams();
+  //const {methodName} = useParams();
+  const onPreviewButtonClick = useCallback((e) => {
+    console.log(e.currentTarget);
+  }, []);
   return (
     <>
-    <div id="EvolveMorph" className="unit-hub">
-    <UnitHub {...{gameId, unitName, morph: current, formRef, onFormChange}}>
-      <MorphMethodSelect {...{gameId, onMethodSelect, currentMethod: methodName}} />
-      {methodName == null || (
-        <>
-        <MorphMethodMenu {...{methodName, paramBounds, morph: current}} />
-        <button onClick={(e) => console.log(e.currentTarget)} type="button">Preview</button>
-        </>
-      )}
+    <MorphHub {...{onFormChange, onPreviewButtonClick, methodName, paramBounds}} />
+    <div id="MorphPreview" className="unit-hub">
+      <UnitHub {...{gameId, unitName, morph: preview, formRef, onFormChange, fillValue: "-"}}>
+      <button disabled onClick={(e) => console.log(e.currentTarget)} type="button">Confirm</button>
     </UnitHub>
-    </div>
-    <div id="MorphPreview" className="unit-hub">
-    {methodName == null || (
-      <UnitHub {...{gameId, unitName, morph: preview, formRef, onFormChange, fillValue: "-"}}>
-      <button disabled onClick={(e) => console.log(e.currentTarget)} type="button">Confirm</button>
-      </UnitHub>
-    )}
-    </div>
-    <div id="MorphPreview" className="unit-hub">
-    {methodName == null || (
-      <UnitHub {...{gameId, unitName, morph: preview, formRef, onFormChange, fillValue: "-"}}>
-      <button disabled onClick={(e) => console.log(e.currentTarget)} type="button">Confirm</button>
-      </UnitHub>
-    )}
     </div>
     </>
   );
