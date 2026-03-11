@@ -21,7 +21,7 @@ import {
   MorphHub,
   MorphMethodExecute,
   //EvolveMorph2,
-} from "./lib/routes";
+} from "./routes";
 import {
   getMorph,
   createMorph,

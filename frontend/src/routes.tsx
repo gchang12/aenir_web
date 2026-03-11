@@ -21,7 +21,7 @@ import {
 import {
   GAMES,
   UNITS,
-} from "./constants";
+} from "./lib/constants";
 import {
   MorphMethodMenu,
   MorphMethodSelect,
@@ -34,7 +34,7 @@ import {
   BlankClassLevelInfo,
   ConfirmationMenu,
   UnitHub,
-} from "./Components";
+} from "./lib/Components";
 import {
   getMorph,
   getLocalMorphs,
@@ -43,7 +43,7 @@ import {
   executeMorphMethod,
   normalizeArgValues,
   calculateStatsDelta,
-} from "./functions";
+} from "./lib/functions";
 
 export function Root() {
   return (
