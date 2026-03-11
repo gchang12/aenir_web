@@ -223,18 +223,16 @@ export function MorphHub({methodName = null}) {
 }
 
 export function MorphMethodExecute() {
-  const {pk, fullMorph, paramBounds} = useLoaderData();
   const {methodName} = useParams();
-  console.log("MorphMethodExecute.methodName:", methodName);
-  const {initArgs, morph} = fullMorph;
-  const {gameNo, unitName} = initArgs;
+  const {pk, fullMorph, paramBounds} = useLoaderData();
+  const {gameNo, unitName} = fullMorph.initArgs;
   const gameId = "fe" + gameNo;
-  const [current, setCurrent] = useState(morph);
+  const [current, setCurrent] = useState(fullMorph.morph);
   const [preview, setPreview] = useState(null);
   const [previewMode, setPreviewMode] = useState(null);
+  const {pkLoc} = useParams();
   const formRef = useRef(null);
   const navigate = useNavigate();
-  const {pkLoc} = useParams();
   useEffect(() => {
     setCurrent(fullMorph.morph);
   }, [pk]);
@@ -242,7 +240,7 @@ export function MorphMethodExecute() {
     //console.log(e.currentTarget);
     const action = e.currentTarget.value ?? "";
     navigate(`/morphs/${pkLoc}/${action}`);
-  }, []);
+  }, [pkLoc]);
   const onFormChange = useCallback((e) => {
     //console.log(e.currentTarget);
     setPreviewMode(true);
@@ -275,7 +273,7 @@ export function MorphMethodExecute() {
         setPreview(morph);
         setPreviewMode(false);
       });
-  }, [pkLoc]);
+  }, [pk, methodName]);
   return (
     <>
     <MorphHub {...{methodName}} />
