@@ -146,6 +146,7 @@ class UseStatBoosterArgs(serializers.Serializer):
             #"Talisman",
             #"Boots",
             #"Body Ring",
+            "",
         ),
     )
 
@@ -167,6 +168,7 @@ class ScrollEquipmentArgs(serializers.Serializer):
             'Sety',
             'Tordo',
             'Ulir',
+            "",
         ),
     )
 
@@ -187,6 +189,7 @@ class BandEquipmentArgs(serializers.Serializer):
             'Mage Band',
             'Priest Band',
             'Thief Band',
+            "",
         ),
     )
 
@@ -323,6 +326,7 @@ class BandSetSerializer(serializers.Serializer):
             'Mage Band',
             'Priest Band',
             'Thief Band',
+            "",
         ),
     )
 
@@ -343,6 +347,7 @@ class ScrollSetSerializer(serializers.Serializer):
             'Sety',
             'Tordo',
             'Ulir',
+            "",
         ),
     )
 
