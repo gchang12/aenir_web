@@ -166,3 +166,7 @@ menu {
 figcaption {
   width: 100%;
 }
+
+tr.positive {
+  color: lightblue;
+};

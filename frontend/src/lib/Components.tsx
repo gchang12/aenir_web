@@ -154,13 +154,29 @@ export function BlankStatsTable({gameId}) {
   );
 };
 
-export function CurrentStatsTable({stats}) {
+export function CurrentStatsTable({stats, highlightMap}) {
+  function shouldHighlight(stat, currentValue, localMax) {
+    if (highlightMap == null) {
+      return currentValue === localMax ? "maxed-stat" : undefined;
+    } else {
+      const statValue = highlightMap[stat];
+      if (statValue > 0) {
+        return "positive";
+      } else if (statValue < 0) {
+        return "negative";
+      } else {
+        return undefined;
+      };
+    };
+  };
   return (
     <table className="StatsTable">
       <tbody>
       {stats.map(([stat, currentValue, localMax, absMax]) => {
+        const className = shouldHighlight(stat, currentValue, localMax);
+        //console.log(stat, className);
         return (
-          <tr key={stat} className={currentValue === localMax ? "maxed-stat" : undefined}>
+          <tr key={stat} className={className}>
             <th>{stat}</th>
             <td>{currentValue}</td>
             <td>
@@ -257,7 +273,7 @@ export function ConfirmationMenu({previewMode, refetchMorph, message, children})
   );
 };
 
-export function UnitHub({gameId, unitName, morph, onFormChange, formRef, children}) {
+export function UnitHub({gameId, unitName, morph, onFormChange, formRef, highlightMap, children}) {
   return (
     <>
     <ProfileIcon {...{gameId, unitName}}>
@@ -268,7 +284,7 @@ export function UnitHub({gameId, unitName, morph, onFormChange, formRef, childre
       {children}
     </Form>
     {/* */}
-    {morph == null ? <BlankStatsTable {...{gameId}} /> : <CurrentStatsTable {...{stats: morph.stats}} />}
+    {morph == null ? <BlankStatsTable {...{gameId}} /> : <CurrentStatsTable {...{stats: morph.stats, highlightMap}} />}
     </>
   );
 };
@@ -326,7 +342,7 @@ function PromoteMenu({paramBounds, morph}) {
       <label htmlFor="promote">Promote</label>
       <select disabled={paramBounds == null} id="promote" name="promo_cls" onChange={(e) => setPromoCls(e.currentTarget.value)}>
       <option value=""></option> 
-      {paramBounds.map(([_, promoCls]) => {
+      {paramBounds == null || paramBounds.map(([_, promoCls]) => {
         return (
           <option key={promoCls} value={promoCls}>
           {promoCls}
@@ -341,13 +357,13 @@ function PromoteMenu({paramBounds, morph}) {
 }
 
 function UseStatBoosterMenu({paramBounds, gameNo}) {
-  const [itemName, useItemName] = useState('');
+  const [itemName, setItemName] = useState('');
   const [stat, statValue] = paramBounds;
   const statBoosters = listStatBoosters(gameNo);
   return (
     <div className="UseStatBoosterMenu">
-      <label htmlFor="use_stat_booster">Use Stat Booster</label>
-      <select disabled={paramBounds == null} id="use_stat_booster" name="item_name" onChange={(e) => setPromoCls(e.currentTarget.value)}>
+      <label htmlFor="use_stat_booster">Item</label>
+      <select disabled={paramBounds == null} id="use_stat_booster" name="item_name" onChange={(e) => setItemName(e.currentTarget.value)}>
       <option value=""></option> 
       {statBoosters.map(statBooster => {
         return (
@@ -358,7 +374,7 @@ function UseStatBoosterMenu({paramBounds, gameNo}) {
       })
       }
       </select>
-      {typeof statValue === "number" || <p>{`'${stat}' is maxed out at '${statValue}`}</p>}
+      {typeof statValue === "number" && <p>{`'${stat}' is maxed out at '${statValue}`}</p>}
     </div>
   );
 }
@@ -392,22 +408,22 @@ function UseMetissTomeMenu() {
   );
 }
 
-export function MorphMethodMenu({methodName, paramBounds, morph}) {
+export function MorphMethodMenu({methodName, paramBounds, morph, gameNo}) {
   switch (methodName) {
     case "level_up":
       return <LevelUpMenu {...{paramBounds, morph}} />
     case "promote":
       return <PromoteMenu {...{paramBounds, morph}} />
     case "use_stat_booster":
-      return <UseStatBoosterMenu {...{paramBounds, morph}} />
+      return <UseStatBoosterMenu {...{paramBounds, morph, gameNo}} />
     case "set_scrolls":
-      return <SetScrollsMenu {...{paramBounds, morph}} />
+      return <SetScrollsMenu {...{paramBounds, morph, gameNo}} />
     case "use_afas_drops":
       return <UseAfasDropsMenu {...{paramBounds, morph}} />
     case "use_metiss_tome":
       return <UseMetissTomeMenu {...{paramBounds, morph}} />
     case "set_bands":
-      return <SetBandsMenu {...{paramBounds, morph}} />
+      return <SetBandsMenu {...{paramBounds, morph, gameNo}} />
     default:
       throw new Error(`Unrecgonized method: '${methodName}'`);
   };

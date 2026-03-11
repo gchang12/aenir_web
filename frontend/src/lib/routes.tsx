@@ -42,6 +42,7 @@ import {
   simulateMorphMethod,
   executeMorphMethod,
   normalizeArgValues,
+  calculateStatsDelta,
 } from "./functions";
 
 export function Root() {
@@ -259,12 +260,14 @@ export function MorphMethodExecute() {
         setPreviewMode(false);
       });
   }, [pk, methodName]);
+  const highlightMap = calculateStatsDelta(current, preview);
+  console.log(current, preview);
   return (
     <>
     <MorphHub {...{methodName}} />
     <div id="MorphPreview" className="unit-hub">
-      <UnitHub {...{gameId, unitName, morph: preview, onFormChange, formRef}}>
-        <MorphMethodMenu {...{methodName, paramBounds, morph: current}} />
+      <UnitHub {...{gameId, unitName, morph: preview, onFormChange, formRef, highlightMap}}>
+        <MorphMethodMenu {...{methodName, paramBounds, morph: current, gameNo}} />
         <button disabled={previewMode !== true} onClick={onPreviewButtonClick} type="button">Preview</button>
         <button disabled={previewMode !== false} type="submit">Confirm</button>
       </UnitHub>

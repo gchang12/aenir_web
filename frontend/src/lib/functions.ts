@@ -200,3 +200,17 @@ export function listStatBoosters(gameNo) {
       throw new Error("Unrecognized game: " + gameNo);
   };
 }
+
+export function calculateStatsDelta(morph1, morph2) {
+  const arrayLength = morph1.stats.length;
+  const statsDelta = {};
+  let statName, stat1, stat2;
+  for (let i=0; i < arrayLength; i++) {
+    statName = morph1.stats[i][0];
+    stat1 = morph1.stats[i][1];
+    stat2 = morph2 == null ? null : morph2.stats[i][1];
+    statsDelta[statName] = stat2 == null ? null : stat2 > stat1;
+  };
+  console.log(Object.entries(statsDelta));
+  return statsDelta;
+}
