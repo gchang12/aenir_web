@@ -180,7 +180,12 @@ class MorphViewSet(viewsets.ViewSet):
             "set_bands": (vmorph.set_bands, BandSetSerializer),
             "set_scrolls": (vmorph.set_scrolls, ScrollSetSerializer),
         }[method_name]
-        method_args_serializer = serializer(data=request.query_params)
+        logger.debug("request.data: %r", request.data)
+        logger.debug("request.query_params: %r", request.query_params)
+        if request.method == "GET":
+            method_args_serializer = serializer(data=request.query_params)
+        else:
+            method_args_serializer = serializer(data=request.data)
         logger.debug("Attempting to validate argument(s) of '%s'.", method_name)
         method_args_serializer.is_valid(raise_exception=True)
         valid_method_args = method_args_serializer.validated_data

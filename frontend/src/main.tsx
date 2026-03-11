@@ -31,6 +31,7 @@ import {
   setLocalMorphs,
   getLocalMorphs,
   getNullArgs,
+  normalizeArgValues,
 } from "./lib/functions";
 
 const router = createBrowserRouter([
@@ -142,10 +143,7 @@ const router = createBrowserRouter([
               const formData = await request.formData();
               const {pkLoc, methodName} = params;
               const pk = getLocalMorphs()[pkLoc].pk;
-              const args = {};
-              for (const [key, value] of formData.entries()) {
-                args[key] = value;
-              };
+              const args = normalizeArgValues(formData);
               console.log(`executeMorphMethod(${pk}, ${methodName}, ${Object.entries(args)})`);
               await executeMorphMethod(pk, methodName, args);
               return redirect(`/morphs/${pkLoc}/`);

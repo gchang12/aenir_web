@@ -90,8 +90,9 @@ export function simulateMorphMethod(pk, method_name, args) {
 
 export function executeMorphMethod(pk, method_name, args) {
   const url = RESOURCE_URL + [pk, method_name, ""].join("/");
+  console.log("executeMorphMethod.args:", Object.entries(args));
   const fetchTask = axios
-    .patch(url, {params: args})
+    .patch(url, args)
     .then(resp => resp.data)
     .catch(err => console.log(err));
   return fetchTask;
@@ -161,4 +162,23 @@ export function getNullArgs(methodName) {
     default:
       throw new Error(`Unrecgonized method: '${methodName}'`);
   };
+}
+
+export function normalizeArgValues(formData) {
+  const args = {};
+  for (const [key, value] of formData.entries()) {
+    console.log("key:", key, "value:", value);
+    switch (key) {
+      case "num_levels":
+      case "promo_cls":
+      case "item_name":
+      case "scrolls":
+      case "bands":
+        args[key] = value;
+        break;
+      default:
+        throw new Error("Unrecognized argument:" + key);
+    };
+  };
+  return args;
 }

@@ -41,6 +41,7 @@ import {
   setLocalMorphs,
   simulateMorphMethod,
   executeMorphMethod,
+  normalizeArgValues,
 } from "./functions";
 
 export function Root() {
@@ -248,24 +249,8 @@ export function MorphMethodExecute() {
   const onPreviewButtonClick = useCallback((e) => {
     console.log(e.currentTarget);
     console.log(formRef.current);
-    const formData = new FormData(formRef.current);
-    const args = {};
-    for (const [key, value] of formData.entries()) {
-      console.log("key:", key, "value:", value);
-      switch (key) {
-        case "num_levels":
-          args[key] = (value - current.level[0]);
-          break;
-        case "promo_cls":
-        case "item_name":
-        case "scrolls":
-        case "bands":
-          args[key] = value;
-          break;
-        default:
-          throw new Error("Unrecognized argument:" + key);
-      };
-    };
+    const formData = new FormData(formRef.current)
+    const args = normalizeArgValues(formData);
     console.log("args:", Object.entries(args));
     simulateMorphMethod(pk, methodName, args)
       .then(({morph}) => {
