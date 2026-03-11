@@ -225,7 +225,7 @@ export function EvolveMorph() {
       <MorphMethodSelect {...{gameId, onMethodSelect, currentMethod: methodName}} />
       {methodName == null || (
         <>
-        <MorphMethodMenu {...{methodName, pk}} />
+        <MorphMethodMenu {...{methodName, paramBounds}} />
         <button onClick={(e) => console.log(e.currentTarget)} type="button">Preview</button>
         </>
       )}

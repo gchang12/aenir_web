@@ -142,3 +142,23 @@ export function listMorphMethods(gameId) {
   return morphMethods;
 }
 
+export function getNullArgs(methodName) {
+  switch (methodName) {
+    case "level_up":
+      return {num_levels: 0};
+    case "promote":
+      return {promo_cls: ""};
+    case "use_stat_booster":
+      return {item_name: ""};
+    case "set_scrolls":
+      return {scrolls: [""]};
+    case "use_afas_drops":
+      return {};
+    case "use_metiss_tome":
+      return {};
+    case "set_bands":
+      return {bands: [""]};
+    default:
+      throw new Error(`Unrecgonized method: '${methodName}'`);
+  };
+}

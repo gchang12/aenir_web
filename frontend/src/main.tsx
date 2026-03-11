@@ -24,8 +24,10 @@ import {
   getMorph,
   createMorph,
   retrieveMorph,
+  simulateMorphMethod,
   setLocalMorphs,
   getLocalMorphs,
+  getNullArgs,
 } from "./lib/functions";
 
 const router = createBrowserRouter([
@@ -117,11 +119,11 @@ const router = createBrowserRouter([
                 path: ":methodName",
                 Component: EvolveMorph,
                 loader: async ({params}) => {
-                  const {pkLoc} = params;
+                  const {pkLoc, methodName} = params;
                   const pk = getLocalMorphs()[pkLoc].pk;
-                  const fullMorph = await retrieveMorph(pk);
-                  console.log("fullMorph:", Object.entries(fullMorph));
-                  return {pk, fullMorph};
+                  const nullArgs = getNullArgs(methodName);
+                  const {paramBounds} = await simulateMorphMethod(pk, methodName, nullArgs)
+                  return {pk, paramBounds};
                 },
               },
             ],
