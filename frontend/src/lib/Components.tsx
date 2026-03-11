@@ -129,8 +129,9 @@ export function OptionSelect({missingParams}) {
   );
 };
 
-export function BlankStatsTable({gameId, fillValue}) {
+export function BlankStatsTable({gameId}) {
   const statList = getStatList(gameId);
+  const fillValue = "-";
   return (
     <table className="StatsTable">
       <tbody>
@@ -223,7 +224,8 @@ export function ClassLevelInfo({morph}) {
   );
 };
 
-export function BlankClassLevelInfo({fillValue}) {
+export function BlankClassLevelInfo() {
+  const fillValue = "-";
   return (
     <table className="ClassLevelInfo">
       <tbody>
@@ -253,18 +255,18 @@ export function ConfirmationMenu({previewMode, refetchMorph, message, children})
   );
 };
 
-export function UnitHub({gameId, unitName, morph, onFormChange, formRef, fillValue, children}) {
+export function UnitHub({gameId, unitName, morph, onFormChange, formRef, children}) {
   return (
     <>
     <ProfileIcon {...{gameId, unitName}}>
     {unitName}
     </ProfileIcon>
-    {morph == null ? <BlankClassLevelInfo {...{gameId, fillValue}} /> : <ClassLevelInfo {...{morph}} />}
+    {morph == null ? <BlankClassLevelInfo /> : <ClassLevelInfo {...{morph}} />}
     <Form onChange={onFormChange} ref={formRef} className="ConfirmationMenu" method="post">
       {children}
     </Form>
     {/* */}
-    {morph == null ? <BlankStatsTable {...{gameId, fillValue}} /> : <CurrentStatsTable {...{stats: morph.stats}} />}
+    {morph == null ? <BlankStatsTable {...{gameId}} /> : <CurrentStatsTable {...{stats: morph.stats}} />}
     </>
   );
 };
@@ -273,7 +275,7 @@ export function MorphMethodSelect({gameId, onMethodSelect, currentMethod}) {
   const morphMethods = listMorphMethods(gameId);
   return (
     <div className="SelectMorphMethod">
-      <label htmlFor="morphMethod">Actions</label>
+      <label htmlFor="morphMethod">Action</label>
       <select required name="morphMethod" id="morphMethod" onChange={onMethodSelect} defaultValue={currentMethod}>
         <option name="morphMethod" value=""></option>
         {morphMethods.map(method => {

@@ -39,6 +39,7 @@ import {
   getMorph,
   getLocalMorphs,
   setLocalMorphs,
+  simulateMorphMethod,
 } from "./lib/functions";
 
 export function Root() {
@@ -195,14 +196,13 @@ export function Morphs() {
   );
 }
 
-export function MorphHub({onFormChange, onPreviewButtonClick, methodName, paramBounds}) {
+export function MorphHub({methodName = null}) {
   const {pk, fullMorph} = useLoaderData();
   const {initArgs, morph} = fullMorph;
   const {gameNo, unitName} = initArgs;
   const gameId = "fe" + gameNo;
   const [current, setCurrent] = useState(morph);
   const [preview, setPreview] = useState(null);
-  const formRef = useRef(null);
   const navigate = useNavigate();
   const {pkLoc} = useParams();
   useEffect(() => {
@@ -211,59 +211,61 @@ export function MorphHub({onFormChange, onPreviewButtonClick, methodName, paramB
   const onMethodSelect = useCallback((e) => {
     const action = e.currentTarget.value ?? "";
     navigate(`/morphs/${pkLoc}/${action}`);
-  }, []);
+  }, [pkLoc]);
   return (
     <div id="MorphHub" className="unit-hub">
-    <UnitHub {...{gameId, unitName, morph: current, formRef, onFormChange}}>
-      <MorphMethodSelect {...{gameId, onMethodSelect, currentMethod: methodName}} />
-      {(methodName == null && paramBounds == null) || (
-        <>
-        <MorphMethodMenu {...{methodName, paramBounds, morph: current}} />
-        <button onClick={(e) => console.log(e.currentTarget)} type="button">Preview</button>
-        </>
-      )}
-    </UnitHub>
+      <UnitHub {...{gameId, unitName, morph: current}}>
+        <MorphMethodSelect {...{gameId, onMethodSelect, currentMethod: methodName}} />
+      </UnitHub>
     </div>
   );
 }
 
 export function MorphMethodExecute() {
-  const {pkLoc, methodName} = useParams();
-  console.log("MorphMethodExecute.pkLoc:", pkLoc);
-  console.log("MorphMethodExecute.methodName:", methodName);
   const {pk, fullMorph, paramBounds} = useLoaderData();
-  console.log("MorphMethodExecute.paramBounds:", Object.entries(paramBounds ?? {}));
+  const {methodName} = useParams();
+  console.log("MorphMethodExecute.methodName:", methodName);
   const {initArgs, morph} = fullMorph;
   const {gameNo, unitName} = initArgs;
   const gameId = "fe" + gameNo;
   const [current, setCurrent] = useState(morph);
   const [preview, setPreview] = useState(null);
+  const [previewMode, setPreviewMode] = useState(true);
   const formRef = useRef(null);
   const navigate = useNavigate();
-  //const {pkLoc} = useParams();
   useEffect(() => {
     setCurrent(fullMorph.morph);
   }, [pk]);
   const onMethodSelect = useCallback((e) => {
-    console.log(e.currentTarget);
+    //console.log(e.currentTarget);
     const action = e.currentTarget.value ?? "";
     navigate(`/morphs/${pkLoc}/${action}`);
   }, []);
   const onFormChange = useCallback((e) => {
-    console.log(e.currentTarget);
+    //console.log(e.currentTarget);
+    setPreviewMode(true);
   }, []);
-  // NOTE: This is for all children of morphs/:pkLoc/
-  //const {methodName} = useParams();
   const onPreviewButtonClick = useCallback((e) => {
     console.log(e.currentTarget);
-  }, []);
+    console.log(formRef.current);
+    const formData = new FormData(formRef.current);
+    const args = {};
+    for (const [key, value] of formData.entries()) {
+      args[key] = value;
+    };
+    console.log("args:", Object.entries(args));
+    //simulateMorphMethod(pk, methodName,
+    setPreviewMode(false);
+  }, [pk, methodName]);
   return (
     <>
-    <MorphHub {...{onFormChange, onPreviewButtonClick, methodName, paramBounds}} />
+    <MorphHub {...{methodName}} />
     <div id="MorphPreview" className="unit-hub">
-      <UnitHub {...{gameId, unitName, morph: preview, formRef, onFormChange, fillValue: "-"}}>
-      <button disabled onClick={(e) => console.log(e.currentTarget)} type="button">Confirm</button>
-    </UnitHub>
+      <UnitHub {...{gameId, unitName, morph: preview, onFormChange, formRef}}>
+        <MorphMethodMenu {...{methodName, paramBounds, morph: current}} />
+        <button disabled={!previewMode} onClick={onPreviewButtonClick} type="button">Preview</button>
+        <button disabled={previewMode} type="submit">Confirm</button>
+      </UnitHub>
     </div>
     </>
   );
