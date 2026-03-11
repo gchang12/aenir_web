@@ -260,6 +260,22 @@ class MorphViewSet(viewsets.ViewSet):
         return self.simulate_operation(request, pk, method_name)
 
     @action(detail=True, methods=["patch", "get"])
+    def equip_scroll(self, request, pk):
+        """
+        Simulates operations on a morph without modifying it.
+        """
+        method_name = "equip_scroll"
+        return self.simulate_operation(request, pk, method_name)
+
+    @action(detail=True, methods=["patch", "get"])
+    def unequip_scroll(self, request, pk):
+        """
+        Simulates operations on a morph without modifying it.
+        """
+        method_name = "unequip_scroll"
+        return self.simulate_operation(request, pk, method_name)
+
+    @action(detail=True, methods=["patch", "get"])
     def use_afas_drops(self, request, pk):
         """
         Simulates operations on a morph without modifying it.
@@ -276,6 +292,38 @@ class MorphViewSet(viewsets.ViewSet):
         return self.simulate_operation(request, pk, method_name)
 
     @action(detail=True, methods=["patch", "get"])
+    def equip_band(self, request, pk):
+        """
+        Simulates operations on a morph without modifying it.
+        """
+        method_name = "equip_band"
+        return self.simulate_operation(request, pk, method_name)
+
+    @action(detail=True, methods=["patch", "get"])
+    def unequip_band(self, request, pk):
+        """
+        Simulates operations on a morph without modifying it.
+        """
+        method_name = "unequip_band"
+        return self.simulate_operation(request, pk, method_name)
+
+    @action(detail=True, methods=["patch", "get"])
+    def equip_knight_ward(self, request, pk):
+        """
+        Simulates operations on a morph without modifying it.
+        """
+        method_name = "equip_knight_ward"
+        return self.simulate_operation(request, pk, method_name)
+
+    @action(detail=True, methods=["patch", "get"])
+    def unequip_knight_ward(self, request, pk):
+        """
+        Simulates operations on a morph without modifying it.
+        """
+        method_name = "unequip_knight_ward"
+        return self.simulate_operation(request, pk, method_name)
+
+    @action(detail=True, methods=["patch", "get"])
     def set_bands(self, request, pk):
         """
         """
@@ -287,12 +335,5 @@ class MorphViewSet(viewsets.ViewSet):
         """
         """
         method_name = "set_scrolls"
-        return self.simulate_operation(request, pk, method_name)
-
-    @action(detail=True, methods=["patch", "get"])
-    def set_knight_ward(self, request, pk):
-        """
-        """
-        method_name = "set_knight_ward"
         return self.simulate_operation(request, pk, method_name)
 
