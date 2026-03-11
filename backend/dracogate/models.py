@@ -399,7 +399,7 @@ class VirtualMorph(models.Model):
         except BandError as err:
             param_bounds = {
                 # That band was not found! Here is a list of valid bands. (Or you know, just an easy means of getting the band list)
-                BandError.Reason.NOT_FOUND: None,
+                BandError.Reason.NOT_FOUND: err.valid_bands,
                 # No inventory space! Please unequip some bands.
                 BandError.Reason.NO_INVENTORY_SPACE: None,
                 # (band_name) is not equipped! List of bands that ARE equipped.

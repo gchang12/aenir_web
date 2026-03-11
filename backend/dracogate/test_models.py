@@ -1043,6 +1043,46 @@ class TelliusKnightUnit(TestCase):
         ]
         self.assertListEqual(actual, expected)
 
+    def test_set_bands__not_found(self):
+        """
+        """
+        bands = [
+            'Archer Band',
+            'Fighter Band',
+            'Soldier Band',
+            "Sword Band",
+            "",
+        ]
+        vmorph = self.vmorph
+        vmorph.init()
+        (is_success, actual) = vmorph.set_bands(bands=bands)
+        self.assertIs(is_success, False)
+        expected = {
+            'Sword Band': True,
+            'Soldier Band': True,
+            'Fighter Band': True,
+            'Archer Band': True,
+            'Knight Band': True,
+            'Paladin Band': True,
+            'Pegasus Band': True,
+            'Wyvern Band': True,
+            'Mage Band': True,
+            'Priest Band': True,
+            'Thief Band': True,
+            "Knight Ward": True,
+        }
+        self.assertDictEqual(actual, expected)
+        # check history
+        expected = []
+        actual = vmorph.history
+        self.assertListEqual(actual, expected)
+        # refetch
+        vmorph.save()
+        vmorph2 = VirtualMorph.objects.get()
+        actual = vmorph2.history
+        expected = []
+        self.assertListEqual(actual, expected)
+
     def test_equip_band(self):
         """
         """
