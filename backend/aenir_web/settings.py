@@ -124,9 +124,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-CORS_ORIGIN_WHITELIST = (
+CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000",
-)
+]
 
 # https://docs.djangoproject.com/en/6.0/topics/logging/#id3
 LOGGING = {

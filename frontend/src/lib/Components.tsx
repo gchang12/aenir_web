@@ -296,7 +296,7 @@ function LevelUpMenu({paramBounds, morph}) {
   const errorMsg = morph.level[0] >= paramBounds[1] ?  `Cannot level-up past LV${paramBounds[1]}.` : null;
   return (
     <div className="LevelUpMenu">
-      <label htmlFor="level_up">Level Up</label>
+      <label htmlFor="level_up">Target Level</label>
       <input id="level_up" disabled={paramBounds[0] == null} type="number" name="num_levels" min={paramBounds[0]} placeholder={morph.level[0]} max={paramBounds[1]} step="1" />
       {errorMsg == null || (
         <p>{errorMsg}</p>

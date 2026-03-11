@@ -27,6 +27,7 @@ import {
   createMorph,
   retrieveMorph,
   simulateMorphMethod,
+  executeMorphMethod,
   setLocalMorphs,
   getLocalMorphs,
   getNullArgs,
@@ -136,6 +137,18 @@ const router = createBrowserRouter([
                 morph,
               };
               return {pk, fullMorph, paramBounds};
+            },
+            action: async ({params, request}) => {
+              const formData = await request.formData();
+              const {pkLoc, methodName} = params;
+              const pk = getLocalMorphs()[pkLoc].pk;
+              const args = {};
+              for (const [key, value] of formData.entries()) {
+                args[key] = value;
+              };
+              console.log(`executeMorphMethod(${pk}, ${methodName}, ${Object.entries(args)})`);
+              await executeMorphMethod(pk, methodName, args);
+              return redirect(`/morphs/${pkLoc}/`);
             },
           },
         ],
