@@ -40,6 +40,7 @@ import {
   getLocalMorphs,
   setLocalMorphs,
   simulateMorphMethod,
+  executeMorphMethod,
 } from "./lib/functions";
 
 export function Root() {
@@ -230,9 +231,10 @@ export function MorphMethodExecute() {
   const gameId = "fe" + gameNo;
   const [current, setCurrent] = useState(morph);
   const [preview, setPreview] = useState(null);
-  const [previewMode, setPreviewMode] = useState(true);
+  const [previewMode, setPreviewMode] = useState(null);
   const formRef = useRef(null);
   const navigate = useNavigate();
+  const {pkLoc} = useParams();
   useEffect(() => {
     setCurrent(fullMorph.morph);
   }, [pk]);
@@ -251,20 +253,37 @@ export function MorphMethodExecute() {
     const formData = new FormData(formRef.current);
     const args = {};
     for (const [key, value] of formData.entries()) {
-      args[key] = value;
+      console.log("key:", key, "value:", value);
+      switch (key) {
+        case "num_levels":
+          args[key] = (value - current.level[0]);
+          break;
+        case "promo_cls":
+        case "item_name":
+        case "scrolls":
+        case "bands":
+          args[key] = value;
+          break;
+        default:
+          throw new Error("Unrecognized argument:" + key);
+      };
     };
     console.log("args:", Object.entries(args));
-    //simulateMorphMethod(pk, methodName,
-    setPreviewMode(false);
-  }, [pk, methodName]);
+    simulateMorphMethod(pk, methodName, args)
+      .then(({morph}) => {
+        console.log(Object.entries(morph));
+        setPreview(morph);
+        setPreviewMode(false);
+      });
+  }, [pkLoc]);
   return (
     <>
     <MorphHub {...{methodName}} />
     <div id="MorphPreview" className="unit-hub">
       <UnitHub {...{gameId, unitName, morph: preview, onFormChange, formRef}}>
         <MorphMethodMenu {...{methodName, paramBounds, morph: current}} />
-        <button disabled={!previewMode} onClick={onPreviewButtonClick} type="button">Preview</button>
-        <button disabled={previewMode} type="submit">Confirm</button>
+        <button disabled={previewMode !== true} onClick={onPreviewButtonClick} type="button">Preview</button>
+        <button disabled={previewMode !== false} type="submit">Confirm</button>
       </UnitHub>
     </div>
     </>

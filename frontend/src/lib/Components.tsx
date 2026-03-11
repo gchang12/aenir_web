@@ -297,7 +297,7 @@ function LevelUpMenu({paramBounds, morph}) {
   return (
     <div className="LevelUpMenu">
       <label htmlFor="level_up">Level Up</label>
-      <input id="level_up" disabled={paramBounds[0] == null} type="number" name="level_up" min={paramBounds[0]} defaultValue={paramBounds[0]} max={paramBounds[1]} />
+      <input id="level_up" disabled={paramBounds[0] == null} type="number" name="num_levels" min={paramBounds[0]} placeholder={morph.level[0]} max={paramBounds[1]} step="1" />
       {errorMsg == null || (
         <p>{errorMsg}</p>
       )}
