@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {
   STAT_LIST,
+  STAT_BOOSTERS,
 } from "./constants";
 
 const RESOURCE_URL: string = "http://localhost:8000/dracogate/api/morphs/";
@@ -177,8 +178,25 @@ export function normalizeArgValues(formData) {
         args[key] = value;
         break;
       default:
-        throw new Error("Unrecognized argument:" + key);
+        throw new Error("Unrecognized argument: " + key);
     };
   };
   return args;
+}
+
+export function listStatBoosters(gameNo) {
+  switch (gameNo) {
+    case 4:
+      throw new Error("FE4 has no stat boosters!");
+    case 5:
+      return STAT_BOOSTERS.THRACIA;
+    case 6:
+    case 7:
+    case 8:
+      return STAT_BOOSTERS.GBA;
+    case 9:
+      return STAT_BOOSTERS.RADIANT;
+    default:
+      throw new Error("Unrecognized game: " + gameNo);
+  };
 }

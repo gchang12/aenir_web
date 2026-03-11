@@ -128,15 +128,9 @@ const router = createBrowserRouter([
               const morphRecord = getLocalMorphs()[pkLoc];
               const {pk, gameId, unitName} = morphRecord;
               const {morph, paramBounds} = await simulateMorphMethod(pk, methodName, nullArgs);
-              console.log("MorphMethodExecute.loader.paramBounds:", Object.entries(paramBounds));
+              const fullMorph = await retrieveMorph(pk);
+              console.log("MorphMethodExecute.loader.paramBounds:", Object.entries(paramBounds ?? {}));
               console.log("MorphMethodExecute.loader.morph:", Object.entries(morph));
-              const fullMorph = {
-                initArgs: {
-                  gameNo: Number(gameId.replace("fe", "")),
-                  unitName,
-                },
-                morph,
-              };
               return {pk, fullMorph, paramBounds};
             },
             action: async ({params, request}) => {

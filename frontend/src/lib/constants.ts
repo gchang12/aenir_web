@@ -1907,3 +1907,40 @@ export const MORPH_METHOD_NAMES = {
   "set_bands": "Equip Bands",
   "set_knight_ward": "Knight Ward",
 };
+
+export const STAT_BOOSTERS = {
+  THRACIA: [
+    "Life Ring",
+    "Power Ring",
+    "Magic Ring",
+    "Skill Ring",
+    "Speed Ring",
+    "Luck Ring",
+    "Shield Ring",
+    "Body Ring",
+    "Leg Ring",
+  ],
+  GBA: [
+    "Angelic Robe",
+    "Energy Ring",
+    "Secret Book",
+    "Speedwings",
+    "Goddess Icon",
+    "Dragonshield",
+    "Talisman",
+    "Boots",
+    "Body Ring",
+  ],
+  RADIANT: [
+    "Seraph Robe",
+    "Energy Drop",
+    "Spirit Dust",
+    "Secret Book",
+    "Speedwing",
+    "Ashera Icon",
+    "Dracoshield",
+    "Talisman",
+    "Boots",
+    "Body Ring",
+  ],
+}; 

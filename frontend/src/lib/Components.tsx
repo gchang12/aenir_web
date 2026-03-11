@@ -4,12 +4,14 @@ import {
 } from "./constants";
 import {
   getStatList,
+  listStatBoosters,
   listMorphMethods,
   simulateMorphMethod,
   executeMorphMethod,
 } from "./functions";
 import {
   useState,
+  useEffect,
   useCallback,
 } from "react";
 import {
@@ -293,7 +295,7 @@ export function MorphMethodSelect({gameId, onMethodSelect, currentMethod}) {
 };
 
 function LevelUpMenu({paramBounds, morph}) {
-  const errorMsg = morph.level[0] >= paramBounds[1] ?  `Cannot level-up past LV${paramBounds[1]}.` : null;
+  const errorMsg = morph.level[0] >= paramBounds[1] ? `Max level: '${paramBounds[1]}'.` : null;
   return (
     <div className="LevelUpMenu">
       <label htmlFor="level_up">Levels</label>
@@ -307,19 +309,23 @@ function LevelUpMenu({paramBounds, morph}) {
 
 function PromoteMenu({paramBounds, morph}) {
   // upon change, show error message
-  const [errorMsg, setErrorMsg] = useState("");
-  const checkForErrors = useCallback((e) => {
-    console.log(e.currentTarget);
-    const promoCls = e.currentTarget.value;
-    const minPromoLv = paramBounds.find(paramBoundEntry => paramBoundEntry[1] === promoCls)[0];
-    if (morph.level.at(0) < minPromoLv) {
-      setErrorMsg(`Must be at least Lv. ${minPromoLv} to promtoe.`);
-    };
+  const [errorMsg, setErrorMsg] = useState('');
+  const [promoCls, setPromoCls] = useState(paramBounds == null ? null : paramBounds[0][1]);
+  useEffect(() => {
+    if (paramBounds == null) {
+      setErrorMsg("This unit cannot promote.");
+    } else {
+      const minPromoLv = paramBounds.find(paramBoundEntry => paramBoundEntry[1] === promoCls)[0];
+      if (morph.level.at(0) < minPromoLv) {
+        setErrorMsg(`Must be at least Lv. ${minPromoLv} to promote to '${promoCls}'.`);
+      };
+    }
   }, [paramBounds]);
   return (
     <div className="PromoteMenu">
       <label htmlFor="promote">Promote</label>
-      <select id="promote" name="promote">
+      <select disabled={paramBounds == null} id="promote" name="promo_cls" onChange={(e) => setPromoCls(e.currentTarget.value)}>
+      <option value=""></option> 
       {paramBounds.map(([_, promoCls]) => {
         return (
           <option key={promoCls} value={promoCls}>
@@ -334,13 +340,29 @@ function PromoteMenu({paramBounds, morph}) {
   );
 }
 
-function UseStatBoosterMenu() {
+function UseStatBoosterMenu({paramBounds, gameNo}) {
+  const [itemName, useItemName] = useState('');
+  const [stat, statValue] = paramBounds;
+  const statBoosters = listStatBoosters(gameNo);
   return (
-    <h1>
-    Promote
-    </h1>
+    <div className="UseStatBoosterMenu">
+      <label htmlFor="use_stat_booster">Use Stat Booster</label>
+      <select disabled={paramBounds == null} id="use_stat_booster" name="item_name" onChange={(e) => setPromoCls(e.currentTarget.value)}>
+      <option value=""></option> 
+      {statBoosters.map(statBooster => {
+        return (
+          <option key={statBooster} value={statBooster}>
+          {statBooster}
+          </option>
+        );
+      })
+      }
+      </select>
+      {typeof statValue === "number" || <p>{`'${stat}' is maxed out at '${statValue}`}</p>}
+    </div>
   );
 }
+
 function SetBandsMenu() {
   return (
     <h1>
