@@ -195,7 +195,7 @@ export function Morphs() {
   );
 }
 
-export function EvolveMorph() {
+export function MorphHub({paramBounds}) {
   const {pk, fullMorph} = useLoaderData();
   const {initArgs, morph} = fullMorph;
   const {gameNo, unitName} = initArgs;
@@ -225,7 +225,48 @@ export function EvolveMorph() {
       <MorphMethodSelect {...{gameId, onMethodSelect, currentMethod: methodName}} />
       {methodName == null || (
         <>
-        <MorphMethodMenu {...{methodName, paramBounds}} />
+        <MorphMethodMenu {...{methodName, paramBounds, morph: current}} />
+        <button onClick={(e) => console.log(e.currentTarget)} type="button">Preview</button>
+        </>
+      )}
+    </UnitHub>
+    </div>
+    </>
+  );
+}
+
+export function MorphMethodExecute() {
+  const {pk, fullMorph} = useLoaderData();
+  console.log("MorphMethodExecute.paramBounds:", Object.entries(paramBounds ?? {}));
+  const {initArgs, morph} = fullMorph;
+  const {gameNo, unitName} = initArgs;
+  const gameId = "fe" + gameNo;
+  const [current, setCurrent] = useState(morph);
+  const [preview, setPreview] = useState(null);
+  const formRef = useRef(null);
+  const navigate = useNavigate();
+  const {pkLoc} = useParams();
+  useEffect(() => {
+    setCurrent(fullMorph.morph);
+  }, [pk]);
+  const onMethodSelect = useCallback((e) => {
+    console.log(e.currentTarget);
+    const action = e.currentTarget.value ?? "";
+    navigate(`/morphs/${pkLoc}/${action}`);
+  }, []);
+  const onFormChange = useCallback((e) => {
+    console.log(e.currentTarget);
+  }, []);
+  // NOTE: This is for all children of morphs/:pkLoc/
+  const {methodName} = useParams();
+  return (
+    <>
+    <div id="EvolveMorph" className="unit-hub">
+    <UnitHub {...{gameId, unitName, morph: current, formRef, onFormChange}}>
+      <MorphMethodSelect {...{gameId, onMethodSelect, currentMethod: methodName}} />
+      {methodName == null || (
+        <>
+        <MorphMethodMenu {...{methodName, paramBounds, morph: current}} />
         <button onClick={(e) => console.log(e.currentTarget)} type="button">Preview</button>
         </>
       )}
@@ -238,6 +279,14 @@ export function EvolveMorph() {
       </UnitHub>
     )}
     </div>
+    <div id="MorphPreview" className="unit-hub">
+    {methodName == null || (
+      <UnitHub {...{gameId, unitName, morph: preview, formRef, onFormChange, fillValue: "-"}}>
+      <button disabled onClick={(e) => console.log(e.currentTarget)} type="button">Confirm</button>
+      </UnitHub>
+    )}
+    </div>
     </>
   );
 }
+

@@ -18,7 +18,9 @@ import {
   UnitSelect,
   UnitConfirm,
   Morphs,
-  EvolveMorph,
+  MorphHub,
+  MorphMethodExecute,
+  //EvolveMorph2,
 } from "./routes";
 import {
   getMorph,
@@ -106,24 +108,25 @@ const router = createBrowserRouter([
         children: [
           {
             path: ":pkLoc",
-            Component: EvolveMorph,
+            Component: MorphHub,
             loader: async ({params}) => {
               const {pkLoc} = params;
               const pk = getLocalMorphs()[pkLoc].pk;
               const fullMorph = await retrieveMorph(pk);
-              console.log("fullMorph:", Object.entries(fullMorph));
+              console.log("loader.fullMorph:", Object.entries(fullMorph));
               return {pk, fullMorph};
             },
             children: [
               {
                 path: ":methodName",
-                Component: EvolveMorph,
+                Component: MorphMethodExecute,
                 loader: async ({params}) => {
                   const {pkLoc, methodName} = params;
                   const pk = getLocalMorphs()[pkLoc].pk;
                   const nullArgs = getNullArgs(methodName);
-                  const {paramBounds} = await simulateMorphMethod(pk, methodName, nullArgs)
-                  return {pk, paramBounds};
+                  const {morph, paramBounds} = await simulateMorphMethod(pk, methodName, nullArgs);
+                  console.log("loader.paramBounds:", Object.entries(paramBounds));
+                  return {pk, fullMorph: morph, paramBounds};
                 },
               },
             ],

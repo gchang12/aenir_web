@@ -10,6 +10,7 @@ import {
 } from "./functions";
 import {
   useState,
+  useCallback,
 } from "react";
 import {
   Form,
@@ -277,7 +278,6 @@ export function MorphMethodSelect({gameId, onMethodSelect, currentMethod}) {
         <option name="morphMethod" value=""></option>
         {morphMethods.map(method => {
           const displayName = MORPH_METHOD_NAMES[method];
-          console.log(method, currentMethod === method);
           return (
             <option name="morphMethod" key={method} value={method}>
               {displayName}
@@ -290,38 +290,48 @@ export function MorphMethodSelect({gameId, onMethodSelect, currentMethod}) {
   );
 };
 
-function LevelUpMenu({pk}) {
-  const method_name = "level_up";
-  const args = {
-    num_levels: 0,
-  };
-  let paramBounds, morph;
-  simulateMorphMethod(pk, method_name, args)
-    .then(data => {
-      ({paramBounds, morph} = data);
-      console.log("(Inside) Promise has been resolved. Data:" + Object.entries(data));
-      return (
-        <div className="LevelUpMenu">
-          <label htmlFor="level_up">Level Up</label>
-          <input id="level_up" disabled={paramBounds[0] == null} type="number" name="level_up" min={morph.level[0] + 1} max={paramBounds[1]} />
-        </div>
-      );
-    })
-    .catch(err => console.log(err));
-  // preview.
-  // list options.
-  // alert user if operation is invalid.
-  // NO submit-button!
-  console.log("(Outside) Promise has been resolved. Data:", Object.entries(paramBounds ?? {}), Object.entries(morph ?? {}));
-}
-
-function PromoteMenu() {
+function LevelUpMenu({paramBounds, morph}) {
+  const errorMsg = morph.level[0] >= paramBounds[1] ?  `Cannot level-up past LV${paramBounds[1]}.` : null;
   return (
-    <h1>
-    Promote
-    </h1>
+    <div className="LevelUpMenu">
+      <label htmlFor="level_up">Level Up</label>
+      <input id="level_up" disabled={paramBounds[0] == null} type="number" name="level_up" min={morph.level[0] + 1} max={paramBounds[1]} />
+      {errorMsg == null || (
+        <p>{errorMsg}</p>
+      )}
+    </div>
   );
 }
+
+function PromoteMenu({paramBounds, morph}) {
+  // upon change, show error message
+  const [errorMsg, setErrorMsg] = useState("");
+  const checkForErrors = useCallback((e) => {
+    console.log(e.currentTarget);
+    const promoCls = e.currentTarget.value;
+    const minPromoLv = paramBounds.find(paramBoundEntry => paramBoundEntry[1] === promoCls)[0];
+    if (morph.level.at(0) < minPromoLv) {
+      setErrorMsg(`Must be at least Lv. ${minPromoLv} to promtoe.`);
+    };
+  }, [paramBounds]);
+  return (
+    <div className="PromoteMenu">
+      <label htmlFor="promote">Promote</label>
+      <select id="promote" name="promote">
+      {paramBounds.map(([_, promoCls]) => {
+        return (
+          <option key={promoCls} value={promoCls}>
+          {promoCls}
+          </option>
+        );
+      })
+      }
+      </select>
+      {errorMsg === "" || <p>{errorMsg}</p>}
+    </div>
+  );
+}
+
 function UseStatBoosterMenu() {
   return (
     <h1>
@@ -357,30 +367,23 @@ function UseMetissTomeMenu() {
     </h1>
   );
 }
-function SetKnightWardMenu() {
-  return (
-    <h1>
-    Equip Knight Ward
-    </h1>
-  );
-}
 
-export function MorphMethodMenu({methodName, pk}) {
+export function MorphMethodMenu({methodName, paramBounds, morph}) {
   switch (methodName) {
     case "level_up":
-      return <LevelUpMenu {...{pk}} />
+      return <LevelUpMenu {...{paramBounds, morph}} />
     case "promote":
-      return <PromoteMenu {...{pk}} />
+      return <PromoteMenu {...{paramBounds, morph}} />
     case "use_stat_booster":
-      return <UseStatBoosterMenu {...{pk}} />
+      return <UseStatBoosterMenu {...{paramBounds, morph}} />
     case "set_scrolls":
-      return <SetScrollsMenu {...{pk}} />
+      return <SetScrollsMenu {...{paramBounds, morph}} />
     case "use_afas_drops":
-      return <UseAfasDropsMenu {...{pk}} />
+      return <UseAfasDropsMenu {...{paramBounds, morph}} />
     case "use_metiss_tome":
-      return <UseMetissTomeMenu {...{pk}} />
+      return <UseMetissTomeMenu {...{paramBounds, morph}} />
     case "set_bands":
-      return <SetBandsMenu {...{pk}} />
+      return <SetBandsMenu {...{paramBounds, morph}} />
     default:
       throw new Error(`Unrecgonized method: '${methodName}'`);
   };
