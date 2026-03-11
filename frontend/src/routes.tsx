@@ -11,6 +11,7 @@ import {
   // fetcher.data does not work.
   //useFetcher,
   useParams,
+  useNavigate,
   NavLink,
   Outlet,
   Form,
@@ -202,11 +203,15 @@ export function EvolveMorph() {
   const [current, setCurrent] = useState(morph);
   const [preview, setPreview] = useState(null);
   const formRef = useRef(null);
+  const navigate = useNavigate();
+  const {pkLoc} = useParams();
   useEffect(() => {
     setCurrent(fullMorph.morph);
   }, [pk]);
   const onMethodSelect = useCallback((e) => {
     console.log(e.currentTarget);
+    const action = e.currentTarget.value ?? "";
+    navigate(`/morphs/${pkLoc}/${action}`);
   }, []);
   const onFormChange = useCallback((e) => {
     console.log(e.currentTarget);
@@ -217,7 +222,7 @@ export function EvolveMorph() {
     <>
     <div id="EvolveMorph" className="unit-hub">
     <UnitHub {...{gameId, unitName, morph: current, formRef, onFormChange}}>
-      <MorphMethodSelect {...{gameId, onMethodSelect}} />
+      <MorphMethodSelect {...{gameId, onMethodSelect, currentMethod: methodName}} />
       {methodName == null || (
         <>
         <MorphMethodMenu {...{methodName, pk}} />

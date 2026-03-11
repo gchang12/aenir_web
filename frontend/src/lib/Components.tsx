@@ -268,15 +268,16 @@ export function UnitHub({gameId, unitName, morph, onFormChange, formRef, fillVal
   );
 };
 
-export function MorphMethodSelect({gameId, onMethodSelect}) {
+export function MorphMethodSelect({gameId, onMethodSelect, currentMethod}) {
   const morphMethods = listMorphMethods(gameId);
   return (
     <div className="SelectMorphMethod">
       <label htmlFor="morphMethod">Actions</label>
-      <select required name="morphMethod" id="morphMethod" onChange={onMethodSelect}>
-        <option name="morphMethod" value="" defaultChecked></option>
+      <select required name="morphMethod" id="morphMethod" onChange={onMethodSelect} defaultValue={currentMethod}>
+        <option name="morphMethod" value=""></option>
         {morphMethods.map(method => {
           const displayName = MORPH_METHOD_NAMES[method];
+          console.log(method, currentMethod === method);
           return (
             <option name="morphMethod" key={method} value={method}>
               {displayName}
