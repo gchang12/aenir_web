@@ -183,9 +183,11 @@ export function CurrentStatsTable({stats, highlightMap}) {
       return currentValue === localMax ? "maxed-stat" : undefined;
     } else {
       const statValue = highlightMap[stat];
+      console.log(stat, statValue);
       if (statValue > 0) {
         return "positive";
       } else if (statValue < 0) {
+        console.log("Returning negative");
         return "negative";
       } else {
         return undefined;

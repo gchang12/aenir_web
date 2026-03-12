@@ -208,7 +208,7 @@ export function calculateStatsDelta(morph1, morph2) {
     statName = morph1.stats[i][0];
     stat1 = morph1.stats[i][1];
     stat2 = morph2 == null ? null : morph2.stats[i][1];
-    statsDelta[statName] = stat2 == null ? null : stat2 > stat1;
+    statsDelta[statName] = stat2 == null ? null : stat2 - stat1;
   };
   return statsDelta;
 }

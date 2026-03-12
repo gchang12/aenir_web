@@ -171,6 +171,10 @@ tr.positive {
   color: lightblue;
 }
 
+tr.negative {
+  color: red;
+}
+
 .unit-comparison {
   display: flex;
 }

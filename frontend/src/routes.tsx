@@ -270,12 +270,12 @@ export function MorphMethodExecute() {
         //setParamBounds2(response.paramBounds ?? []);
       });
   }, [pk, methodName]);
-  const highlightMap = calculateStatsDelta(current, preview);
+  const highlightMap = calculateStatsDelta(current, preview ?? current);
   return (
     <>
     <MorphHub {...{methodName}} />
     <div id="MorphPreview" className="unit-hub">
-      <UnitHub {...{gameId, unitName, morph: previewMode === true ? current : preview, onFormChange, formRef, highlightMap}}>
+      <UnitHub {...{gameId, unitName, morph: previewMode == true ? current : preview, onFormChange, formRef, highlightMap}}>
       <MorphMethodMenu {...{methodName, paramBounds, morph: current, gameNo}} />
       <button disabled={previewMode !== true} onClick={onPreviewButtonClick} type="button">Preview</button>
         <button disabled={previewMode !== false} type="submit">Confirm</button>
@@ -350,7 +350,8 @@ export function MorphComparison() {
         currentDiff.push([stat, diffValue]);
       };
       setDiff(currentDiff);
-      const zeroStats = morph1.stats.map(stat => [stat[0], 0]);
+      console.log(currentDiff);
+      const zeroStats = morph1.morph.stats.map(stat => [stat[0], 0]);
       setStatsDelta(calculateStatsDelta({stats: zeroStats}, {stats: currentDiff}));
     };
   }, [morphs]);
