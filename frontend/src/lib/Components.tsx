@@ -10,6 +10,7 @@ import {
   listMorphMethods,
   simulateMorphMethod,
   executeMorphMethod,
+  getNullGrowthStats,
 } from "./functions";
 import {
   useState,
@@ -147,6 +148,26 @@ export function BlankStatsTable({gameId}) {
             <td>
               <meter min="0" value="0"></meter>
             </td>
+          </tr>
+        );
+      })
+      }
+      </tbody>
+    </table>
+  );
+};
+
+export function InputStatsTable({gameId}) {
+  const statList = getStatList(gameId);
+  const nullGrowthStats = getNullGrowthStats(gameId);
+  return (
+    <table className="StatsTable">
+      <tbody>
+      {statList.map(stat => {
+        return (
+          <tr key={stat}>
+            <th>{stat}</th>
+            <td><input disabled={nullGrowthStats.includes(stat)} required name={stat} type="number" /></td>
           </tr>
         );
       })

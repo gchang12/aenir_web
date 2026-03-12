@@ -169,4 +169,8 @@ figcaption {
 
 tr.positive {
   color: lightblue;
-};
+}
+
+.unit-comparison {
+  display: flex;
+}

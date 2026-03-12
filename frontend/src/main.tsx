@@ -19,7 +19,9 @@ import {
   UnitConfirm,
   Morphs,
   MorphHub,
+  MorphComparison,
   MorphMethodExecute,
+  ///MorphMethodForGrowths,
   //EvolveMorph2,
 } from "./routes";
 import {
@@ -124,6 +126,7 @@ const router = createBrowserRouter([
             Component: MorphMethodExecute,
             loader: async ({params}) => {
               const {pkLoc, methodName} = params;
+              /* TODO: Implement growths methods later.
               switch (methodName) {
                 case "level_up":
                 case "promote":
@@ -139,14 +142,12 @@ const router = createBrowserRouter([
                 default:
                   throw new Error("Unrecognized action: " + methodName);
               };
+              */
               const nullArgs = getNullArgs(methodName);
               const morphRecord = getLocalMorphs()[pkLoc];
               const {pk, gameId, unitName} = morphRecord;
               const {morph, paramBounds} = await simulateMorphMethod(pk, methodName, nullArgs);
-              console.log("pk:", pk);
               const fullMorph = await retrieveMorph(pk);
-              console.log("MorphMethodExecute.loader.paramBounds:", Object.entries(paramBounds ?? {}));
-              console.log("MorphMethodExecute.loader.morph:", Object.entries(morph));
               return {pk, fullMorph, paramBounds};
             },
             action: async ({params, request}) => {
@@ -154,12 +155,19 @@ const router = createBrowserRouter([
               const {pkLoc, methodName} = params;
               const pk = getLocalMorphs()[pkLoc].pk;
               const args = normalizeArgValues(formData);
-              console.log(`executeMorphMethod(${pk}, ${methodName}, ${Object.entries(args)})`);
               await executeMorphMethod(pk, methodName, args);
               return redirect(`/morphs/${pkLoc}/`);
             },
           },
         ],
+      },
+      {
+        path: "compare-morphs",
+        Component: MorphComparison,
+        loader: () => {
+          const localMorphs = getLocalMorphs();
+          return {localMorphs};
+        },
       },
     ],
   },

@@ -5,6 +5,7 @@ import {
   useCallback,
   useRef,
   useMemo,
+  Fragment,
 } from 'react'
 import {
   useLoaderData,
@@ -29,6 +30,7 @@ import {
   OptionSelect,
   CurrentStatsTable,
   BlankStatsTable,
+  InputStatsTable,
   GrowthsStatsTable,
   ProfileIcon,
   ClassLevelInfo,
@@ -44,6 +46,8 @@ import {
   executeMorphMethod,
   normalizeArgValues,
   calculateStatsDelta,
+  retrieveMorph,
+  getNullGrowthStats,
 } from "./lib/functions";
 
 export function Root() {
@@ -57,7 +61,7 @@ export function Root() {
         <menu>
           <li><NavLink to="/create-morph/">Create</NavLink></li>
           <li><NavLink to="/morphs/">Morphs</NavLink></li>
-          <li><NavLink to="/compare/">Compare</NavLink></li>
+          <li><NavLink to="/compare-morphs/">Compare</NavLink></li>
         </menu>
       </nav>
     </header>
@@ -270,7 +274,7 @@ export function MorphMethodExecute() {
     <>
     <MorphHub {...{methodName}} />
     <div id="MorphPreview" className="unit-hub">
-      <UnitHub {...{gameId, unitName, morph: preview, onFormChange, formRef, highlightMap}}>
+      <UnitHub {...{gameId, unitName, morph: previewMode === true ? current : preview, onFormChange, formRef, highlightMap}}>
       <MorphMethodMenu {...{methodName, paramBounds, morph: current, gameNo}} />
       <button disabled={previewMode !== true} onClick={onPreviewButtonClick} type="button">Preview</button>
         <button disabled={previewMode !== false} type="submit">Confirm</button>
@@ -280,39 +284,113 @@ export function MorphMethodExecute() {
   );
 }
 
-export function MorphHubForGrowths({methodName = null}) {
-  const {pk, fullMorph} = useLoaderData();
-  const {initArgs, morph} = fullMorph;
-  const {gameNo, unitName} = initArgs;
-  const gameId = "fe" + gameNo;
-  const [current, setCurrent] = useState(morph);
-  const [preview, setPreview] = useState(null);
-  const navigate = useNavigate();
-  const {pkLoc} = useParams();
-  useEffect(() => {
-    setCurrent(fullMorph.morph);
-  }, [pk]);
-  const onMethodSelect = useCallback((e) => {
-    const action = e.currentTarget.value ?? "";
-    navigate(`/morphs/${pkLoc}/${action}`);
-  }, [pkLoc]);
+export function MorphComparison() {
+  const {localMorphs} = useLoaderData();
+  const [morphs, setMorphs] = useState([]);
+  const [diff, setDiff] = useState(null);
+  const [statsDelta, setStatsDelta] = useState([]);
+  const loadMorph = useCallback((e) => {
+    const pk = e.currentTarget.value;
+    console.log("pk", pk);
+    retrieveMorph(pk)
+      .then(morph => {
+        console.log("morph:", morph);
+        console.log("morphs:", morphs);
+        setMorphs([...morphs, {morph, pk}]);
+        setDiff(null);
+      })
+      .catch(err => console.log(err));
+  }, [morphs]);
+  const formRef = useRef(null);
+  const calculateDiff = useCallback((e) => {
+    //console.log("morphs:", morphs);
+    const morphWrapper = morphs.at(0)?.morph;
+    const avgMorph = morphWrapper?.morph;
+    const nullGrowthStats = getNullGrowthStats("fe" + morphWrapper.initArgs.gameNo);
+    //console.log("avgStats:", avgMorph.stats);
+    const currentDiff = [];
+    if (formRef.current.reportValidity()) {
+      const inputStats = new FormData(formRef.current);
+      let avgStat, diffValue;
+      for (const [stat, inputStat] of inputStats.entries()) {
+        if (nullGrowthStats.includes(stat)) {
+          diffValue = null;
+        } else {
+          avgStat = avgMorph.stats.find(statArray => statArray[0] === stat)[1];
+          diffValue = Math.round(100 * (Number(inputStat) - avgStat)) / 100;
+        }
+        currentDiff.push([stat, diffValue]);
+      }; 
+      setDiff(currentDiff);
+      const zeroStats = avgMorph.stats.map(stat => [stat[0], 0]);
+      setStatsDelta(calculateStatsDelta({stats: zeroStats}, {stats: currentDiff}));
+    };
+  }, [morphs]);
+  const clearDiff = useCallback((e) => {
+    setDiff(null);
+  }, []);
+  const removeMorph = useCallback((e) => {
+    setMorphs(morphs.filter(morphw => morphw.pk !== e.currentTarget.value));
+    setDiff(null);
+  }, []);
   return (
-    <div id="MorphHub" className="unit-hub">
-      <UnitHub {...{gameId, unitName, morph: current}}>
-        <MorphMethodSelect {...{gameId, onMethodSelect, currentMethod: methodName}} />
-      </UnitHub>
+    <div id="MorphComparison">
+      <Form method="post">
+        <select multiple disabled={morphs.length === 2} onChange={loadMorph}>
+        {Object.entries(localMorphs).map(([indexNo, morph]) => {
+          const {pk, gameId, unitName, morphId} = morph;
+          console.log("Listing the morphs");
+          return (
+            <option key={indexNo} value={pk} disabled={morphs.map(morph => morph.pk).includes(pk)}>
+              {"(" + indexNo + ") " + morphId}
+            </option>
+          );
+        })
+        }
+        </select>
+      </Form>
+      <div className="unit-comparison">
+      {morphs.length === 2 && morphs.map(({pk, morph}) => {
+        console.log("Listing the selected morphs");
+        const {gameId, unitName} = getLocalMorphs().find(morph => morph.pk === pk);
+        return (
+          <div className="UnitHub" key={pk}>
+            <UnitHub {...{gameId, unitName, morph: morph.morph}} />
+            <button value={pk} onClick={removeMorph} type="button">Remove</button>
+          </div>
+        );
+      })
+      }
+      {morphs.length === 1 && morphs.slice(0, 1).map(({pk, morph}) => {
+        console.log("Listing the selected morphs");
+        const {gameId, unitName} = getLocalMorphs().find(morph => morph.pk === pk);
+        return (
+          <Fragment key={pk}>
+          <div className="UnitHub">
+            <UnitHub {...{gameId, unitName, morph: morph.morph}} />
+            <button value={pk} onClick={removeMorph} type="button">Remove</button>
+          </div>
+          <div className="UnitHub">
+            <ProfileIcon {...{gameId, unitName}}>
+            {unitName}
+            </ProfileIcon>
+            <ClassLevelInfo {...{morph: morph.morph}} />
+            <Form className="ConfirmationMenu" ref={formRef}>
+              <InputStatsTable {...{gameId}} />
+              <button onClick={calculateDiff} type="button">Compare</button>
+            </Form>
+          </div>
+          </Fragment>
+        );
+      })
+      }
+      {diff != null && (
+        <>
+        {/* <ClassLevelInfo {...{morph: morphs.at(0)?.morph}} /> */}
+        <CurrentStatsTable {...{stats: diff, highlightMap: statsDelta}} />
+        </>
+      )}
+      </div>
     </div>
   );
-}
-
-  /*
-  let morph;
-  switch (methodName) {
-    case "set_scrolls":
-    case "set_bands":
-    case "use_metiss_tome":
-    case "use_afas_drops":
-      morph = preview
-      break;
-  };
-  */
+};

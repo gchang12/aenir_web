@@ -117,6 +117,7 @@ export function listMorphMethods(gameId) {
       throw new Error("Unrecognized game: " + gameId);
   };
   // set game-specific methods.
+  /*
   switch (gameId) {
     case "fe4":
       break;
@@ -138,6 +139,7 @@ export function listMorphMethods(gameId) {
     default:
       throw new Error("Unrecognized game: " + gameId);
   };
+  */
   return morphMethods;
 }
 
@@ -158,7 +160,7 @@ export function getNullArgs(methodName) {
     case "set_bands":
       return {bands: [""]};
     default:
-      throw new Error(`Unrecgonized method: '${methodName}'`);
+      throw new Error(`Unrecognized method: '${methodName}'`);
   };
 }
 
@@ -201,6 +203,7 @@ export function calculateStatsDelta(morph1, morph2) {
   const arrayLength = morph1.stats.length;
   const statsDelta = {};
   let statName, stat1, stat2;
+  console.log(morph2.stats);
   for (let i=0; i < arrayLength; i++) {
     statName = morph1.stats[i][0];
     stat1 = morph1.stats[i][1];
@@ -209,3 +212,18 @@ export function calculateStatsDelta(morph1, morph2) {
   };
   return statsDelta;
 }
+
+export function getNullGrowthStats(gameId) {
+  switch (gameId) {
+    case "fe4":
+      return [];
+    case "fe5":
+      return ["Lead", "MS", "PC"];
+    case "fe6":
+    case "fe7":
+    case "fe8":
+      return ["Con", "Mov"];
+    case "fe9":
+      return ["Con", "Mov", "Wt"];
+  };
+};
