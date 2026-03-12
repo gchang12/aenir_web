@@ -296,7 +296,7 @@ export function MorphComparison() {
       .then(morph => {
         console.log("morph:", morph);
         console.log("morphs:", morphs);
-        setMorphs([...morphs, {morph, pk}]);
+        setMorphs([...morphs, {...morph, pk}]);
         setDiff(null);
       })
       .catch(err => console.log(err));
@@ -304,9 +304,8 @@ export function MorphComparison() {
   const formRef = useRef(null);
   const calculateDiff = useCallback((e) => {
     //console.log("morphs:", morphs);
-    const morphWrapper = morphs.at(0)?.morph;
-    const avgMorph = morphWrapper?.morph;
-    const nullGrowthStats = getNullGrowthStats("fe" + morphWrapper.initArgs.gameNo);
+    const avgMorph = morphs.at(0);
+    const nullGrowthStats = getNullGrowthStats("fe" + avgMorph.initArgs.gameNo);
     //console.log("avgStats:", avgMorph.stats);
     const currentDiff = [];
     if (formRef.current.reportValidity()) {
@@ -330,7 +329,7 @@ export function MorphComparison() {
     setDiff(null);
   }, []);
   const removeMorph = useCallback((e) => {
-    setMorphs(morphs.filter(morphw => morphw.pk !== e.currentTarget.value));
+    setMorphs(morphs.filter(morph => morph.pk !== e.currentTarget.value));
     setDiff(null);
   }, []);
   return (
@@ -350,25 +349,26 @@ export function MorphComparison() {
         </select>
       </Form>
       <div className="unit-comparison">
-      {morphs.length === 2 && morphs.map(({pk, morph}) => {
-        console.log("Listing the selected morphs");
-        const {gameId, unitName} = getLocalMorphs().find(morph => morph.pk === pk);
+      {morphs.length === 2 && morphs.map(morph => {
+        console.log("Listing the selected morphs1");
+        const {gameId, unitName} = getLocalMorphs().find(localMorph => localMorph.pk === morph.pk);
         return (
-          <div className="UnitHub" key={pk}>
+          <div className="UnitHub" key={morph.pk}>
             <UnitHub {...{gameId, unitName, morph: morph.morph}} />
-            <button value={pk} onClick={removeMorph} type="button">Remove</button>
+            <button value={morph.pk} onClick={removeMorph} type="button">Remove</button>
           </div>
         );
       })
       }
-      {morphs.length === 1 && morphs.slice(0, 1).map(({pk, morph}) => {
-        console.log("Listing the selected morphs");
-        const {gameId, unitName} = getLocalMorphs().find(morph => morph.pk === pk);
+      {morphs.length === 1 && morphs.slice(0, 1).map(morph => {
+        console.log("Listing the selected morphs2");
+        const {gameId, unitName} = getLocalMorphs().find(localMorph => localMorph.pk === morph.pk);
+        console.log(morph);
         return (
-          <Fragment key={pk}>
+          <Fragment key={morph.pk}>
           <div className="UnitHub">
             <UnitHub {...{gameId, unitName, morph: morph.morph}} />
-            <button value={pk} onClick={removeMorph} type="button">Remove</button>
+            <button value={morph.pk} onClick={removeMorph} type="button">Remove</button>
           </div>
           <div className="UnitHub">
             <ProfileIcon {...{gameId, unitName}}>
