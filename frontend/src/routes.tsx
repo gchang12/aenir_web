@@ -48,6 +48,7 @@ import {
   calculateStatsDelta,
   retrieveMorph,
   getNullGrowthStats,
+  statsAreCompatible,
 } from "./lib/functions";
 
 export function Root() {
@@ -302,6 +303,7 @@ export function MorphComparison() {
       .catch(err => console.log(err));
   }, [morphs]);
   const formRef = useRef(null);
+  const formRef2 = useRef(null);
   const calculateDiff = useCallback((e) => {
     //console.log("morphs:", morphs);
     const avgMorph = morphs.at(0);
@@ -332,6 +334,26 @@ export function MorphComparison() {
     setMorphs(morphs.filter(morph => morph.pk !== e.currentTarget.value));
     setDiff(null);
   }, []);
+  const attemptValidationAndCompare = useCallback((e) => {
+    const [morph1, morph2] = morphs;
+    const currentDiff = [];
+    if (statsAreCompatible(morph1, morph2)) {
+      const nullGrowthStats = getNullGrowthStats("fe" + morph1.initArgs.gameNo);
+      let stat2, diffValue;
+      for (const [stat, statValue] of morph1.morph.stats) {
+        if (nullGrowthStats.includes(stat)) {
+          diffValue = null;
+        } else {
+          stat2 = morph2.morph.stats.find(statBundle => statBundle[0] === stat)[1];
+          diffValue = Math.round(100 * (Number(stat2) - statValue)) / 100;
+        }
+        currentDiff.push([stat, diffValue]);
+      };
+      setDiff(currentDiff);
+      const zeroStats = morph1.stats.map(stat => [stat[0], 0]);
+      setStatsDelta(calculateStatsDelta({stats: zeroStats}, {stats: currentDiff}));
+    };
+  }, [morphs]);
   return (
     <div id="MorphComparison">
       <Form method="post">
@@ -349,21 +371,9 @@ export function MorphComparison() {
         </select>
       </Form>
       <div className="unit-comparison">
-      {morphs.length === 2 && morphs.map(morph => {
+      {morphs.length === 1 && morphs.slice(0, 1).map(morph => {
         console.log("Listing the selected morphs1");
         const {gameId, unitName} = getLocalMorphs().find(localMorph => localMorph.pk === morph.pk);
-        return (
-          <div className="UnitHub" key={morph.pk}>
-            <UnitHub {...{gameId, unitName, morph: morph.morph}} />
-            <button value={morph.pk} onClick={removeMorph} type="button">Remove</button>
-          </div>
-        );
-      })
-      }
-      {morphs.length === 1 && morphs.slice(0, 1).map(morph => {
-        console.log("Listing the selected morphs2");
-        const {gameId, unitName} = getLocalMorphs().find(localMorph => localMorph.pk === morph.pk);
-        console.log(morph);
         return (
           <Fragment key={morph.pk}>
           <div className="UnitHub">
@@ -384,6 +394,20 @@ export function MorphComparison() {
         );
       })
       }
+      {morphs.length === 2 && morphs.map(morph => {
+        console.log("Listing the selected morphs2");
+        const {gameId, unitName} = getLocalMorphs().find(localMorph => localMorph.pk === morph.pk);
+        return (
+          <div className="UnitHub" key={morph.pk}>
+            <UnitHub {...{gameId, unitName, morph: morph.morph}} />
+            <button value={morph.pk} onClick={removeMorph} type="button">Remove</button>
+          </div>
+        );
+      })
+      }
+      {morphs.length === 2 && (
+        <button type="button" onClick={attemptValidationAndCompare}>Compare</button>
+      )}
       {diff != null && (
         <>
         {/* <ClassLevelInfo {...{morph: morphs.at(0)?.morph}} /> */}

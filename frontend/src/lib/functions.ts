@@ -227,3 +227,16 @@ export function getNullGrowthStats(gameId) {
       return ["Con", "Mov", "Wt"];
   };
 };
+
+export function statsAreCompatible(morph1, morph2) {
+  function isGBAGame(morph) {
+    return [6, 7, 8].includes(morph.initArgs.gameNo);
+  };
+  if (isGBAGame(morph1) && isGBAGame(morph2)) {
+    return true;
+  } else if (morph1.initArgs.gameNo === morph2.initArgs.gameNo) {
+    return true;
+  } else {
+    return false;
+  };
+};
