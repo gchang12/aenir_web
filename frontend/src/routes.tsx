@@ -308,7 +308,7 @@ export function MorphComparison() {
     //console.log("morphs:", morphs);
     const avgMorph = morphs.at(0);
     const nullGrowthStats = getNullGrowthStats("fe" + avgMorph.initArgs.gameNo);
-    //console.log("avgStats:", avgMorph.stats);
+    console.log("avgMorph:", avgMorph);
     const currentDiff = [];
     if (formRef.current.reportValidity()) {
       const inputStats = new FormData(formRef.current);
@@ -317,7 +317,7 @@ export function MorphComparison() {
         if (nullGrowthStats.includes(stat)) {
           diffValue = null;
         } else {
-          avgStat = avgMorph.stats.find(statArray => statArray[0] === stat)[1];
+          avgStat = avgMorph.morph.stats.find(statArray => statArray[0] === stat)[1];
           diffValue = Math.round(100 * (Number(inputStat) - avgStat)) / 100;
         }
         currentDiff.push([stat, diffValue]);
