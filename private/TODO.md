@@ -1,3 +1,13 @@
+
+2026-03-27
+==========
+Start from scratch.
+Add home screen.
+Add login and registration pages.
+Add tests and doc-strings.
+
+stat-values should be sent as an object / dict
+
 Keep initArgs at top-level.
 
 Test to see if stat-data reloads upon navigation
