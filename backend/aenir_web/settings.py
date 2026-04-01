@@ -122,6 +122,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+AUTH_USER_MODEL = "registration.User"
 CORS_ORIGIN_WHITELIST = (
     "http://localhost:3000",
 )
