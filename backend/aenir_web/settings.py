@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     # 3rd PARTY,
     "rest_framework",
     "corsheaders",
+    "rest_framework.authtoken",
+    # MINE
+    "registration.apps.RegistrationConfig",
 ]
 
 MIDDLEWARE = [
