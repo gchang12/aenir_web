@@ -11,7 +11,7 @@ from rest_framework.authtoken import views as token_views
 
 from .views import CreateAccountView
 
-app_name = "registration"
+app_name = "accounts"
 urlpatterns = [
     path("", include("django.contrib.auth.urls")),
     #registration/login/ [name='login']

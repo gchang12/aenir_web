@@ -1,6 +1,7 @@
-<p>registration/create_account.html</p>
+<h1>Create Account</h1>
 <form method="post">
   {% csrf_token %}
   {{ form }}
   <button>Submit</button>
 </form>
+<a href="/accounts/login/">Already got an account?</a>
