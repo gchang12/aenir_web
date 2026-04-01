@@ -9,16 +9,11 @@ export function Root() {
     <>
     <header>
       <img id="logo" src="/logo.png" />
-      <nav>
-        <menu>
-          <li><Link to="/accounts/login/">Login</Link></li>
-        </menu>
-      </nav>
+      <div id="user_status">
+        <a href="/accounts/login/">Login</a>
+        <a href="/accounts/logout/">Logout</a>
+      </div>
     </header>
-    <nav>
-      <menu>
-      </menu>
-    </nav>
     <Outlet />
     </>
   );
