@@ -12,6 +12,7 @@ class CreateAccountView(CreateView):
     """
     """
     model = User
-    fields = ["email", "username", "password"]
+    #fields = ["email", "username", "password"]
+    fields = ["email", "password"]
     template_name = "registration/create_account.html"
     success_url = "/accounts/login/"
