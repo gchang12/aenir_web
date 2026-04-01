@@ -1,3 +1,9 @@
+Send request for username if not present already.
+- Make a viewset that sends back data about the user.
+- Ping that viewset
+Upon success, redirect user to some 3000-URL
+Have the loader load the credentials by sending another request.
+
 Keep initArgs at top-level.
 
 Test to see if stat-data reloads upon navigation

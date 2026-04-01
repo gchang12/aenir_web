@@ -7,11 +7,16 @@ import {
 } from "react-router";
 import { RouterProvider } from "react-router/dom";
 
+import axios from "axios";
+
 import './index.css'
 
 import {
   BACKEND_URL,
 } from "./lib/constants";
+import {
+  Username,
+} from "./lib/functions";
 import {
   Root,
 } from "./routes";
@@ -28,6 +33,14 @@ const router = createBrowserRouter([
             path: "login/",
             loader: () => {
               return redirect(BACKEND_URL + "accounts/login/");
+            },
+          },
+          {
+            path: "login_done/",
+            loader: async () => {
+              const username = await Username.fetch();
+              Username.set(username);
+              return redirect("/");
             },
           },
           // TODO: logout/

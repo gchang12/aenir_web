@@ -6,6 +6,14 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.edit import CreateView
 
+from rest_framework import viewsets
+from rest_framework.permissions import (
+    IsAuthenticated,
+)
+from rest_framework.response import (
+    Response,
+)
+
 User = get_user_model()
 
 class CreateAccountView(CreateView):
@@ -26,3 +34,16 @@ class CreateAccountView(CreateView):
         print("request.session.session_key", request.session.session_key)
         #print("request.auth", request.auth)
         return response
+
+class UsernameViewSet(viewsets.ViewSet):
+    """
+    """
+    permission_classes = (IsAuthenticated,)
+
+    def list(self, request):
+        """
+        """
+        username = request.user.email
+        return Response({
+            "username": username,
+        })
