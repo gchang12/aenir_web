@@ -10,7 +10,8 @@ export function Root() {
     <header>
       <img id="logo" src="/logo.png" />
       <div id="user_status">
-        <Link to="/accounts/login/">Login</Link>
+        <a to="/accounts/login/">Login</a>
+        <a to="/accounts/logout/">Logout</a>
       </div>
     </header>
     <Outlet />
