@@ -1,15 +1,37 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
-import { createBrowserRouter } from "react-router";
+import {
+  createBrowserRouter,
+  redirect,
+} from "react-router";
 import { RouterProvider } from "react-router/dom";
 
 import './index.css'
 
+import {
+  BACKEND_URL,
+} from "./lib/constants";
+import {
+  Root,
+} from "./routes";
+
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <p>Hello world</p>,
+    Component: Root,
+  },
+  {
+    path: "/login/",
+    loader: () => {
+      return redirect(BACKEND_URL + "accounts/login/");
+    },
+  },
+  {
+    path: "/create-account/",
+    loader: () => {
+      return redirect(BACKEND_URL + "accounts/create-account");
+    },
   },
 ]);
 
