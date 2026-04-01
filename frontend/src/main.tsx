@@ -30,6 +30,7 @@ const router = createBrowserRouter([
               return redirect(BACKEND_URL + "accounts/login/");
             },
           },
+          // TODO: logout/
           {
             path: "create-account/",
             loader: () => {
