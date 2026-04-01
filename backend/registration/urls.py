@@ -23,6 +23,6 @@ urlpatterns = [
     #registration/reset/<uidb64>/<token>/ [name='password_reset_confirm']
     #registration/reset/done/ [name='password_reset_complete']
     path("create-account/", CreateAccountView.as_view(), name="create-account"),
-    path("obtain-auth-token/", token_views.obtain_auth_token, name="obtain-auth-token"),
+    #path("obtain-auth-token/", token_views.obtain_auth_token, name="obtain-auth-token"),
     path("profile/", RedirectView.as_view(url="http://localhost:3000/"), name="profile"),
 ]

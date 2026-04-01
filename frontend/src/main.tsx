@@ -14,7 +14,6 @@ import {
 } from "./lib/constants";
 import {
   Root,
-  LoginView,
 } from "./routes";
 
 const router = createBrowserRouter([
@@ -28,21 +27,19 @@ const router = createBrowserRouter([
           {
             path: "login/",
             loader: () => {
-              // TODO: Replace with a working login view
-              //return redirect(BACKEND_URL + "accounts/login/");
+              return redirect(BACKEND_URL + "accounts/login/");
             },
-            Component: LoginView,
           },
           {
             path: "create-account/",
             loader: () => {
-              return redirect(BACKEND_URL + "accounts/create-account");
+              return redirect(BACKEND_URL + "accounts/create-account/");
             },
           },
           {
             path: "password_reset/",
             loader: () => {
-              return redirect(BACKEND_URL + "accounts/password_reset");
+              return redirect(BACKEND_URL + "accounts/password_reset/");
             },
           },
         ],

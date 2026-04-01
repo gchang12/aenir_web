@@ -126,6 +126,7 @@ AUTH_USER_MODEL = "registration.User"
 CORS_ORIGIN_WHITELIST = (
     "http://localhost:3000",
 )
+#CSRF_USE_SESSIONS = True
 
 # https://docs.djangoproject.com/en/6.0/topics/logging/#id3
 LOGGING = {
