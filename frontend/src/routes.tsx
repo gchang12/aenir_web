@@ -12,7 +12,6 @@ export function Root() {
       <nav>
         <menu>
           <li><Link to="/accounts/login/">Login</Link></li>
-          <li><Link to="/accounts/create-account/">Create Account</Link></li>
         </menu>
       </nav>
     </header>

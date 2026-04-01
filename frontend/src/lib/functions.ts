@@ -11,6 +11,12 @@ const AXIOS_INST = axios.create(
 );
 
 export async function login(axiosInst, {username, password}) {
-  const response = await axios.post(BACKEND_URL + "accounts/login", {username, password});
-  console.log(response);
+  const response = await axiosInst(
+    {
+      method: "post",
+      url: "accounts/login/",
+      data: {username, password},
+    }
+  );
+  return response;
 }
