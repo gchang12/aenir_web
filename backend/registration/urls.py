@@ -13,10 +13,12 @@ from rest_framework import routers
 from .views import (
     CreateAccountView,
     UsernameViewSet,
+    LogoutView,
 )
 
 router = routers.DefaultRouter()
 router.register(r"get_username", UsernameViewSet, basename="get_username")
+router.register(r"logout", LogoutView, basename="logout")
 
 app_name = "accounts"
 urlpatterns = [
@@ -33,4 +35,6 @@ urlpatterns = [
     #path("obtain-auth-token/", token_views.obtain_auth_token, name="obtain-auth-token"),
     path("profile/", RedirectView.as_view(url="http://localhost:3000/accounts/login_done/"), name="profile"),
     path("api/", include(router.urls)),
+    #path("api/logout/", LogoutView.as_view(), name="logout"),
+    #path("api-auth/", include("rest_framework.urls")),
 ]

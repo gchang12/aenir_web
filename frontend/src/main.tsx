@@ -43,6 +43,15 @@ const router = createBrowserRouter([
               return redirect("/");
             },
           },
+          {
+            path: "logout/",
+            loader: async () => {
+              //return redirect(BACKEND_URL + "accounts/logout/");
+              // TODO: This keeps getting interpreted as an unauthenticated request.
+              await axios.post(BACKEND_URL + "accounts/api/logout/", {withCredentials: true});
+              //await axios.post(BACKEND_URL + "accounts/api-auth/logout/", {withCredentials: true});
+            },
+          },
           // TODO: logout/
           {
             path: "create-account/",

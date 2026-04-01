@@ -2,11 +2,17 @@
 """
 
 from django.shortcuts import render
-from django.contrib.auth import get_user_model
+from django.contrib.auth import (
+    get_user_model,
+    logout,
+)
 from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.edit import CreateView
 
-from rest_framework import viewsets
+from rest_framework import (
+    viewsets,
+    views,
+)
 from rest_framework.permissions import (
     IsAuthenticated,
 )
@@ -47,3 +53,18 @@ class UsernameViewSet(viewsets.ViewSet):
         return Response({
             "username": username,
         })
+
+class LogoutView(viewsets.ViewSet):
+    """
+    """
+    permission_classes = (IsAuthenticated,)
+
+    def create(self, request):
+        """
+        """
+        print("request", request)
+        print("request.session", request.session)
+        print("request.user", request.user)
+        logout(request)
+        print("request.user", request.user)
+        return Response()

@@ -13,6 +13,8 @@ export class Username {
   }
   static async fetch() {
     const response = await axios.get(BACKEND_URL + "accounts/api/get_username", {withCredentials: true});
+    //console.log(response);
+    //axios.default.headers.post['X-CSRF-Token'] = response.data._csrf;
     return response.data.username;
   }
 }
