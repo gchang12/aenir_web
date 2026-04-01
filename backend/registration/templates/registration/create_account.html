@@ -1,4 +1,6 @@
+<p>registration/create_account.html</p>
 <form method="post">
+  {% csrf_token %}
   {{ form }}
   <button>Submit</button>
 </form>

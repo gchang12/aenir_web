@@ -11,3 +11,5 @@ User = get_user_model()
 class CreateAccountView(CreateView):
     model = User
     fields = ["username", "password"]
+    template_name = "registration/create_account.html"
+    success_url = "http://localhost:3000/"
