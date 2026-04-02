@@ -3,11 +3,13 @@
 
 from django.db import models
 from django.contrib.auth.models import (
-    AbstractBaseUser,
+    #AbstractBaseUser,
+    AbstractUser,
     UserManager,
+    #User,
 )
 
-class User(AbstractBaseUser):
+class User(AbstractUser):
     """
     """
     email = models.EmailField(
