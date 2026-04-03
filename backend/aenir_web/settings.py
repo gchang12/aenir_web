@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # MY STUFF
     "accounts.apps.AccountsConfig",
+    "dracogate.apps.DracogateConfig",
 ]
 
 MIDDLEWARE = [

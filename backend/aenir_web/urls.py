@@ -23,4 +23,5 @@ from django.urls import (
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("accounts/", include("accounts.urls")),
+    path("dracogate/", include("dracogate.urls")),
 ]
