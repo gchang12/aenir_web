@@ -28,10 +28,21 @@ class UnitSelectView(GameSelectView):
     def get_context_data(self, game_no, **kwargs):
         """
         """
-        #print(dir(self))
-        #print(kwargs)
         context = super().get_context_data(**kwargs)
         morph_cls = getattr(morph, "Morph%d" % game_no)
         units = morph_cls.CHARACTER_LIST()
+        context['game_no'] = game_no
         context['units'] = units
+        return context
+
+class UnitConfirmView(UnitSelectView):
+    """
+    """
+    template_name = "dracogate/unit_confirm.html"
+
+    def get_context_data(self, game_no, name, **kwargs):
+        """
+        """
+        context = super().get_context_data(game_no, **kwargs)
+        context['name'] = name
         return context

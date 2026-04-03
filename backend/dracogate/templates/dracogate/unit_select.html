@@ -12,11 +12,14 @@ Create Morph – Unit Select
   <menu>
     {% for unit in units %}
     <li>
-      <a href="{{ unit }}">{{ unit }}</a>
+      <a href="{% url 'dracogate:unit_confirm' game_no unit %}">{{ unit }}</a>
     </li>
     {% endfor %}
   </menu>
 
 </article>
+
+{% block unit_confirm %}
+{% endblock %}
 
 {% endblock %}
