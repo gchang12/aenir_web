@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -9,7 +10,7 @@
   <body>
     <header>
       <!-- I gotta fix up the logo. -->
-      <img />
+      <img src="{% static 'logo.svg' %}" />
       <div id="authentication">
         {% if user.username %}
           Welcome, {{ user.username }}!
