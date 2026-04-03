@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>
+      {% block title %}
+      {% endblock %}
+    </title>
+  </head>
+  <body>
+    <header>
+      <!-- I gotta fix up the logo. -->
+      <img />
+      <div id="authentication">
+        {% if user.username %}
+          Welcome, {{ user.username }}!
+          <a href="/accounts/logout/">Logout</a>
+        {% else %}
+          You are not logged in.
+          <a href="/accounts/login/">Login</a>
+        {% endif %}
+      </div>
+    </header>
+    <main>
+      {% block main %}
+      {% endblock %}
+    </main>
+  </body>
+</html>
