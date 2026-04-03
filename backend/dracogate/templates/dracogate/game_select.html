@@ -5,21 +5,26 @@ Create Morph – Game Select
 {% endblock %}
 
 {% block main %}
+
 <h1>Create Morph</h1>
 
 <article>
-<h2>Game Select</h2>
+  <h2>Game Select</h2>
 
-<menu>
+  <menu>
 
-{% for game_no, formal_name in games.items %}
-<li>
-  <a href="{{ game_no }}">{{ formal_name }}</a>
-  {# <a href="{% url 'dracogate:unit_select' game_no %}">{{ formal_name }}</a> #}
-</li>
-{% endfor %}
+  {% for game_no, formal_name in games.items %}
+  <li>
+    <a href="{% url 'dracogate:unit_select' game_no %}">{{ formal_name }}</a>
+    {# <a href="{% url 'dracogate:unit_select' game_no %}">{{ formal_name }}</a> #}
+  </li>
+  {% endfor %}
 
-</menu>
+  </menu>
+
 </article>
+
+{% block unit_select %}
+{% endblock %}
 
 {% endblock %}

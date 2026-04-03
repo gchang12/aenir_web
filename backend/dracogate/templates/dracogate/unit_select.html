@@ -1,0 +1,22 @@
+{% extends "dracogate/game_select.html" %}
+
+{% block title %}
+Create Morph – Unit Select
+{% endblock %}
+
+{% block unit_select %}
+
+<article>
+
+  <h2>Unit Select</h2>
+  <menu>
+    {% for unit in units %}
+    <li>
+      <a href="{{ unit }}">{{ unit }}</a>
+    </li>
+    {% endfor %}
+  </menu>
+
+</article>
+
+{% endblock %}
