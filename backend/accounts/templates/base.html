@@ -14,10 +14,10 @@
       <div id="authentication">
         {% if user.username %}
           Welcome, {{ user.username }}!
-          <a href="/accounts/logout/">Logout</a>
+          <a href="{% url 'accounts:logout' %}">Logout</a>
         {% else %}
           You are not logged in.
-          <a href="/accounts/login/">Login</a>
+          <a href="{% url 'accounts:login' %}">Login</a>
         {% endif %}
       </div>
     </header>

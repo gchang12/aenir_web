@@ -10,6 +10,6 @@ Login
   {{ form }}
   <button>Submit</button>
 </form>
-<a href="/accounts/create_account">Don't have an account yet?</a>
-<a href="/accounts/password_reset">Forget your password?</a>
+<a href="{% url 'accounts:create_account' %}">Don't have an account yet?</a>
+<a href="{% url 'accounts:password_reset' %}">Forget your password?</a>
 {% endblock %}
