@@ -1,5 +1,7 @@
 {% extends "dracogate/game_select.html" %}
 
+{% load static %}
+
 {% block title %}
 Create Morph – Unit Select
 {% endblock %}
@@ -12,6 +14,7 @@ Create Morph – Unit Select
   <menu>
     {% for unit in units %}
     <li>
+      <img src="{% get_static_prefix %}dracogate/images/{{game_no}}/characters/{{unit}}.png" />
       <a href="{% url 'dracogate:unit_confirm' game_no unit %}">{{ unit }}</a>
     </li>
     {% endfor %}

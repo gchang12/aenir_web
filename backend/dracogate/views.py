@@ -30,7 +30,7 @@ class UnitSelectView(GameSelectView):
         """
         context = super().get_context_data(**kwargs)
         morph_cls = getattr(morph, "Morph%d" % game_no)
-        units = morph_cls.CHARACTER_LIST()
+        units = morph_cls.get_true_character_list()
         context['game_no'] = game_no
         context['units'] = units
         return context
