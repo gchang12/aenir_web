@@ -57,3 +57,47 @@ class VirtualMorph(models.Model):
         unique_together = [
             ["owner", "morph_id"],
         ]
+
+    def init(self):
+        """
+        """
+
+    def level_up(self, num_levels):
+        """
+        """
+
+    def use_stat_booster(self, item_name):
+        """
+        """
+
+    def set_scrolls(self, scrolls):
+        """
+        """
+
+    def use_afas_drops(self):
+        """
+        """
+
+    def use_metiss_tome(self):
+        """
+        """
+
+    def set_bands(self, bands):
+        """
+        """
+
+    def transform(self):
+        """
+        """
+
+    def revert(self):
+        """
+        """
+
+    def equip_demi_band(self):
+        """
+        """
+
+    def unequip_demi_band(self):
+        """
+        """
