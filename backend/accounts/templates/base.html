@@ -13,8 +13,10 @@
   <body>
     <header>
       <!-- I gotta fix up the logo. -->
-      <img src="{% static 'logo.svg' %}" />
-      <div id="authentication">
+      <a href="/">
+        <img src="{% static 'logo.svg' %}" />
+      </a>
+      <div id="accounts">
         {% if user.username %}
           Welcome, {{ user.username }}!
           <a href="{% url 'accounts:logout' %}">Logout</a>
@@ -24,6 +26,15 @@
         {% endif %}
       </div>
     </header>
+    <nav>
+      <menu>
+        <li>
+          <a href="{% url 'dracogate:game_select' %}">
+            Create Morph
+          </a>
+        </li>
+      </menu>
+    </nav>
     <main>
       {% block main %}
       {% endblock %}
