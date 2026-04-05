@@ -25,6 +25,6 @@ nav {
   }
 }
 
-.maxed-stat {
+.maxed-stat th, .maxed-stat th + td {
   color: green;
 }
