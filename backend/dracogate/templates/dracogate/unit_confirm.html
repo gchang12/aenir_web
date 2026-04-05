@@ -8,9 +8,39 @@ Create Morph – FE{{GAME_NO}} – {{NAME}}
 
 {% block unit_confirm %}
 
-<section>
+<section id="unit_confirm">
 
   <h2>Unit Confirm</h2>
+
+  <div class="unit-hub">
+    <figure>
+      <img src="{% get_static_prefix %}dracogate/images/{{GAME_NO}}/characters/{{NAME}}.png" />
+      <figcaption>{{NAME}}</figcaption>
+    </figure>
+    <table>
+      <thead>
+        <tr>
+          <th>Class</th>
+          <td>{{active_stats.current_cls}}</td>
+        </tr>
+        <tr>
+          <th>Lv</th>
+          <td>{{active_stats.current_lv}}</td>
+        </tr>
+      </thead>
+    </table>
+    <table>
+      <tbody>
+        {% for stat in active_stats.numeric_stats %}
+        <tr{% if stat.current_val == stat.max_val %} class="maxed-stat"{% endif %}>
+          <th>{{stat.id}}</th>
+          <td>{{stat.current_val}}</td>
+          <td><meter low="0" value="{{stat.current_val}}" max="{{stat.absmax_val}}" high="{{stat.max_val}}"></meter></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
 </section>
 

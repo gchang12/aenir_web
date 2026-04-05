@@ -24,3 +24,7 @@ nav {
     display: flex;
   }
 }
+
+.maxed-stat {
+  color: green;
+}
