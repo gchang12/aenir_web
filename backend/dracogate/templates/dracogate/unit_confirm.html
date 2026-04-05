@@ -30,12 +30,19 @@ Create Morph – FE{{GAME_NO}} – {{NAME}}
       </thead>
     </table>
     <table>
+      <thead>
+        <th></th>
+        <th colspan="2">Bases</th>
+        <th colspan="2">Growths</th>
+      </thead>
       <tbody>
         {% for stat in active_stats.numeric_stats %}
         <tr{% if stat.current_val == stat.max_val %} class="maxed-stat"{% endif %}>
           <th>{{stat.id}}</th>
           <td>{{stat.current_val}}</td>
           <td><meter low="0" value="{{stat.current_val}}" max="{{stat.absmax_val}}" high="{{stat.max_val}}"></meter></td>
+          <td>{% if stat.growth_rate != None %}{{stat.growth_rate}}%{% endif %}</td>
+          <td><meter low="0" value="{{stat.growth_rate}}" max="200" high="100"></meter></td>
         </tr>
         {% endfor %}
       </tbody>
