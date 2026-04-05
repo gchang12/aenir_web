@@ -89,5 +89,5 @@ class VirtualMorphTests(TestCase):
                 "absmax_val": 15.0,
             },
         )
-        actual = tuple(dataclasses.asdict(stat) for stat in vmorph._generate_stats())
+        actual = tuple(stat._asdict() for stat in vmorph._generate_stats())
         self.assertTupleEqual(actual, expected)

@@ -3,14 +3,14 @@
 
 import uuid
 from dataclasses import dataclass
+from typing import NamedTuple
 
 from django.db import models
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-@dataclass(frozen=True, kw_only=True)
-class Stat:
+class Stat(NamedTuple):
     """
     """
     id: str
