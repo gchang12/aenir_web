@@ -13,10 +13,10 @@ Create Morph – Unit Select
   <h2>Unit Select</h2>
   <menu>
     {% for unit in units %}
-    <li>
-      <a href="{% url 'dracogate:unit_confirm' game_no unit %}">
+    <li{% if unit == NAME %} class="active"{% endif %}>
+      <a href="{% url 'dracogate:unit_confirm' GAME_NO unit %}">
         <figure>
-          <img src="{% get_static_prefix %}dracogate/images/{{game_no}}/characters/{{unit}}.png" />
+          <img src="{% get_static_prefix %}dracogate/images/{{GAME_NO}}/characters/{{unit}}.png" />
           <figcaption>{{ unit }}</figcaption>
         </figure>
       </a>

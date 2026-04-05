@@ -10,6 +10,9 @@
   & li:hover {
     background-color: lightgreen;
   }
+  & li.active {
+    background-color: lightgreen;
+  }
 }
 
 #game_select {

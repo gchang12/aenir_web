@@ -20,7 +20,7 @@ Create Morph – Game Select
   <menu>
 
   {% for game_no, formal_name in games.items %}
-  <li>
+  <li{% if game_no == GAME_NO %} class="active"{% endif %}>
     <a href="{% url 'dracogate:unit_select' game_no %}">
       <figure>
         <img src="{% get_static_prefix %}dracogate/images/{{game_no}}/cover-art.png" />

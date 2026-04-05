@@ -31,7 +31,7 @@ class UnitSelectView(GameSelectView):
         context = super().get_context_data(**kwargs)
         morph_cls = getattr(morph, "Morph%d" % game_no)
         units = morph_cls.get_true_character_list()
-        context['game_no'] = game_no
+        context['GAME_NO'] = game_no
         context['units'] = units
         return context
 
@@ -44,5 +44,5 @@ class UnitConfirmView(UnitSelectView):
         """
         """
         context = super().get_context_data(game_no, **kwargs)
-        context['name'] = name
+        context['NAME'] = name
         return context
