@@ -6,12 +6,10 @@ nav {
 
 #create_morph {
   display: flex;
-  & section {
-    height: 40rem;
-    overflow-y: scroll;
-  }
   & menu {
     list-style-type: none;
+    height: 30rem;
+    overflow-y: scroll;
   }
   & li:hover {
     background-color: lightgreen;
