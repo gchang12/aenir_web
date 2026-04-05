@@ -1,0 +1,19 @@
+#create_morph {
+  display: flex;
+  & section {
+    height: 40rem;
+    overflow-y: scroll;
+  }
+  & menu {
+    list-style-type: none;
+  }
+  & li:hover {
+    background-color: lightgreen;
+  }
+}
+
+#game_select {
+  & figure {
+    display: flex;
+  }
+}
