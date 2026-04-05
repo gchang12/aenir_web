@@ -2,34 +2,22 @@
 """
 
 import uuid
+from dataclasses import dataclass
+
 from django.db import models
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+@dataclass(frozen=True, kw_only=True)
 class Stat:
     """
     """
-
-    def __init__(self, *, id, current_val, growth_rate, max_val, absmax_val):
-        """
-        """
-        self.id = id
-        self.current_val = current_val
-        self.growth_rate = growth_rate
-        self.max_val = max_val
-        self.absmax_val = absmax_val
-
-    def as_dict(self):
-        """
-        """
-        return {
-            "id": self.id,
-            "current_val": self.current_val,
-            "growth_rate": self.growth_rate,
-            "max_val": self.max_val,
-            "absmax_val": self.absmax_val,
-        }
+    id: str
+    current_val: float
+    growth_rate: int | None
+    max_val: float
+    absmax_val: float
 
 class VirtualMorph(models.Model):
     """
@@ -130,4 +118,4 @@ class VirtualMorph(models.Model):
                 growth_rate=(None if statname in zero_growth_stat_list else growth_rates[statname]),
                 max_val=max_stats[statname] / 100,
                 absmax_val=absmax_stats[indexno] / 100,
-            ).as_dict()
+            )

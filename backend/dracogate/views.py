@@ -60,6 +60,6 @@ class UnitConfirmView(UnitSelectView):
         context['active_stats'] = {
             "current_cls": morph.current_cls,
             "current_lv": morph.current_lv,
-            "numeric_stats": tuple(vmorph._generate_stats()),
+            "numeric_stats": vmorph._generate_stats(),
         }
         return context

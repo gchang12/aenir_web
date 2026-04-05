@@ -1,6 +1,8 @@
 """
 """
 
+import dataclasses
+
 from django.test import TestCase
 
 from aenir import get_morph
@@ -29,7 +31,6 @@ class VirtualMorphTests(TestCase):
                 "growth_rate": 80,
                 "max_val": 60.0,
                 "absmax_val": 80.0,
-                "css_class": None,
             },
             {
                 "id": "Pow",
@@ -37,7 +38,6 @@ class VirtualMorphTests(TestCase):
                 "growth_rate": 40,
                 "max_val": 20.0,
                 "absmax_val": 30.0,
-                "css_class": None,
             },
             {
                 "id": "Skl",
@@ -45,7 +45,6 @@ class VirtualMorphTests(TestCase):
                 "growth_rate": 50,
                 "max_val": 20.0,
                 "absmax_val": 30.0,
-                "css_class": None,
             },
             {
                 "id": "Spd",
@@ -53,7 +52,6 @@ class VirtualMorphTests(TestCase):
                 "growth_rate": 40,
                 "max_val": 20.0,
                 "absmax_val": 30.0,
-                "css_class": None,
             },
             {
                 "id": "Lck",
@@ -61,7 +59,6 @@ class VirtualMorphTests(TestCase):
                 "growth_rate": 60,
                 "max_val": 30.0,
                 "absmax_val": 30.0,
-                "css_class": None,
             },
             {
                 "id": "Def",
@@ -69,7 +66,6 @@ class VirtualMorphTests(TestCase):
                 "growth_rate": 25,
                 "max_val": 20.0,
                 "absmax_val": 30.0,
-                "css_class": None,
             },
             {
                 "id": "Res",
@@ -77,7 +73,6 @@ class VirtualMorphTests(TestCase):
                 "growth_rate": 30,
                 "max_val": 20.0,
                 "absmax_val": 30.0,
-                "css_class": None,
             },
             {
                 "id": "Con",
@@ -85,7 +80,6 @@ class VirtualMorphTests(TestCase):
                 "growth_rate": None,
                 "max_val": 20.0,
                 "absmax_val": 25.0,
-                "css_class": None,
             },
             {
                 "id": "Mov",
@@ -93,8 +87,7 @@ class VirtualMorphTests(TestCase):
                 "growth_rate": None,
                 "max_val": 15.0,
                 "absmax_val": 15.0,
-                "css_class": None,
             },
         )
-        actual = tuple(vmorph._generate_stats())
+        actual = tuple(dataclasses.asdict(stat) for stat in vmorph._generate_stats())
         self.assertTupleEqual(actual, expected)
