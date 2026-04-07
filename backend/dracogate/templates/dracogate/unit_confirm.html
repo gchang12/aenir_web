@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-Create Morph – FE{{GAME_NO}} – {{NAME}}
+Create Morph – FE{{game_no}} – {{name}}
 {% endblock %}
 
 {% block unit_confirm %}
@@ -14,8 +14,8 @@ Create Morph – FE{{GAME_NO}} – {{NAME}}
 
   <div class="unit-hub">
     <figure>
-      <img src="{% get_static_prefix %}dracogate/images/{{GAME_NO}}/characters/{{NAME}}.png" />
-      <figcaption>{{NAME}}</figcaption>
+      <img src="{% get_static_prefix %}dracogate/images/{{game_no}}/characters/{{name}}.png" />
+      <figcaption>{{name}}</figcaption>
     </figure>
     <table>
       <thead>

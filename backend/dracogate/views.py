@@ -4,10 +4,13 @@
 from django.shortcuts import render
 from django.views.generic.base import TemplateView
 
-from aenir.games import FireEmblemGame
-from aenir import morph
+import aenir.morph
+import aenir.games
+# TODO: Import all exceptions into 'aenir' for semantics' sake.
 from aenir import get_morph
-from aenir._exceptions import InitError
+from aenir._exceptions import (
+    InitError,
+)
 
 from .models import VirtualMorph
 
@@ -20,7 +23,7 @@ class GameSelectView(TemplateView):
         """
         """
         context = super().get_context_data(**kwargs)
-        games = {game.value: game.formal_name for game in FireEmblemGame}
+        games = {game.value: game.formal_name for game in aenir.games.FireEmblemGame}
         context['games'] = games
         return context
 
@@ -33,9 +36,9 @@ class UnitSelectView(GameSelectView):
         """
         """
         context = super().get_context_data(**kwargs)
-        morph_cls = getattr(morph, "Morph%d" % game_no)
+        morph_cls = getattr(aenir.morph, "Morph%d" % game_no)
         units = morph_cls.get_true_character_list()
-        context['GAME_NO'] = game_no
+        context['game_no'] = game_no
         context['units'] = units
         return context
 
@@ -48,7 +51,7 @@ class UnitConfirmView(UnitSelectView):
         """
         """
         context = super().get_context_data(game_no, **kwargs)
-        context['NAME'] = name
+        context['name'] = name
         try:
             morph = get_morph(game_no, name)
         except InitError as err:
