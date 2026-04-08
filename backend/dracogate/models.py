@@ -49,6 +49,10 @@ class VirtualMorph(models.Model):
         default=list,
         blank=True,
     )
+    progress = models.JSONField(
+        default=dict,
+        blank=True,
+    )
 
     class Meta:
         """
