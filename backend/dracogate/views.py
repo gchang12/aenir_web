@@ -1,10 +1,14 @@
 """
 """
 
-from django.shortcuts import render
+from django.shortcuts import (
+    render,
+    redirect,
+)
 from django.views.generic.base import TemplateView
 # TODO: Should this be a mix-in?
 from django.views.generic.edit import FormView
+from django.urls import reverse
 from django import forms
 
 import aenir.morph
@@ -17,6 +21,7 @@ from aenir._exceptions import (
 
 from .models import VirtualMorph
 from .forms import InitFormBuilder
+from ._logging import logger
 
 class GameSelectView(TemplateView):
     """
@@ -103,15 +108,18 @@ class UnitConfirmView(UnitSelectView, FormView):
             owner = self.request.user
         morph_id = VirtualMorph._generate_morph_id(game_no, name)
         # create morph
-        VirtualMorph.objects.create(
+        vmorph = VirtualMorph.objects.create(
             owner=owner,
             morph_id=morph_id,
             game_no=game_no,
             name=name,
             options=options,
         )
+        success_url = reverse("dracogate:modify_morph", args=[vmorph.id])
+        logger.debug("return: %r", success_url)
         # redirect to `success_url`
-        return super().form_valid(form)
+        #return super().form_valid(form)
+        return redirect(success_url)
 
 class PreviewMorphView(TemplateView):
     """
@@ -137,3 +145,8 @@ class PreviewMorphView(TemplateView):
             "numeric_stats": vmorph._generate_stats(),
         }
         return context
+
+class ModifyMorphView(TemplateView):
+    """
+    """
+    template_name = "dracogate/modify_morph.html"

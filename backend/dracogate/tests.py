@@ -5,6 +5,7 @@ import dataclasses
 
 from django.test import TestCase
 from django import forms
+from django.urls import reverse
 
 from aenir import get_morph
 from aenir._exceptions import (
@@ -330,4 +331,79 @@ class InitFormBuilderTests(TestCase):
                 self.assertFieldIsInstance((form_class, field_name), field_type)
                 self.assertWidgetEqual((form_class, field_name), widget_type)
                 self.assertInitialEqual((form_class, field_name), initial_value)
+
+class UnitConfirmViewTests(TestCase):
+    """
+    """
+
+    def check_response_and_vmorph_attributes(self, game_no, name, options):
+        """
+        """
+        data = {
+            "game_no": game_no,
+            "name": name,
+        }
+        data.update(options)
+        # send data
+        url = reverse("dracogate:unit_confirm", args=[game_no, name])
+        response = self.client.post(url, data=data)
+        # check response code
+        self.assertLess(response.status_code, 400)
+        # check database for expected object.
+        vmorph = VirtualMorph.objects.get()
+        self.assertEqual(vmorph.game_no, game_no)
+        self.assertEqual(vmorph.name, name)
+        self.assertDictEqual(vmorph.options, options)
+        self.assertTrue(vmorph.morph_id)
+
+    def setUp(self):
+        """
+        """
+        logger.debug("%s", self.id())
+
+    def test_father(self):
+        """
+        Checks that VirtualMorph is created with expected attributes.
+        """
+        # prepare data
+        game_no = 4
+        name = "Lakche"
+        options = {"father": "Lex"}
+        self.check_response_and_vmorph_attributes(game_no, name, options)
+
+    def test_hard_mode(self):
+        """
+        Checks that VirtualMorph is created with expected attributes.
+        """
+        game_no = 6
+        name = "Rutger"
+        options = {"hard_mode": True}
+        self.check_response_and_vmorph_attributes(game_no, name, options)
+
+    def test_number_of_declines(self):
+        """
+        Checks that VirtualMorph is created with expected attributes.
+        """
+        game_no = 6
+        name = "Hugh"
+        options = {"number_of_declines": 2}
+        self.check_response_and_vmorph_attributes(game_no, name, options)
+
+    def test_hard_mode__and__chapter(self):
+        """
+        Checks that VirtualMorph is created with expected attributes.
+        """
+        game_no = 6
+        name = "Cath"
+        options = {"hard_mode": True, "chapter": "20"}
+        self.check_response_and_vmorph_attributes(game_no, name, options)
+
+    def test_lyn_mode(self):
+        """
+        Checks that VirtualMorph is created with expected attributes.
+        """
+        game_no = 7
+        name = "Wallace"
+        options = {"lyn_mode": True}
+        self.check_response_and_vmorph_attributes(game_no, name, options)
 
