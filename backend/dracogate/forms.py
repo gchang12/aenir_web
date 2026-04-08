@@ -68,6 +68,7 @@ class InitFormBuilder:
             return forms.ChoiceField(
                 choices=[(chapter, chapter) for chapter in values],
                 #required=False,
+                initial=values[0],
             )
 
         def lyn_mode(values: List[bool]):
