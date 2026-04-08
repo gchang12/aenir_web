@@ -3,6 +3,9 @@
 
 from django.shortcuts import render
 from django.views.generic.base import TemplateView
+# TODO: Should this be a mix-in?
+from django.views.generic.edit import FormView
+from django import forms
 
 import aenir.morph
 import aenir.games
@@ -13,6 +16,7 @@ from aenir._exceptions import (
 )
 
 from .models import VirtualMorph
+from .forms import InitFormBuilder
 
 class GameSelectView(TemplateView):
     """

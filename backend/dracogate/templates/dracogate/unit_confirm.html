@@ -49,6 +49,11 @@ Create Morph – FE{{game_no}} – {{name}}
         {% endfor %}
       </tbody>
     </table>
+    <form method="post">
+      {% csrf_token %}
+      {{ form }}
+      <button>Submit</button>
+    </form>
   </div>
 
 </section>
