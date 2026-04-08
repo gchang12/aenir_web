@@ -14,8 +14,8 @@ Create Morph – FE{{game_no}} – {{name}}
 
   <div class="unit-hub">
     <figure>
-      <img src="{% get_static_prefix %}dracogate/images/{{game_no}}/characters/{{name}}.png" />
-      <figcaption>{{name}}</figcaption>
+      <img src="{% get_static_prefix %}dracogate/images/{{route_params.game_no}}/characters/{{route_params.name}}.png" />
+      <figcaption><h3>{{route_params.name}}</h3></figcaption>
     </figure>
     <table>
       <thead>

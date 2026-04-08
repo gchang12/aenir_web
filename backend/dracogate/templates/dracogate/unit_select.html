@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-Create Morph – FE{{game_no}}
+Create Morph – FE{{route_params.game_no}}
 {% endblock %}
 
 {% block unit_select %}
@@ -13,10 +13,10 @@ Create Morph – FE{{game_no}}
   <h2>Unit Select</h2>
   <menu>
     {% for unit in units %}
-    <li{% if unit == name %} class="active"{% endif %}>
-      <a href="{% url 'dracogate:unit_confirm' game_no unit %}#FE{{game_no}}">
+    <li{% if unit == route_params.name %} class="active"{% endif %}>
+      <a href="{% url 'dracogate:unit_confirm' route_params.game_no unit %}#FE{{route_params.game_no}}">
         <figure>
-          <img src="{% get_static_prefix %}dracogate/images/{{game_no}}/characters/{{unit}}.png" />
+          <img src="{% get_static_prefix %}dracogate/images/{{route_params.game_no}}/characters/{{unit}}.png" />
           <figcaption>{{ unit }}</figcaption>
         </figure>
       </a>

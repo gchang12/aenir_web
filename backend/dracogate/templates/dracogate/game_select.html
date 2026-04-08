@@ -19,13 +19,13 @@ Create Morph
 
   <menu>
 
-  {% for this_game_no, formal_name in games.items %}
-  <li{% if this_game_no == game_no %} class="active"{% endif %} id="FE{{this_game_no}}">
-    <a href="{% url 'dracogate:unit_select' this_game_no %}#FE{{this_game_no}}">
+  {% for game_no, formal_name in games.items %}
+  <li{% if game_no == route_params.game_no %} class="active"{% endif %} id="FE{{game_no}}">
+    <a href="{% url 'dracogate:unit_select' game_no %}#FE{{game_no}}">
       <figure>
-        <img src="{% get_static_prefix %}dracogate/images/{{this_game_no}}/cover-art.png" />
+        <img src="{% get_static_prefix %}dracogate/images/{{game_no}}/cover-art.png" />
         <figcaption>
-            <h3>FE{{this_game_no}}</h3>
+            <h3>FE{{game_no}}</h3>
             <h4>{{ formal_name }}</h4>
         </figcaption>
       </figure>
