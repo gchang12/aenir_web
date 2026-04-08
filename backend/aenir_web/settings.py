@@ -120,3 +120,19 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 AUTH_USER_MODEL = "accounts.User"
+
+LOGGING = {
+    "version": 1,
+    "handlers": {
+        "file": {
+            "class": "logging.FileHandler",
+            "filename": ".aenir_web.log",
+        },
+    },
+    "loggers": {
+        "aenir_web": {
+            "level": "DEBUG",
+            "handlers": ["file"],
+        },
+    },
+}
