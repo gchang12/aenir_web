@@ -2,11 +2,14 @@
 """
 
 import uuid
+from datetime import datetime 
 from dataclasses import dataclass
 from typing import NamedTuple
 
 from django.db import models
 from django.contrib.auth import get_user_model
+
+from aenir import get_morph
 
 User = get_user_model()
 
@@ -22,6 +25,7 @@ class Stat(NamedTuple):
 class VirtualMorph(models.Model):
     """
     """
+    # meta
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -37,6 +41,7 @@ class VirtualMorph(models.Model):
     morph_id = models.CharField(
         max_length=25,
     )
+    # initialization
     game_no = models.PositiveSmallIntegerField()
     name = models.CharField(
         max_length=9,
@@ -45,14 +50,13 @@ class VirtualMorph(models.Model):
         default=dict,
         blank=True,
     )
+    # progression
     history = models.JSONField(
         default=list,
         blank=True,
     )
-    progress = models.JSONField(
-        default=dict,
-        blank=True,
-    )
+    # to show on-screen as a preview
+    progress = models.JSONField()
 
     class Meta:
         """
@@ -60,6 +64,30 @@ class VirtualMorph(models.Model):
         unique_together = [
             ["owner", "morph_id"],
         ]
+
+    def generate_morph_id(self):
+        """
+        """
+        now = datetime.now()
+        date_name = now.isoformat()
+        trimmed_date_name = date_name[:date_name.index('.')][5:].replace('T', '_').replace('-', '').replace(':', '')
+        morph_id = "FE%d!%s-%s" % (self.game_no, self.name, trimmed_date_name)
+        return morph_id
+
+    def save(self, **kwargs):
+        """
+        """
+        try:
+            morph = self.morph
+        except AttributeError:
+            morph = get_morph(self.game_no, self.name, **self.options)
+        self.progress = {
+            "current_cls": morph.current_cls,
+            "current_lv": morph.current_lv,
+        }
+        self.morph_id = self.generate_morph_id()
+        #print("save", self.morph_id)
+        return super().save(**kwargs)
 
     def init(self):
         """
@@ -123,3 +151,4 @@ class VirtualMorph(models.Model):
                 max_val=max_stats[statname] / 100,
                 absmax_val=absmax_stats[indexno] / 100,
             )
+

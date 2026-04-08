@@ -91,16 +91,31 @@ class UnitConfirmView(UnitSelectView, FormView):
         # Yep.
         return form_class 
 
+    def form_valid(self, form):
+        """
+        """
+        cleaned_data = form.cleaned_data
+        # prepare data to be saved.
+        #print("form", form, dir(form))
+        #print("cleaned_data", cleaned_data)
+        #print("type(cleaned_data)", type(form.cleaned_data))
+        game_no = cleaned_data.pop('game_no')
+        name = cleaned_data.pop('name')
+        options = cleaned_data
+        if self.request.user.username == "":
+            owner = None
+        else:
+            owner = self.request.user
+        VirtualMorph.objects.create(owner=owner, game_no=game_no, name=name, options=options)
+        # create morph
+        # redirect to `success_url`
+        return super().form_valid(form)
+
 class PreviewMorphView(TemplateView, FormView):
     """
     """
     template_name = "dracogate/_preview_morph.html"
     form_class = None
-
-    def get_form_class(self):
-        """
-        """
-        # TODO: Check to see if route-params are available at this stage.
 
     # TODO: Need to do research on htmx to progress.
     def get_context_data(self, game_no, name, **kwargs):
