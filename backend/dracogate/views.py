@@ -76,8 +76,8 @@ class UnitConfirmView(UnitSelectView, FormView):
     def get_form_class(self):
         """
         """
-        print("super().get_form_class())", super().get_form_class())
-        print("get_form_class: self.request.path", self.request.path.split('/'))
+        #print("super().get_form_class())", super().get_form_class())
+        #print("get_form_class: self.request.path", self.request.path.split('/'))
         path = self.request.path.split('/')
         game_no = int(path[-3].replace("FE", ""))
         name = path[-2]

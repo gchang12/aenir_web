@@ -330,3 +330,4 @@ class InitFormBuilderTests(TestCase):
                 self.assertFieldIsInstance((form_class, field_name), field_type)
                 self.assertWidgetEqual((form_class, field_name), widget_type)
                 self.assertInitialEqual((form_class, field_name), initial_value)
+

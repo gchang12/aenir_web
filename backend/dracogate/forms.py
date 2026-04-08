@@ -38,9 +38,8 @@ class InitFormBuilder:
             """
             return forms.ChoiceField(
                 initial=values[0],
-                #max_length=9,
-                #required=False,
                 choices=[(father, father) for father in values],
+                required=True,
             )
 
         def hard_mode(values: List[bool]):
@@ -48,7 +47,7 @@ class InitFormBuilder:
             """
             return forms.BooleanField(
                 initial=values[0],
-                #required=False,
+                required=True,
             )
 
         def number_of_declines(values: List[int]):
@@ -59,7 +58,7 @@ class InitFormBuilder:
                 min_value=0,
                 max_value=3,
                 step_size=1,
-                #required=False,
+                required=True,
             )
 
         def chapter(values: List[str]):
@@ -67,8 +66,8 @@ class InitFormBuilder:
             """
             return forms.ChoiceField(
                 choices=[(chapter, chapter) for chapter in values],
-                #required=False,
                 initial=values[0],
+                required=True,
             )
 
         def lyn_mode(values: List[bool]):
@@ -76,7 +75,7 @@ class InitFormBuilder:
             """
             return forms.BooleanField(
                 initial=values[0],
-                #required=False,
+                required=True,
             )
 
     @classmethod
@@ -101,3 +100,4 @@ class InitFormBuilder:
         for field_name, values in init_params.items():
             InitForm.base_fields[field_name] = getattr(cls.Options, field_name)(values)
         return InitForm
+
