@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>aenir –
+    <title>aenir:
       {% block title %}
       A Fire Emblem average stats calculator
       {% endblock %}
@@ -16,6 +16,7 @@
       <a href="/">
         <img src="{% static 'logo.svg' %}" />
       </a>
+      {# <div id="site-header"> <img src="{% static 'aenir.svg' %}" /> <img src="{% static 'a-fe-stat-calculator.svg' %}" /> </div> #}
       <div id="accounts">
         {% if user.username %}
           Welcome, {{ user.username }}!
