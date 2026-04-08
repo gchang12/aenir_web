@@ -38,6 +38,9 @@ class VirtualMorph(models.Model):
     creation_date = models.DateField(
         auto_now_add=True,
     )
+    modification_date = models.DateField(
+        auto_now=True,
+    )
     morph_id = models.CharField(
         max_length=25,
     )
@@ -142,7 +145,7 @@ class VirtualMorph(models.Model):
         growth_rates = morph.growth_rates.as_dict()
         max_stats = morph.max_stats.as_dict()
         absmax_stats = morph.Stats.ABSOLUTE_MAXES()
-        # null zero-growth stats
+        # nullify zero-growth stats
         zero_growth_stat_list = morph.Stats.ZERO_GROWTH_STAT_LIST()
         for indexno, statname in enumerate(morph.Stats.STAT_LIST()):
             yield Stat(
