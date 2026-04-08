@@ -123,10 +123,16 @@ AUTH_USER_MODEL = "accounts.User"
 
 LOGGING = {
     "version": 1,
+    "formatters": {
+        "general": {
+            "format": "%(name)s:%(levelname)s:%(message)s",
+        },
+    },
     "handlers": {
         "file": {
             "class": "logging.FileHandler",
             "filename": ".aenir_web.log",
+            "formatter": "general",
         },
     },
     "loggers": {
