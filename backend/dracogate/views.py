@@ -87,8 +87,6 @@ class UnitConfirmView(UnitSelectView, FormView):
         except InitError as e:
             init_params = e.init_params
         form_class = InitFormBuilder.build_form_class(game_no, name, init_params)
-        # TODO: Check to see if route-params are available at this stage.
-        # Yep.
         return form_class 
 
     def form_valid(self, form):
@@ -96,9 +94,6 @@ class UnitConfirmView(UnitSelectView, FormView):
         """
         cleaned_data = form.cleaned_data
         # prepare data to be saved.
-        #print("form", form, dir(form))
-        #print("cleaned_data", cleaned_data)
-        #print("type(cleaned_data)", type(form.cleaned_data))
         game_no = cleaned_data.pop('game_no')
         name = cleaned_data.pop('name')
         options = cleaned_data
@@ -106,12 +101,19 @@ class UnitConfirmView(UnitSelectView, FormView):
             owner = None
         else:
             owner = self.request.user
-        VirtualMorph.objects.create(owner=owner, game_no=game_no, name=name, options=options)
+        morph_id = VirtualMorph._generate_morph_id(game_no, name)
         # create morph
+        VirtualMorph.objects.create(
+            owner=owner,
+            morph_id=morph_id,
+            game_no=game_no,
+            name=name,
+            options=options,
+        )
         # redirect to `success_url`
         return super().form_valid(form)
 
-class PreviewMorphView(TemplateView, FormView):
+class PreviewMorphView(TemplateView):
     """
     """
     template_name = "dracogate/_preview_morph.html"

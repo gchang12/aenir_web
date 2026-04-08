@@ -65,13 +65,14 @@ class VirtualMorph(models.Model):
             ["owner", "morph_id"],
         ]
 
-    def generate_morph_id(self):
+    @staticmethod
+    def _generate_morph_id(game_no, name):
         """
         """
         now = datetime.now()
         date_name = now.isoformat()
         trimmed_date_name = date_name[:date_name.index('.')][5:].replace('T', '_').replace('-', '').replace(':', '')
-        morph_id = "FE%d!%s-%s" % (self.game_no, self.name, trimmed_date_name)
+        morph_id = "FE%d!%s-%s" % (game_no, name, trimmed_date_name)
         return morph_id
 
     def save(self, **kwargs):
@@ -85,7 +86,7 @@ class VirtualMorph(models.Model):
             "current_cls": morph.current_cls,
             "current_lv": morph.current_lv,
         }
-        self.morph_id = self.generate_morph_id()
+        #self.morph_id = self.generate_morph_id()
         #print("save", self.morph_id)
         return super().save(**kwargs)
 
