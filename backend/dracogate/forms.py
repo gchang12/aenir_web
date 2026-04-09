@@ -9,22 +9,6 @@ from typing import (
 
 from django import forms
 
-FATHERS = (
-    'Arden',
-    'Azel',
-    'Alec',
-    'Claude',
-    'Jamka',
-    'Dew',
-    'Noish',
-    'Fin',
-    'Beowolf',
-    'Holyn',
-    'Midayle',
-    'Levin',
-    'Lex',
-)
-
 class InitFormBuilder:
     """
     """

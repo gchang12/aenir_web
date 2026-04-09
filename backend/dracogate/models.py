@@ -6,12 +6,34 @@ from datetime import datetime
 from dataclasses import dataclass
 from typing import NamedTuple
 
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.utils.translation import gettext_lazy as _
 
 from aenir import get_morph
 
 User = get_user_model()
+
+def validate_progress_value(progress_value):
+    """
+    """
+    if not isinstance(progress_value, dict):
+        raise ValidationError(
+            _("Received object of type %(type)r"),
+            params={"type": type(progress_value)},
+        )
+    if set(progress_value) != {"current_cls", "current_lv"}:
+        raise ValidationError(
+            _("Wrong keys in `progress_value`: %(keys)r"),
+            params={"keys": progress_value.keys()},
+        )
+    if (type(progress_value["current_cls"]), type(progress_value["current_lv"])) != (str, int):
+        raise ValidationError(
+            _("Wrong value types in `progress_value`: %(values)r"),
+            params={"value_types": {key: type(value) for key, value in progress_value.items()}},
+        )
+
 
 class Stat(NamedTuple):
     """
@@ -59,7 +81,9 @@ class VirtualMorph(models.Model):
         blank=True,
     )
     # to show on-screen as a preview
-    progress = models.JSONField()
+    progress = models.JSONField(
+        validators=[validate_progress_value],
+    )
 
     class Meta:
         """
@@ -83,12 +107,12 @@ class VirtualMorph(models.Model):
         """
         try:
             morph = self.morph
+            self.progress = {
+                "current_cls": morph.current_cls,
+                "current_lv": morph.current_lv,
+            }
         except AttributeError:
-            morph = get_morph(self.game_no, self.name, **self.options)
-        self.progress = {
-            "current_cls": morph.current_cls,
-            "current_lv": morph.current_lv,
-        }
+            pass
         #self.morph_id = self.generate_morph_id()
         #print("save", self.morph_id)
         return super().save(**kwargs)

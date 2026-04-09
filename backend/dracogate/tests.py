@@ -1,11 +1,12 @@
 """
 """
 
-import dataclasses
+import unittest
 
 from django.test import TestCase
 from django import forms
 from django.urls import reverse
+from django.core.exceptions import ValidationError
 
 from aenir import get_morph
 from aenir._exceptions import (
@@ -25,6 +26,81 @@ from ._logging import logger
 class VirtualMorphTests(TestCase):
     """
     """
+
+    def test__progress_validation__okay(self):
+        """
+        """
+        game_no = 6
+        name = "Roy"
+        progress = {
+            "current_cls": "Lord",
+            "current_lv": 1,
+        }
+        vmorph = VirtualMorph.objects.create(
+            game_no=game_no,
+            name=name,
+            progress=progress,
+            owner=None,
+            morph_id="progress_validation",
+        )
+
+    @unittest.expectedFailure
+    def test__progress_validation__type_err(self):
+        """
+        """
+        game_no = 6
+        name = "Roy"
+        progress = [
+            ("current_cls", "Lord"),
+            ("current_lv", 1),
+        ]
+        with self.assertRaises(ValidationError):
+            VirtualMorph.objects.create(
+                game_no=game_no,
+                name=name,
+                progress=progress,
+                owner=None,
+                morph_id="progress_validation",
+            )
+
+    @unittest.expectedFailure
+    def test__progress_validation__wrong_keys(self):
+        """
+        """
+        game_no = 6
+        name = "Roy"
+        progress = {
+            "current_cls": "Lord",
+            "current_lv": 1,
+            "": None,
+        }
+        with self.assertRaises(ValidationError):
+            VirtualMorph.objects.create(
+                game_no=game_no,
+                name=name,
+                progress=progress,
+                owner=None,
+                morph_id="progress_validation",
+            )
+
+    @unittest.expectedFailure
+    def test__progress_validation__wrong_value_types(self):
+        """
+        """
+        game_no = 6
+        name = "Roy"
+        progress = {
+            "current_cls": "Lord",
+            "current_lv": None,
+        }
+        with self.assertRaises(ValidationError):
+            VirtualMorph.objects.create(
+                game_no=game_no,
+                name=name,
+                progress=progress,
+                owner=None,
+                morph_id="progress_validation",
+            )
 
     def test_generate_stats(self):
         """

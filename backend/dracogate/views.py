@@ -106,6 +106,11 @@ class UnitConfirmView(UnitSelectView, FormView):
             owner = None
         else:
             owner = self.request.user
+        morph = get_morph(game_no, name, **options)
+        progress = {
+            "current_lv": morph.current_lv,
+            "current_cls": morph.current_cls,
+        }
         morph_id = VirtualMorph._generate_morph_id(game_no, name)
         # create morph
         vmorph = VirtualMorph.objects.create(
@@ -114,6 +119,7 @@ class UnitConfirmView(UnitSelectView, FormView):
             game_no=game_no,
             name=name,
             options=options,
+            progress=progress,
         )
         success_url = reverse("dracogate:modify_morph", args=[vmorph.id])
         logger.debug("return: %r", success_url)
