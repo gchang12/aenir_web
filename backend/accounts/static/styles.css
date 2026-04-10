@@ -28,3 +28,9 @@ nav {
 .maxed-stat th, .maxed-stat th + td {
   color: green;
 }
+
+#modify_morphs {
+  & menu {
+    list-style-type: none;
+  }
+}

@@ -15,5 +15,6 @@ urlpatterns = [
     path("create_morph/FE<int:game_no>/", views.UnitSelectView.as_view(), name="unit_select"),
     path("create_morph/FE<int:game_no>/<str:name>/", views.UnitConfirmView.as_view(), name="unit_confirm"),
     path("_preview_morph/FE<int:game_no>/<str:name>/", views.PreviewMorphView.as_view(), name="_preview_morph"),
+    path("modify_morphs/", views.ListMorphsView.as_view(), name="list_morphs"),
     path("modify_morphs/<uuid:id>/", views.ModifyMorphView.as_view(), name="modify_morph"),
 ]

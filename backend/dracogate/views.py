@@ -6,6 +6,10 @@ from django.shortcuts import (
     redirect,
 )
 from django.views.generic.base import TemplateView
+from django.views.generic import (
+    ListView,
+    DetailView,
+)
 # TODO: Should this be a mix-in?
 from django.views.generic.edit import FormView
 from django.urls import reverse
@@ -152,7 +156,42 @@ class PreviewMorphView(TemplateView):
         }
         return context
 
-class ModifyMorphView(TemplateView):
+class ListMorphsView(ListView):
+    """
+    """
+    paginate_by = 20
+    template_name = "dracogate/list_morphs.html"
+    queryset = None
+    model = VirtualMorph
+
+    def get_context_data(self, **kwargs):
+        """
+        """
+        context = super().get_context_data(**kwargs)
+        #print("get_context_data")
+        #print(context)
+        return context
+
+    # TODO: Implement!
+    def get_queryset(self, **kwargs):
+        """
+        """
+        # get queryset for logged-in users.
+        # for users who aren't logged in, show nothing except maybe an input box where they can input some UUID to fetch some vmorph
+        #print("get_queryset")
+        if self.request.user.username == "":
+            queryset = []
+        else:
+            queryset = self.model.objects.filter(owner=self.request.user)
+        #print(self.request.user)
+        #print(dir(self))
+        ##print(kwargs)
+        #queryset = super().get_queryset(**kwargs)
+        return queryset
+
+class ModifyMorphView(DetailView):
     """
     """
     template_name = "dracogate/modify_morph.html"
+    model = VirtualMorph
+

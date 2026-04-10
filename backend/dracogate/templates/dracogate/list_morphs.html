@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Morph List
+{% endblock %}
+
+{% block main %}
+
+<section id="modify_morphs">
+  <h1>Modify Morphs</h2>
+
+<menu>
+  {% for object in object_list %}
+    <li>
+      <a href="{% url 'dracogate:modify_morph' object.id %}">
+        <figure>
+          <img src="{% get_static_prefix %}dracogate/images/{{object.game_no}}/characters/{{object.name}}.png" />
+          <figcaption>
+            {{ object.morph_id }}
+          </figcaption>
+        </figure>
+      </a>
+    </li>
+  {% endfor %}
+</menu>
+
+</section>
+
+{% block modify_morph %}
+{% endblock %}
+
+{% endblock %}
