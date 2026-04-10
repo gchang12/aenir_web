@@ -125,6 +125,7 @@ class UnitConfirmView(UnitSelectView, FormView):
             options=options,
             progress=progress,
         )
+        logger.debug("vmorph.id: %r, %r", vmorph.id, type(vmorph.id))
         success_url = reverse("dracogate:modify_morph", args=[vmorph.id])
         logger.debug("return: %r", success_url)
         # redirect to `success_url`
