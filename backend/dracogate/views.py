@@ -183,11 +183,12 @@ class ListMorphsView(ListView):
         if self.request.user.username == "":
             queryset = []
         else:
-            queryset = self.model.objects.filter(owner=self.request.user)
+            #queryset = self.model.objects.filter(owner=self.request.user)
+            pass
         #print(self.request.user)
         #print(dir(self))
         ##print(kwargs)
-        #queryset = super().get_queryset(**kwargs)
+        queryset = super().get_queryset(**kwargs)
         return queryset
 
 class ModifyMorphView(DetailView):

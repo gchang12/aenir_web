@@ -49,7 +49,7 @@ Create Morph: FE{{route_params.game_no}} {{route_params.name}}
         {% endfor %}
       </tbody>
     </table>
-    <form method="post">
+    <form method="post" action="{% url 'dracogate:unit_confirm' route_params.game_no route_params.name %}">
       {% csrf_token %}
       {{ form }}
       <button>Submit</button>
