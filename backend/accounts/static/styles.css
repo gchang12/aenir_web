@@ -32,5 +32,8 @@ nav {
 #modify_morphs {
   & menu {
     list-style-type: none;
+    height: 30rem;
+    width: 20rem;
+    overflow-y: scroll;
   }
 }

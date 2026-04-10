@@ -31,7 +31,7 @@ class InitFormBuilder:
             """
             return forms.BooleanField(
                 initial=values[0],
-                required=True,
+                required=False,
                 label="Hard Mode",
             )
 
@@ -61,7 +61,7 @@ class InitFormBuilder:
             """
             return forms.BooleanField(
                 initial=values[0],
-                required=True,
+                required=False,
                 label="Lyn Mode",
             )
 
