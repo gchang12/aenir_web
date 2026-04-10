@@ -189,7 +189,7 @@ class ListMorphsView(ListView):
         #print(dir(self))
         ##print(kwargs)
         queryset = super().get_queryset(**kwargs)
-        return queryset
+        return queryset.order_by("-modification_date")
 
 class ModifyMorphView(DetailView):
     """
