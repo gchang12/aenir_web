@@ -7,17 +7,20 @@ Modify Morphs
 
 {% block main %}
 
-<section id="list_morphs">
+<article id="list_morphs">
   <h1>Modify Morphs</h1>
 
-<menu>
+{% block modify_morph %}
+<article>
+  <h2>Morph Select</h2>
+  <menu>
   {% for object in object_list %}
     <li>
       <a href="{% url 'dracogate:modify_morph' object.id %}">
         <figure>
           <img src="{% get_static_prefix %}dracogate/images/{{object.game_no}}/characters/{{object.name}}.png" />
           <figcaption>
-            <h2>{{ object.morph_id }}</h2>
+            <h3>{{ object.morph_id }}</h3>
             <table>
               <thead>
                 <tr>
@@ -57,11 +60,8 @@ Modify Morphs
       </a>
     </li>
   {% endfor %}
-</menu>
-
-</section>
-
-{% block modify_morph %}
+  </menu>
+</article>
 {% endblock %}
 
 {% endblock %}
