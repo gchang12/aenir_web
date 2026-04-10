@@ -32,6 +32,7 @@ class InitFormBuilder:
             return forms.BooleanField(
                 initial=values[0],
                 required=True,
+                label="Hard Mode",
             )
 
         def number_of_declines(values: List[int]):
@@ -43,6 +44,7 @@ class InitFormBuilder:
                 max_value=3,
                 step_size=1,
                 required=True,
+                label="Number of Declines",
             )
 
         def chapter(values: List[str]):
@@ -60,6 +62,7 @@ class InitFormBuilder:
             return forms.BooleanField(
                 initial=values[0],
                 required=True,
+                label="Lyn Mode",
             )
 
     @classmethod
