@@ -142,14 +142,32 @@ class PreviewMorphView(TemplateView):
     def get_context_data(self, game_no, name, **kwargs):
         """
         """
+        print(game_no, name, self.request.GET)
         try:
             morph = get_morph(game_no, name)
         except InitError as err:
+            # TODO: Update with URL parameters from self.request.GET afterwards.
             default_options = {field: values[0] for field, values in err.init_params.items()}
+            specified_options = self.request.GET
+            for param in default_options.keys():
+                if param in ("hard_mode", "lyn_mode"):
+                    new_param_value = specified_options.get(param) == "on"
+                elif param == "number_of_declines":
+                    new_param_value = int(specified_options.get(param))
+                else:
+                    new_param_value = specified_options.get(param)
+                if new_param_value is not None:
+                    default_options[param] = new_param_value
+            #print(specified_options)
             morph = get_morph(game_no, name, **default_options)
             # TODO: Show form class
         vmorph = VirtualMorph(game_no=game_no, name=name)
         vmorph.morph = morph
+        context = super().get_context_data(**kwargs)
+        context['route_params'] = {
+            "game_no": game_no,
+            "name": name,
+        }
         context['active_stats'] = {
             "current_cls": morph.current_cls,
             "current_lv": morph.current_lv,

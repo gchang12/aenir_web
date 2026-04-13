@@ -1,0 +1,41 @@
+{% load static %}
+
+<div class="unit-hub" id="_preview_morph">
+  <figure>
+    <img src="{% get_static_prefix %}dracogate/images/{{route_params.game_no}}/characters/{{route_params.name}}.png" />
+    <figcaption><h3>{{route_params.name}}</h3></figcaption>
+  </figure>
+  <table>
+    <thead>
+      <tr>
+        <th>Class</th>
+        <td>{{active_stats.current_cls}}</td>
+      </tr>
+      <tr>
+        <th>Lv</th>
+        <td>{{active_stats.current_lv}}</td>
+      </tr>
+    </thead>
+  </table>
+  <table>
+    <thead>
+      <th></th>
+      <th colspan="2">Bases</th>
+      <th colspan="2">Growths</th>
+    </thead>
+    <tbody>
+      {% for stat in active_stats.numeric_stats %}
+      <tr{% if stat.current_val == stat.max_val %} class="maxed-stat"{% endif %}>
+        <th>{{stat.id}}</th>
+        <td>{{stat.current_val}}</td>
+        <td><meter low="0" value="{{stat.current_val}}" max="{{stat.absmax_val}}" high="{{stat.max_val}}"></meter></td>
+        {% if stat.growth_rate != None %}
+        <td>{{stat.growth_rate}}%</td>
+        <td><meter low="0" value="{{stat.growth_rate}}" max="200" high="100"></meter></td>
+        {% endif %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
