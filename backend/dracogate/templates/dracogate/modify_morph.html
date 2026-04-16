@@ -3,59 +3,82 @@
 {% load static %}
 
 {% block title %}
+{{ object.morph_id }}
 {% endblock %}
 
 {% block modify_morph %}
 
 <article id="modify_morph">
-  <h2>Modify Morph</h2>
-  <div id="init_args">
-    <figure>
-      <figcaption><h3>{{ object.morph_id }}</h3></figcaption>
+  <h2>{{ object.morph_id }}</h2>
+  <div class="body">
+    <div id="profile">
       <img src="{% get_static_prefix %}dracogate/images/{{object.game_no}}/characters/{{object.name}}.png" />
-    </figure>
-    <table>
-      <thead>
-        <tr>
-          <th>Game</th>
-          <td>FE{{ object.game_no }}</td>
-        </tr>
-        <tr>
-          <th>Unit</th>
-          <td>{{ object.name }}</td>
-        </tr>
-        <tr>
-          <th>Class</th>
-          <td>{{ object.progress.current_cls }}</td>
-        </tr>
-        <tr>
-          <th>Lv</th>
-          <td>{{ object.progress.current_lv }}</td>
-        </tr>
-      </thead>
-      <tbody>
-        {% for option, opt_value in object.options.items %}
-        <tr>
-        {% if option == "father" %}
-        <th>Father</th>
-        <td>{{ opt_value }}</td>
-        {% elif option == "hard_mode" %}
-        <th>Mode</th>
-        <td>{% if opt_value == True %}Hard{% else %}Normal{% endif %}</td>
-        {% elif option == "number_of_declines" %}
-        <th>Declines</th>
-        <td>{{ opt_value }}</td>
-        {% elif option == "chapter" %}
-        <th>Chapter</th>
-        <td>{{ opt_value }}</td>
-        {% elif option == "lyn_mode" %}
-        <th>Campaign</th>
-        <td>{% if opt_value == True %}Tutorial{% else %}Main{% endif %}</td>
-        {% endif %}
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+      <table>
+        <thead>
+          <tr>
+            <th>Game</th>
+            <td>FE{{ object.game_no }}</td>
+          </tr>
+          <tr>
+            <th>Unit</th>
+            <td>{{ object.name }}</td>
+          </tr>
+        </thead>
+        <tbody>
+          {% for option, opt_value in object.options.items %}
+          <tr>
+          {% if option == "father" %}
+          <th>Father</th>
+          <td>{{ opt_value }}</td>
+          {% elif option == "hard_mode" %}
+          <th>Mode</th>
+          <td>{% if opt_value == True %}Hard{% else %}Normal{% endif %}</td>
+          {% elif option == "number_of_declines" %}
+          <th>Declines</th>
+          <td>{{ opt_value }}</td>
+          {% elif option == "chapter" %}
+          <th>Chapter</th>
+          <td>{{ opt_value }}</td>
+          {% elif option == "lyn_mode" %}
+          <th>Campaign</th>
+          <td>{% if opt_value == True %}Tutorial{% else %}Main{% endif %}</td>
+          {% endif %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <section id="stats_before">
+      <h3>Before</h3>
+      <div class="body">
+      {% block stats_before %}
+      {% endblock %}
+      </div>
+    </section>
+    <section id="stats_after">
+      <h3>After</h3>
+      <div class="body">
+      {% block stats_after %}
+      {% endblock %}
+      </div>
+    </section>
+    <section id="action_menu">
+      <h3>Actions</h3>
+      <div class="body">
+        <menu>
+          <li>
+            <a href=""></a>
+          </li>
+        </menu>
+        <section id="method_form">
+        {% block method_form %}
+          <h4></h4>
+          <form>
+          </form>
+        {% endblock %}
+        </section>
+      </div>
+    </section>
   </div>
 </article>
 

@@ -120,8 +120,27 @@ class VirtualMorph(models.Model):
     def init(self):
         """
         """
+        morph = get_morph(self.game_no, self.name, **self.options)
+        for method_name, method_kwargs in self.history.items():
+            getattr(morph, method_name)(**method_kwargs)
+        self.morph = morph
 
     def level_up(self, num_levels):
+        """
+        """
+        self.morph._set_max_level()
+        is_success: bool
+        try:
+            self.morph.level_up(num_levels=num_levels)
+            is_success = True
+            param_bounds = (self.morph.current_lv + 1, self.morph.max_level)
+        except LevelUpError as err:
+            is_success = False
+            # TODO: Check error type and return param-bounds based on that.
+            param_bounds = err.param_bounds
+        return (is_success, param_bounds)
+
+    def promote(self, promo_cls):
         """
         """
 

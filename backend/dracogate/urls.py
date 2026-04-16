@@ -17,4 +17,5 @@ urlpatterns = [
     path("_preview/morph/FE<int:game_no>/<str:name>/", views.PreviewMorphView.as_view(), name="_preview_morph"),
     path("modify_morphs/", views.ListMorphsView.as_view(), name="list_morphs"),
     path("modify_morphs/<uuid:pk>/", views.ModifyMorphView.as_view(), name="modify_morph"),
+    #path("modify_morphs/<str:morph_id>/", views.ModifyMorphView.as_view(), name="modify_morph"),
 ]

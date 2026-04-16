@@ -1,3 +1,9 @@
+Before
+After
+Method Form
+
+Every one of the methods should, like, have their own views.
+
 Send request for username if not present already.
 - Make a viewset that sends back data about the user.
 - Ping that viewset

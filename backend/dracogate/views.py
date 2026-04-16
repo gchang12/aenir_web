@@ -136,7 +136,6 @@ class PreviewMorphView(TemplateView):
     """
     """
     template_name = "dracogate/_preview_morph.html"
-    form_class = None
 
     # TODO: Need to do research on htmx to progress.
     def get_context_data(self, game_no, name, **kwargs):
@@ -169,6 +168,42 @@ class PreviewMorphView(TemplateView):
             "name": name,
         }
         context['active_stats'] = {
+            "current_cls": morph.current_cls,
+            "current_lv": morph.current_lv,
+            "numeric_stats": vmorph._generate_stats(),
+        }
+        return context
+
+class DisplayGrowthsView(TemplateView):
+    """
+    """
+    template_name = "dracogate/_display_growths.html"
+
+class DisplayStatsView(TemplateView):
+    """
+    """
+    template_name = "dracogate/_display_stats.html"
+
+    def get_context_data(self, pk, method_name, **kwargs):
+        """
+        """
+        print(game_no, name, self.request.GET)
+        vmorph = VirtualMorph.objects.get(pk=pk)
+        morph = vmorph.init()
+        context = super().get_context_data(**kwargs)
+        context['route_params'] = {
+            "game_no": vmorph.game_no,
+            "name": vmorph.name,
+        }
+        context['active_stats'] = {
+            "current_cls": morph.current_cls,
+            "current_lv": morph.current_lv,
+            "numeric_stats": vmorph._generate_stats(),
+        }
+        # post-operation
+        method_args = self.request.GET
+        getattr(vmorph, method_name)(**method_args)
+        context['active_stats2'] = {
             "current_cls": morph.current_cls,
             "current_lv": morph.current_lv,
             "numeric_stats": vmorph._generate_stats(),
