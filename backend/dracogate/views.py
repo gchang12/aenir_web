@@ -181,31 +181,39 @@ class DisplayGrowthsView(TemplateView):
     """
     template_name = "dracogate/_display_growths.html"
 
-class DisplayStatsView(TemplateView):
+def parse_args(dictlike, method_name):
     """
     """
-    template_name = "dracogate/_display_stats.html"
 
-    def get_context_data(self, pk, method_name, **kwargs):
+class PreviewStatsView(TemplateView):
+    """
+    """
+    template_name = "dracogate/_preview_stats.html"
+
+    def get(self, **kwargs):
         """
         """
-        print(game_no, name, self.request.GET)
+        print("PreviewStatsView", kwargs)
+        return super().get(**kwargs)
+
+    def get_context_data(self, pk, **kwargs):
+        """
+        """
+        print(game_no, name, kwargs)
+        print(self.request.GET)
+        context = super().get_context_data(**kwargs)
         vmorph = VirtualMorph.objects.get(pk=pk)
         morph = vmorph.init()
-        context = super().get_context_data(**kwargs)
+        method_name = self.request.GET.get("method_name")
+        if method_name is not None:
+            # TODO: Parse the arguments
+            kwargs = vmorph.parse_args(self.request.GET, method_name)
+            getattr(vmorph, method_name)(**kwargs)
         context['route_params'] = {
             "game_no": vmorph.game_no,
             "name": vmorph.name,
         }
         context['active_stats'] = {
-            "current_cls": morph.current_cls,
-            "current_lv": morph.current_lv,
-            "numeric_stats": vmorph._generate_stats(),
-        }
-        # post-operation
-        method_args = self.request.GET
-        getattr(vmorph, method_name)(**method_args)
-        context['active_stats2'] = {
             "current_cls": morph.current_cls,
             "current_lv": morph.current_lv,
             "numeric_stats": vmorph._generate_stats(),
@@ -251,4 +259,17 @@ class ModifyMorphView(DetailView):
     """
     template_name = "dracogate/modify_morph.html"
     model = VirtualMorph
+
+    def get_context_data(self, **kwargs):
+        """
+        """
+        print("ModifyMorphView.kwargs", kwargs)
+        context = super().get_context_data(**kwargs)
+        print("ModifyMorphView.get_context_data", context)
+        return context
+
+class LevelUpView(TemplateView):
+    """
+    """
+    template_name = "dracogate/level_up.html"
 

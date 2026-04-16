@@ -199,3 +199,8 @@ class VirtualMorph(models.Model):
                 absmax_val=absmax_stats[indexno] / 100,
             )
 
+    @staticmethod
+    def _parse_args(dictlike, method_name):
+        """
+        """
+

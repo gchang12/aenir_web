@@ -1,0 +1,28 @@
+{# {% block stats_before %} #}
+<h3>Before</h3>
+<p>Something</p>
+<table class="body">
+  <thead>
+    <tr>
+      <th>Class</th>
+      <td>{{ active_stats.current_cls }}</td>
+    </tr>
+    <tr>
+      <th>Lv</th>
+      <td>{{ active_stats.current_lv }}</td>
+    </tr>
+    <tr>
+      <th colspan="3">Current</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for numeric_stat in active_stats.numeric_stats %}
+    <tr>
+      <th>{{ numeric_stat.id }}</th>
+      <td>{{ numeric_stat.current_val }}</td>
+      <td><meter min="0" max="{{ numeric_stat.absmax_val }}" value="{{ numeric_stat.current_val }}" optimum="{{ numeric_stat.max_val }}"></meter></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{# {% endblock %} #}
