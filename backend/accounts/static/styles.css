@@ -37,3 +37,23 @@ nav {
     overflow-y: scroll;
   }
 }
+
+/* #modify_morph { display: grid; } */
+#modify_morph > .body {
+  display: grid;
+  grid-template-areas:
+    "profile stats_before stats_after"
+    "action_menu . .";
+  &> #profile {
+    grid-area: profile;
+  }
+  &> #stats_before {
+    grid-area: stats_before;
+  }
+  &> #stats_after {
+    grid-area: stats_after;
+  }
+  &> #action_menu {
+    grid-area: action_menu;
+  }
+}
