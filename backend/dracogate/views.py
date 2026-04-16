@@ -149,10 +149,12 @@ class PreviewMorphView(TemplateView):
             default_options = {field: values[0] for field, values in err.init_params.items()}
             specified_options = self.request.GET
             for param in default_options.keys():
+                #print(param)
                 if param in ("hard_mode", "lyn_mode"):
                     new_param_value = specified_options.get(param) == "on"
                 elif param == "number_of_declines":
-                    new_param_value = int(specified_options.get(param))
+                    #print(specified_options.get(param))
+                    new_param_value = int(specified_options.get(param) or 0)
                 else:
                     new_param_value = specified_options.get(param)
                 if new_param_value is not None:
