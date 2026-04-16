@@ -121,9 +121,10 @@ class VirtualMorph(models.Model):
         """
         """
         morph = get_morph(self.game_no, self.name, **self.options)
-        for method_name, method_kwargs in self.history.items():
+        for method_name, method_kwargs in self.history:
             getattr(morph, method_name)(**method_kwargs)
         self.morph = morph
+        return morph
 
     def level_up(self, num_levels):
         """

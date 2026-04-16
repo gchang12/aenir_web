@@ -185,29 +185,32 @@ def parse_args(dictlike, method_name):
     """
     """
 
-class PreviewStatsView(TemplateView):
+class PreviewStatsView(DetailView):
     """
     """
     template_name = "dracogate/_preview_stats.html"
+    model = VirtualMorph
 
-    def get(self, **kwargs):
+    def get(self, request, pk, **kwargs):
         """
         """
-        print("PreviewStatsView", kwargs)
-        return super().get(**kwargs)
+        print("PreviewStatsView", request, pk, kwargs)
+        return super().get(self, request, pk, **kwargs)
 
-    def get_context_data(self, pk, **kwargs):
+    def get_context_data(self, object, **kwargs):
         """
         """
-        print(game_no, name, kwargs)
-        print(self.request.GET)
+        print(kwargs)
+        #print(game_no, name, kwargs)
+        #print(self.request.GET)
+        pk = object.pk
         context = super().get_context_data(**kwargs)
         vmorph = VirtualMorph.objects.get(pk=pk)
         morph = vmorph.init()
         method_name = self.request.GET.get("method_name")
         if method_name is not None:
             # TODO: Parse the arguments
-            kwargs = vmorph.parse_args(self.request.GET, method_name)
+            kwargs = vmorph._parse_args(self.request.GET, method_name)
             getattr(vmorph, method_name)(**kwargs)
         context['route_params'] = {
             "game_no": vmorph.game_no,
