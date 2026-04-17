@@ -191,19 +191,13 @@ class PreviewStatsView(DetailView):
     template_name = "dracogate/_preview_stats.html"
     model = VirtualMorph
 
-    def get(self, request, pk, **kwargs):
-        """
-        """
-        print("PreviewStatsView", request, pk, kwargs)
-        return super().get(self, request, pk, **kwargs)
-
-    def get_context_data(self, object, **kwargs):
+    def get_context_data(self, **kwargs):
         """
         """
         print(kwargs)
         #print(game_no, name, kwargs)
         #print(self.request.GET)
-        pk = object.pk
+        pk = self.object.pk
         context = super().get_context_data(**kwargs)
         vmorph = VirtualMorph.objects.get(pk=pk)
         morph = vmorph.init()
