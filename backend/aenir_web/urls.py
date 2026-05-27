@@ -23,6 +23,6 @@ from django.views.generic.base import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("dracogate/", include("dracogate.urls")),
+    path("", include("dracogate.urls")),
     path("", TemplateView.as_view(template_name="_root.html")),
 ]
