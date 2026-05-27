@@ -16,16 +16,6 @@
       <a href="/">
         <img src="{% static 'logo.svg' %}" />
       </a>
-      {# <div id="site-header"> <img src="{% static 'aenir.svg' %}" /> <img src="{% static 'a-fe-stat-calculator.svg' %}" /> </div> #}
-      <div id="accounts">
-        {% if user.username %}
-          Welcome, {{ user.username }}!
-          <a href="{% url 'accounts:logout' %}">Logout</a>
-        {% else %}
-          You are not logged in.
-          <a href="{% url 'accounts:login' %}">Login</a>
-        {% endif %}
-      </div>
     </header>
     <nav>
       <menu>
