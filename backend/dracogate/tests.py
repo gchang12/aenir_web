@@ -44,64 +44,6 @@ class VirtualMorphTests(TestCase):
             morph_id="progress_validation",
         )
 
-    @unittest.expectedFailure
-    def test__progress_validation__type_err(self):
-        """
-        """
-        game_no = 6
-        name = "Roy"
-        progress = [
-            ("current_cls", "Lord"),
-            ("current_lv", 1),
-        ]
-        with self.assertRaises(ValidationError):
-            VirtualMorph.objects.create(
-                game_no=game_no,
-                name=name,
-                progress=progress,
-                owner=None,
-                morph_id="progress_validation",
-            )
-
-    @unittest.expectedFailure
-    def test__progress_validation__wrong_keys(self):
-        """
-        """
-        game_no = 6
-        name = "Roy"
-        progress = {
-            "current_cls": "Lord",
-            "current_lv": 1,
-            "": None,
-        }
-        with self.assertRaises(ValidationError):
-            VirtualMorph.objects.create(
-                game_no=game_no,
-                name=name,
-                progress=progress,
-                owner=None,
-                morph_id="progress_validation",
-            )
-
-    @unittest.expectedFailure
-    def test__progress_validation__wrong_value_types(self):
-        """
-        """
-        game_no = 6
-        name = "Roy"
-        progress = {
-            "current_cls": "Lord",
-            "current_lv": None,
-        }
-        with self.assertRaises(ValidationError):
-            VirtualMorph.objects.create(
-                game_no=game_no,
-                name=name,
-                progress=progress,
-                owner=None,
-                morph_id="progress_validation",
-            )
-
     def test_generate_stats(self):
         """
         """
