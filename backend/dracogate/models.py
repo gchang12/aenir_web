@@ -16,16 +16,6 @@ from aenir import get_morph
 
 User = get_user_model()
 
-class Stat(NamedTuple):
-    """
-    For storing lists of 5-tuples.
-    """
-    id: str
-    current_val: float
-    growth_rate: int | None
-    max_val: float
-    absmax_val: float
-
 class VirtualMorph(models.Model):
     """
     """
@@ -73,6 +63,16 @@ class VirtualMorph(models.Model):
         unique_together = [
             ["owner", "morph_id"],
         ]
+
+    class Stat(NamedTuple):
+        """
+        For storing lists of 5-tuples.
+        """
+        id: str
+        current_val: float
+        growth_rate: int | None
+        max_val: float
+        absmax_val: float
 
     @staticmethod
     def _generate_morph_id(game_no, name):
@@ -174,7 +174,7 @@ class VirtualMorph(models.Model):
         # nullify zero-growth stats
         zero_growth_stat_list = morph.Stats.ZERO_GROWTH_STAT_LIST()
         for indexno, statname in enumerate(morph.Stats.STAT_LIST()):
-            yield Stat(
+            yield self.Stat(
                 id=statname,
                 current_val=current_stats[statname] / 100,
                 growth_rate=(None if statname in zero_growth_stat_list else growth_rates[statname]),

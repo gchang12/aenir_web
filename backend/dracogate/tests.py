@@ -15,7 +15,7 @@ from aenir._exceptions import (
 
 from .models import (
     VirtualMorph,
-    Stat,
+    #Stat,
 )
 from .forms import (
     InitFormBuilder,
