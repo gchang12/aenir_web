@@ -1,7 +1,10 @@
 """
+Tests functionality for storing, interacting with, and deleting Morph objects.
 """
 
+import re
 import unittest
+import unittest.mock
 
 from django.test import TestCase
 from django import forms
@@ -25,10 +28,12 @@ from ._logging import logger
 
 class VirtualMorphTests(TestCase):
     """
+    Tests functionality of database-representation of Morph.
     """
 
     def test__progress_validation__okay(self):
         """
+        Demo: Creating VirtualMorph with minimal parameters.
         """
         game_no = 6
         name = "Roy"
@@ -44,8 +49,20 @@ class VirtualMorphTests(TestCase):
             morph_id="progress_validation",
         )
 
+    def test_generate_morph_id(self):
+        """
+        Asserts that 'morph_id' generated is of expected pattern.
+        """
+        game_no = 4
+        name = "Sigurd"
+        pattern = "FE[4-9]!Sigurd-[0-9]{4}_[0-9]{6}"
+        morph_id = VirtualMorph._generate_morph_id(game_no, name)
+        actual = re.fullmatch(pattern, morph_id)
+        self.assertIsNotNone(actual)
+
     def test_generate_stats(self):
         """
+        Asserts that value of stats yielded are as expected.
         """
         game_no = 6
         name = "Roy"
@@ -119,6 +136,26 @@ class VirtualMorphTests(TestCase):
         )
         actual = tuple(stat._asdict() for stat in vmorph._generate_stats())
         self.assertTupleEqual(actual, expected)
+
+    def test_save(self):
+        """
+        Asserts that progress-saving functionality of augmented 'save' method works.
+        """
+        game_no = 4
+        name = "Levin"
+        morph = get_morph(game_no, name)
+        morph.current_cls = "Reaper"
+        morph.current_lv = -1
+        vmorph = VirtualMorph(
+            morph_id="test_save",
+            game_no=game_no,
+            name=name,
+        )
+        vmorph.morph = morph
+        vmorph.save()
+        vmorph2 = VirtualMorph.objects.get()
+        self.assertEqual(vmorph2.progress['current_cls'], morph.current_cls)
+        self.assertEqual(vmorph2.progress['current_lv'], morph.current_lv)
 
 class InitFormBuilderTests(TestCase):
     """

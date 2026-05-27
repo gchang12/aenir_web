@@ -18,12 +18,11 @@ User = get_user_model()
 
 class VirtualMorph(models.Model):
     """
+    Database representation of Morph object.
     """
     # meta
-    # TODO: replace with int
-    id = models.UUIDField(
+    id = models.BigAutoField(
         primary_key=True,
-        default=uuid.uuid4,
     )
     owner = models.ForeignKey(
         to=User,
@@ -54,11 +53,11 @@ class VirtualMorph(models.Model):
         blank=True,
     )
     # to show on-screen as a preview
-    # TODO: Make this a OneToOneField
     progress = models.JSONField()
 
     class Meta:
         """
+        Declare uniqueness constraints.
         """
         unique_together = [
             ["owner", "morph_id"],
@@ -74,13 +73,36 @@ class VirtualMorph(models.Model):
         max_val: float
         absmax_val: float
 
+    def _generate_stats(self):
+        """
+        Yields 5-tuples of the form: (stat-name, current-value, growth-rate, max-value, abs-max-val).
+        """
+        morph = self.morph
+        current_stats = morph.current_stats.as_dict()
+        growth_rates = morph.growth_rates.as_dict()
+        max_stats = morph.max_stats.as_dict()
+        absmax_stats = morph.Stats.ABSOLUTE_MAXES()
+        # nullify zero-growth stats
+        zero_growth_stat_list = morph.Stats.ZERO_GROWTH_STAT_LIST()
+        for indexno, statname in enumerate(morph.Stats.STAT_LIST()):
+            yield self.Stat(
+                id=statname,
+                current_val=current_stats[statname] / 100,
+                growth_rate=(None if statname in zero_growth_stat_list else growth_rates[statname]),
+                max_val=max_stats[statname] / 100,
+                absmax_val=absmax_stats[indexno] / 100,
+            )
+
     @staticmethod
     def _generate_morph_id(game_no, name):
         """
         """
         now = datetime.now()
         date_name = now.isoformat()
-        trimmed_date_name = date_name[:date_name.index('.')][5:].replace('T', '_').replace('-', '').replace(':', '')
+        trimmed_date_name = date_name[:date_name.index('.')][5:] \
+            .replace('T', '_') \
+            .replace('-', '') \
+            .replace(':', '')
         morph_id = "FE%d!%s-%s" % (game_no, name, trimmed_date_name)
         return morph_id
 
@@ -98,6 +120,8 @@ class VirtualMorph(models.Model):
         #self.morph_id = self.generate_morph_id()
         #print("save", self.morph_id)
         return super().save(**kwargs)
+
+    # TODO: Test later.
 
     def init(self):
         """
@@ -162,25 +186,6 @@ class VirtualMorph(models.Model):
     def unequip_demi_band(self):
         """
         """
-
-    def _generate_stats(self):
-        """
-        """
-        morph = self.morph
-        current_stats = morph.current_stats.as_dict()
-        growth_rates = morph.growth_rates.as_dict()
-        max_stats = morph.max_stats.as_dict()
-        absmax_stats = morph.Stats.ABSOLUTE_MAXES()
-        # nullify zero-growth stats
-        zero_growth_stat_list = morph.Stats.ZERO_GROWTH_STAT_LIST()
-        for indexno, statname in enumerate(morph.Stats.STAT_LIST()):
-            yield self.Stat(
-                id=statname,
-                current_val=current_stats[statname] / 100,
-                growth_rate=(None if statname in zero_growth_stat_list else growth_rates[statname]),
-                max_val=max_stats[statname] / 100,
-                absmax_val=absmax_stats[indexno] / 100,
-            )
 
     @staticmethod
     def _parse_args(dictlike, method_name):
