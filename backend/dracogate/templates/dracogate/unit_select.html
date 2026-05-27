@@ -7,26 +7,22 @@ Create Morph: FE{{route_params.game_no}}
 {% endblock %}
 
 {% block unit_select %}
-
-<section id="unit_select">
-
-  <h2>Unit Select</h2>
-  <menu>
-    {% for unit in units %}
-    <li{% if unit == route_params.name %} class="active"{% endif %}>
-      <a href="{% url 'dracogate:unit_confirm' route_params.game_no unit %}#FE{{route_params.game_no}}">
-        <figure>
-          <img src="{% get_static_prefix %}dracogate/images/{{route_params.game_no}}/characters/{{unit}}.png" />
-          <figcaption>{{ unit }}</figcaption>
-        </figure>
-      </a>
-    </li>
-    {% endfor %}
-  </menu>
-
-</section>
-
-{% block unit_confirm %}
+  <section id="unit_select">
+    <h2>Unit Select</h2>
+    <menu>
+      {% for unit in units %}
+      <li{% if unit == route_params.name %} class="active"{% endif %}>
+        <a href="{% url 'dracogate:unit_confirm' route_params.game_no unit %}#FE{{route_params.game_no}}">
+          <figure>
+            <img src="{% get_static_prefix %}dracogate/images/{{route_params.game_no}}/characters/{{unit}}.png" />
+            <figcaption>{{ unit }}</figcaption>
+          </figure>
+        </a>
+      </li>
+      {% endfor %}
+    </menu>
+  </section>
+  {% block unit_confirm %}
+  {% endblock %}
 {% endblock %}
 
-{% endblock %}
