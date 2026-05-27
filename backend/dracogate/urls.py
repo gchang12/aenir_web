@@ -1,4 +1,5 @@
 """
+URLs for views, to be inserted or loaded.
 """
 
 from django.contrib import admin

@@ -1,4 +1,5 @@
 """
+Views for interacting with Morph objects.
 """
 
 from django.shortcuts import (
@@ -29,11 +30,13 @@ from ._logging import logger
 
 class GameSelectView(TemplateView):
     """
+    Displays list of hyperlinks for each game encompassed by aenir.
     """
     template_name = "dracogate/game_select.html"
 
     def get_context_data(self, **kwargs):
         """
+        Inserts 'games' list into template context.
         """
         context = super().get_context_data(**kwargs)
         games = {game.value: game.formal_name for game in aenir.games.FireEmblemGame}
@@ -42,11 +45,13 @@ class GameSelectView(TemplateView):
 
 class UnitSelectView(GameSelectView):
     """
+    Displays list of hyperlinks for each unit for a given game.
     """
     template_name = "dracogate/unit_select.html"
 
     def get_context_data(self, game_no, **kwargs):
         """
+        Inserts 'units' list and namespaced 'game_no' parameters into template context.
         """
         context = super().get_context_data(**kwargs)
         morph_cls = getattr(aenir.morph, "Morph%d" % game_no)

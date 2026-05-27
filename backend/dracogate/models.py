@@ -1,4 +1,5 @@
 """
+Models for storing Morph data.
 """
 
 import uuid
@@ -17,6 +18,7 @@ User = get_user_model()
 
 class Stat(NamedTuple):
     """
+    For storing lists of 5-tuples.
     """
     id: str
     current_val: float
