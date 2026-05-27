@@ -48,6 +48,7 @@ class VirtualMorph(models.Model):
     """
     """
     # meta
+    # TODO: replace with int
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -81,7 +82,9 @@ class VirtualMorph(models.Model):
         blank=True,
     )
     # to show on-screen as a preview
+    # TODO: Make this a OneToOneField
     progress = models.JSONField(
+        # NOTE: Isn't the 'validators' option just for the users?
         validators=[validate_progress_value],
     )
 
