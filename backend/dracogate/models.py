@@ -15,26 +15,6 @@ from aenir import get_morph
 
 User = get_user_model()
 
-def validate_progress_value(progress_value):
-    """
-    """
-    if not isinstance(progress_value, dict):
-        raise ValidationError(
-            _("Received object of type %(type)r"),
-            params={"type": type(progress_value)},
-        )
-    if set(progress_value) != {"current_cls", "current_lv"}:
-        raise ValidationError(
-            _("Wrong keys in `progress_value`: %(keys)r"),
-            params={"keys": progress_value.keys()},
-        )
-    if (type(progress_value["current_cls"]), type(progress_value["current_lv"])) != (str, int):
-        raise ValidationError(
-            _("Wrong value types in `progress_value`: %(values)r"),
-            params={"value_types": {key: type(value) for key, value in progress_value.items()}},
-        )
-
-
 class Stat(NamedTuple):
     """
     """
@@ -83,10 +63,7 @@ class VirtualMorph(models.Model):
     )
     # to show on-screen as a preview
     # TODO: Make this a OneToOneField
-    progress = models.JSONField(
-        # NOTE: Isn't the 'validators' option just for the users?
-        validators=[validate_progress_value],
-    )
+    progress = models.JSONField()
 
     class Meta:
         """
