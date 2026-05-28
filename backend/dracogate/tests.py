@@ -159,7 +159,14 @@ class VirtualMorphTests(TestCase):
 
 class InitFormBuilderTests(TestCase):
     """
+    Tests functionality of dynamic forms.
     """
+
+    def setUp(self):
+        """
+        Logs current test-ID.
+        """
+        logger.debug("%s", self.id())
 
     @staticmethod
     def build_form_class(game_no, name):
@@ -170,8 +177,11 @@ class InitFormBuilderTests(TestCase):
             init_params = {}
         except InitError as err:
             init_params = err.init_params
+        # NOTE: Isn't this one of the things that need to be tested?
         form_class = InitFormBuilder.build_form_class(game_no, name, init_params)
         return form_class
+
+    # TODO: Remove these assert* methods
 
     def assertFieldsEqual(self, form_class, fields):
         """
@@ -210,11 +220,6 @@ class InitFormBuilderTests(TestCase):
         field = form_class.base_fields[field_name]
         actual = field.initial
         self.assertEqual(actual, expected)
-
-    def setUp(self):
-        """
-        """
-        logger.debug("%s", self.id())
 
     def test_father(self):
         """
