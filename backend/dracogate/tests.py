@@ -18,7 +18,6 @@ from aenir._exceptions import (
 
 from .models import (
     VirtualMorph,
-    #Stat,
 )
 from .forms import (
     InitFormBuilder,
@@ -168,67 +167,23 @@ class InitFormBuilderTests(TestCase):
         """
         logger.debug("%s", self.id())
 
-    @staticmethod
-    def build_form_class(game_no, name):
-        """
-        """
-        try:
-            get_morph(game_no, name)
-            init_params = {}
-        except InitError as err:
-            init_params = err.init_params
-        # NOTE: Isn't this one of the things that need to be tested?
-        form_class = InitFormBuilder.build_form_class(game_no, name, init_params)
-        return form_class
-
-    # TODO: Remove these assert* methods
-
-    def assertFieldsEqual(self, form_class, fields):
-        """
-        """
-        actual = tuple(form_class.base_fields)
-        expected = tuple(fields)
-        self.assertTupleEqual(actual, expected)
-
-    def assertFieldIsInstance(self, form_and_field, field_type):
-        """
-        """
-        form_class, field_name = form_and_field
-        field = form_class.base_fields[field_name]
-        self.assertIsInstance(field, field_type)
-
-    def assertChoicesEqual(self, form_and_field, choices):
-        """
-        """
-        form_class, field_name = form_and_field
-        field = form_class.base_fields[field_name]
-        actual = tuple(field.choices)
-        expected = tuple(choices)
-        self.assertTupleEqual(actual, expected)
-
-    def assertWidgetEqual(self, form_and_field, widget_type):
-        """
-        """
-        form_class, field_name = form_and_field
-        field = form_class.base_fields[field_name]
-        self.assertIsInstance(field.widget, widget_type)
-
-    def assertInitialEqual(self, form_and_field, expected):
-        """
-        """
-        form_class, field_name = form_and_field
-        field = form_class.base_fields[field_name]
-        actual = field.initial
-        self.assertEqual(actual, expected)
-
     def test_father(self):
         """
         """
         game_no = 4
         name = "Lakche"
-        form_class = self.build_form_class(game_no, name)
+        #form_class = self.build_form_class(game_no, name)
+        try:
+            get_morph(game_no, name)
+            init_params = {}
+        except InitError as err:
+            init_params = err.init_params
+        form_class = InitFormBuilder.build_form_class(game_no, name, init_params)
         fields = ("game_no", "name", 'father')
-        self.assertFieldsEqual(form_class, fields)
+        #self.assertFieldsEqual(form_class, fields)
+        actual = tuple(form_class.base_fields)
+        expected = tuple(fields)
+        self.assertTupleEqual(actual, expected)
         widget_types = (
             forms.HiddenInput,
             forms.HiddenInput,
@@ -246,9 +201,17 @@ class InitFormBuilderTests(TestCase):
         )
         for field_name, field_type, widget_type, initial_value in zip(fields, field_types, widget_types, initial_values):
             with self.subTest(field_name=field_name):
-                self.assertFieldIsInstance((form_class, field_name), field_type)
-                self.assertWidgetEqual((form_class, field_name), widget_type)
-                self.assertInitialEqual((form_class, field_name), initial_value)
+                #self.assertFieldIsInstance((form_class, field_name), field_type)
+                field = form_class.base_fields[field_name]
+                self.assertIsInstance(field, field_type)
+                #self.assertWidgetEqual((form_class, field_name), widget_type)
+                #field = form_class.base_fields[field_name]
+                self.assertIsInstance(field.widget, widget_type)
+                #self.assertInitialEqual((form_class, field_name), initial_value)
+                #field = form_class.base_fields[field_name]
+                actual = field.initial
+                expected = initial_value
+                self.assertEqual(actual, expected)
         choices = (
             ('Arden', 'Arden'),
             ('Azel', 'Azel'),
@@ -264,16 +227,30 @@ class InitFormBuilderTests(TestCase):
             ('Levin', 'Levin'),
             ('Lex', 'Lex'),
         )
-        self.assertChoicesEqual((form_class, "father"), choices)
+        #self.assertChoicesEqual((form_class, "father"), choices)
+        field_name = "father"
+        field = form_class.base_fields[field_name]
+        actual = field.choices
+        expected = choices
+        self.assertSequenceEqual(actual, expected)
 
     def test_hard_mode(self):
         """
         """
         game_no = 6
         name = "Rutger"
-        form_class = self.build_form_class(game_no, name)
+        #form_class = self.build_form_class(game_no, name)
+        try:
+            get_morph(game_no, name)
+            init_params = {}
+        except InitError as err:
+            init_params = err.init_params
+        form_class = InitFormBuilder.build_form_class(game_no, name, init_params)
         fields = ("game_no", "name", 'hard_mode')
-        self.assertFieldsEqual(form_class, fields)
+        #self.assertFieldsEqual(form_class, fields)
+        actual = tuple(form_class.base_fields)
+        expected = tuple(fields)
+        self.assertTupleEqual(actual, expected)
         widget_types = (
             forms.HiddenInput,
             forms.HiddenInput,
@@ -291,18 +268,39 @@ class InitFormBuilderTests(TestCase):
         )
         for field_name, field_type, widget_type, initial_value in zip(fields, field_types, widget_types, initial_values):
             with self.subTest(field_name=field_name):
-                self.assertFieldIsInstance((form_class, field_name), field_type)
-                self.assertWidgetEqual((form_class, field_name), widget_type)
-                self.assertInitialEqual((form_class, field_name), initial_value)
+                #self.assertFieldIsInstance((form_class, field_name), field_type)
+                #self.assertWidgetEqual((form_class, field_name), widget_type)
+                #self.assertInitialEqual((form_class, field_name), initial_value)
+                #self.assertFieldIsInstance((form_class, field_name), field_type)
+                field = form_class.base_fields[field_name]
+                self.assertIsInstance(field, field_type)
+                #self.assertWidgetEqual((form_class, field_name), widget_type)
+                #field = form_class.base_fields[field_name]
+                self.assertIsInstance(field.widget, widget_type)
+                #self.assertInitialEqual((form_class, field_name), initial_value)
+                #field = form_class.base_fields[field_name]
+                actual = field.initial
+                expected = initial_value
+                self.assertEqual(actual, expected)
 
     def test_number_of_declines(self):
         """
         """
         game_no = 6
         name = "Hugh"
-        form_class = self.build_form_class(game_no, name)
+        #form_class = self.build_form_class(game_no, name)
+        try:
+            get_morph(game_no, name)
+            init_params = {}
+        except InitError as err:
+            init_params = err.init_params
+        form_class = InitFormBuilder.build_form_class(game_no, name, init_params)
         fields = ("game_no", "name", 'number_of_declines')
-        self.assertFieldsEqual(form_class, fields)
+        #self.assertFieldsEqual(form_class, fields)
+        actual = tuple(form_class.base_fields)
+        expected = tuple(fields)
+        #logger.debug("actual %r", actual)
+        self.assertTupleEqual(actual, expected)
         widget_types = (
             forms.HiddenInput,
             forms.HiddenInput,
@@ -320,18 +318,38 @@ class InitFormBuilderTests(TestCase):
         )
         for field_name, field_type, widget_type, initial_value in zip(fields, field_types, widget_types, initial_values):
             with self.subTest(field_name=field_name):
-                self.assertFieldIsInstance((form_class, field_name), field_type)
-                self.assertWidgetEqual((form_class, field_name), widget_type)
-                self.assertInitialEqual((form_class, field_name), initial_value)
+                #self.assertFieldIsInstance((form_class, field_name), field_type)
+                #self.assertWidgetEqual((form_class, field_name), widget_type)
+                #self.assertInitialEqual((form_class, field_name), initial_value)
+                #self.assertFieldIsInstance((form_class, field_name), field_type)
+                field = form_class.base_fields[field_name]
+                self.assertIsInstance(field, field_type)
+                #self.assertWidgetEqual((form_class, field_name), widget_type)
+                #field = form_class.base_fields[field_name]
+                self.assertIsInstance(field.widget, widget_type)
+                #self.assertInitialEqual((form_class, field_name), initial_value)
+                #field = form_class.base_fields[field_name]
+                actual = field.initial
+                expected = initial_value
+                self.assertEqual(actual, expected)
 
     def test_hard_mode__and__chapter(self):
         """
         """
         game_no = 6
         name = "Cath"
-        form_class = self.build_form_class(game_no, name)
+        #form_class = self.build_form_class(game_no, name)
+        try:
+            get_morph(game_no, name)
+            init_params = {}
+        except InitError as err:
+            init_params = err.init_params
+        form_class = InitFormBuilder.build_form_class(game_no, name, init_params)
         fields = ("game_no", "name", 'hard_mode', 'chapter')
-        self.assertFieldsEqual(form_class, fields)
+        #self.assertFieldsEqual(form_class, fields)
+        actual = tuple(form_class.base_fields)
+        expected = tuple(fields)
+        self.assertTupleEqual(actual, expected)
         widget_types = (
             forms.HiddenInput,
             forms.HiddenInput,
@@ -352,25 +370,50 @@ class InitFormBuilderTests(TestCase):
         )
         for field_name, field_type, widget_type, initial_value in zip(fields, field_types, widget_types, initial_values):
             with self.subTest(field_name=field_name):
-                self.assertFieldIsInstance((form_class, field_name), field_type)
-                self.assertWidgetEqual((form_class, field_name), widget_type)
-                self.assertInitialEqual((form_class, field_name), initial_value)
+                #self.assertFieldIsInstance((form_class, field_name), field_type)
+                #self.assertWidgetEqual((form_class, field_name), widget_type)
+                #self.assertInitialEqual((form_class, field_name), initial_value)
+                #self.assertFieldIsInstance((form_class, field_name), field_type)
+                field = form_class.base_fields[field_name]
+                self.assertIsInstance(field, field_type)
+                #self.assertWidgetEqual((form_class, field_name), widget_type)
+                #field = form_class.base_fields[field_name]
+                self.assertIsInstance(field.widget, widget_type)
+                #self.assertInitialEqual((form_class, field_name), initial_value)
+                #field = form_class.base_fields[field_name]
+                actual = field.initial
+                expected = initial_value
+                self.assertEqual(actual, expected)
         choices = (
             ("12", "12"),
             ("16", "16"),
             ("20", "20"),
             ("22", "22"),
         )
-        self.assertChoicesEqual((form_class, "chapter"), choices)
+        #self.assertChoicesEqual((form_class, "chapter"), choices)
+        field_name = "chapter"
+        field = form_class.base_fields[field_name]
+        actual = field.choices
+        expected = choices
+        self.assertSequenceEqual(actual, expected)
 
     def test_lyn_mode(self):
         """
         """
         game_no = 7
         name = "Wallace"
-        form_class = self.build_form_class(game_no, name)
+        #form_class = self.build_form_class(game_no, name)
+        try:
+            get_morph(game_no, name)
+            init_params = {}
+        except InitError as err:
+            init_params = err.init_params
+        form_class = InitFormBuilder.build_form_class(game_no, name, init_params)
         fields = ("game_no", "name", 'lyn_mode')
-        self.assertFieldsEqual(form_class, fields)
+        #self.assertFieldsEqual(form_class, fields)
+        actual = tuple(form_class.base_fields)
+        expected = tuple(fields)
+        self.assertTupleEqual(actual, expected)
         widget_types = (
             forms.HiddenInput,
             forms.HiddenInput,
@@ -388,9 +431,20 @@ class InitFormBuilderTests(TestCase):
         )
         for field_name, field_type, widget_type, initial_value in zip(fields, field_types, widget_types, initial_values):
             with self.subTest(field_name=field_name):
-                self.assertFieldIsInstance((form_class, field_name), field_type)
-                self.assertWidgetEqual((form_class, field_name), widget_type)
-                self.assertInitialEqual((form_class, field_name), initial_value)
+                #self.assertFieldIsInstance((form_class, field_name), field_type)
+                #self.assertWidgetEqual((form_class, field_name), widget_type)
+                #self.assertInitialEqual((form_class, field_name), initial_value)
+                #self.assertFieldIsInstance((form_class, field_name), field_type)
+                field = form_class.base_fields[field_name]
+                self.assertIsInstance(field, field_type)
+                #self.assertWidgetEqual((form_class, field_name), widget_type)
+                #field = form_class.base_fields[field_name]
+                self.assertIsInstance(field.widget, widget_type)
+                #self.assertInitialEqual((form_class, field_name), initial_value)
+                #field = form_class.base_fields[field_name]
+                actual = field.initial
+                expected = initial_value
+                self.assertEqual(actual, expected)
 
 class UnitConfirmViewTests(TestCase):
     """
