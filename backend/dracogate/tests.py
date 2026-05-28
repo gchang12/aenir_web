@@ -169,6 +169,7 @@ class InitFormBuilderTests(TestCase):
 
     def test_father(self):
         """
+        Checks the attributes of a form that has a field for the 'father' option.
         """
         game_no = 4
         name = "Lakche"
@@ -236,6 +237,7 @@ class InitFormBuilderTests(TestCase):
 
     def test_hard_mode(self):
         """
+        Checks the attributes of a form that has a field for the 'hard_mode' option.
         """
         game_no = 6
         name = "Rutger"
@@ -285,6 +287,7 @@ class InitFormBuilderTests(TestCase):
 
     def test_number_of_declines(self):
         """
+        Checks the attributes of a form that has a field for the 'number_of_declines' option.
         """
         game_no = 6
         name = "Hugh"
@@ -335,6 +338,7 @@ class InitFormBuilderTests(TestCase):
 
     def test_hard_mode__and__chapter(self):
         """
+        Checks the attributes of a form that has a field for the 'hard_mode' and 'chapter' options.
         """
         game_no = 6
         name = "Cath"
@@ -399,6 +403,7 @@ class InitFormBuilderTests(TestCase):
 
     def test_lyn_mode(self):
         """
+        Checks the attributes of a form that has a field for the 'lyn_mode' options.
         """
         game_no = 7
         name = "Wallace"
