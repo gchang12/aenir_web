@@ -453,16 +453,18 @@ class InitFormBuilderTests(TestCase):
 
 class UnitConfirmViewTests(TestCase):
     """
+    Checks that units are created upon successful POST request.
     """
 
     def setUp(self):
         """
+        Logs current test-ID.
         """
         logger.debug("%s", self.id())
 
     def test_father(self):
         """
-        Checks that VirtualMorph is created with expected attributes.
+        Checks that VirtualMorph that requires 'father' value is created with expected attributes.
         """
         # prepare data
         game_no = 4
@@ -488,7 +490,7 @@ class UnitConfirmViewTests(TestCase):
 
     def test_hard_mode(self):
         """
-        Checks that VirtualMorph is created with expected attributes.
+        Checks that VirtualMorph that requires 'hard_mode' value is created with expected attributes.
         """
         game_no = 6
         name = "Rutger"
@@ -513,7 +515,7 @@ class UnitConfirmViewTests(TestCase):
 
     def test_number_of_declines(self):
         """
-        Checks that VirtualMorph is created with expected attributes.
+        Checks that VirtualMorph that requires 'number_of_declines' value is created with expected attributes.
         """
         game_no = 6
         name = "Hugh"
@@ -538,7 +540,7 @@ class UnitConfirmViewTests(TestCase):
 
     def test_hard_mode__and__chapter(self):
         """
-        Checks that VirtualMorph is created with expected attributes.
+        Checks that VirtualMorph that requires 'hard_mode' and 'chapter' values is created with expected attributes.
         """
         game_no = 6
         name = "Cath"
@@ -563,7 +565,7 @@ class UnitConfirmViewTests(TestCase):
 
     def test_lyn_mode(self):
         """
-        Checks that VirtualMorph is created with expected attributes.
+        Checks that VirtualMorph that requires 'lyn_mode' value is created with expected attributes.
         """
         game_no = 7
         name = "Wallace"
