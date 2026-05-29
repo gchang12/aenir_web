@@ -1,4 +1,5 @@
 """
+Declares logger to be used for debugging purposes.
 """
 
 import logging
