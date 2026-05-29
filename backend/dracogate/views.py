@@ -181,15 +181,6 @@ class PreviewMorphView(TemplateView):
         }
         return context
 
-class DisplayGrowthsView(TemplateView):
-    """
-    """
-    template_name = "dracogate/_display_growths.html"
-
-def parse_args(dictlike, method_name):
-    """
-    """
-
 class PreviewStatsView(DetailView):
     """
     """
@@ -269,9 +260,4 @@ class ModifyMorphView(DetailView):
         context = super().get_context_data(**kwargs)
         print("ModifyMorphView.get_context_data", context)
         return context
-
-class LevelUpView(TemplateView):
-    """
-    """
-    template_name = "dracogate/level_up.html"
 
