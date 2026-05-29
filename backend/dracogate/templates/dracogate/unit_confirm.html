@@ -9,24 +9,21 @@ Create Morph: FE{{route_params.game_no}} {{route_params.name}}
 {% block unit_confirm %}
 
 <section id="unit_confirm">
-
   <h2>Unit Confirm</h2>
-
   <div
-    hx-get="{% url 'dracogate:_preview_morph' route_params.game_no route_params.name %}"
+    hx-get="{% url 'dracogate:unit_confirm_preview' route_params.game_no route_params.name %}"
     hx-trigger="load"
-    class="unit-hub" id="_preview_morph">
+    class="unit-hub" id="unit_confirm_preview">
   </div>
   <form
-    hx-get="{% url 'dracogate:_preview_morph' route_params.game_no route_params.name %}"
+    hx-get="{% url 'dracogate:unit_confirm_preview' route_params.game_no route_params.name %}"
     hx-trigger="change"
-    hx-target="#_preview_morph"
+    hx-target="#unit_confirm_preview"
     method="post" action="{% url 'dracogate:unit_confirm' route_params.game_no route_params.name %}">
     {% csrf_token %}
     {{ form }}
     <button>Submit</button>
   </form>
-
 </section>
 
 {% endblock %}

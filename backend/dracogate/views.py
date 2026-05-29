@@ -61,6 +61,8 @@ class UnitSelectView(GameSelectView):
         context['units'] = units
         return context
 
+# TODO: Clean this up!
+
 class UnitConfirmView(UnitSelectView, FormView):
     """
     """
@@ -70,14 +72,14 @@ class UnitConfirmView(UnitSelectView, FormView):
         """
         """
         context = super().get_context_data(game_no, **kwargs)
-        # TODO: namespace names by prefixing them with 'route_params' as appropriate
         context['route_params']['name'] = name
+        # NOTE: It's not like these are needed.
+        '''
         try:
             morph = get_morph(game_no, name)
         except InitError as err:
             default_options = {field: values[0] for field, values in err.init_params.items()}
             morph = get_morph(game_no, name, **default_options)
-            # TODO: Show form class
         vmorph = VirtualMorph(game_no=game_no, name=name)
         vmorph.morph = morph
         context['active_stats'] = {
@@ -85,13 +87,12 @@ class UnitConfirmView(UnitSelectView, FormView):
             "current_lv": morph.current_lv,
             "numeric_stats": vmorph._generate_stats(),
         }
+        '''
         return context
 
     def get_form_class(self):
         """
         """
-        #print("super().get_form_class())", super().get_form_class())
-        #print("get_form_class: self.request.path", self.request.path.split('/'))
         path = self.request.path.split('/')
         game_no = int(path[-3].replace("FE", ""))
         name = path[-2]
@@ -111,10 +112,7 @@ class UnitConfirmView(UnitSelectView, FormView):
         game_no = cleaned_data.pop('game_no')
         name = cleaned_data.pop('name')
         options = cleaned_data
-        if self.request.user.username == "":
-            owner = None
-        else:
-            owner = self.request.user
+        owner = None
         morph = get_morph(game_no, name, **options)
         progress = {
             "current_lv": morph.current_lv,
@@ -137,10 +135,10 @@ class UnitConfirmView(UnitSelectView, FormView):
         #return super().form_valid(form)
         return redirect(success_url)
 
-class PreviewMorphView(TemplateView):
+class UnitConfirmPreviewView(TemplateView):
     """
     """
-    template_name = "dracogate/_preview_morph.html"
+    template_name = "dracogate/unit_confirm_preview.html"
 
     # TODO: Need to do research on htmx to progress.
     def get_context_data(self, game_no, name, **kwargs):
@@ -236,11 +234,11 @@ class ListMorphsView(ListView):
         # get queryset for logged-in users.
         # for users who aren't logged in, show nothing except maybe an input box where they can input some UUID to fetch some vmorph
         #print("get_queryset")
-        if self.request.user.username == "":
-            queryset = []
-        else:
+        #if self.request.user.username == "":
+            #queryset = []
+        #else:
             #queryset = self.model.objects.filter(owner=self.request.user)
-            pass
+            #pass
         #print(self.request.user)
         #print(dir(self))
         ##print(kwargs)
