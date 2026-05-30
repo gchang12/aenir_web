@@ -1,11 +1,11 @@
 {% load static %}
 
-<div class="unit-hub" id="_preview_morph">
+<div class="unit-hub" id="unit_confirm_preview">
   <figure>
     <img src="{% get_static_prefix %}dracogate/images/{{route_params.game_no}}/characters/{{route_params.name}}.png" />
     <figcaption><h3>{{route_params.name}}</h3></figcaption>
   </figure>
-  <table>
+  <table class="class level">
     <thead>
       <tr>
         <th>Class</th>
@@ -17,7 +17,7 @@
       </tr>
     </thead>
   </table>
-  <table>
+  <table class="numeric_stats">
     <thead>
       <th></th>
       <th colspan="2">Bases</th>

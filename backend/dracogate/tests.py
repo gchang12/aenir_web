@@ -5,12 +5,17 @@ Tests functionality for storing, interacting with, and deleting Morph objects.
 import re
 import unittest
 import unittest.mock
+import urllib.parse
 
 from django.test import TestCase
 from django import forms
 from django.urls import reverse
 from django.core.exceptions import ValidationError
 
+from bs4 import BeautifulSoup
+
+import aenir.games
+import aenir.morph
 from aenir import get_morph
 from aenir._exceptions import (
     InitError,
@@ -24,6 +29,8 @@ from .forms import (
 )
 
 from ._logging import logger
+
+# MODELS #
 
 class VirtualMorphTests(TestCase):
     """
@@ -155,6 +162,8 @@ class VirtualMorphTests(TestCase):
         vmorph2 = VirtualMorph.objects.get()
         self.assertEqual(vmorph2.progress['current_cls'], morph.current_cls)
         self.assertEqual(vmorph2.progress['current_lv'], morph.current_lv)
+
+# FORMS #
 
 class InitFormBuilderTests(TestCase):
     """
@@ -451,6 +460,54 @@ class InitFormBuilderTests(TestCase):
                 expected = initial_value
                 self.assertEqual(actual, expected)
 
+# VIEWS #
+
+class GameSelectViewTests(TestCase):
+    """
+    Checks if hyperlinks are displayed.
+    """
+
+    def test_hyperlinks_exist_and_work(self):
+        """
+        Checks if a hyperlink for each unit_select-view is displayed.
+        """
+        url = reverse("dracogate:game_select")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        for fe_game in aenir.games.FireEmblemGame:
+            game_no = fe_game.value
+            unit_select_url = reverse("dracogate:unit_select", args=[game_no]) + "#FE%d" % game_no
+            css_selector = "a[href='%s']" % unit_select_url
+            a = soup.css.select_one(css_selector)
+            logger.debug("Checking if '%s' exists in HTML document.", css_selector)
+            with self.subTest(fe_game=game_no):
+                self.assertIsNotNone(a)
+
+class UnitSelectViewTests(TestCase):
+    """
+    Checks if hyperlinks are displayed.
+    """
+
+    def test_hyperlinks_exist_and_work(self):
+        """
+        Checks if a hyperlink for each unit_confirm-view is displayed.
+        """
+        for fe_game in aenir.games.FireEmblemGame:
+            game_no = fe_game.value
+            morph_cls = getattr(aenir.morph, "Morph%d" % game_no)
+            url = reverse("dracogate:unit_select", args=[game_no])
+            response = self.client.get(url)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            with self.subTest(fe_game=game_no):
+                self.assertEqual(response.status_code, 200)
+                for name in morph_cls.get_true_character_list():
+                    unit_confirm_url = reverse("dracogate:unit_confirm", args=[game_no, name]) + "#FE%d" % game_no
+                    css_selector = 'a[href="%s"]' % unit_confirm_url
+                    logger.debug("Checking if '%s' exists in HTML document.", css_selector)
+                    a = soup.css.select_one(css_selector)
+                    self.assertIsNotNone(a)
+
 class UnitConfirmViewTests(TestCase):
     """
     Checks that units are created upon successful POST request.
@@ -587,4 +644,499 @@ class UnitConfirmViewTests(TestCase):
         self.assertEqual(vmorph.name, name)
         self.assertDictEqual(vmorph.options, options)
         self.assertTrue(vmorph.morph_id)
+
+    def test_father__GET(self):
+        """
+        Checks that GET response contains <select> element for 'father'.
+        """
+        # prepare data
+        game_no = 4
+        name = "Lakche"
+        options = {"father": "Lex"}
+        #self.check_response_and_vmorph_attributes(game_no, name, options)
+        data = {
+            "game_no": game_no,
+            "name": name,
+        }
+        data.update(options)
+        # send data
+        url = reverse("dracogate:unit_confirm", args=[game_no, name])
+        response = self.client.get(url, data=data)
+        # check response code
+        self.assertEqual(response.status_code, 200)
+        # check form for correct widgets and the like.
+        soup = BeautifulSoup(response.text, 'html.parser')
+        form = soup.css.select_one('form[action="%s"]' % url)
+        self.assertIsNotNone(form)
+        select = form.css.select_one("select[name='father']")
+        self.assertIsNotNone(select)
+        morph_cls = aenir.morph.Morph4
+        for father in morph_cls.FATHER_LIST():
+            option = select.css.select_one("option[value='%s']" % father)
+            self.assertIsNotNone(option)
+
+    def test_hard_mode__GET(self):
+        """
+        Checks that GET response contains <input> element for 'hard_mode'.
+        """
+        game_no = 6
+        name = "Rutger"
+        options = {"hard_mode": True}
+        #self.check_response_and_vmorph_attributes(game_no, name, options)
+        data = {
+            "game_no": game_no,
+            "name": name,
+        }
+        data.update(options)
+        # send data
+        url = reverse("dracogate:unit_confirm", args=[game_no, name])
+        response = self.client.get(url, data=data)
+        # check response code
+        self.assertEqual(response.status_code, 200)
+        # check form for correct widgets and the like.
+        soup = BeautifulSoup(response.text, 'html.parser')
+        form = soup.css.select_one('form[action="%s"]' % url)
+        self.assertIsNotNone(form)
+        input1 = form.css.select_one("input[type='checkbox'][name='hard_mode']")
+        self.assertIsNotNone(input1)
+
+    def test_number_of_declines__GET(self):
+        """
+        Checks that GET response contains <input> element for 'number_of_declines'.
+        """
+        game_no = 6
+        name = "Hugh"
+        options = {"number_of_declines": 2}
+        #self.check_response_and_vmorph_attributes(game_no, name, options)
+        data = {
+            "game_no": game_no,
+            "name": name,
+        }
+        data.update(options)
+        # send data
+        url = reverse("dracogate:unit_confirm", args=[game_no, name])
+        response = self.client.get(url, data=data)
+        # check response code
+        self.assertEqual(response.status_code, 200)
+        # check form for correct widgets and the like.
+        soup = BeautifulSoup(response.text, 'html.parser')
+        form = soup.css.select_one('form[action="%s"]' % url)
+        self.assertIsNotNone(form)
+        input1 = form.css.select_one("input[type='number'][name='number_of_declines']")
+        self.assertIsNotNone(input1)
+
+    def test_hard_mode__and__chapter__GET(self):
+        """
+        Checks that GET response contains <input> element for 'hard_mode' and <select> element for 'chapter'.
+        """
+        game_no = 6
+        name = "Cath"
+        options = {"hard_mode": True, "chapter": "20"}
+        #self.check_response_and_vmorph_attributes(game_no, name, options)
+        data = {
+            "game_no": game_no,
+            "name": name,
+        }
+        data.update(options)
+        # send data
+        url = reverse("dracogate:unit_confirm", args=[game_no, name])
+        response = self.client.get(url, data=data)
+        # check response code
+        self.assertEqual(response.status_code, 200)
+        # check form for correct widgets and the like.
+        soup = BeautifulSoup(response.text, 'html.parser')
+        form = soup.css.select_one('form[action="%s"]' % url)
+        self.assertIsNotNone(form)
+        input1 = form.css.select_one("input[type='checkbox'][name='hard_mode']")
+        self.assertIsNotNone(input1)
+        select = form.css.select_one("select[name='chapter']")
+        self.assertIsNotNone(select)
+        chapters = (
+            12,
+            16,
+            20,
+            22,
+        )
+        for chapter in chapters:
+            option = form.css.select_one("option[value='%s']" % chapter)
+            self.assertIsNotNone(option)
+
+    def test_lyn_mode__GET(self):
+        """
+        Checks that GET response contains <input> element for 'lyn_mode'.
+        """
+        game_no = 7
+        name = "Wallace"
+        options = {"lyn_mode": True}
+        #self.check_response_and_vmorph_attributes(game_no, name, options)
+        data = {
+            "game_no": game_no,
+            "name": name,
+        }
+        data.update(options)
+        # send data
+        url = reverse("dracogate:unit_confirm", args=[game_no, name])
+        response = self.client.get(url, data=data)
+        # check response code
+        self.assertEqual(response.status_code, 200)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        form = soup.css.select_one('form[action="%s"]' % url)
+        self.assertIsNotNone(form)
+        input1 = form.css.select_one("input[type='checkbox'][name='lyn_mode']")
+        self.assertIsNotNone(input1)
+
+class UnitConfirmPreviewViewTests(TestCase):
+    """
+    Checks that right unit data is displayed.
+    """
+
+    def setUp(self):
+        """
+        Logs current test-ID.
+        """
+        logger.debug("%s", self.id())
+
+    def test_fe4_unit(self):
+        """
+        Checks that necessary information is displayed.
+        """
+        # declare parameters
+        game_no = 4
+        name = "Lakche"
+        options = {"father": "Lex"}
+        cls_lv = [
+            ("Class", "Swordfighter"),
+            ("Lv", "1"),
+        ]
+        url = reverse("dracogate:unit_confirm_preview", args=[game_no, name])
+        # send request
+        logger.debug("Sending request to '%s' with params: %r", url, options)
+        response = self.client.get(url, query_params=options)
+        self.assertEqual(response.status_code, 200)
+        # check response body for expected elements.
+        logger.debug("Checking response body for expected elements.")
+        soup = BeautifulSoup(response.text, "html.parser")
+        # class and level
+        table1 = soup.css.select_one("table.class.level")
+        self.assertIsNotNone(table1)
+        for index_no, tr in enumerate(table1.css.select("thead > tr")):
+            (key, value) = cls_lv[index_no]
+            th = tr.find("th")
+            self.assertIsNotNone(th)
+            self.assertEqual(th.text, key)
+            td = tr.find("td")
+            self.assertIsNotNone(td)
+            self.assertEqual(td.text, value)
+        # create morph
+        morph = get_morph(game_no, name, **options)
+        # HP and all the other stats
+        table2 = soup.css.select_one("table.numeric_stats")
+        self.assertIsNotNone(table2)
+        current_stats = morph.current_stats.as_list()
+        for index_no, tr in enumerate(table2.css.select("tbody > tr")):
+            (key, value) = current_stats[index_no]
+            th = tr.find("th")
+            self.assertIsNotNone(th)
+            self.assertEqual(th.text, key)
+            td = tr.find("td")
+            self.assertIsNotNone(td)
+            self.assertEqual(td.text, "%s" % (value / 100))
+        # figure
+        figure = soup.find("figure")
+        self.assertIsNotNone(figure)
+        # name
+        h3 = figure.find("h3")
+        self.assertIsNotNone(h3)
+        self.assertEqual(h3.text, name)
+        # image, maybe
+        img = figure.find("img")
+        self.assertIsNotNone(img)
+        self.assertEqual(img['src'], "/static/dracogate/images/%d/characters/%s.png" % (game_no, name))
+
+    def test_fe5_unit(self):
+        """
+        Checks that necessary information is displayed.
+        """
+        # declare parameters
+        game_no = 5
+        name = "Leaf"
+        options = {}
+        cls_lv = [
+            ("Class", "Lord"),
+            ("Lv", "1"),
+        ]
+        url = reverse("dracogate:unit_confirm_preview", args=[game_no, name])
+        # send request
+        logger.debug("Sending request to '%s' with params: %r", url, options)
+        response = self.client.get(url, query_params=options)
+        self.assertEqual(response.status_code, 200)
+        # check response body for expected elements.
+        logger.debug("Checking response body for expected elements.")
+        soup = BeautifulSoup(response.text, "html.parser")
+        # class and level
+        table1 = soup.css.select_one("table.class.level")
+        self.assertIsNotNone(table1)
+        for index_no, tr in enumerate(table1.css.select("thead > tr")):
+            (key, value) = cls_lv[index_no]
+            th = tr.find("th")
+            self.assertIsNotNone(th)
+            self.assertEqual(th.text, key)
+            td = tr.find("td")
+            self.assertIsNotNone(td)
+            self.assertEqual(td.text, value)
+        # create morph
+        morph = get_morph(game_no, name, **options)
+        # HP and all the other stats
+        table2 = soup.css.select_one("table.numeric_stats")
+        self.assertIsNotNone(table2)
+        current_stats = morph.current_stats.as_list()
+        for index_no, tr in enumerate(table2.css.select("tbody > tr")):
+            (key, value) = current_stats[index_no]
+            th = tr.find("th")
+            self.assertIsNotNone(th)
+            self.assertEqual(th.text, key)
+            td = tr.find("td")
+            self.assertIsNotNone(td)
+            self.assertEqual(td.text, "%s" % (value / 100))
+        # figure
+        figure = soup.find("figure")
+        self.assertIsNotNone(figure)
+        # name
+        h3 = figure.find("h3")
+        self.assertIsNotNone(h3)
+        self.assertEqual(h3.text, name)
+        # image, maybe
+        img = figure.find("img")
+        self.assertIsNotNone(img)
+        self.assertEqual(img['src'], "/static/dracogate/images/%d/characters/%s.png" % (game_no, name))
+
+    def test_fe6_unit(self):
+        """
+        Checks that necessary information is displayed.
+        """
+        # declare parameters
+        game_no = 6
+        name = "Rutger"
+        options = {"hard_mode": "on"}
+        cls_lv = [
+            ("Class", "Myrmidon"),
+            ("Lv", "4"),
+        ]
+        url = reverse("dracogate:unit_confirm_preview", args=[game_no, name])
+        # send request
+        logger.debug("Sending request to '%s' with params: %r", url, options)
+        response = self.client.get(url, query_params=options)
+        self.assertEqual(response.status_code, 200)
+        # check response body for expected elements.
+        logger.debug("Checking response body for expected elements.")
+        soup = BeautifulSoup(response.text, "html.parser")
+        # class and level
+        table1 = soup.css.select_one("table.class.level")
+        self.assertIsNotNone(table1)
+        for index_no, tr in enumerate(table1.css.select("thead > tr")):
+            (key, value) = cls_lv[index_no]
+            th = tr.find("th")
+            self.assertIsNotNone(th)
+            self.assertEqual(th.text, key)
+            td = tr.find("td")
+            self.assertIsNotNone(td)
+            self.assertEqual(td.text, value)
+        # create morph
+        options['hard_mode'] = True
+        morph = get_morph(game_no, name, **options)
+        # HP and all the other stats
+        table2 = soup.css.select_one("table.numeric_stats")
+        self.assertIsNotNone(table2)
+        current_stats = morph.current_stats.as_list()
+        for index_no, tr in enumerate(table2.css.select("tbody > tr")):
+            (key, value) = current_stats[index_no]
+            th = tr.find("th")
+            self.assertIsNotNone(th)
+            self.assertEqual(th.text, key)
+            td = tr.find("td")
+            self.assertIsNotNone(td)
+            self.assertEqual(td.text, "%s" % (value / 100))
+        # figure
+        figure = soup.find("figure")
+        self.assertIsNotNone(figure)
+        # name
+        h3 = figure.find("h3")
+        self.assertIsNotNone(h3)
+        self.assertEqual(h3.text, name)
+        # image, maybe
+        img = figure.find("img")
+        self.assertIsNotNone(img)
+        self.assertEqual(img['src'], "/static/dracogate/images/%d/characters/%s.png" % (game_no, name))
+
+    def test_fe7_unit(self):
+        """
+        Checks that necessary information is displayed.
+        """
+        # declare parameters
+        game_no = 7
+        name = "Guy"
+        options = {"hard_mode": "on"}
+        cls_lv = [
+            ("Class", "Myrmidon"),
+            ("Lv", "3"),
+        ]
+        url = reverse("dracogate:unit_confirm_preview", args=[game_no, name])
+        # send request
+        logger.debug("Sending request to '%s' with params: %r", url, options)
+        response = self.client.get(url, query_params=options)
+        self.assertEqual(response.status_code, 200)
+        # check response body for expected elements.
+        logger.debug("Checking response body for expected elements.")
+        soup = BeautifulSoup(response.text, "html.parser")
+        # class and level
+        table1 = soup.css.select_one("table.class.level")
+        self.assertIsNotNone(table1)
+        for index_no, tr in enumerate(table1.css.select("thead > tr")):
+            (key, value) = cls_lv[index_no]
+            th = tr.find("th")
+            self.assertIsNotNone(th)
+            self.assertEqual(th.text, key)
+            td = tr.find("td")
+            self.assertIsNotNone(td)
+            self.assertEqual(td.text, value)
+        # create morph
+        options['hard_mode'] = True
+        morph = get_morph(game_no, name, **options)
+        # HP and all the other stats
+        table2 = soup.css.select_one("table.numeric_stats")
+        self.assertIsNotNone(table2)
+        current_stats = morph.current_stats.as_list()
+        for index_no, tr in enumerate(table2.css.select("tbody > tr")):
+            (key, value) = current_stats[index_no]
+            th = tr.find("th")
+            self.assertIsNotNone(th)
+            self.assertEqual(th.text, key)
+            td = tr.find("td")
+            self.assertIsNotNone(td)
+            self.assertEqual(td.text, "%s" % (value / 100))
+        # figure
+        figure = soup.find("figure")
+        self.assertIsNotNone(figure)
+        # name
+        h3 = figure.find("h3")
+        self.assertIsNotNone(h3)
+        self.assertEqual(h3.text, name)
+        # image, maybe
+        img = figure.find("img")
+        self.assertIsNotNone(img)
+        self.assertEqual(img['src'], "/static/dracogate/images/%d/characters/%s.png" % (game_no, name))
+
+    def test_fe8_unit(self):
+        """
+        Checks that necessary information is displayed.
+        """
+        # declare parameters
+        game_no = 8
+        name = "Eirika"
+        options = {}
+        cls_lv = [
+            ("Class", "Lord"),
+            ("Lv", "1"),
+        ]
+        url = reverse("dracogate:unit_confirm_preview", args=[game_no, name])
+        # send request
+        logger.debug("Sending request to '%s' with params: %r", url, options)
+        response = self.client.get(url, query_params=options)
+        self.assertEqual(response.status_code, 200)
+        # check response body for expected elements.
+        logger.debug("Checking response body for expected elements.")
+        soup = BeautifulSoup(response.text, "html.parser")
+        # class and level
+        table1 = soup.css.select_one("table.class.level")
+        self.assertIsNotNone(table1)
+        for index_no, tr in enumerate(table1.css.select("thead > tr")):
+            (key, value) = cls_lv[index_no]
+            th = tr.find("th")
+            self.assertIsNotNone(th)
+            self.assertEqual(th.text, key)
+            td = tr.find("td")
+            self.assertIsNotNone(td)
+            self.assertEqual(td.text, value)
+        # create morph
+        morph = get_morph(game_no, name, **options)
+        # HP and all the other stats
+        table2 = soup.css.select_one("table.numeric_stats")
+        self.assertIsNotNone(table2)
+        current_stats = morph.current_stats.as_list()
+        for index_no, tr in enumerate(table2.css.select("tbody > tr")):
+            (key, value) = current_stats[index_no]
+            th = tr.find("th")
+            self.assertIsNotNone(th)
+            self.assertEqual(th.text, key)
+            td = tr.find("td")
+            self.assertIsNotNone(td)
+            self.assertEqual(td.text, "%s" % (value / 100))
+        # figure
+        figure = soup.find("figure")
+        self.assertIsNotNone(figure)
+        # name
+        h3 = figure.find("h3")
+        self.assertIsNotNone(h3)
+        self.assertEqual(h3.text, name)
+        # image, maybe
+        img = figure.find("img")
+        self.assertIsNotNone(img)
+        self.assertEqual(img['src'], "/static/dracogate/images/%d/characters/%s.png" % (game_no, name))
+
+    def test_fe9_unit(self):
+        """
+        Checks that necessary information is displayed.
+        """
+        # declare parameters
+        game_no = 9
+        name = "Titania"
+        options = {}
+        cls_lv = [
+            ("Class", "Paladin"),
+            ("Lv", "1"),
+        ]
+        url = reverse("dracogate:unit_confirm_preview", args=[game_no, name])
+        # send request
+        logger.debug("Sending request to '%s' with params: %r", url, options)
+        response = self.client.get(url, query_params=options)
+        self.assertEqual(response.status_code, 200)
+        # check response body for expected elements.
+        logger.debug("Checking response body for expected elements.")
+        soup = BeautifulSoup(response.text, "html.parser")
+        # class and level
+        table1 = soup.css.select_one("table.class.level")
+        self.assertIsNotNone(table1)
+        for index_no, tr in enumerate(table1.css.select("thead > tr")):
+            (key, value) = cls_lv[index_no]
+            th = tr.find("th")
+            self.assertIsNotNone(th)
+            self.assertEqual(th.text, key)
+            td = tr.find("td")
+            self.assertIsNotNone(td)
+            self.assertEqual(td.text, value)
+        # create morph
+        morph = get_morph(game_no, name, **options)
+        # HP and all the other stats
+        table2 = soup.css.select_one("table.numeric_stats")
+        self.assertIsNotNone(table2)
+        current_stats = morph.current_stats.as_list()
+        for index_no, tr in enumerate(table2.css.select("tbody > tr")):
+            (key, value) = current_stats[index_no]
+            th = tr.find("th")
+            self.assertIsNotNone(th)
+            self.assertEqual(th.text, key)
+            td = tr.find("td")
+            self.assertIsNotNone(td)
+            self.assertEqual(td.text, "%s" % (value / 100))
+        # figure
+        figure = soup.find("figure")
+        self.assertIsNotNone(figure)
+        # name
+        h3 = figure.find("h3")
+        self.assertIsNotNone(h3)
+        self.assertEqual(h3.text, name)
+        # image, maybe
+        img = figure.find("img")
+        self.assertIsNotNone(img)
+        self.assertEqual(img['src'], "/static/dracogate/images/%d/characters/%s.png" % (game_no, name))
 

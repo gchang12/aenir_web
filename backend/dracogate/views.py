@@ -11,14 +11,12 @@ from django.views.generic import (
     ListView,
     DetailView,
 )
-# TODO: Should this be a mix-in?
 from django.views.generic.edit import FormView
 from django.urls import reverse
 from django import forms
 
 import aenir.morph
 import aenir.games
-# TODO: Import all exceptions into 'aenir' for semantics' sake.
 from aenir import get_morph
 from aenir._exceptions import (
     InitError,
@@ -61,37 +59,23 @@ class UnitSelectView(GameSelectView):
         context['units'] = units
         return context
 
-# TODO: Clean this up!
-
 class UnitConfirmView(UnitSelectView, FormView):
     """
+    Web interface for initializing a Morph instance.
     """
     template_name = "dracogate/unit_confirm.html"
 
     def get_context_data(self, game_no, name, **kwargs):
         """
+        Adds the 'name' value to the namespace 'route_params' in the template context.
         """
         context = super().get_context_data(game_no, **kwargs)
         context['route_params']['name'] = name
-        # NOTE: It's not like these are needed.
-        '''
-        try:
-            morph = get_morph(game_no, name)
-        except InitError as err:
-            default_options = {field: values[0] for field, values in err.init_params.items()}
-            morph = get_morph(game_no, name, **default_options)
-        vmorph = VirtualMorph(game_no=game_no, name=name)
-        vmorph.morph = morph
-        context['active_stats'] = {
-            "current_cls": morph.current_cls,
-            "current_lv": morph.current_lv,
-            "numeric_stats": vmorph._generate_stats(),
-        }
-        '''
         return context
 
     def get_form_class(self):
         """
+        Returns a form class specific to the unit.
         """
         path = self.request.path.split('/')
         game_no = int(path[-3].replace("FE", ""))
@@ -106,20 +90,21 @@ class UnitConfirmView(UnitSelectView, FormView):
 
     def form_valid(self, form):
         """
+        Creates a VirtualMorph in the database.
         """
+        # prepare data to be saved
         cleaned_data = form.cleaned_data
-        # prepare data to be saved.
         game_no = cleaned_data.pop('game_no')
         name = cleaned_data.pop('name')
         options = cleaned_data
-        owner = None
+        logger.debug("Generating progress data for Morph%d('%s', **%r).", game_no, name, options)
         morph = get_morph(game_no, name, **options)
         progress = {
             "current_lv": morph.current_lv,
             "current_cls": morph.current_cls,
         }
         morph_id = VirtualMorph._generate_morph_id(game_no, name)
-        # create morph
+        owner = None
         vmorph = VirtualMorph.objects.create(
             owner=owner,
             morph_id=morph_id,
@@ -128,46 +113,46 @@ class UnitConfirmView(UnitSelectView, FormView):
             options=options,
             progress=progress,
         )
+        # generate success_url
         logger.debug("vmorph.id: %r, %r", vmorph.id, type(vmorph.id))
-        success_url = reverse("dracogate:modify_morph", args=[vmorph.id])
+        success_url = reverse("dracogate:evolve_morph", args=[vmorph.id])
         logger.debug("return: %r", success_url)
-        # redirect to `success_url`
-        #return super().form_valid(form)
         return redirect(success_url)
+
+# TODO: Clean this up!
+# TODO: Test!
 
 class UnitConfirmPreviewView(TemplateView):
     """
+    Shows initial stats of Morph instance given game_no, name, and options.
     """
     template_name = "dracogate/unit_confirm_preview.html"
 
-    # TODO: Need to do research on htmx to progress.
     def get_context_data(self, game_no, name, **kwargs):
         """
+        Generates variables for showing unit stats.
         """
-        print(game_no, name, self.request.GET)
         try:
+            logger.debug("Attempting initialization of Morph%d('%s')", game_no, name)
             morph = get_morph(game_no, name)
         except InitError as err:
-            # TODO: Update with URL parameters from self.request.GET afterwards.
+            logger.debug("Initialization failed. Updating Morph initialization parameters with GET parameters.")
             default_options = {field: values[0] for field, values in err.init_params.items()}
             specified_options = self.request.GET
             for param in default_options.keys():
-                #print(param)
+                new_param_value = specified_options.get(param)
                 if param in ("hard_mode", "lyn_mode"):
-                    new_param_value = specified_options.get(param) == "on"
+                    new_param_value = new_param_value == "on"
                 elif param == "number_of_declines":
-                    #print(specified_options.get(param))
-                    new_param_value = int(specified_options.get(param) or 0)
-                else:
-                    new_param_value = specified_options.get(param)
+                    new_param_value = int(new_param_value or 0)
                 if new_param_value is not None:
                     default_options[param] = new_param_value
-            #print(specified_options)
+            logger.debug("Reinitializing Morph with parameters: (game_no=%d, name='%s', **%r)", game_no, name, default_options)
             morph = get_morph(game_no, name, **default_options)
-            # TODO: Show form class
         vmorph = VirtualMorph(game_no=game_no, name=name)
         vmorph.morph = morph
         context = super().get_context_data(**kwargs)
+        logger.debug("Setting template context variables.")
         context['route_params'] = {
             "game_no": game_no,
             "name": name,
