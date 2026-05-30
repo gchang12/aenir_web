@@ -115,7 +115,7 @@ class UnitConfirmView(UnitSelectView, FormView):
         )
         # generate success_url
         logger.debug("vmorph.id: %r, %r", vmorph.id, type(vmorph.id))
-        success_url = reverse("dracogate:evolve_morph", args=[vmorph.id])
+        success_url = reverse("dracogate:modify_morph", args=[vmorph.id])
         logger.debug("return: %r", success_url)
         return redirect(success_url)
 
@@ -175,25 +175,18 @@ class ListMorphsView(ListView):
         """
         """
         context = super().get_context_data(**kwargs)
-        #print("get_context_data")
-        #print(context)
         return context
 
-    # TODO: Implement!
     def get_queryset(self, **kwargs):
         """
         """
         # get queryset for logged-in users.
         # for users who aren't logged in, show nothing except maybe an input box where they can input some UUID to fetch some vmorph
-        #print("get_queryset")
         #if self.request.user.username == "":
             #queryset = []
         #else:
             #queryset = self.model.objects.filter(owner=self.request.user)
             #pass
-        #print(self.request.user)
-        #print(dir(self))
-        ##print(kwargs)
         queryset = super().get_queryset(**kwargs)
         return queryset.order_by("-modification_date")
 
@@ -206,9 +199,7 @@ class ModifyMorphView(DetailView):
     def get_context_data(self, **kwargs):
         """
         """
-        print("ModifyMorphView.kwargs", kwargs)
         context = super().get_context_data(**kwargs)
-        print("ModifyMorphView.get_context_data", context)
         return context
 
 class ModifyMorphPreviewView(DetailView):
@@ -220,16 +211,12 @@ class ModifyMorphPreviewView(DetailView):
     def get_context_data(self, **kwargs):
         """
         """
-        print(kwargs)
-        #print(game_no, name, kwargs)
-        #print(self.request.GET)
         pk = self.object.pk
         context = super().get_context_data(**kwargs)
         vmorph = VirtualMorph.objects.get(pk=pk)
         morph = vmorph.init()
         method_name = self.request.GET.get("method_name")
         if method_name is not None:
-            # TODO: Parse the arguments
             kwargs = vmorph._parse_args(self.request.GET, method_name)
             getattr(vmorph, method_name)(**kwargs)
         context['route_params'] = {
@@ -242,3 +229,4 @@ class ModifyMorphPreviewView(DetailView):
             "numeric_stats": vmorph._generate_stats(),
         }
         return context
+

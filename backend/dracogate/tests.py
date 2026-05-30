@@ -674,6 +674,8 @@ class UnitConfirmViewTests(TestCase):
         for father in morph_cls.FATHER_LIST():
             option = select.css.select_one("option[value='%s']" % father)
             self.assertIsNotNone(option)
+        for option in select.find_all("option"):
+            self.assertIn(option['value'], morph_cls.FATHER_LIST())
 
     def test_hard_mode__GET(self):
         """
@@ -724,6 +726,8 @@ class UnitConfirmViewTests(TestCase):
         self.assertIsNotNone(form)
         input1 = form.css.select_one("input[type='number'][name='number_of_declines']")
         self.assertIsNotNone(input1)
+        self.assertEqual(input1['min'], "0")
+        self.assertEqual(input1['max'], "3")
 
     def test_hard_mode__and__chapter__GET(self):
         """
@@ -752,14 +756,16 @@ class UnitConfirmViewTests(TestCase):
         select = form.css.select_one("select[name='chapter']")
         self.assertIsNotNone(select)
         chapters = (
-            12,
-            16,
-            20,
-            22,
+            "12",
+            "16",
+            "20",
+            "22",
         )
         for chapter in chapters:
             option = form.css.select_one("option[value='%s']" % chapter)
             self.assertIsNotNone(option)
+        for option in select.find_all("option"):
+            self.assertIn(option['value'], chapters)
 
     def test_lyn_mode__GET(self):
         """
