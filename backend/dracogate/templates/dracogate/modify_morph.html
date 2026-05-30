@@ -50,16 +50,16 @@
     </div>
     <section
       id="stats_before"
-      hx-get="{% url 'dracogate:_preview_stats' object.pk %}"
+      hx-get="{% url 'dracogate:modify_morph_preview' object.pk %}"
       hx-trigger="load"
       >
-      {# {% url 'dracogate:_preview_stats' object.pk %} #}
+      {# {% url 'dracogate:modify_morph_preview' object.pk %} #}
       {# {% block stats_before %} #}
       {# <h3>Before</h3> #}
       {# <div class="body"> #}
         {# </div> #}
       {# {% endblock %} #}
-      {% url 'dracogate:_preview_stats' object.pk %}
+      {% url 'dracogate:modify_morph_preview' object.pk %}
     </section>
     <section id="stats_after">
       <h3>After</h3>

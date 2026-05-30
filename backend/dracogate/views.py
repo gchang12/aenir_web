@@ -119,9 +119,6 @@ class UnitConfirmView(UnitSelectView, FormView):
         logger.debug("return: %r", success_url)
         return redirect(success_url)
 
-# TODO: Clean this up!
-# TODO: Test!
-
 class UnitConfirmPreviewView(TemplateView):
     """
     Shows initial stats of Morph instance given game_no, name, and options.
@@ -164,37 +161,7 @@ class UnitConfirmPreviewView(TemplateView):
         }
         return context
 
-class PreviewStatsView(DetailView):
-    """
-    """
-    template_name = "dracogate/_preview_stats.html"
-    model = VirtualMorph
-
-    def get_context_data(self, **kwargs):
-        """
-        """
-        print(kwargs)
-        #print(game_no, name, kwargs)
-        #print(self.request.GET)
-        pk = self.object.pk
-        context = super().get_context_data(**kwargs)
-        vmorph = VirtualMorph.objects.get(pk=pk)
-        morph = vmorph.init()
-        method_name = self.request.GET.get("method_name")
-        if method_name is not None:
-            # TODO: Parse the arguments
-            kwargs = vmorph._parse_args(self.request.GET, method_name)
-            getattr(vmorph, method_name)(**kwargs)
-        context['route_params'] = {
-            "game_no": vmorph.game_no,
-            "name": vmorph.name,
-        }
-        context['active_stats'] = {
-            "current_cls": morph.current_cls,
-            "current_lv": morph.current_lv,
-            "numeric_stats": vmorph._generate_stats(),
-        }
-        return context
+# TODO: Test!
 
 class ListMorphsView(ListView):
     """
@@ -244,3 +211,34 @@ class ModifyMorphView(DetailView):
         print("ModifyMorphView.get_context_data", context)
         return context
 
+class ModifyMorphPreviewView(DetailView):
+    """
+    """
+    template_name = "dracogate/modify_morph_preview.html"
+    model = VirtualMorph
+
+    def get_context_data(self, **kwargs):
+        """
+        """
+        print(kwargs)
+        #print(game_no, name, kwargs)
+        #print(self.request.GET)
+        pk = self.object.pk
+        context = super().get_context_data(**kwargs)
+        vmorph = VirtualMorph.objects.get(pk=pk)
+        morph = vmorph.init()
+        method_name = self.request.GET.get("method_name")
+        if method_name is not None:
+            # TODO: Parse the arguments
+            kwargs = vmorph._parse_args(self.request.GET, method_name)
+            getattr(vmorph, method_name)(**kwargs)
+        context['route_params'] = {
+            "game_no": vmorph.game_no,
+            "name": vmorph.name,
+        }
+        context['active_stats'] = {
+            "current_cls": morph.current_cls,
+            "current_lv": morph.current_lv,
+            "numeric_stats": vmorph._generate_stats(),
+        }
+        return context
