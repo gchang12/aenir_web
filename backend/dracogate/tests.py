@@ -1146,3 +1146,31 @@ class UnitConfirmPreviewViewTests(TestCase):
         self.assertIsNotNone(img)
         self.assertEqual(img['src'], "/static/dracogate/images/%d/characters/%s.png" % (game_no, name))
 
+# TODO: Implement!
+
+class ListMorphsViewTests(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        Logs current test-ID.
+        """
+        logger.debug("%s", self.id())
+
+    def test_at_most_20_morphs(self):
+        """
+        """
+
+    def test_more_than_20_morphs(self):
+        """
+        """
+
+    def test_more_than_20_morphs__page2(self):
+        """
+        """
+
+    def test_more_than_20_morphs__last_page(self):
+        """
+        """
+

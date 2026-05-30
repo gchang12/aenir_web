@@ -162,6 +162,7 @@ class UnitConfirmPreviewView(TemplateView):
         return context
 
 # TODO: Test!
+# TODO: Clean up!
 
 class ListMorphsView(ListView):
     """
@@ -215,10 +216,11 @@ class ModifyMorphPreviewView(DetailView):
         context = super().get_context_data(**kwargs)
         vmorph = VirtualMorph.objects.get(pk=pk)
         morph = vmorph.init()
-        method_name = self.request.GET.get("method_name")
-        if method_name is not None:
-            kwargs = vmorph._parse_args(self.request.GET, method_name)
-            getattr(vmorph, method_name)(**kwargs)
+        # TODO: Fix up.
+        #method_name = self.request.GET.get("method_name")
+        #if method_name is not None:
+            #kwargs = vmorph._parse_args(self.request.GET, method_name)
+            #getattr(vmorph, method_name)(**kwargs)
         context['route_params'] = {
             "game_no": vmorph.game_no,
             "name": vmorph.name,
