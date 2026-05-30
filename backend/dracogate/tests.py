@@ -210,17 +210,17 @@ class InitFormBuilderTests(TestCase):
             "Arden",
         )
         for field_name, field_type, widget_type, initial_value in zip(fields, field_types, widget_types, initial_values):
+            field = form_class.base_fields[field_name]
+            actual = field.initial
+            expected = initial_value
             with self.subTest(field_name=field_name):
                 #self.assertFieldIsInstance((form_class, field_name), field_type)
-                field = form_class.base_fields[field_name]
                 self.assertIsInstance(field, field_type)
                 #self.assertWidgetEqual((form_class, field_name), widget_type)
                 #field = form_class.base_fields[field_name]
                 self.assertIsInstance(field.widget, widget_type)
                 #self.assertInitialEqual((form_class, field_name), initial_value)
                 #field = form_class.base_fields[field_name]
-                actual = field.initial
-                expected = initial_value
                 self.assertEqual(actual, expected)
         choices = (
             ('Arden', 'Arden'),
@@ -278,20 +278,20 @@ class InitFormBuilderTests(TestCase):
             False,
         )
         for field_name, field_type, widget_type, initial_value in zip(fields, field_types, widget_types, initial_values):
+            field = form_class.base_fields[field_name]
+            actual = field.initial
+            expected = initial_value
             with self.subTest(field_name=field_name):
                 #self.assertFieldIsInstance((form_class, field_name), field_type)
                 #self.assertWidgetEqual((form_class, field_name), widget_type)
                 #self.assertInitialEqual((form_class, field_name), initial_value)
                 #self.assertFieldIsInstance((form_class, field_name), field_type)
-                field = form_class.base_fields[field_name]
                 self.assertIsInstance(field, field_type)
                 #self.assertWidgetEqual((form_class, field_name), widget_type)
                 #field = form_class.base_fields[field_name]
                 self.assertIsInstance(field.widget, widget_type)
                 #self.assertInitialEqual((form_class, field_name), initial_value)
                 #field = form_class.base_fields[field_name]
-                actual = field.initial
-                expected = initial_value
                 self.assertEqual(actual, expected)
 
     def test_number_of_declines(self):
@@ -329,20 +329,20 @@ class InitFormBuilderTests(TestCase):
             0,
         )
         for field_name, field_type, widget_type, initial_value in zip(fields, field_types, widget_types, initial_values):
+            field = form_class.base_fields[field_name]
+            actual = field.initial
+            expected = initial_value
             with self.subTest(field_name=field_name):
                 #self.assertFieldIsInstance((form_class, field_name), field_type)
                 #self.assertWidgetEqual((form_class, field_name), widget_type)
                 #self.assertInitialEqual((form_class, field_name), initial_value)
                 #self.assertFieldIsInstance((form_class, field_name), field_type)
-                field = form_class.base_fields[field_name]
                 self.assertIsInstance(field, field_type)
                 #self.assertWidgetEqual((form_class, field_name), widget_type)
                 #field = form_class.base_fields[field_name]
                 self.assertIsInstance(field.widget, widget_type)
                 #self.assertInitialEqual((form_class, field_name), initial_value)
                 #field = form_class.base_fields[field_name]
-                actual = field.initial
-                expected = initial_value
                 self.assertEqual(actual, expected)
 
     def test_hard_mode__and__chapter(self):
@@ -382,20 +382,20 @@ class InitFormBuilderTests(TestCase):
             "12",
         )
         for field_name, field_type, widget_type, initial_value in zip(fields, field_types, widget_types, initial_values):
+            field = form_class.base_fields[field_name]
+            actual = field.initial
+            expected = initial_value
             with self.subTest(field_name=field_name):
                 #self.assertFieldIsInstance((form_class, field_name), field_type)
                 #self.assertWidgetEqual((form_class, field_name), widget_type)
                 #self.assertInitialEqual((form_class, field_name), initial_value)
                 #self.assertFieldIsInstance((form_class, field_name), field_type)
-                field = form_class.base_fields[field_name]
                 self.assertIsInstance(field, field_type)
                 #self.assertWidgetEqual((form_class, field_name), widget_type)
                 #field = form_class.base_fields[field_name]
                 self.assertIsInstance(field.widget, widget_type)
                 #self.assertInitialEqual((form_class, field_name), initial_value)
                 #field = form_class.base_fields[field_name]
-                actual = field.initial
-                expected = initial_value
                 self.assertEqual(actual, expected)
         choices = (
             ("12", "12"),
@@ -444,20 +444,20 @@ class InitFormBuilderTests(TestCase):
             False,
         )
         for field_name, field_type, widget_type, initial_value in zip(fields, field_types, widget_types, initial_values):
+            field = form_class.base_fields[field_name]
+            actual = field.initial
+            expected = initial_value
             with self.subTest(field_name=field_name):
                 #self.assertFieldIsInstance((form_class, field_name), field_type)
                 #self.assertWidgetEqual((form_class, field_name), widget_type)
                 #self.assertInitialEqual((form_class, field_name), initial_value)
                 #self.assertFieldIsInstance((form_class, field_name), field_type)
-                field = form_class.base_fields[field_name]
                 self.assertIsInstance(field, field_type)
                 #self.assertWidgetEqual((form_class, field_name), widget_type)
                 #field = form_class.base_fields[field_name]
                 self.assertIsInstance(field.widget, widget_type)
                 #self.assertInitialEqual((form_class, field_name), initial_value)
                 #field = form_class.base_fields[field_name]
-                actual = field.initial
-                expected = initial_value
                 self.assertEqual(actual, expected)
 
 # VIEWS #
