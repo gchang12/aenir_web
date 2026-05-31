@@ -1176,8 +1176,8 @@ class ListMorphsViewTests(TestCase):
         Logs current test-ID and creates VirtualMorph objects.
         """
         logger.debug("%s", self.id())
-        num_morphs = 50
-        self.create_virtual_morph(num_morphs)
+        self.paginate_by = 50
+        self.create_virtual_morph(self.paginate_by)
         self.url = reverse("dracogate:list_morphs")
 
     @staticmethod
@@ -1223,6 +1223,8 @@ class ListMorphsViewTests(TestCase):
         soup = BeautifulSoup(response.text, 'html.parser')
         a = soup.css.select_one(".page-navi a[href='?page=2']")
         self.assertIsNotNone(a)
+        a_list = soup.css.select("#list_morphs menu a")
+        self.assertEqual(len(tuple(a_list)), self.paginate_by)
 
     def test_more_than_50_morphs__page2(self):
         """
@@ -1239,6 +1241,8 @@ class ListMorphsViewTests(TestCase):
         self.assertEqual(h3.text, "Morph ID: FE6.Roy-1")
         a2 = soup.css.select_one(".page-navi a[href='?page=1']")
         self.assertIsNotNone(a2)
+        a_list = soup.css.select("#list_morphs menu a")
+        self.assertEqual(len(tuple(a_list)), 1)
 
 # TODO: Implement!
 
