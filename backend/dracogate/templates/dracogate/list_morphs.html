@@ -18,7 +18,7 @@ Modify Morphs
           <figure>
             <img src="{% get_static_prefix %}dracogate/images/{{object.game_no}}/characters/{{object.name}}.png" />
             <figcaption>
-              <h3>{{ object.morph_id }}</h3>
+              <h3>Morph ID: {{ object.morph_id }}</h3>
               <table>
                 <thead>
                   <tr>
@@ -60,6 +60,14 @@ Modify Morphs
     {% endfor %}
     </menu>
   </article>
+  <div class="page-navi">
+    {% if page_obj.has_next %}
+    <a href="?page={{page_obj.next_page_number}}">Next</a>
+    {% endif %}
+    {% if page_obj.has_previous %}
+    <a href="?page={{page_obj.previous_page_number}}">Previous</a>
+    {% endif %}
+  </div>
   {% endblock %}
 </article>
 {% endblock %}

@@ -19,6 +19,7 @@ import aenir.morph
 from aenir import get_morph
 from aenir._exceptions import (
     InitError,
+    UnitNotFoundError,
 )
 
 from .models import (
@@ -508,6 +509,15 @@ class UnitSelectViewTests(TestCase):
                     a = soup.css.select_one(css_selector)
                     self.assertIsNotNone(a)
 
+    def test_game_dne(self):
+        """
+        Validates that nonexistent games are not covered by application.
+        """
+        game_no = 99
+        url = reverse("dracogate:unit_select", args=[game_no])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+
 class UnitConfirmViewTests(TestCase):
     """
     Checks that units are created upon successful POST request.
@@ -790,6 +800,16 @@ class UnitConfirmViewTests(TestCase):
         self.assertIsNotNone(form)
         input1 = form.css.select_one("input[type='checkbox'][name='lyn_mode']")
         self.assertIsNotNone(input1)
+
+    def test_unit_dne(self):
+        """
+        Validates that nonexistent units for a given name are not covered.
+        """
+        game_no = 7
+        name = "Marth"
+        url = reverse("dracogate:unit_confirm", args=[game_no, name])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
 
 class UnitConfirmPreviewViewTests(TestCase):
     """
@@ -1150,27 +1170,75 @@ class UnitConfirmPreviewViewTests(TestCase):
 
 class ListMorphsViewTests(TestCase):
     """
+    Checks to see if the expected elements are there.
     """
 
     def setUp(self):
         """
-        Logs current test-ID.
+        Logs current test-ID and creates VirtualMorph objects.
         """
         logger.debug("%s", self.id())
+        num_morphs = 50
+        self.create_virtual_morph(num_morphs)
+        self.url = reverse("dracogate:list_morphs")
 
-    def test_at_most_20_morphs(self):
+    @staticmethod
+    def create_virtual_morph(num_morphs):
         """
+        Creates VirtualMorph objects given the number to create.
         """
+        owner = None
+        game_no = 6
+        name = "Roy"
+        options = {}
+        progress = {
+            "current_cls": "Lord",
+            "current_lv": 1,
+        }
+        for i in range(num_morphs):
+            morph_id = "FE6.Roy-%d" % (i + 1)
+            VirtualMorph.objects.create(
+                owner=owner,
+                morph_id=morph_id,
+                game_no=game_no,
+                name=name,
+                options=options,
+                progress=progress,
+            )
 
-    def test_more_than_20_morphs(self):
+    def test_at_most_50_morphs(self):
         """
+        Checks that page navigational elements are missing whenever max pagination count is not exceeded.
         """
+        response = self.client.get(self.url)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        a = soup.css.select_one(".page-navi a")
+        self.assertIsNone(a)
 
-    def test_more_than_20_morphs__page2(self):
+    def test_more_than_50_morphs(self):
         """
+        Checks that 'Next' navigational element is here if max pagination count is exceeded.
         """
+        # next is present.
+        self.create_virtual_morph(1)
+        response = self.client.get(self.url + "?page=1")
+        soup = BeautifulSoup(response.text, 'html.parser')
+        a = soup.css.select_one(".page-navi a[href='?page=2']")
+        self.assertIsNotNone(a)
 
-    def test_more_than_20_morphs__last_page(self):
+    def test_more_than_50_morphs__page2(self):
         """
+        Checks that 'Previous' navigational element is here if max pagination count is exceeded.
         """
+        # previous is present.
+        self.create_virtual_morph(1)
+        response = self.client.get(self.url + "?page=2")
+        soup = BeautifulSoup(response.text, 'html.parser')
+        a = soup.css.select_one("#list_morphs a")
+        self.assertIsNotNone(a)
+        h3 = a.find("h3")
+        self.assertIsNotNone(h3)
+        self.assertEqual(h3.text, "Morph ID: FE6.Roy-1")
+        a2 = soup.css.select_one(".page-navi a[href='?page=1']")
+        self.assertIsNotNone(a2)
 

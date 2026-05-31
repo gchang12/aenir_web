@@ -14,12 +14,14 @@ from django.views.generic import (
 from django.views.generic.edit import FormView
 from django.urls import reverse
 from django import forms
+from django.http import Http404
 
 import aenir.morph
 import aenir.games
 from aenir import get_morph
 from aenir._exceptions import (
     InitError,
+    UnitNotFoundError,
 )
 
 from .models import VirtualMorph
@@ -52,7 +54,10 @@ class UnitSelectView(GameSelectView):
         Inserts 'units' list and namespaced 'game_no' parameters into template context.
         """
         context = super().get_context_data(**kwargs)
-        morph_cls = getattr(aenir.morph, "Morph%d" % game_no)
+        try:
+            morph_cls = getattr(aenir.morph, "Morph%d" % game_no)
+        except AttributeError:
+            raise Http404("Sorry. Morph%d has not been implemented yet!" % game_no)
         units = morph_cls.get_true_character_list()
         context['route_params'] = {}
         context['route_params']['game_no'] = game_no
@@ -85,6 +90,8 @@ class UnitConfirmView(UnitSelectView, FormView):
             init_params = {}
         except InitError as e:
             init_params = e.init_params
+        except UnitNotFoundError:
+            raise Http404("'%s' is not an FE%d character." % (name, game_no))
         form_class = InitFormBuilder.build_form_class(game_no, name, init_params)
         return form_class 
 
@@ -161,35 +168,31 @@ class UnitConfirmPreviewView(TemplateView):
         }
         return context
 
-# TODO: Test!
-# TODO: Clean up!
-
 class ListMorphsView(ListView):
     """
+    Lists hyperlinks to VirtualMorph objects that can be accessed.
     """
-    paginate_by = 20
+    paginate_by = 50
     template_name = "dracogate/list_morphs.html"
     queryset = None
     model = VirtualMorph
 
     def get_context_data(self, **kwargs):
         """
+        Default implementation.
         """
         context = super().get_context_data(**kwargs)
+        logger.debug("context: %r", context)
         return context
 
     def get_queryset(self, **kwargs):
         """
+        Sorts queryset by 'modification_date'.
         """
-        # get queryset for logged-in users.
-        # for users who aren't logged in, show nothing except maybe an input box where they can input some UUID to fetch some vmorph
-        #if self.request.user.username == "":
-            #queryset = []
-        #else:
-            #queryset = self.model.objects.filter(owner=self.request.user)
-            #pass
         queryset = super().get_queryset(**kwargs)
         return queryset.order_by("-modification_date")
+
+# TODO: Test! Clean up!
 
 class ModifyMorphView(DetailView):
     """
