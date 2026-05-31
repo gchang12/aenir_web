@@ -1166,8 +1166,6 @@ class UnitConfirmPreviewViewTests(TestCase):
         self.assertIsNotNone(img)
         self.assertEqual(img['src'], "/static/dracogate/images/%d/characters/%s.png" % (game_no, name))
 
-# TODO: Implement!
-
 class ListMorphsViewTests(TestCase):
     """
     Checks to see if the expected elements are there.
@@ -1242,3 +1240,8 @@ class ListMorphsViewTests(TestCase):
         a2 = soup.css.select_one(".page-navi a[href='?page=1']")
         self.assertIsNotNone(a2)
 
+# TODO: Implement!
+
+class ModifyMorphViewTests(TestCase):
+    """
+    """

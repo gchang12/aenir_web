@@ -193,6 +193,7 @@ class ListMorphsView(ListView):
         return queryset.order_by("-modification_date")
 
 # TODO: Test! Clean up!
+# Clearly, this needs more planning.
 
 class ModifyMorphView(DetailView):
     """
@@ -219,11 +220,6 @@ class ModifyMorphPreviewView(DetailView):
         context = super().get_context_data(**kwargs)
         vmorph = VirtualMorph.objects.get(pk=pk)
         morph = vmorph.init()
-        # TODO: Fix up.
-        #method_name = self.request.GET.get("method_name")
-        #if method_name is not None:
-            #kwargs = vmorph._parse_args(self.request.GET, method_name)
-            #getattr(vmorph, method_name)(**kwargs)
         context['route_params'] = {
             "game_no": vmorph.game_no,
             "name": vmorph.name,
