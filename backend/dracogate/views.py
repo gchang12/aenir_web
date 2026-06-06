@@ -200,10 +200,30 @@ class ModifyMorphView(DetailView):
     """
     template_name = "dracogate/modify_morph.html"
     model = VirtualMorph
+    method_dict = {
+        "level_up": "Level Up",
+        "promote": "Promote",
+        "use_stat_booster": "Use Stat Booster",
+        "set_scrolls": "Equip Scrolls",
+        "use_afas_drops": "Use Afa's Drops",
+        "use_metiss_tome": "Use Metis's Tome",
+        "set_bands": "Equip Bands",
+        # TODO: Define new method: shapeshift
+        "transform": "Transform",
+        "revert": "Revert",
+        "shapeshift": "Transform",
+    }
 
     def get_context_data(self, **kwargs):
         """
         """
+        # TODO: Define list of valid methods
+        # 4: level_up, promote
+        # 5: level_up, promote, use_stat_booster, set_scrolls
+        # 6: level_up, promote, use_stat_booster
+        # 7: level_up, promote, use_stat_booster, use_afas_drops
+        # 8: level_up, promote, use_stat_booster, use_metiss_tome
+        # 9: level_up, promote, use_stat_booster, set_bands, transform / revert
         context = super().get_context_data(**kwargs)
         return context
 
