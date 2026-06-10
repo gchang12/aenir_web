@@ -58,7 +58,7 @@ class UnitSelectView(GameSelectView):
             morph_cls = getattr(aenir.morph, "Morph%d" % game_no)
         except AttributeError:
             raise Http404("Sorry. Morph%d has not been implemented yet!" % game_no)
-        units = morph_cls.get_true_character_list()
+        units = morph_cls.CHARACTERS
         context['route_params'] = {}
         context['route_params']['game_no'] = game_no
         context['units'] = units
@@ -208,22 +208,20 @@ class ModifyMorphView(DetailView):
         "use_afas_drops": "Use Afa's Drops",
         "use_metiss_tome": "Use Metis's Tome",
         "set_bands": "Equip Bands",
-        # TODO: Define new method: shapeshift
         "transform": "Transform",
-        "revert": "Revert",
-        "shapeshift": "Transform",
+        #"revert": "Revert",
+        #"shapeshift": "Transform",
     }
 
     def get_context_data(self, **kwargs):
         """
         """
-        # TODO: Define list of valid methods
         # 4: level_up, promote
         # 5: level_up, promote, use_stat_booster, set_scrolls
         # 6: level_up, promote, use_stat_booster
         # 7: level_up, promote, use_stat_booster, use_afas_drops
         # 8: level_up, promote, use_stat_booster, use_metiss_tome
-        # 9: level_up, promote, use_stat_booster, set_bands, transform / revert
+        # 9: level_up, promote, use_stat_booster, set_bands, transform
         context = super().get_context_data(**kwargs)
         return context
 

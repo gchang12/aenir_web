@@ -1,4 +1,5 @@
-aenir==0.0.post1.dev1348
+## The following requirements were added by pip freeze:
+aenir==0.0.post1.dev1362
 asgiref==3.11.1
 beautifulsoup4==4.14.3
 bs4==0.0.2

@@ -13,6 +13,13 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
 from aenir import get_morph
+from aenir._exceptions import (
+    LevelUpError,
+    TransformationError,
+    DemiBandError,
+)
+
+from ._logging import logger
 
 User = get_user_model()
 
@@ -81,10 +88,10 @@ class VirtualMorph(models.Model):
         current_stats = morph.current_stats.as_dict()
         growth_rates = morph.growth_rates.as_dict()
         max_stats = morph.max_stats.as_dict()
-        absmax_stats = morph.Stats.ABSOLUTE_MAXES()
+        absmax_stats = morph.Stats.ABSOLUTE_MAXES
         # nullify zero-growth stats
-        zero_growth_stat_list = morph.Stats.ZERO_GROWTH_STAT_LIST()
-        for indexno, statname in enumerate(morph.Stats.STAT_LIST()):
+        zero_growth_stat_list = morph.Stats.ZERO_GROWTH_STAT_LIST
+        for indexno, statname in enumerate(morph.Stats.STAT_LIST):
             yield self.Stat(
                 id=statname,
                 current_val=current_stats[statname] / 100,
@@ -174,18 +181,25 @@ class VirtualMorph(models.Model):
     def transform(self):
         """
         """
-
-    def revert(self):
-        """
-        """
-
-    def equip_demi_band(self):
-        """
-        """
-
-    def unequip_demi_band(self):
-        """
-        """
+        is_success: bool
+        try:
+            {
+                True: self.morph.revert,
+                False: self.morph.transform,
+            }[self.morph.is_transformed]()
+            self.history.append(
+                ({
+                    True: "transform",
+                    False: "revert",
+                }[self.morph.is_transformed], {})
+            )
+            param_bounds = (self.current_cls, self.cls_to_transform_to)
+            is_success = True
+        except (KeyError, TransformationError, DemiBandError) as err:
+            param_bounds = None
+            is_success = False
+            logger.debug("Error while transforming: %r", err)
+        return (is_success, param_bounds)
 
     @staticmethod
     def _parse_args(dictlike, method_name):
