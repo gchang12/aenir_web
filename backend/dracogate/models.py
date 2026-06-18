@@ -88,10 +88,10 @@ class VirtualMorph(models.Model):
         current_stats = morph.current_stats.as_dict()
         growth_rates = morph.growth_rates.as_dict()
         max_stats = morph.max_stats.as_dict()
-        absmax_stats = morph.Stats.ABSOLUTE_MAXES
+        absmax_stats = morph.Stats.ABSOLUTE_MAXES()
         # nullify zero-growth stats
-        zero_growth_stat_list = morph.Stats.ZERO_GROWTH_STAT_LIST
-        for indexno, statname in enumerate(morph.Stats.STAT_LIST):
+        zero_growth_stat_list = morph.Stats.ZERO_GROWTH_STAT_LIST()
+        for indexno, statname in enumerate(morph.Stats.STAT_LIST()):
             yield self.Stat(
                 id=statname,
                 current_val=current_stats[statname] / 100,

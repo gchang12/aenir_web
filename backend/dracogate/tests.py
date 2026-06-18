@@ -502,7 +502,7 @@ class UnitSelectViewTests(TestCase):
             soup = BeautifulSoup(response.text, 'html.parser')
             with self.subTest(fe_game=game_no):
                 self.assertEqual(response.status_code, 200)
-                for name in morph_cls.CHARACTERS:
+                for name in morph_cls.CHARACTERS():
                     unit_confirm_url = reverse("dracogate:unit_confirm", args=[game_no, name]) + "#FE%d" % game_no
                     css_selector = 'a[href="%s"]' % unit_confirm_url
                     logger.debug("Checking if '%s' exists in HTML document.", css_selector)
@@ -681,11 +681,11 @@ class UnitConfirmViewTests(TestCase):
         select = form.css.select_one("select[name='father']")
         self.assertIsNotNone(select)
         morph_cls = aenir.morph.Morph4
-        for father in morph_cls.FATHERS:
+        for father in morph_cls.FATHERS():
             option = select.css.select_one("option[value='%s']" % father)
             self.assertIsNotNone(option)
         for option in select.find_all("option"):
-            self.assertIn(option['value'], morph_cls.FATHERS)
+            self.assertIn(option['value'], morph_cls.FATHERS())
 
     def test_hard_mode__GET(self):
         """

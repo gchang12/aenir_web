@@ -59,7 +59,7 @@
     {# Current stats  #}
     <section
       id="stats_before"
-      hx-get="{% url 'dracogate:modify_morph_preview' object.pk %}"
+      hx-get="{% url 'dracogate:modify_morph_preview' object.pk %}?stat_type={{ method.stat_type }}"
       hx-trigger="load"
       >
     </section>
@@ -79,7 +79,7 @@
     {# TODO: Fill out. #}
       <h3>{{ method.title }}</h3>
       <form
-        hx-get="{% url 'dracogate:modify_morph_preview' object.pk %}"
+        hx-get="{% url 'dracogate:modify_morph_preview' object.pk %}?stat_type={{ method.stat_type }}&method={{ method.name }}"
         hx-trigger="change"
         hx-target="#stats_after"
         method="post"

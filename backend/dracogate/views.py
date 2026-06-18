@@ -194,6 +194,8 @@ class ListMorphsView(ListView):
 
 # TODO: Test! Clean up!
 # Clearly, this needs more planning.
+# TODO: Insert URL list.
+# TODO: Modify morph-preview view
 
 class ModifyMorphView(DetailView):
     """
