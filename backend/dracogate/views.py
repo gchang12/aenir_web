@@ -216,7 +216,7 @@ class ModifyMorphView(DetailView):
         "shapeshift": "Transform",
     }
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, *args, **kwargs):
         """
         """
         # 4: level_up, promote
@@ -225,8 +225,56 @@ class ModifyMorphView(DetailView):
         # 7: level_up, promote, use_stat_booster, use_afas_drops
         # 8: level_up, promote, use_stat_booster, use_metiss_tome
         # 9: level_up, promote, use_stat_booster, set_bands, shapeshift
-        context = super().get_context_data(**kwargs)
+        context = super().get_context_data(*args, **kwargs)
+        game_no = self.object.game_no
+        method_names = {
+            4: (
+                "level_up",
+                "promote",
+            ),
+            5: (
+                "level_up",
+                "promote",
+                "use_stat_booster",
+                "set_scrolls",
+            ),
+            6: (
+                "level_up",
+                "promote",
+                "use_stat_booster",
+            ),
+            7: (
+                "level_up",
+                "promote",
+                "use_stat_booster",
+                "use_afas_drops",
+            ),
+            8: (
+                "level_up",
+                "promote",
+                "use_stat_booster",
+                "use_metiss_tome",
+            ),
+            9: (
+                "level_up",
+                "promote",
+                "set_bands",
+                "shapeshift",
+            ),
+        }[game_no]
+        context['valid_methods'] = [{"name": name, "title": self.method_dict[name]} for name in method_names]
         return context
+
+class MorphMethodView(ModifyMorphView, FormView):
+    """
+    """
+    # TODO: Specify form classes
+
+    def get(self, *args, **kwargs):
+        """
+        """
+        print(args, kwargs)
+        return super().get(*args, **kwargs)
 
 class ModifyMorphPreviewView(DetailView):
     """

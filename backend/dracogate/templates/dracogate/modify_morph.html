@@ -67,6 +67,11 @@
     <section id="action_menu">
       <h3>Actions</h3>
       <menu>
+        {% for method in valid_methods %}
+        <li>
+          <a href="{% url 'dracogate:morph_method' object.pk method.name %}">{{method.title}}</a>
+        </li>
+        {% endfor %}
     {# TODO: Fill out. #}
       </menu>
     </section>
