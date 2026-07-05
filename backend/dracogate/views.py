@@ -196,6 +196,7 @@ class ListMorphsView(ListView):
 # Clearly, this needs more planning.
 # TODO: Insert URL list.
 # TODO: Modify morph-preview view
+# TODO: Make sure to disable the submit-button if the selection is invalid.
 
 class ModifyMorphView(DetailView):
     """
@@ -210,9 +211,9 @@ class ModifyMorphView(DetailView):
         "use_afas_drops": "Use Afa's Drops",
         "use_metiss_tome": "Use Metis's Tome",
         "set_bands": "Equip Bands",
-        "transform": "Transform",
+        #"transform": "Transform",
         #"revert": "Revert",
-        #"shapeshift": "Transform",
+        "shapeshift": "Transform",
     }
 
     def get_context_data(self, **kwargs):
@@ -223,7 +224,7 @@ class ModifyMorphView(DetailView):
         # 6: level_up, promote, use_stat_booster
         # 7: level_up, promote, use_stat_booster, use_afas_drops
         # 8: level_up, promote, use_stat_booster, use_metiss_tome
-        # 9: level_up, promote, use_stat_booster, set_bands, transform
+        # 9: level_up, promote, use_stat_booster, set_bands, shapeshift
         context = super().get_context_data(**kwargs)
         return context
 

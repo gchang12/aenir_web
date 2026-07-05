@@ -16,9 +16,9 @@
     <div id="profile">
       {# Portrait with caption  #}
       <img src="{% get_static_prefix %}dracogate/images/{{object.game_no}}/characters/{{object.name}}.png" />
-      <table>
+      <table id="init_params">
         {# Init-options  #}
-        <thead>
+        <thead id="mandatory_params">
           <tr>
             <th>Game</th>
             <td>FE{{ object.game_no }}</td>
@@ -28,7 +28,7 @@
             <td>{{ object.name }}</td>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="init_options">
           {% for option, opt_value in object.options.items %}
           <tr>
             {% if option == "father" %}
@@ -57,37 +57,40 @@
       </table>
     </div>
     {# Current stats  #}
+    {# TODO: show stats in this view #}
     <section
       id="stats_before"
       hx-get="{% url 'dracogate:modify_morph_preview' object.pk %}?stat_type={{ method.stat_type }}"
       hx-trigger="load"
       >
     </section>
-    <section id="stats_after">
-      <h3>After</h3>
-      {# {% block stats_after %} {% endblock %} #}
-    </section>
-    {# Menu of methods  #}
     <section id="action_menu">
       <h3>Actions</h3>
       <menu>
     {# TODO: Fill out. #}
       </menu>
     </section>
-    <section id="method_form">
-      {# {% block method_form %} #}
-    {# TODO: Fill out. #}
-      <h3>{{ method.title }}</h3>
-      <form
-        hx-get="{% url 'dracogate:modify_morph_preview' object.pk %}?stat_type={{ method.stat_type }}&method={{ method.name }}"
-        hx-trigger="change"
-        hx-target="#stats_after"
-        method="post"
-        >
-        {{ method.form }}
-      </form>
-      {# {% endblock %} #}
-    </section>
+    <div id="stat_preview">
+      <section id="stats_after">
+        <h3>After</h3>
+        {# {% block stats_after %} {% endblock %} #}
+      </section>
+      {# Menu of methods  #}
+      <section id="method_form">
+        {# {% block method_form %} #}
+      {# TODO: Fill out. #}
+        <h3>{{ method.title }}</h3>
+        <form
+          hx-get="{% url 'dracogate:modify_morph_preview' object.pk %}?stat_type={{ method.stat_type }}&method={{ method.name }}"
+          hx-trigger="change"
+          hx-target="#stats_preview"
+          method="post"
+          >
+          {{ method.form }}
+        </form>
+        {# {% endblock %} #}
+      </section>
+    </div>
   </main>
 </article>
 {% endblock %}
