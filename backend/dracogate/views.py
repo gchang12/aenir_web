@@ -276,6 +276,18 @@ class MorphMethodView(ModifyMorphView, FormView):
         print(args, kwargs)
         return super().get(*args, **kwargs)
 
+class LevelUpView(ModifyMorphView, FormView):
+    """
+    """
+    # TODO: Specify form classes
+
+    def get(self, *args, **kwargs):
+        """
+        """
+        print(args, kwargs)
+        return super().get(*args, **kwargs)
+
+
 class ModifyMorphPreviewView(DetailView):
     """
     """

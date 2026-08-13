@@ -98,3 +98,7 @@ class InitFormBuilder:
             InitForm.base_fields[field_name] = getattr(cls.Options, field_name)(values)
         return InitForm
 
+# TODO: Implement
+class LevelUpFormBuilder:
+    """
+    """

@@ -18,8 +18,8 @@ urlpatterns = [
     # TODO: Think of better names for these.
     path("morphs/", views.ListMorphsView.as_view(), name="list_morphs"),
     path("morphs/<int:pk>/", views.ModifyMorphView.as_view(), name="modify_morph"),
-    path("morphs/<int:pk>/<str:method>/", views.MorphMethodView.as_view(), name="morph_method"),
-    #path("morphs/<int:pk>/level_up/", views.LevelUpView.as_view(), name="level_up"),
+    #path("morphs/<int:pk>/<str:method>/", views.MorphMethodView.as_view(), name="morph_method"),
+    path("morphs/<int:pk>/level_up/", views.LevelUpView.as_view(), name="level_up"),
     #path("morphs/<int:pk>/promote/", views.PromoteView.as_view(), name="promote"),
     #path("morphs/<int:pk>/use_stat_booster/", views.UseStatBoosterView.as_view(), name="use_stat_booster"),
     #path("morphs/<int:pk>/set_scrolls/", views.SetScrollsView.as_view(), name="set_scrolls"),

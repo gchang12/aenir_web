@@ -56,8 +56,6 @@
         </tbody>
       </table>
     </div>
-    {# Current stats  #}
-    {# TODO: show stats in this view #}
     <section
       id="stats_before"
       hx-get="{% url 'dracogate:modify_morph_preview' object.pk %}?stat_type={{ method.stat_type }}"
@@ -72,28 +70,22 @@
           <a href="{% url 'dracogate:morph_method' object.pk method.name %}">{{method.title}}</a>
         </li>
         {% endfor %}
-    {# TODO: Fill out. #}
       </menu>
     </section>
     <div id="stat_preview">
       <section id="stats_after">
         <h3>After</h3>
-        {# {% block stats_after %} {% endblock %} #}
       </section>
-      {# Menu of methods  #}
       <section id="method_form">
-        {# {% block method_form %} #}
-      {# TODO: Fill out. #}
         <h3>{{ method.title }}</h3>
         <form
-          hx-get="{% url 'dracogate:modify_morph_preview' object.pk %}?stat_type={{ method.stat_type }}&method={{ method.name }}"
+          hx-get="{% url 'dracogate:modify_morph_preview' object.pk %}?stat_type={{ method.stat_type }}&method={{ method.name }}&stat_type={{ method.stat_type }}"
           hx-trigger="change"
           hx-target="#stats_preview"
           method="post"
           >
           {{ method.form }}
         </form>
-        {# {% endblock %} #}
       </section>
     </div>
   </main>

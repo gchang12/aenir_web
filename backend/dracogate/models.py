@@ -142,6 +142,7 @@ class VirtualMorph(models.Model):
     def level_up(self, num_levels):
         """
         """
+        # TODO: Redo
         self.morph._set_max_level()
         is_success: bool
         try:
