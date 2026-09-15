@@ -1,20 +1,14 @@
-APP_NAME := aenir_web
-VENV_NAME := .venv-aenir_web
+PROJECT_NAME := aenir_web
+VENV_NAME := .venv-$(PROJECT_NAME)
 
-.backend: _terminal backend/$(VENV_NAME)/
-	#firefox http://127.0.0.1:8000/api/ &
-	printf '\033]0;%s\007' "backend-server";
-	bash -c 'cd backend/ && . $(VENV_NAME)/bin/activate && ./manage.py runserver;'
+$(VENV_NAME)/: requirements.txt
+	bash -c 'python3 -m venv $(VENV_NAME)/ && . $(VENV_NAME)/bin/activate && pip install -r requirements.txt;'
 
-.frontend: _terminal frontend/node_modules/
-	printf '\033]0;%s\007' "frontend-server";
-	bash -c 'cd frontend/ && . ~/.nvm/nvm.sh && nvm install 24.13.0 && npm run dev;'
-
-_terminal:
-	xfce4-terminal --tab --working-directory=/home/eclair/Documents/coding/_web-dev/$(APP_NAME)/;
-
-backend/$(VENV_NAME)/:
-	bash -c 'cd backend && python3 -m venv $(VENV_NAME)/ && . $(VENV_NAME)/bin/activate && pip install -r requirements.txt;'
-
-frontend/node_modules/:
-	bash -c 'cd frontend/ && . ~/.nvm/nvm.sh && nvm install 24 && npm install;'
+backend/: $(VENV_NAME)/
+	bash -c '. $(VENV_NAME)/bin/activate && pip install django && django-admin startproject $(PROJECT_NAME)';
+	mv $(PROJECT_NAME)/ backend/;
+	# create .env file
+	cat backend/$(PROJECT_NAME)/settings.py | grep SECRET_KEY > backend/.env;
+	sed -i s/' '//g backend/.env;
+	sed -i s/\'//g backend/.env;
+	sed -i s/'^SECRET_KEY = .*'/'from decouple import config; SECRET_KEY = config("SECRET_KEY")'/g backend/$(PROJECT_NAME)/settings.py;
