@@ -4,6 +4,7 @@
 from django.views.generic import base, edit
 
 from aenir.games import FireEmblemGame
+from aenir.morph import get_morph_class
 
 class GameSelectView(base.TemplateView):
     """
@@ -25,6 +26,15 @@ class GameSelectView(base.TemplateView):
 class UnitSelectView(base.TemplateView):
     """
     """
+    template_name = "dracogate/unit_select.html"
+
+    def get_context_data(self, game_no):
+        """
+        """
+        context = super().get_context_data()
+        context['units'] = get_morph_class(game_no).CHARACTERS()
+        context['game_no'] = game_no
+        return context
 
 # TODO: Figure out how to implement these
 

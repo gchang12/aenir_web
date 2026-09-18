@@ -1,0 +1,23 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block main %}
+<article id="unit_select">
+  <h1>Create Morph</h1>
+  <h2>Unit Select</h2>
+  <ul>
+    {% for unit in units %}
+    <li>
+      <a href="{% url 'dracogate:unit_confirm' game_no unit %}">
+        <figure>
+          <img src="{% get_static_prefix %}/dracogate/images/fe{{game_no}}/characters/{{unit}}.png" />
+          <figcaption>
+            <h3>{{ unit }}</h3>
+          </figcaption>
+        </figure>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</article>
+{% endblock %}
