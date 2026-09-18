@@ -9,4 +9,4 @@ class User(AbstractUser):
         primary_key=True,
     )
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ()
+    REQUIRED_FIELDS = ("username",)

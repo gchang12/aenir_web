@@ -18,17 +18,28 @@
         <img src="{% static 'icon.png' %}" />
       </a>
       <nav>
-        Morphs
-        <ul>
-          <li><a href="#">Create</a></li>
-          <li><a href="#">Evolve</a></li>
-          <li><a href="#">Compare</a></li>
-          <li><a href="#">Arena</a></li>
-        </ul>
+        <figure>
+          <figcaption>Morphs</figcaption>
+          <ul>
+            <li><a href="#">Create</a></li>
+            <li><a href="#">Evolve</a></li>
+            <li><a href="#">Compare</a></li>
+            <li><a href="#">Arena</a></li>
+          </ul>
+        </figure>
       </nav>
       <div id="login">
-        <!-- Show login link if not logged in -->
-        <!-- Show logout button if logged in -->
+        {% if user.is_authenticated %}
+        <div class="welcome-message">
+          Welcome, {{ user.username }}!
+        </div>
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button>Logout</button>
+        </form>
+        {% else %}
+          <a href="{% url 'login' %}">Login</a>
+        {% endif %}
       </div>
     </header>
     <main>

@@ -14,8 +14,12 @@ footer {
   background-color: red;
 }
 
-nav > ul {
+nav ul {
   margin: 0;
   list-style-type: none;
   padding-left: 0;
-} 
+}
+
+nav > figure {
+  margin: 0;
+}
