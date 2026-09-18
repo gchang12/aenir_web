@@ -1,11 +1,12 @@
-from django.urls import path, include
-#from django.http import HttpResponse
+"""
+"""
 
-'''
-def index(request):
-    return HttpResponse("Hello world")
-'''
+from django.urls import path, include
+
+from . import views
 
 urlpatterns = [
-    #path("", index, name="index"),
+    #path("", views.HomePageView.as_view(), name="homepage"),
+    #path("accounts/", include("django.contrib.auth.urls")),
+    path("__reload__/", include("django_browser_reload.urls")),
 ]
