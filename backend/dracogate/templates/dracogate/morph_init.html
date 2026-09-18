@@ -1,0 +1,23 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block main %}
+<article id="morph_init">
+  <h1>Create Morph</h1>
+  <ol>
+    {% for game in games %}
+    <li>
+      <a href="{% url 'dracogate:game_select' game.game_no %}">
+        <figure>
+          <img src="{% get_static_prefix %}dracogate/images/fe{{game.game_no}}/cover-art.png" />
+          <figcaption>
+            <h2>FE{{game.game_no}}</h2>
+            <h3>{{ game.title }}</h3>
+          </figcaption>
+        </figure>
+      </a>
+    </li>
+    {% endfor %}
+  </ol>
+</article>
+{% endblock %}
