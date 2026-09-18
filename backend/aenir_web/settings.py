@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "_top.apps.TopConfig",
+    "dracogate.apps.DracogateConfig",
     "django_browser_reload",
 ]
 
