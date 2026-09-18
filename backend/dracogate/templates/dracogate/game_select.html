@@ -4,15 +4,16 @@
 {% block main %}
 <article id="morph_init">
   <h1>Create Morph</h1>
+  <h2>Game Select</h2>
   <ol>
     {% for game in games %}
     <li>
-      <a href="{% url 'dracogate:game_select' game.game_no %}">
+      <a href="{% url 'dracogate:unit_select' game.game_no %}">
         <figure>
           <img src="{% get_static_prefix %}dracogate/images/fe{{game.game_no}}/cover-art.png" />
           <figcaption>
-            <h2>FE{{game.game_no}}</h2>
-            <h3>{{ game.title }}</h3>
+            <h3>FE{{game.game_no}}</h3>
+            <h4>{{ game.title }}</h4>
           </figcaption>
         </figure>
       </a>

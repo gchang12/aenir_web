@@ -5,16 +5,15 @@ from django.views.generic import base, edit
 
 from aenir.games import FireEmblemGame
 
-class CreateMorphView(base.TemplateView):
+class GameSelectView(base.TemplateView):
     """
     """
-    template_name = "dracogate/morph_init.html"
+    template_name = "dracogate/game_select.html"
 
-    def get_context_data(self, **kwds):
+    def get_context_data(self):
         """
         """
-        print(kwds)
-        context = super().get_context_data(**kwds)
+        context = super().get_context_data()
         context['games'] = [
             {
                 "title": fe_game.formal_name,
@@ -23,16 +22,16 @@ class CreateMorphView(base.TemplateView):
         ]
         return context
 
-class GameSelectView(base.TemplateView):
+class UnitSelectView(base.TemplateView):
     """
     """
 
 # TODO: Figure out how to implement these
 
-class UnitSelectView(edit.CreateView):
+class UnitConfirmView(edit.CreateView):
     """
     """
 
-class UnitSelectForm(edit.FormView):
+class UnitConfirmForm(edit.FormView):
     """
     """
