@@ -1,0 +1,21 @@
+body {
+  margin: 0;
+}
+
+header {
+  background-color: grey;
+}
+
+main {
+  background-color: orange;
+}
+
+footer {
+  background-color: red;
+}
+
+nav > ul {
+  margin: 0;
+  list-style-type: none;
+  padding-left: 0;
+} 

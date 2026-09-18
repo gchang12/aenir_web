@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>
+      aenir –
+      {% block title %}
+      A Fire Emblem average stats calculator
+      {% endblock %}
+    </title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" />
+    <link rel="stylesheet" href="{% static 'style.css' %}" />
+  </head>
+  <body>
+    <header>
+      <a href="/">
+        <img src="{% static 'icon.png' %}" />
+      </a>
+      <nav>
+        Morphs
+        <ul>
+          <li><a href="#">Create</a></li>
+          <li><a href="#">Evolve</a></li>
+          <li><a href="#">Compare</a></li>
+          <li><a href="#">Arena</a></li>
+        </ul>
+      </nav>
+      <div id="login">
+      </div>
+    </header>
+    <main>
+      {% block main %}
+      {% endblock %}
+    </main>
+    <footer>
+      <div class="credit"><a href="https://github.com/gchang12/aenir_web" target="_blank">GitHub</a></div>
+      <div class="credit">Thanks to <a href="https://serenesforest.net/">Serenes Forest</a> for compiling the data</div>
+      <div class="credit">Images belong to Intelligent Systems.</div>
+    </footer>
+  </body>
+</html>
