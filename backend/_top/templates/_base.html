@@ -10,10 +10,11 @@
     </title>
     <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" />
     <link rel="stylesheet" href="{% static 'style.css' %}" />
+    <script src="{% static 'htmx.min.js' %}"></script>
   </head>
   <body>
     <header>
-      <a href="/">
+      <a href="{% url 'homepage' %}">
         <img src="{% static 'icon.png' %}" />
       </a>
       <nav>
@@ -26,6 +27,8 @@
         </ul>
       </nav>
       <div id="login">
+        <!-- Show login link if not logged in -->
+        <!-- Show logout button if logged in -->
       </div>
     </header>
     <main>
