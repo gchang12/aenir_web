@@ -6,6 +6,8 @@ from django.views.generic import base, edit
 from aenir.games import FireEmblemGame
 from aenir.morph import get_morph_class
 
+from . import models
+
 class GameSelectView(base.TemplateView):
     """
     """
@@ -41,7 +43,18 @@ class UnitSelectView(base.TemplateView):
 class UnitConfirmView(edit.CreateView):
     """
     """
+    template_name = "dracogate/unit_confirm.html"
+    model = models.VirtualMorph
+    fields = []
 
-class UnitConfirmForm(edit.FormView):
+    def get_context_data(self):
+        """
+        """
+        #print(self, dir(self), self.args, self.kwargs, kwds)
+        context = super().get_context_data(**self.kwargs)
+        context.update(self.kwargs)
+        return context
+
+class UnitConfirmForecast(base.TemplateView):
     """
     """
