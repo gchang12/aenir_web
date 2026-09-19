@@ -1,0 +1,18 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block main %}
+<article id="unit_confirm">
+  <h1>Create Morph</h1>
+  <h2>Unit Confirm</h2>
+  <h3>FE{{ game_no }}</h3>
+  <figure>
+    <img src="{% get_static_prefix %}dracogate/images/fe{{game_no}}/characters/{{unit}}.png" />
+    <figcaption>
+      <h4>{{ unit }}</h4>
+    </figcaption>
+  </figure>
+  <section id="unit_confirm_forecast">
+  </section>
+</article>
+{% endblock %}
