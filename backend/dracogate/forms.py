@@ -89,6 +89,26 @@ class InitFormBuilder:
             InitOptionsForm.declared_fields[init_param] = getattr(cls, init_param)(choices)
         return InitOptionsForm
 
+class LevelUpFormBuilder:
+    """
+    """
+
+    @staticmethod
+    def build_form_class(param_bounds):
+        """
+        """
+        class LevelUpForm(forms.Form):
+            """
+            """
+            num_levels = forms.IntegerField(
+                min_value=param_bounds['min_lv'] or param_bounds['max_lv'],
+                max_value=param_bounds['max_lv'],
+                step_size=1,
+                disabled=param_bounds['min_lv'] is None,
+                label="Level Up",
+            )
+        return LevelUpForm
+
 '''
     def __init__(self, name: str, *, father: str | None = None):
     def __init__(self, name: str):

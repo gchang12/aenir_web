@@ -11,7 +11,10 @@ from aenir import (
     InitError,
 )
 
-from dracogate.forms import InitFormBuilder
+from dracogate.forms import (
+    InitFormBuilder,
+    LevelUpFormBuilder,
+)
 from dracogate.models import VirtualMorph
 
 User = get_user_model()
@@ -370,7 +373,7 @@ class UnitConfirmLoggedOutTests(UnitConfirmTests):
         self.generate_url = lambda game_no, name: reverse("dracogate:unit_confirm", kwargs={"game_no": game_no, "unit": name})
         self.user = None
 
-class VirtualMorphTests(TestCase):
+class LevelUpTests(TestCase):
     """
     """
 
@@ -389,12 +392,47 @@ class VirtualMorphTests(TestCase):
         )
         self.vmorph.morph = get_morph(game_no, unit, **init_options)
 
-    def test_level_up(self):
+    def test_level_up__virtualmorph1(self):
         """
         """
         param_bounds = self.vmorph.level_up(0)
         self.assertDictEqual(param_bounds, {"min_lv": 2, "max_lv": 20})
+
+    def test_level_up__virtualmorph2(self):
+        """
+        """
         param_bounds = self.vmorph.level_up(19)
         self.assertDictEqual(param_bounds, {})
+
+    def test_level_up__virtualmorph3(self):
+        """
+        """
+        self.vmorph.level_up(19)
         param_bounds = self.vmorph.level_up(1)
         self.assertDictEqual(param_bounds, {"min_lv": None, "max_lv": 20})
+
+    def test_level_up__formbuilder1(self):
+        """
+        """
+        param_bounds = self.vmorph.level_up(0)
+        form_class = LevelUpFormBuilder.build_form_class(param_bounds)
+        self.assertIn('num_levels', form_class.declared_fields)
+        self.assertEqual(form_class.declared_fields['num_levels'].min_value, 2)
+        self.assertEqual(form_class.declared_fields['num_levels'].max_value, 20)
+
+    def test_level_up__formbuilder3(self):
+        """
+        """
+        # pretend Roy is at max level
+        self.vmorph.level_up(19)
+        # try to get param_bounds
+        param_bounds = self.vmorph.level_up(0)
+        if self.vmorph.morph.current_lv == self.vmorph.morph.max_level:
+            param_bounds['min_lv'] = None
+        # get form class
+        form_class = LevelUpFormBuilder.build_form_class(param_bounds)
+        # test form class
+        self.assertIn('num_levels', form_class.declared_fields)
+        self.assertEqual(form_class.declared_fields['num_levels'].min_value, 20)
+        self.assertEqual(form_class.declared_fields['num_levels'].max_value, 20)
+        self.assertIs(form_class.declared_fields['num_levels'].disabled, True)
