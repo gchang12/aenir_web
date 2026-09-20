@@ -275,8 +275,71 @@ class MorphDetailView(DetailView):
         obj = self.model.objects.get(id=id)
         return obj
 
-class LevelUpView(FormView):
+class ActionForecastView(DetailView):
+    """
+    """
+    template_name = "dracogate/action_forecast.html"
+    model = VirtualMorph
+
+    def get_object(self):
+        """
+        """
+        id = self.request.path.split('/')[-3]
+        obj = self.model.objects.get(id=id)
+        obj.init()
+        return obj
+
+    def get_context_data(self, **kwds):
+        """
+        """
+        action = self.request.GET['action']
+        stat_type = self.request.GET['stat_type']
+        context = super().get_context_data(**kwds)
+        morph = self.object.morph.copy()
+        context['stats_before'] = {
+            "bases": StatsBundler.action_forecast_bases,
+            "growths": StatsBundler.action_forecast_growths,
+        }[stat_type](morph, None)
+        {
+            "level_up": self.level_up,
+        }[action]()
+        delta_dict = {
+            "bases": (self.object.morph.current_stats > morph.current_stats).as_dict,
+            "growths": (self.object.morph.growth_rates > morph.growth_rates).as_dict,
+        }[stat_type]()
+        context['stats_after'] = {
+            "bases": StatsBundler.action_forecast_bases(self.object.morph, delta_dict),
+            "growths": StatsBundler.action_forecast_bases(self.object.morph, delta_dict),
+        }[stat_type]
+        return context
+
+    def level_up(self):
+        """
+        """
+        num_levels = int(self.request.GET["target_lv"]) - self.object.morph.current_lv
+        self.object.level_up(num_levels)
+
+class LevelUpView(FormView, DetailView):
     """
     """
     template_name = "dracogate/level_up.html"
+    model = VirtualMorph
+
+    def get_object(self):
+        """
+        """
+        id = self.request.path.split('/')[-3]
+        obj = self.model.objects.get(id=id)
+        obj.init()
+        return obj
+
+    def get_form_class(self, **kwds):
+        """
+        """
+        #print(dir(self), self.object, kwds, id)
+        param_bounds = self.object.level_up(0)
+        if self.object.morph.current_lv == self.object.morph.max_level:
+            param_bounds['min_lv'] = None
+        form_class = LevelUpFormBuilder.build_form_class(param_bounds)
+        return form_class
 

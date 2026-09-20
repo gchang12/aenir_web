@@ -23,3 +23,15 @@ nav ul {
 nav > figure {
   margin: 0;
 }
+
+.stat.increased {
+  background-color: skyblue;
+}
+
+.stat.decreased {
+  background-color: red;
+}
+
+#action_forecast {
+  display: flex;
+}

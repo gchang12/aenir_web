@@ -1,0 +1,34 @@
+<div id="action_forecast">
+  <figure>
+    <figcaption>Before</figcaption>
+    <table>
+      <tbody>
+        {% for stat in stats_before %}
+        <tr>
+          <th>{{ stat.name }}</th>
+          <td>{{ stat.value }}</td>
+          <td>
+            <meter min="0" high="{{ stat.max }}" optimum="{{ stat.max }}" max="{{ stat.absmax }}" value="{{ stat.value }}">
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </figure>
+  <figure>
+    <figcaption>After</figcaption>
+    <table>
+      <tbody>
+        {% for stat in stats_after %}
+        <tr>
+          <th>{{ stat.name }}</th>
+          <td>{{ stat.value }}</td>
+          <td class="stat{% if stat.delta > 0 %} increased{% elif stat.delta < 0 %} decreased{% endif %}">
+            <meter min="0" high="{{ stat.max }}" optimum="{{ stat.max }}" max="{{ stat.absmax }}" value="{{ stat.value }}">
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </figure>
+</div>

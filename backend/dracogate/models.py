@@ -45,6 +45,47 @@ class StatsBundler:
                 "absmax": absmax / 100,
             }
 
+    @staticmethod
+    def action_forecast_bases(morph, delta_dict):
+        """
+        """
+        absmax_stats = morph.Stats.ABSOLUTE_MAXES()
+        for indexno, stat in enumerate(morph.Stats.STAT_LIST()):
+            base = getattr(morph.current_stats, stat)
+            max_ = getattr(morph.max_stats, stat)
+            absmax = absmax_stats[indexno]
+            if delta_dict is not None:
+                delta = (None if delta_dict[stat] is None else delta_dict[stat] / 100)
+            else:
+                delta = None
+            yield {
+                "name": stat,
+                "value": base / 100,
+                "max": max_ / 100,
+                "absmax": absmax / 100,
+                "delta": delta,
+            }
+
+    @staticmethod
+    def action_forecast_growths(morph, delta_dict):
+        """
+        """
+        for indexno, stat in enumerate(morph.Stats.STAT_LIST()):
+            growth = getattr(morph.growth_rates, stat)
+            max_ = getattr(morph.max_stats, stat)
+            absmax = absmax_stats[indexno]
+            if delta_dict is not None:
+                delta = (None if delta_dict[stat] is None else delta_dict[stat] / 100)
+            else:
+                delta = None
+            yield {
+                "name": stat,
+                "value": growth,
+                "max": 100,
+                "absmax": 100,
+                "delta": delta,
+            }
+
 class VirtualMorph(models.Model):
     """
     """
