@@ -9,7 +9,8 @@ from django.views.generic.base import (
 )
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
+from django.shortcuts import redirect
 
 from aenir.games import FireEmblemGame
 from aenir import (
@@ -292,7 +293,7 @@ class ActionForecastView(DetailView):
     def get_context_data(self, **kwds):
         """
         """
-        action = self.request.GET['action']
+        action = self.request.GET.get('action')
         stat_type = self.request.GET['stat_type']
         context = super().get_context_data(**kwds)
         morph = self.object.morph.copy()
@@ -301,6 +302,7 @@ class ActionForecastView(DetailView):
             "growths": StatsBundler.action_forecast_growths,
         }[stat_type](morph, None)
         {
+            None: lambda: None,
             "level_up": self.level_up,
         }[action]()
         delta_dict = {
@@ -333,13 +335,34 @@ class LevelUpView(FormView, DetailView):
         obj.init()
         return obj
 
+    def get_context_data(self, **kwds):
+        """
+        """
+        (is_success, _) = self.object.level_up(1)
+        context = super().get_context_data(**kwds)
+        context['is_success'] = is_success
+        return context
+
     def get_form_class(self, **kwds):
         """
         """
         #print(dir(self), self.object, kwds, id)
-        param_bounds = self.object.level_up(0)
+        try:
+            (is_success, param_bounds) = self.object.level_up(0)
+        except AttributeError:
+            self.object = self.get_object()
+            (is_success, param_bounds) = self.object.level_up(0)
         if self.object.morph.current_lv == self.object.morph.max_level:
             param_bounds['min_lv'] = None
         form_class = LevelUpFormBuilder.build_form_class(param_bounds)
         return form_class
+
+    def form_valid(self, form):
+        """
+        """
+        num_levels = form.cleaned_data['target_lv'] - self.object.morph.current_lv
+        #print(self.object.morph.current_stats.as_dict())
+        self.object.level_up(num_levels)
+        self.object.save()
+        return redirect(reverse("dracogate:morph_detail", kwargs={"id": self.object.id}))
 
