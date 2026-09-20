@@ -9,6 +9,7 @@ from django.utils import timezone
 
 from aenir import (
     get_morph_class,
+    LevelUpError,
 )
 
 User = get_user_model()
@@ -101,6 +102,16 @@ class VirtualMorph(models.Model):
     def level_up(self, num_levels: int):
         """
         """
+        try:
+            self.morph.level_up(num_levels)
+            param_bounds = {}
+        except LevelUpError as e:
+            min_lv, max_lv = e.level_range
+            param_bounds = {
+                "min_lv": min_lv,
+                "max_lv": max_lv,
+            }
+        return param_bounds
 
 '''
     def path_to(cls, file: str) -> str:

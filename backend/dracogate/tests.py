@@ -369,3 +369,32 @@ class UnitConfirmLoggedOutTests(UnitConfirmTests):
         """
         self.generate_url = lambda game_no, name: reverse("dracogate:unit_confirm", kwargs={"game_no": game_no, "unit": name})
         self.user = None
+
+class VirtualMorphTests(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        game_no = 6
+        unit = "Roy"
+        init_options = {}
+        self.user = User.objects.create()
+        self.vmorph = VirtualMorph.objects.create(
+            owner=self.user,
+            game_no=game_no,
+            unit=unit,
+            init_options=init_options,
+        )
+        self.vmorph.morph = get_morph(game_no, unit, **init_options)
+
+    def test_level_up(self):
+        """
+        """
+        param_bounds = self.vmorph.level_up(0)
+        self.assertDictEqual(param_bounds, {"min_lv": 2, "max_lv": 20})
+        param_bounds = self.vmorph.level_up(19)
+        self.assertDictEqual(param_bounds, {})
+        param_bounds = self.vmorph.level_up(1)
+        self.assertDictEqual(param_bounds, {"min_lv": None, "max_lv": 20})
