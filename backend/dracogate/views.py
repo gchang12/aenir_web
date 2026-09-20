@@ -200,13 +200,28 @@ class MorphDetailView(DetailView):
     """
     template_name = "dracogate/morph_detail.html"
     model = VirtualMorph
+    init_option_dict = {
+        "father": "Father",
+        "hard_mode": "Hard Mode",
+        "number_of_declines": "Declines",
+        "chapter": "Chapter",
+        "lyn_mode": "Lyn Mode",
+    }
+
+    def get_context_data(self, object):
+        """
+        """
+        context = super().get_context_data()
+        morph = get_morph(self.object.game_no, self.object.unit, **self.object.init_options)
+        context['init_options'] = {self.init_option_dict[key]: value for key, value in self.object.init_options.items()}
+        return context
 
     def get_object(self):
         """
         """
         id = self.request.path.split('/')[-2]
-        object = self.model.objects.get(id=id)
-        return object
+        obj = self.model.objects.get(id=id)
+        return obj
 
 class LevelUpView(FormView):
     """

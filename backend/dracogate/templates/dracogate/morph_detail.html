@@ -1,5 +1,35 @@
 {% extends "_base.html" %}
+{% load static %}
 
 {% block main %}
-<h1>About Morph</h1>
+<h1>{{ object.name }}</h1>
+<div id="unit_profile">
+  <figure class="unit_identity">
+    <img src="{% get_static_prefix %}dracogate/images/fe{{object.game_no}}/characters/{{object.unit}}.png" />
+    <figcaption>
+      <table>
+        <tbody>
+          <tr>
+            <th>Game</th>
+            <td>FE{{object.game_no}}</td>
+          </tr>
+          <tr>
+            <th>Unit</th>
+            <td>{{object.unit}}</td>
+          </tr>
+          {% for key, value in init_options.items %}
+          <tr>
+            <th>{{ key }}</th>
+            <td>{{ value }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </figcaption>
+  </figure>
+  <table>
+    <tbody>
+    </tbody>
+  </table>
+</div>
 {% endblock %}
