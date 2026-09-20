@@ -1,7 +1,14 @@
 """
 """
 
-from django.views.generic import base, edit
+from django.views.generic.edit import (
+    FormView,
+)
+from django.views.generic.base import (
+    TemplateView,
+)
+from django.views.generic.detail import DetailView
+from django.views.generic.list import ListView
 from django.urls import reverse_lazy
 
 from aenir.games import FireEmblemGame
@@ -55,7 +62,7 @@ def get_temp_morph(game_no, unit, init_options):
         temp_morph = get_morph(game_no, unit, **init_options)
     return (init_params, temp_morph)
 
-class GameSelectView(base.TemplateView):
+class GameSelectView(TemplateView):
     """
     """
     template_name = "dracogate/game_select.html"
@@ -72,7 +79,7 @@ class GameSelectView(base.TemplateView):
         ]
         return context
 
-class UnitSelectView(base.TemplateView):
+class UnitSelectView(TemplateView):
     """
     """
     template_name = "dracogate/unit_select.html"
@@ -85,9 +92,7 @@ class UnitSelectView(base.TemplateView):
         context['game_no'] = game_no
         return context
 
-# TODO: Figure out how to implement these
-
-class UnitConfirmView(edit.FormView):
+class UnitConfirmView(FormView):
     """
     """
     template_name = "dracogate/unit_confirm.html"
@@ -151,7 +156,7 @@ class UnitConfirmView(edit.FormView):
         vmorph.save()
         return super().form_valid(form)
 
-class UnitConfirmForecast(base.TemplateView):
+class UnitConfirmForecast(TemplateView):
     """
     """
     template_name = "dracogate/unit_confirm_forecast.html"
