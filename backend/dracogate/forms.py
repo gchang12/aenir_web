@@ -32,10 +32,13 @@ class InitFormBuilder:
     def hard_mode(choices):
         """
         """
-        return forms.BooleanField(
+        return forms.NullBooleanField(
             required=True,
             initial=choices[0],
             label="Hard Mode",
+            widget=forms.Select(
+                choices=((choice, choice) for choice in choices),
+            ),
         )
 
     @staticmethod
@@ -66,10 +69,13 @@ class InitFormBuilder:
     def lyn_mode(choices):
         """
         """
-        return forms.BooleanField(
+        return forms.NullBooleanField(
             required=True,
             initial=choices[0],
             label="Lyn Mode",
+            widget=forms.Select(
+                choices=((choice, choice) for choice in choices),
+            ),
         )
 
     @classmethod
@@ -79,14 +85,20 @@ class InitFormBuilder:
         class InitForm(forms.Form):
             """
             """
+            '''
             game_no = forms.IntegerField(
                 min_value=4,
                 max_value=9,
                 step_size=1,
+                #disabled=True,
+                widget=forms.HiddenInput,
             )
             name = forms.CharField(
                 max_length=9,
+                #disabled=True,
+                widget=forms.HiddenInput,
             )
+            '''
         for init_param, choices in init_params.items():
             InitForm.declared_fields[init_param] = getattr(cls, init_param)(choices)
         return InitForm

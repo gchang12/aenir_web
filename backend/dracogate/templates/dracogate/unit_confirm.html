@@ -5,14 +5,24 @@
 <article id="unit_confirm">
   <h1>Create Morph</h1>
   <h2>Unit Confirm</h2>
-  <h3>FE{{ game_no }}</h3>
   <figure>
     <img src="{% get_static_prefix %}dracogate/images/fe{{game_no}}/characters/{{unit}}.png" />
     <figcaption>
+      <h3>FE{{ game_no }}</h3>
       <h4>{{ unit }}</h4>
     </figcaption>
   </figure>
-  <section id="unit_confirm_forecast">
-  </section>
+  <form
+    hx-target="#unit_confirm_forecast"
+    hx-trigger="change"
+    hx-get="{% url 'dracogate:unit_confirm_forecast' game_no unit %}">
+    {% csrf_token %}
+    {{ form }}
+    <button>Create</button>
+  </form>
+  <div id="unit_confirm_forecast"
+    hx-get="{% url 'dracogate:unit_confirm_forecast' game_no unit %}"
+    hx-trigger="load">
+  </div>
 </article>
 {% endblock %}

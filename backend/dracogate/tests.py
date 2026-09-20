@@ -41,7 +41,7 @@ class InitFormBuilderTests(TestCase):
         form_class = forms.InitFormBuilder.build_form_class(init_params)
         self.assertIn("hard_mode", form_class.declared_fields)
         field = form_class.declared_fields["hard_mode"]
-        self.assertIsInstance(field, django.forms.BooleanField)
+        self.assertIsInstance(field, django.forms.NullBooleanField)
 
     def test_number_of_declines(self):
         """
@@ -85,5 +85,6 @@ class InitFormBuilderTests(TestCase):
         form_class = forms.InitFormBuilder.build_form_class(init_params)
         self.assertIn("lyn_mode", form_class.declared_fields)
         field = form_class.declared_fields["lyn_mode"]
-        self.assertIsInstance(field, django.forms.BooleanField)
+        self.assertIsInstance(field, django.forms.NullBooleanField)
 
+# TODO: Write forms to test init-preview.

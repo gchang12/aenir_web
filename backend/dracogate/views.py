@@ -68,20 +68,34 @@ class UnitSelectView(base.TemplateView):
 
 # TODO: Figure out how to implement these
 
-class UnitConfirmView(edit.CreateView):
+class UnitConfirmView(edit.FormView):
     """
     """
     template_name = "dracogate/unit_confirm.html"
-    model = models.VirtualMorph
-    fields = []
+    #model = models.VirtualMorph
+    #fields = []
 
     def get_context_data(self):
         """
         """
-        #print(self, dir(self), self.args, self.kwargs, kwds)
         context = super().get_context_data(**self.kwargs)
         context.update(self.kwargs)
         return context
+
+    def get_form_class(self):
+        """
+        """
+        #self.init_params = {}
+        #form = super().get_form_class()
+        form_class = forms.InitFormBuilder.build_form_class(self.init_params)
+        return form_class
+
+    def get(self, request, game_no, unit):
+        """
+        """
+        (init_params, _) = get_temp_morph(game_no, unit, request.GET.dict())
+        self.init_params = init_params
+        return super().get(request, game_no, unit)
 
 class UnitConfirmForecast(base.TemplateView):
     """
