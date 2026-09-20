@@ -10,7 +10,7 @@ from aenir import (
     InitError,
 )
 
-from . import forms
+from dracogate.forms import InitFormBuilder
 
 class InitFormBuilderTests(TestCase):
     """
@@ -24,7 +24,7 @@ class InitFormBuilderTests(TestCase):
             init_params = {}
         except InitError as e:
             init_params = e.init_params
-        form_class = forms.InitFormBuilder.build_form_class(init_params)
+        form_class = InitFormBuilder.build_form_class(init_params)
         self.assertIn("father", form_class.declared_fields)
         field = form_class.declared_fields["father"]
         self.assertIsInstance(field, django.forms.ChoiceField)
@@ -39,7 +39,7 @@ class InitFormBuilderTests(TestCase):
             init_params = {}
         except InitError as e:
             init_params = e.init_params
-        form_class = forms.InitFormBuilder.build_form_class(init_params)
+        form_class = InitFormBuilder.build_form_class(init_params)
         self.assertIn("hard_mode", form_class.declared_fields)
         field = form_class.declared_fields["hard_mode"]
         self.assertIsInstance(field, django.forms.NullBooleanField)
@@ -52,7 +52,7 @@ class InitFormBuilderTests(TestCase):
             init_params = {}
         except InitError as e:
             init_params = e.init_params
-        form_class = forms.InitFormBuilder.build_form_class(init_params)
+        form_class = InitFormBuilder.build_form_class(init_params)
         self.assertIn("number_of_declines", form_class.declared_fields)
         field = form_class.declared_fields["number_of_declines"]
         self.assertIsInstance(field, django.forms.IntegerField)
@@ -67,7 +67,7 @@ class InitFormBuilderTests(TestCase):
             init_params = {}
         except InitError as e:
             init_params = e.init_params
-        form_class = forms.InitFormBuilder.build_form_class(init_params)
+        form_class = InitFormBuilder.build_form_class(init_params)
         self.assertIn("hard_mode", form_class.declared_fields)
         self.assertIn("chapter", form_class.declared_fields)
         field = form_class.declared_fields["chapter"]
@@ -83,7 +83,7 @@ class InitFormBuilderTests(TestCase):
             init_params = {}
         except InitError as e:
             init_params = e.init_params
-        form_class = forms.InitFormBuilder.build_form_class(init_params)
+        form_class = InitFormBuilder.build_form_class(init_params)
         self.assertIn("lyn_mode", form_class.declared_fields)
         field = form_class.declared_fields["lyn_mode"]
         self.assertIsInstance(field, django.forms.NullBooleanField)
@@ -178,4 +178,78 @@ class UnitConfirmForecastTests(TestCase):
         response = self.client.get(url)
         for value in old_values:
             self.assertContains(response, value)
+
+class InitFormBuilderTests(TestCase):
+    """
+    """
+
+    def test_father(self):
+        """
+        """
+        data = {"father": "Lex"}
+        try:
+            get_morph(4, "Lakche")
+            init_params = {}
+        except InitError as e:
+            init_params = e.init_params
+        form_class = InitFormBuilder.build_form_class(init_params)
+        form = form_class(data)
+        self.assertIs(form.is_valid(), True)
+        self.assertDictEqual(form.cleaned_data, data)
+
+    def test_hard_mode(self):
+        """
+        """
+        data = {"hard_mode": True}
+        try:
+            get_morph(6, "Rutger")
+            init_params = {}
+        except InitError as e:
+            init_params = e.init_params
+        form_class = InitFormBuilder.build_form_class(init_params)
+        form = form_class(data)
+        self.assertIs(form.is_valid(), True)
+        self.assertDictEqual(form.cleaned_data, data)
+
+    def test_number_of_declines(self):
+        """
+        """
+        data = {"number_of_declines": 3}
+        try:
+            get_morph(6, "Hugh")
+            init_params = {}
+        except InitError as e:
+            init_params = e.init_params
+        form_class = InitFormBuilder.build_form_class(init_params)
+        form = form_class(data)
+        self.assertIs(form.is_valid(), True)
+        self.assertDictEqual(form.cleaned_data, data)
+
+    def test_chapter(self):
+        """
+        """
+        data = {"hard_mode": True, "chapter": "22"}
+        try:
+            get_morph(6, "Cath")
+            init_params = {}
+        except InitError as e:
+            init_params = e.init_params
+        form_class = InitFormBuilder.build_form_class(init_params)
+        form = form_class(data)
+        self.assertIs(form.is_valid(), True)
+        self.assertDictEqual(form.cleaned_data, data)
+
+    def test_lyn_mode(self):
+        """
+        """
+        data = {"lyn_mode": True}
+        try:
+            get_morph(7, "Lyn")
+            init_params = {}
+        except InitError as e:
+            init_params = e.init_params
+        form_class = InitFormBuilder.build_form_class(init_params)
+        form = form_class(data)
+        self.assertIs(form.is_valid(), True)
+        self.assertDictEqual(form.cleaned_data, data)
 
