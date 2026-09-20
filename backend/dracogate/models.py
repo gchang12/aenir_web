@@ -73,3 +73,4 @@ class VirtualMorph(models.Model):
 
     class Meta:
         unique_together = ["owner", "name"]
+
