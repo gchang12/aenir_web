@@ -143,6 +143,7 @@ class VirtualMorph(models.Model):
     def level_up(self, num_levels: int):
         """
         """
+        is_success: bool
         try:
             self.morph.level_up(num_levels)
             param_bounds = {}
@@ -150,13 +151,15 @@ class VirtualMorph(models.Model):
                 ("level_up", {"num_levels": num_levels})
             )
             self.stats = self.morph.as_dict()
+            is_success = True
         except LevelUpError as e:
             min_lv, max_lv = e.level_range
             param_bounds = {
                 "min_lv": min_lv,
                 "max_lv": max_lv,
             }
-        return param_bounds
+            is_success = False
+        return (is_success, param_bounds)
 
 '''
     def path_to(cls, file: str) -> str:

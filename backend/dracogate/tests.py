@@ -395,13 +395,14 @@ class LevelUpTests(TestCase):
     def test_level_up__virtualmorph1(self):
         """
         """
-        param_bounds = self.vmorph.level_up(0)
+        (is_success, param_bounds) = self.vmorph.level_up(0)
         self.assertDictEqual(param_bounds, {"min_lv": 2, "max_lv": 20})
+        self.assertIs(is_success, False)
 
     def test_level_up__virtualmorph2(self):
         """
         """
-        param_bounds = self.vmorph.level_up(19)
+        (is_success, param_bounds) = self.vmorph.level_up(19)
         self.assertDictEqual(param_bounds, {})
         self.assertListEqual(
             self.vmorph.history,
@@ -409,12 +410,13 @@ class LevelUpTests(TestCase):
                 ("level_up", {'num_levels': 19})
             ],
         )
+        self.assertIs(is_success, True)
 
     def test_level_up__virtualmorph3(self):
         """
         """
         self.vmorph.level_up(19)
-        param_bounds = self.vmorph.level_up(1)
+        (is_success, param_bounds) = self.vmorph.level_up(1)
         self.assertDictEqual(param_bounds, {"min_lv": None, "max_lv": 20})
         self.assertListEqual(
             self.vmorph.history,
@@ -422,11 +424,12 @@ class LevelUpTests(TestCase):
                 ("level_up", {'num_levels': 19})
             ],
         )
+        self.assertIs(is_success, False)
 
     def test_level_up__formbuilder1(self):
         """
         """
-        param_bounds = self.vmorph.level_up(0)
+        (_, param_bounds) = self.vmorph.level_up(0)
         form_class = LevelUpFormBuilder.build_form_class(param_bounds)
         self.assertIn('target_lv', form_class.declared_fields)
         #self.assertEqual(form_class.declared_fields['target_lv'].initial, 2)
@@ -439,7 +442,7 @@ class LevelUpTests(TestCase):
         # pretend Roy is at max level
         self.vmorph.level_up(19)
         # try to get param_bounds
-        param_bounds = self.vmorph.level_up(0)
+        (_, param_bounds) = self.vmorph.level_up(0)
         if self.vmorph.morph.current_lv == self.vmorph.morph.max_level:
             param_bounds['min_lv'] = None
         # get form class
