@@ -396,49 +396,63 @@ class LevelUpTests(TestCase):
         """
         """
         (is_success, param_bounds) = self.vmorph.level_up(0)
-        self.assertDictEqual(param_bounds, {"min_lv": 2, "max_lv": 20})
-        self.assertIs(is_success, False)
+        expected1 = {"min_lv": 2, "max_lv": 20}
+        expected2 = False
+        self.assertDictEqual(param_bounds, expected1)
+        self.assertIs(is_success, expected2)
 
     def test_level_up__virtualmorph2(self):
         """
         """
+        expected1 = {}
+        expected2 = [
+            ("level_up", {'num_levels': 19})
+        ]
+        expected3 = True
         (is_success, param_bounds) = self.vmorph.level_up(19)
-        self.assertDictEqual(param_bounds, {})
+        self.assertDictEqual(param_bounds, expected1)
         self.assertListEqual(
             self.vmorph.history,
-            [
-                ("level_up", {'num_levels': 19})
-            ],
+            expected2,
         )
-        self.assertIs(is_success, True)
+        self.assertIs(is_success, expected3)
 
     def test_level_up__virtualmorph3(self):
         """
         """
+        expected1 = {"min_lv": None, "max_lv": 20}
+        expected2 = [
+            ("level_up", {'num_levels': 19})
+        ]
+        expected3 = False
         self.vmorph.level_up(19)
         (is_success, param_bounds) = self.vmorph.level_up(1)
-        self.assertDictEqual(param_bounds, {"min_lv": None, "max_lv": 20})
+        self.assertDictEqual(param_bounds, expected1)
         self.assertListEqual(
             self.vmorph.history,
-            [
-                ("level_up", {'num_levels': 19})
-            ],
+            expected2,
         )
-        self.assertIs(is_success, False)
+        self.assertIs(is_success, expected3)
 
     def test_level_up__formbuilder1(self):
         """
         """
+        field = "target_lv"
+        expected2 = 2
+        expected3 = 20
         (_, param_bounds) = self.vmorph.level_up(0)
         form_class = LevelUpFormBuilder.build_form_class(param_bounds)
-        self.assertIn('target_lv', form_class.declared_fields)
-        #self.assertEqual(form_class.declared_fields['target_lv'].initial, 2)
-        self.assertEqual(form_class.declared_fields['target_lv'].min_value, 2)
-        self.assertEqual(form_class.declared_fields['target_lv'].max_value, 20)
+        self.assertIn(field, form_class.declared_fields)
+        self.assertEqual(form_class.declared_fields[field].min_value, expected2)
+        self.assertEqual(form_class.declared_fields[field].max_value, expected3)
 
     def test_level_up__formbuilder3(self):
         """
         """
+        field = "target_lv"
+        expected2 = 20
+        expected3 = 20
+        expected4 = True
         # pretend Roy is at max level
         self.vmorph.level_up(19)
         # try to get param_bounds
@@ -448,8 +462,33 @@ class LevelUpTests(TestCase):
         # get form class
         form_class = LevelUpFormBuilder.build_form_class(param_bounds)
         # test form class
-        self.assertIn('target_lv', form_class.declared_fields)
-        #self.assertEqual(form_class.declared_fields['target_lv'].initial, 20)
-        self.assertEqual(form_class.declared_fields['target_lv'].min_value, 20)
-        self.assertEqual(form_class.declared_fields['target_lv'].max_value, 20)
-        self.assertIs(form_class.declared_fields['target_lv'].disabled, True)
+        self.assertIn(field, form_class.declared_fields)
+        self.assertEqual(form_class.declared_fields[field].min_value, expected2)
+        self.assertEqual(form_class.declared_fields[field].max_value, expected3)
+        self.assertIs(form_class.declared_fields[field].disabled, expected4)
+
+    def test_level_up__forecast(self):
+        """
+        """
+        url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
+        query_params = {"action": "level_up", "stat_type": "bases", "target_lv": "20"}
+        response = self.client.get(url, query_params=query_params)
+        # HP values
+        values = ("33.2", "18.0")
+        for value in values:
+            self.assertContains(response, value)
+
+    def test_level_up__view_post(self):
+        """
+        """
+        expected = [["level_up", {"num_levels": 19}]]
+        field = "target_lv"
+        url = reverse("dracogate:level_up", kwargs={"id": self.vmorph.id})
+        data = {field: 20}
+        response = self.client.post(url, data=data)
+        self.assertLess(response.status_code, 400)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        morph = vmorph.init()
+        self.assertEqual(morph.current_lv, data[field])
+        self.assertListEqual(vmorph.history, expected)
+
