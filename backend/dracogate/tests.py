@@ -4,6 +4,7 @@
 from django.test import TestCase
 import django.forms
 from django.urls import reverse
+from django.contrib.auth import get_user_model
 
 from aenir import (
     get_morph,
@@ -11,6 +12,9 @@ from aenir import (
 )
 
 from dracogate.forms import InitFormBuilder
+from dracogate.models import VirtualMorph
+
+User = get_user_model()
 
 class InitFormBuilderTests(TestCase):
     """
@@ -253,3 +257,115 @@ class InitFormBuilderTests(TestCase):
         self.assertIs(form.is_valid(), True)
         self.assertDictEqual(form.cleaned_data, data)
 
+class UnitConfirmTests(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        self.generate_url = lambda game_no, name: reverse("dracogate:unit_confirm", kwargs={"game_no": game_no, "unit": name})
+        self.user = User.objects.create()
+        self.client.force_login(self.user)
+        #print(type(self.user))
+        #self.assertFalse(VirtualMorph.objects.all())
+
+    def test_father(self):
+        """
+        """
+        data = {"father": "Lex"}
+        kwargs = {
+            "game_no": 4,
+            "name": "Lakche",
+        }
+        url = self.generate_url(**kwargs)
+        response = self.client.post(url, data=data)
+        self.assertEqual(VirtualMorph.objects.count(), 1)
+        vmorph = VirtualMorph.objects.get()
+        self.assertEqual(vmorph.owner, self.user)
+        self.assertTrue(vmorph.name)
+        self.assertEqual(vmorph.game_no, kwargs['game_no'])
+        self.assertEqual(vmorph.unit, kwargs['name'])
+        self.assertEqual(vmorph.init_options, data)
+
+    def test_hard_mode(self):
+        """
+        """
+        data = {"hard_mode": True}
+        kwargs = {
+            "game_no": 6,
+            "name": "Rutger",
+        }
+        url = self.generate_url(**kwargs)
+        response = self.client.post(url, data=data)
+        self.assertEqual(VirtualMorph.objects.count(), 1)
+        vmorph = VirtualMorph.objects.get()
+        self.assertEqual(vmorph.owner, self.user)
+        self.assertTrue(vmorph.name)
+        self.assertEqual(vmorph.game_no, kwargs['game_no'])
+        self.assertEqual(vmorph.unit, kwargs['name'])
+        self.assertEqual(vmorph.init_options, data)
+
+    def test_number_of_declines(self):
+        """
+        """
+        data = {"number_of_declines": 3}
+        kwargs = {
+            "game_no": 6,
+            "name": "Hugh",
+        }
+        url = self.generate_url(**kwargs)
+        response = self.client.post(url, data=data)
+        self.assertEqual(VirtualMorph.objects.count(), 1)
+        vmorph = VirtualMorph.objects.get()
+        self.assertEqual(vmorph.owner, self.user)
+        self.assertTrue(vmorph.name)
+        self.assertEqual(vmorph.game_no, kwargs['game_no'])
+        self.assertEqual(vmorph.unit, kwargs['name'])
+        self.assertEqual(vmorph.init_options, data)
+
+    def test_chapter(self):
+        """
+        """
+        data = {"hard_mode": True, "chapter": "22"}
+        kwargs = {
+            "game_no": 6,
+            "name": "Cath",
+        }
+        url = self.generate_url(**kwargs)
+        response = self.client.post(url, data=data)
+        self.assertEqual(VirtualMorph.objects.count(), 1)
+        vmorph = VirtualMorph.objects.get()
+        self.assertEqual(vmorph.owner, self.user)
+        self.assertTrue(vmorph.name)
+        self.assertEqual(vmorph.game_no, kwargs['game_no'])
+        self.assertEqual(vmorph.unit, kwargs['name'])
+        self.assertEqual(vmorph.init_options, data)
+
+    def test_lyn_mode(self):
+        """
+        """
+        data = {"lyn_mode": True}
+        kwargs = {
+            "game_no": 7,
+            "name": "Lyn",
+        }
+        url = self.generate_url(**kwargs)
+        response = self.client.post(url, data=data)
+        self.assertEqual(VirtualMorph.objects.count(), 1)
+        vmorph = VirtualMorph.objects.get()
+        self.assertEqual(vmorph.owner, self.user)
+        self.assertTrue(vmorph.name)
+        self.assertEqual(vmorph.game_no, kwargs['game_no'])
+        self.assertEqual(vmorph.unit, kwargs['name'])
+        self.assertEqual(vmorph.init_options, data)
+
+class UnitConfirmLoggedOutTests(UnitConfirmTests):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        self.generate_url = lambda game_no, name: reverse("dracogate:unit_confirm", kwargs={"game_no": game_no, "unit": name})
+        self.user = None
