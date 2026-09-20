@@ -12,8 +12,11 @@ from django.views.generic.list import ListView
 from django.urls import reverse_lazy
 
 from aenir.games import FireEmblemGame
-from aenir import InitError
-from aenir.morph import get_morph, get_morph_class
+from aenir import (
+    InitError,
+    get_morph,
+    get_morph_class,
+)
 
 from dracogate.models import (
     VirtualMorph,

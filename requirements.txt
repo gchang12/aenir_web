@@ -1,5 +1,5 @@
 ## The following requirements were added by pip freeze:
-aenir==0.0.post1.dev1365
+aenir==0.0.post1.dev1375
 asgiref==3.12.1
 Django==6.1.1
 django-browser-reload==1.21.0
