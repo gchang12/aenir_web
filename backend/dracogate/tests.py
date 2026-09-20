@@ -1,6 +1,9 @@
 """
 """
 
+import json
+import html
+
 from django.test import TestCase
 import django.forms
 from django.urls import reverse
@@ -290,6 +293,19 @@ class UnitConfirmTests(TestCase):
         self.assertEqual(vmorph.game_no, kwargs['game_no'])
         self.assertEqual(vmorph.unit, kwargs['name'])
         self.assertEqual(vmorph.init_options, data)
+        # test for existence of init_options in morph_detail
+        url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
+        response = self.client.get(url)
+        values = (
+            "Game",
+            "FE%d" % kwargs['game_no'],
+            "Unit",
+            kwargs["name"],
+            "Father",
+            "Lex",
+        )
+        for value in values:
+            self.assertContains(response, value)
 
     def test_hard_mode(self):
         """
@@ -308,6 +324,19 @@ class UnitConfirmTests(TestCase):
         self.assertEqual(vmorph.game_no, kwargs['game_no'])
         self.assertEqual(vmorph.unit, kwargs['name'])
         self.assertEqual(vmorph.init_options, data)
+        # test for existence of init_options in morph_detail
+        url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
+        response = self.client.get(url)
+        values = (
+            "Game",
+            "FE%d" % kwargs['game_no'],
+            "Unit",
+            kwargs["name"],
+            "Difficulty",
+            "Hard",
+        )
+        for value in values:
+            self.assertContains(response, value)
 
     def test_number_of_declines(self):
         """
@@ -326,6 +355,19 @@ class UnitConfirmTests(TestCase):
         self.assertEqual(vmorph.game_no, kwargs['game_no'])
         self.assertEqual(vmorph.unit, kwargs['name'])
         self.assertEqual(vmorph.init_options, data)
+        # test for existence of init_options in morph_detail
+        url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
+        response = self.client.get(url)
+        values = (
+            "Game",
+            "FE%d" % kwargs['game_no'],
+            "Unit",
+            kwargs["name"],
+            "Declines",
+            "3",
+        )
+        for value in values:
+            self.assertContains(response, value)
 
     def test_chapter(self):
         """
@@ -344,6 +386,21 @@ class UnitConfirmTests(TestCase):
         self.assertEqual(vmorph.game_no, kwargs['game_no'])
         self.assertEqual(vmorph.unit, kwargs['name'])
         self.assertEqual(vmorph.init_options, data)
+        # test for existence of init_options in morph_detail
+        url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
+        response = self.client.get(url)
+        values = (
+            "Game",
+            "FE%d" % kwargs['game_no'],
+            "Unit",
+            kwargs["name"],
+            "Chapter",
+            "22",
+            "Difficulty",
+            "Hard",
+        )
+        for value in values:
+            self.assertContains(response, value)
 
     def test_lyn_mode(self):
         """
@@ -362,6 +419,19 @@ class UnitConfirmTests(TestCase):
         self.assertEqual(vmorph.game_no, kwargs['game_no'])
         self.assertEqual(vmorph.unit, kwargs['name'])
         self.assertEqual(vmorph.init_options, data)
+        # test for existence of init_options in morph_detail
+        url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
+        response = self.client.get(url)
+        values = (
+            "Game",
+            "FE%d" % kwargs['game_no'],
+            "Unit",
+            kwargs["name"],
+            "Campaign",
+            "Tutorial",
+        )
+        for value in values:
+            self.assertContains(response, value)
 
 class UnitConfirmLoggedOutTests(UnitConfirmTests):
     """
@@ -491,4 +561,15 @@ class LevelUpTests(TestCase):
         morph = vmorph.init()
         self.assertEqual(morph.current_lv, data[field])
         self.assertListEqual(vmorph.history, expected)
+        # test for existence of actions in morph_detail
+        url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
+        response = self.client.get(url)
+        values = (
+            "level_up",
+            #html.escape(json.dumps(expected[0][1])),
+            "num_levels",
+                "19",
+        )
+        for value in values:
+            self.assertContains(response, value)
 

@@ -140,6 +140,15 @@ class VirtualMorph(models.Model):
         self.morph = morph
         return morph
 
+    def save(self, **kwds):
+        """
+        """
+        try:
+            self.stats = self.morph.as_dict()
+        except AttributeError:
+            pass
+        return super().save(**kwds)
+
     def level_up(self, num_levels: int):
         """
         """
@@ -150,7 +159,7 @@ class VirtualMorph(models.Model):
             self.history.append(
                 ("level_up", {"num_levels": num_levels})
             )
-            self.stats = self.morph.as_dict()
+            #self.stats = self.morph.as_dict()
             is_success = True
         except LevelUpError as e:
             min_lv, max_lv = e.level_range

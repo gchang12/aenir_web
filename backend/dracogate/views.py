@@ -218,6 +218,7 @@ class MorphDetailView(DetailView):
         "set_scrolls": "Equip Scrolls",
         "set_bands": "Equip Bands",
         "shapeshift": "Shapeshift", # transform/revert
+        "set_demiband": "Toggle Demi Band",
     }
     actions_by_game = {
         4: (
@@ -267,6 +268,7 @@ class MorphDetailView(DetailView):
             lambda action: ("dracogate:" + action, self.action_name_dict[action]),
             self.actions_by_game[self.object.game_no],
         )
+        context['history'] = self.object.history
         return context
 
     def get_object(self):

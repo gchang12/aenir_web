@@ -21,8 +21,16 @@
             </tr>
             {% for key, value in init_options.items %}
             <tr>
+              {% if key == "Hard Mode" %}
+              <th>Difficulty</th>
+              <td>{% if value == True %}Hard{% else %}Normal{% endif %}</td>
+              {% elif key == "Lyn Mode" %}
+              <th>Campaign</th>
+              <td>{% if value == True %}Tutorial{% else %}Main{% endif %}</td>
+              {% else %}
               <th>{{ key }}</th>
               <td>{{ value }}</td>
+              {% endif %}
             </tr>
             {% endfor %}
           </tbody>
@@ -52,8 +60,8 @@
       <tbody>
         {% for event, value in history %}
         <tr>
-          <th>{{ event }}</th>
-          <td>{{ value }}</td>
+          <th><code>{{ event }}</code></th>
+          <td><code>{{ value }}</code></td>
         </tr>
         {% endfor %}
       </tbody>

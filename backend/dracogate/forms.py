@@ -89,6 +89,15 @@ class InitFormBuilder:
             InitOptionsForm.declared_fields[init_param] = getattr(cls, init_param)(choices)
         return InitOptionsForm
 
+class ActionFormBuilder:
+    """
+    """
+
+    def level_up(param_bounds):
+        """
+        """
+
+    pass
 class LevelUpFormBuilder:
     """
     """
