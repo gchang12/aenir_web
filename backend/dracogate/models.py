@@ -78,3 +78,58 @@ class VirtualMorph(models.Model):
     class Meta:
         unique_together = ["owner", "name"]
 
+'''
+    def path_to(cls, file: str) -> str:
+    def query_db(
+    def lookup(
+    def as_dict(self):
+    def from_dict(cls, data):
+    def game(self) -> FireEmblemGame:
+    def name(self) -> str | None:
+    def init_options(self) -> dict:
+    def get_growths_augment(self):
+    def get_promotion_list(self) -> List[str]:
+    def copy(self) -> Self:
+    def get_promotion_item(self) -> str | None:
+    def inventory_size(self) -> int:
+    def inventory_size(self) -> int:
+    def game(self) -> FireEmblemGame:
+    def name(self) -> str | None:
+    def father(self) -> str | None:
+    def get_promotion_item(self) -> str | None:
+    def inventory_size(self) -> int:
+    def get_promotion_item(self) -> str | None:
+    def inventory_size(self) -> int:
+    def get_promotion_item(self) -> str | None:
+    def inventory_size(self) -> int:
+    def inventory_size(self) -> int:
+    def get_promotion_item(self) -> str | None:
+    def inventory_size(self) -> int:
+    def get_promotion_item(self) -> str | None:
+    def roundup_stats(dictlike: dict[str, int]):
+'''
+
+'''
+    def level_up(self, num_levels: int) -> None:
+    def promote(self, *, promo_cls=None) -> None:
+    def use_stat_booster(self, item_name: str) -> None:
+    def use_stat_booster(self, item_name: str) -> None:
+    def promote(self, *, promo_cls=None) -> None:
+    def promote(self, *, promo_cls=None) -> None:
+    def set_scrolls(self, scrolls):
+    def unequip_scroll(self, scroll_name: str) -> None:
+    def equip_scroll(self, scroll_name: str) -> None:
+    def use_afas_drops(self) -> None:
+    def promote(self, *, promo_cls=None) -> None:
+    def use_metiss_tome(self) -> None:
+    def equip_band(self, band_name: str) -> None:
+    def unequip_band(self, band_name: str) -> None:
+    def equip_knight_ward(self) -> None:
+    def unequip_knight_ward(self) -> None:
+    def set_knight_ward(self, equip: bool):
+    def set_bands(self, bands):
+    def transform(self):
+    def revert(self):
+    def equip_demi_band(self):
+    def unequip_demi_band(self):
+'''
