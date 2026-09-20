@@ -24,22 +24,21 @@ from dracogate.models import (
 )
 from . import forms
 
-def parse_init_option(init_option):
+def get_temp_morph(game_no, unit, init_options):
     """
     """
-    key, value = init_option
-    if key in ("lyn_mode", "hard_mode"):
-        value = {
-            "True": True,
-            "False": False,
-        }[value]
-    elif key == "number_of_declines":
-        value = int(value)
-    return key, value
-
-def clean_init_options(init_options):
-    """
-    """
+    def parse_init_option(init_option):
+        """
+        """
+        key, value = init_option
+        if key in ("lyn_mode", "hard_mode"):
+            value = {
+                "True": True,
+                "False": False,
+            }[value]
+        elif key == "number_of_declines":
+            value = int(value)
+        return key, value
     option_fields = forms.InitFormBuilder.OPTION_FIELDS()
     init_options = dict(
         map(
@@ -50,12 +49,6 @@ def clean_init_options(init_options):
             )
         )
     )
-    return init_options
-
-def get_temp_morph(game_no, unit, init_options):
-    """
-    """
-    init_options = clean_init_options(init_options)
     try:
         temp_morph = get_morph(game_no, unit, **init_options)
         init_params = {}

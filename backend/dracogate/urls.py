@@ -21,4 +21,5 @@ urlpatterns = [
     path("<int:id>/set_scrolls/", views.LevelUpView.as_view(), name="set_scrolls"),
     path("<int:id>/set_bands/", views.LevelUpView.as_view(), name="set_bands"),
     path("<int:id>/shapeshift/", views.LevelUpView.as_view(), name="shapeshift"),
+    path("components/<int:id>/action_forecast/", views.LevelUpView.as_view(), name="action_forecast"),
 ]
