@@ -25,7 +25,7 @@ from dracogate.models import (
 )
 from dracogate.forms import (
     InitFormBuilder,
-    LevelUpFormBuilder,
+    ActionFormBuilder,
 )
 
 def get_temp_morph(game_no, unit, init_options):
@@ -356,7 +356,7 @@ class LevelUpView(FormView, DetailView):
             (is_success, param_bounds) = self.object.level_up(0)
         if self.object.morph.current_lv == self.object.morph.max_level:
             param_bounds['min_lv'] = None
-        form_class = LevelUpFormBuilder.build_form_class(param_bounds)
+        form_class = ActionFormBuilder.level_up(param_bounds)
         return form_class
 
     def form_valid(self, form):

@@ -93,17 +93,8 @@ class ActionFormBuilder:
     """
     """
 
-    def level_up(param_bounds):
-        """
-        """
-
-    pass
-class LevelUpFormBuilder:
-    """
-    """
-
     @staticmethod
-    def build_form_class(param_bounds):
+    def level_up(param_bounds):
         """
         """
         class LevelUpForm(forms.Form):

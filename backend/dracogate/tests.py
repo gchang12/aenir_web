@@ -1,8 +1,8 @@
 """
 """
 
-import json
-import html
+#import json
+#import html
 
 from django.test import TestCase
 import django.forms
@@ -16,7 +16,8 @@ from aenir import (
 
 from dracogate.forms import (
     InitFormBuilder,
-    LevelUpFormBuilder,
+    #LevelUpFormBuilder,
+    ActionFormBuilder,
 )
 from dracogate.models import VirtualMorph
 
@@ -511,7 +512,7 @@ class LevelUpTests(TestCase):
         expected2 = 2
         expected3 = 20
         (_, param_bounds) = self.vmorph.level_up(0)
-        form_class = LevelUpFormBuilder.build_form_class(param_bounds)
+        form_class = ActionFormBuilder.level_up(param_bounds)
         self.assertIn(field, form_class.declared_fields)
         self.assertEqual(form_class.declared_fields[field].min_value, expected2)
         self.assertEqual(form_class.declared_fields[field].max_value, expected3)
@@ -530,7 +531,7 @@ class LevelUpTests(TestCase):
         if self.vmorph.morph.current_lv == self.vmorph.morph.max_level:
             param_bounds['min_lv'] = None
         # get form class
-        form_class = LevelUpFormBuilder.build_form_class(param_bounds)
+        form_class = ActionFormBuilder.level_up(param_bounds)
         # test form class
         self.assertIn(field, form_class.declared_fields)
         self.assertEqual(form_class.declared_fields[field].min_value, expected2)
@@ -566,9 +567,9 @@ class LevelUpTests(TestCase):
         response = self.client.get(url)
         values = (
             "level_up",
-            #html.escape(json.dumps(expected[0][1])),
+            #html.unescape(json.dumps(expected[0][1])),
             "num_levels",
-                "19",
+            "19",
         )
         for value in values:
             self.assertContains(response, value)
