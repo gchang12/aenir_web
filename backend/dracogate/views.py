@@ -22,7 +22,10 @@ from dracogate.models import (
     VirtualMorph,
     StatsBundler,
 )
-from . import forms
+from dracogate.forms import (
+    InitFormBuilder,
+    LevelUpFormBuilder,
+)
 
 def get_temp_morph(game_no, unit, init_options):
     """
@@ -40,7 +43,7 @@ def get_temp_morph(game_no, unit, init_options):
         elif key == "number_of_declines":
             value = int(value)
         return key, value
-    option_fields = forms.InitFormBuilder.OPTION_FIELDS()
+    option_fields = InitFormBuilder.OPTION_FIELDS()
     init_options = dict(
         map(
             parse_init_option,
@@ -110,7 +113,7 @@ class UnitConfirmView(FormView):
         #self.init_params = {}
         #form = super().get_form_class()
         #print(self.init_params)
-        form_class = forms.InitFormBuilder.build_form_class(self.init_params)
+        form_class = InitFormBuilder.build_form_class(self.init_params)
         #print(form_class.declared_fields)
         #print("get_form_class", form_class.declared_fields)
         return form_class

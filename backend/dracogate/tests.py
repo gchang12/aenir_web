@@ -416,9 +416,10 @@ class LevelUpTests(TestCase):
         """
         param_bounds = self.vmorph.level_up(0)
         form_class = LevelUpFormBuilder.build_form_class(param_bounds)
-        self.assertIn('num_levels', form_class.declared_fields)
-        self.assertEqual(form_class.declared_fields['num_levels'].min_value, 2)
-        self.assertEqual(form_class.declared_fields['num_levels'].max_value, 20)
+        self.assertIn('target_lv', form_class.declared_fields)
+        self.assertEqual(form_class.declared_fields['target_lv'].initial, 2)
+        self.assertEqual(form_class.declared_fields['target_lv'].min_value, 2)
+        self.assertEqual(form_class.declared_fields['target_lv'].max_value, 20)
 
     def test_level_up__formbuilder3(self):
         """
@@ -432,7 +433,8 @@ class LevelUpTests(TestCase):
         # get form class
         form_class = LevelUpFormBuilder.build_form_class(param_bounds)
         # test form class
-        self.assertIn('num_levels', form_class.declared_fields)
-        self.assertEqual(form_class.declared_fields['num_levels'].min_value, 20)
-        self.assertEqual(form_class.declared_fields['num_levels'].max_value, 20)
-        self.assertIs(form_class.declared_fields['num_levels'].disabled, True)
+        self.assertIn('target_lv', form_class.declared_fields)
+        self.assertEqual(form_class.declared_fields['target_lv'].initial, 20)
+        self.assertEqual(form_class.declared_fields['target_lv'].min_value, 20)
+        self.assertEqual(form_class.declared_fields['target_lv'].max_value, 20)
+        self.assertIs(form_class.declared_fields['target_lv'].disabled, True)

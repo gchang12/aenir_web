@@ -97,15 +97,20 @@ class LevelUpFormBuilder:
     def build_form_class(param_bounds):
         """
         """
+        if param_bounds['min_lv'] is None:
+            initial = param_bounds['max_lv']
+        else:
+            initial = param_bounds['min_lv']
         class LevelUpForm(forms.Form):
             """
             """
-            num_levels = forms.IntegerField(
+            target_lv = forms.IntegerField(
+                initial=initial,
                 min_value=param_bounds['min_lv'] or param_bounds['max_lv'],
                 max_value=param_bounds['max_lv'],
                 step_size=1,
                 disabled=param_bounds['min_lv'] is None,
-                label="Level Up",
+                label="Target Level",
             )
         return LevelUpForm
 
