@@ -10,16 +10,26 @@ from aenir.morph import get_morph, get_morph_class
 from . import models
 from . import forms
 
+def parse_init_option(init_option):
+    """
+    """
+    key, value = init_option
+    if key in ("lyn_mode", "hard_mode"):
+        value = {
+            "True": True,
+            "False": False,
+        }[value]
+    elif key == "number_of_declines":
+        value = int(value)
+    return key, value
+
 def get_temp_morph(game_no, unit, init_options):
     """
     """
     option_fields = forms.InitFormBuilder.OPTION_FIELDS()
     init_options = dict(
         map(
-            lambda key_value: (
-                key_value if key_value[0] not in ("lyn_mode", "hard_mode")
-                else (key_value[0], (True if key_value[1] == "True" else False))
-            ),
+            parse_init_option,
             filter(
                 lambda key_value: key_value[0] in option_fields,
                 init_options.items(),

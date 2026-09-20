@@ -82,26 +82,12 @@ class InitFormBuilder:
     def build_form_class(cls, init_params):
         """
         """
-        class InitForm(forms.Form):
+        class InitOptionsForm(forms.Form):
             """
             """
-            '''
-            game_no = forms.IntegerField(
-                min_value=4,
-                max_value=9,
-                step_size=1,
-                #disabled=True,
-                widget=forms.HiddenInput,
-            )
-            name = forms.CharField(
-                max_length=9,
-                #disabled=True,
-                widget=forms.HiddenInput,
-            )
-            '''
         for init_param, choices in init_params.items():
-            InitForm.declared_fields[init_param] = getattr(cls, init_param)(choices)
-        return InitForm
+            InitOptionsForm.declared_fields[init_param] = getattr(cls, init_param)(choices)
+        return InitOptionsForm
 
 '''
     def __init__(self, name: str, *, father: str | None = None):

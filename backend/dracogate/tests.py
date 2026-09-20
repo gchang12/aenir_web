@@ -3,6 +3,7 @@
 
 from django.test import TestCase
 import django.forms
+from django.urls import reverse
 
 from aenir import (
     get_morph,
@@ -88,3 +89,93 @@ class InitFormBuilderTests(TestCase):
         self.assertIsInstance(field, django.forms.NullBooleanField)
 
 # TODO: Write forms to test init-preview.
+
+class UnitConfirmForecastTests(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        self.generate_url = lambda game_no, name: reverse("dracogate:unit_confirm_forecast", kwargs={"game_no": game_no, "unit": name})
+
+    def test_father(self):
+        """
+        """
+        game_no = 4
+        name = "Lakche"
+        query_params = {"father": "Holyn"}
+        old_values = ("31.0", "65")
+        new_values = ("31.0", "135")
+        url = self.generate_url(game_no, name)
+        response = self.client.get(url, query_params=query_params)
+        for value in new_values:
+            self.assertContains(response, value)
+        response = self.client.get(url)
+        for value in old_values:
+            self.assertContains(response, value)
+
+    def test_hard_mode(self):
+        """
+        """
+        game_no = 6
+        name = "Rutger"
+        query_params = {"hard_mode": "True"}
+        old_values = ("22.0", "13.0")
+        new_values = ("25.5", "8.75")
+        url = self.generate_url(game_no, name)
+        response = self.client.get(url, query_params=query_params)
+        for value in new_values:
+            self.assertContains(response, value)
+        response = self.client.get(url)
+        for value in old_values:
+            self.assertContains(response, value)
+
+    def test_number_of_declines(self):
+        """
+        """
+        game_no = 6
+        name = "Hugh"
+        query_params = {"number_of_declines": "3"}
+        old_values = ("26.0", "13.0")
+        new_values = ("23.0", "10.0")
+        url = self.generate_url(game_no, name)
+        response = self.client.get(url, query_params=query_params)
+        for value in new_values:
+            self.assertContains(response, value)
+        response = self.client.get(url)
+        for value in old_values:
+            self.assertContains(response, value)
+
+    def test_chapter(self):
+        """
+        """
+        game_no = 6
+        name = "Cath"
+        query_params = {"hard_mode": "True", "chapter": "22"}
+        old_values = ("16.0", "11.0")
+        new_values = ("22.3", "16.6")
+        url = self.generate_url(game_no, name)
+        response = self.client.get(url, query_params=query_params)
+        for value in new_values:
+            self.assertContains(response, value)
+        response = self.client.get(url)
+        for value in old_values:
+            self.assertContains(response, value)
+
+    def test_lyn_mode(self):
+        """
+        """
+        game_no = 7
+        name = "Wallace"
+        query_params = {"lyn_mode": "True"}
+        old_values = ("General (M)", "34.0")
+        new_values = ("Knight", "30.0")
+        url = self.generate_url(game_no, name)
+        response = self.client.get(url, query_params=query_params)
+        for value in new_values:
+            self.assertContains(response, value)
+        response = self.client.get(url)
+        for value in old_values:
+            self.assertContains(response, value)
+
