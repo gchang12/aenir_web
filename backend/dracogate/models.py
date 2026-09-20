@@ -7,6 +7,10 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
+from aenir import (
+    get_morph_class,
+)
+
 User = get_user_model()
 
 def vmorph_name_generator():

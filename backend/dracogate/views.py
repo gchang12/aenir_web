@@ -27,6 +27,7 @@ from . import forms
 def get_temp_morph(game_no, unit, init_options):
     """
     """
+    # parse morph-init options
     def parse_init_option(init_option):
         """
         """
@@ -49,6 +50,7 @@ def get_temp_morph(game_no, unit, init_options):
             )
         )
     )
+    # try create morph and get new init_params
     try:
         temp_morph = get_morph(game_no, unit, **init_options)
         init_params = {}
@@ -116,7 +118,7 @@ class UnitConfirmView(FormView):
     def get(self, request, game_no, unit):
         """
         """
-        (init_params, _) = get_temp_morph(game_no, unit, request.GET.dict())
+        (init_params, _) = get_temp_morph(game_no, unit, {})
         self.init_params = init_params
         self.route_params = {
             "game_no": game_no,
