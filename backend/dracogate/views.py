@@ -210,7 +210,7 @@ class MorphDetailView(DetailView):
         "chapter": "Chapter",
         "lyn_mode": "Lyn Mode",
     }
-    event_dict = {
+    action_name_dict = {
         "level_up": "Level Up",
         "promote": "Promote",
         "use_stat_booster": "Use Stat Booster",
@@ -219,6 +219,42 @@ class MorphDetailView(DetailView):
         "set_scrolls": "Equip Scrolls",
         "set_bands": "Equip Bands",
         "shapeshift": "Shapeshift", # transform/revert
+    }
+    actions_by_game = {
+        4: (
+            "level_up",
+            "promote",
+        ),
+        5: (
+            "level_up",
+            "promote",
+            "use_stat_booster",
+            "set_scrolls",
+        ),
+        6: (
+            "level_up",
+            "promote",
+            "use_stat_booster",
+        ),
+        7: (
+            "level_up",
+            "promote",
+            "use_stat_booster",
+            "use_afas_drops",
+        ),
+        8: (
+            "level_up",
+            "promote",
+            "use_stat_booster",
+            "use_metiss_tome",
+        ),
+        9: (
+            "level_up",
+            "promote",
+            "use_stat_booster",
+            "shapeshift",
+            "set_bands",
+        ),
     }
 
     def get_context_data(self, object):
@@ -235,6 +271,10 @@ class MorphDetailView(DetailView):
         morph = morph_class.from_dict(data)
         context['init_options'] = {self.init_option_dict[key]: value for key, value in self.object.init_options.items()}
         context['stats'] = StatsBundler.init_forecast(morph)
+        context['actions'] = map(
+            lambda action: ("dracogate:" + action, self.action_name_dict[action]),
+            self.actions_by_game[self.object.game_no],
+        )
         return context
 
     def get_object(self):

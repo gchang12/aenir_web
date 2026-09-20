@@ -59,5 +59,17 @@
       </tbody>
     </table>
   </article>
+  <article>
+    <h2>Actions</h2>
+    <menu>
+      {% for action, action_title in actions %}
+      <li>
+        <a href="{% url action object.id %}">
+          {{ action_title }}
+        </a>
+      </li>
+      {% endfor %}
+    </menu>
+  </article>
 </div>
 {% endblock %}
