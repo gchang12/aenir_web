@@ -4,9 +4,37 @@
 from django.views.generic import base, edit
 
 from aenir.games import FireEmblemGame
-from aenir.morph import get_morph_class
+from aenir import InitError
+from aenir.morph import get_morph, get_morph_class
 
 from . import models
+from . import forms
+
+def get_temp_morph(game_no, unit, init_options):
+    """
+    """
+    option_fields = forms.InitFormBuilder.OPTION_FIELDS()
+    init_options = dict(
+        map(
+            lambda key_value: (
+                key_value if key_value[0] not in ("lyn_mode", "hard_mode")
+                else (key_value[0], (True if key_value[1] == "True" else False))
+            ),
+            filter(
+                lambda key_value: key_value[0] in option_fields,
+                init_options.items(),
+            )
+        )
+    )
+    #print("init_options", init_options)
+    try:
+        temp_morph = get_morph(game_no, unit, **init_options)
+        init_params = {}
+    except InitError as e:
+        init_params = e.init_params
+        init_options.update({key: value[0] for key, value in init_params.items()})
+        temp_morph = get_morph(game_no, unit, **init_options)
+    return (init_params, temp_morph)
 
 class GameSelectView(base.TemplateView):
     """
@@ -58,3 +86,19 @@ class UnitConfirmView(edit.CreateView):
 class UnitConfirmForecast(base.TemplateView):
     """
     """
+    template_name = "dracogate/unit_confirm_forecast.html"
+
+    def get_context_data(self, game_no, unit):
+        """
+        """
+        # get stats
+        query_params = self.request.GET.dict()
+        context = super().get_context_data()
+        #print(query_params)
+        (init_params, morph) = get_temp_morph(game_no, unit, query_params)
+        context['stats'] = models.StatsBundler.init_forecast(morph)
+        context['unit_level'] = morph.current_lv
+        context['unit_class'] = morph.current_cls
+        #print(context)
+        return context
+

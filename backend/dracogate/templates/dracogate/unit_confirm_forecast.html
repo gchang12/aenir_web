@@ -1,0 +1,40 @@
+<table>
+  <tbody>
+    <tr>
+      <th>Level</th>
+      <td>{{ unit_level }}</td>
+    </tr>
+    <tr>
+      <th>Class</th>
+      <td>{{ unit_class }}</td>
+    </tr>
+  </tbody>
+</table>
+<table>
+  <thead>
+    <tr>
+      <th>Stat</th>
+      <th>Base</th>
+      <th>Growths</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for stat in stats %}
+    <tr>
+      <th>{{ stat.name }}</th>
+      <td>
+        <meter min="0" max="{{stat.absmax}}" high="{{stat.max}}" optimum="{{stat.max}}" value="{{stat.base}}">
+        </meter>
+        <span class="stat-value growth">{{ stat.base }}</span>
+      </td>
+      <td>
+        {% if stat.growth != None %}
+        <meter min="0" max="100" optimum="100" value="{{stat.growth}}">
+        </meter>
+        <span class="stat-value growth">{{ stat.growth }}</span>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

@@ -15,6 +15,30 @@ def vmorph_name_generator():
     now = timezone.now()
     return now.isoformat()
 
+class StatsBundler:
+    """
+    """
+
+    @staticmethod
+    def init_forecast(morph):
+        """
+        """
+        # iterable of (base, growth, max, absmax)
+        absmax_stats = morph.Stats.ABSOLUTE_MAXES()
+        zerogrowth_stats = morph.Stats.ZERO_GROWTH_STAT_LIST()
+        for indexno, stat in enumerate(morph.Stats.STAT_LIST()):
+            base = getattr(morph.current_stats, stat)
+            growth = getattr(morph.growth_rates, stat)
+            max_ = getattr(morph.max_stats, stat)
+            absmax = absmax_stats[indexno]
+            yield {
+                "name": stat,
+                "base": base / 100,
+                "growth": (growth if stat not in zerogrowth_stats else None),
+                "max": max_ / 100,
+                "absmax": absmax / 100,
+            }
+
 class VirtualMorph(models.Model):
     """
     """

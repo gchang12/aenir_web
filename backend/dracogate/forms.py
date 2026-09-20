@@ -8,6 +8,16 @@ class InitFormBuilder:
     """
 
     @staticmethod
+    def OPTION_FIELDS():
+        return (
+            "father",
+            "hard_mode",
+            "number_of_declines",
+            "chapter",
+            "lyn_mode",
+        )
+
+    @staticmethod
     def father(choices):
         """
         """
