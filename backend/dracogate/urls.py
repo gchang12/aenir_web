@@ -11,4 +11,5 @@ urlpatterns = [
     path("create/FE<int:game_no>/", views.UnitSelectView.as_view(), name="unit_select"),
     path("create/FE<int:game_no>/<str:unit>/", views.UnitConfirmView.as_view(), name="unit_confirm"),
     path("components/create/FE<int:game_no>/<str:unit>/", views.UnitConfirmForecast.as_view(), name="unit_confirm_forecast"),
+    path("", views.MorphSelectView.as_view(), name="morph_select"),
 ]

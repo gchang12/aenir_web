@@ -2,12 +2,16 @@
 """
 
 from django.views.generic import base, edit
+from django.urls import reverse_lazy
 
 from aenir.games import FireEmblemGame
 from aenir import InitError
 from aenir.morph import get_morph, get_morph_class
 
-from . import models
+from dracogate.models import (
+    VirtualMorph,
+    StatsBundler,
+)
 from . import forms
 
 def parse_init_option(init_option):
@@ -23,7 +27,7 @@ def parse_init_option(init_option):
         value = int(value)
     return key, value
 
-def get_temp_morph(game_no, unit, init_options):
+def clean_init_options(init_options):
     """
     """
     option_fields = forms.InitFormBuilder.OPTION_FIELDS()
@@ -36,7 +40,12 @@ def get_temp_morph(game_no, unit, init_options):
             )
         )
     )
-    #print("init_options", init_options)
+    return init_options
+
+def get_temp_morph(game_no, unit, init_options):
+    """
+    """
+    init_options = clean_init_options(init_options)
     try:
         temp_morph = get_morph(game_no, unit, **init_options)
         init_params = {}
@@ -82,12 +91,12 @@ class UnitConfirmView(edit.FormView):
     """
     """
     template_name = "dracogate/unit_confirm.html"
-    #model = models.VirtualMorph
-    #fields = []
+    success_url = reverse_lazy("dracogate:morph_select")
 
     def get_context_data(self):
         """
         """
+        #print("get_context_data", self.kwargs)
         context = super().get_context_data(**self.kwargs)
         context.update(self.kwargs)
         return context
@@ -97,7 +106,10 @@ class UnitConfirmView(edit.FormView):
         """
         #self.init_params = {}
         #form = super().get_form_class()
+        #print(self.init_params)
         form_class = forms.InitFormBuilder.build_form_class(self.init_params)
+        #print(form_class.declared_fields)
+        #print("get_form_class", form_class.declared_fields)
         return form_class
 
     def get(self, request, game_no, unit):
@@ -105,7 +117,39 @@ class UnitConfirmView(edit.FormView):
         """
         (init_params, _) = get_temp_morph(game_no, unit, request.GET.dict())
         self.init_params = init_params
+        self.route_params = {
+            "game_no": game_no,
+            "unit": unit,
+        }
         return super().get(request, game_no, unit)
+
+    def post(self, request, game_no, unit):
+        """
+        """
+        (init_params, _) = get_temp_morph(game_no, unit, {})
+        self.init_params = init_params
+        self.route_params = {
+            "game_no": game_no,
+            "unit": unit,
+        }
+        #print("post", self.init_params)
+        return super().post(request, game_no, unit)
+
+    def form_valid(self, form):
+        """
+        """
+        #print("form_valid", form.is_valid())
+        #print("form_valid", form.declared_fields)
+        #print("form_valid", form.cleaned_data)
+        #print("form_valid", self.route_params)
+        vmorph = VirtualMorph(
+            owner=(self.request.user if self.request.user.is_authenticated else None),
+            game_no=self.route_params.pop("game_no"),
+            unit=self.route_params.pop("unit"),
+            init_options=form.cleaned_data,
+        )
+        vmorph.save()
+        return super().form_valid(form)
 
 class UnitConfirmForecast(base.TemplateView):
     """
@@ -120,9 +164,14 @@ class UnitConfirmForecast(base.TemplateView):
         context = super().get_context_data()
         #print(query_params)
         (init_params, morph) = get_temp_morph(game_no, unit, query_params)
-        context['stats'] = models.StatsBundler.init_forecast(morph)
+        context['stats'] = StatsBundler.init_forecast(morph)
         context['unit_level'] = morph.current_lv
         context['unit_class'] = morph.current_cls
         #print(context)
         return context
+
+class MorphSelectView(base.TemplateView):
+    """
+    """
+    template_name = "dracogate/morph_select.html"
 
