@@ -1,5 +1,18 @@
 {% extends "_base.html" %}
+{% load static %}
 
 {% block main %}
 <h1>Morph Select</h1>
+<ol>
+{% for virtualmorph in virtualmorph_list %}
+  <li>
+    <a href="{% url 'dracogate:morph_detail' virtualmorph.id %}">
+      <figure>
+        <img width="50" src="{% get_static_prefix %}dracogate/images/fe{{virtualmorph.game_no}}/characters/{{virtualmorph.unit}}.png" />
+        <figcaption>{{ virtualmorph.name }}</figcaption>
+      </figure>
+    </a>
+  </li>
+{% endfor %}
+</ol>
 {% endblock %}

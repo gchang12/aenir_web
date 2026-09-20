@@ -13,7 +13,8 @@ def vmorph_name_generator():
     """
     """
     now = timezone.now()
-    return now.isoformat()
+    now_isoformat = now.isoformat()
+    return now_isoformat[:now_isoformat.index(".")]
 
 class StatsBundler:
     """
@@ -51,6 +52,9 @@ class VirtualMorph(models.Model):
     name = models.CharField(
         default=vmorph_name_generator,
         max_length=32,
+    )
+    creation_date = models.DateTimeField(
+        auto_now_add=True,
     )
     # init
     game_no = models.PositiveSmallIntegerField(

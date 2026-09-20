@@ -178,11 +178,35 @@ class MorphListView(ListView):
     """
     """
     template_name = "dracogate/morph_list.html"
+    model = VirtualMorph
+
+    def get_context_data(self, **kwargs):
+        """
+        """
+        context = super().get_context_data(**kwargs)
+        print(context)
+        return context
+
+    def get_queryset(self):
+        """
+        """
+        #print(dir(self))
+        owner = (None if not self.request.user.is_authenticated else self.request.user)
+        queryset = self.model.objects.filter(owner=owner).order_by("-creation_date")
+        return queryset
 
 class MorphDetailView(DetailView):
     """
     """
     template_name = "dracogate/morph_detail.html"
+    model = VirtualMorph
+
+    def get_object(self):
+        """
+        """
+        id = self.request.path.split('/')[-2]
+        object = self.model.objects.get(id=id)
+        return object
 
 class LevelUpView(FormView):
     """
