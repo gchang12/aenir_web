@@ -76,7 +76,27 @@ class VirtualMorph(models.Model):
     )
 
     class Meta:
+        """
+        """
         unique_together = ["owner", "name"]
+
+    def init(self):
+        """
+        """
+        data = {}
+        data['game'] = self.game_no
+        data['name'] = self.unit
+        data['init_options'] = self.init_options
+        data['_miscellany'] = {}
+        data.update(self.stats)
+        morph_class = get_morph_class(self.game_no)
+        morph = morph_class.from_dict(data)
+        self.morph = morph
+        return morph
+
+    def level_up(self, num_levels: int):
+        """
+        """
 
 '''
     def path_to(cls, file: str) -> str:

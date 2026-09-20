@@ -254,14 +254,7 @@ class MorphDetailView(DetailView):
         """
         """
         context = super().get_context_data()
-        morph_class = get_morph_class(self.object.game_no)
-        data = self.object.stats
-        data['game'] = self.object.game_no
-        data['name'] = self.object.unit
-        data['init_options'] = self.object.init_options
-        data['_miscellany'] = {}
-        data.update(self.object.stats)
-        morph = morph_class.from_dict(data)
+        morph = self.object.init()
         context['init_options'] = {self.init_option_dict[key]: value for key, value in self.object.init_options.items()}
         context['stats'] = StatsBundler.init_forecast(morph)
         context['actions'] = map(
