@@ -210,13 +210,31 @@ class MorphDetailView(DetailView):
         "chapter": "Chapter",
         "lyn_mode": "Lyn Mode",
     }
+    event_dict = {
+        "level_up": "Level Up",
+        "promote": "Promote",
+        "use_stat_booster": "Use Stat Booster",
+        "use_afas_drops": "Use Afa's Drops",
+        "use_metiss_tome": "Use Metis's Tome",
+        "set_scrolls": "Equip Scrolls",
+        "set_bands": "Equip Bands",
+        "shapeshift": "Shapeshift", # transform/revert
+    }
 
     def get_context_data(self, object):
         """
         """
         context = super().get_context_data()
-        morph = get_morph(self.object.game_no, self.object.unit, **self.object.init_options)
+        morph_class = get_morph_class(self.object.game_no)
+        data = self.object.stats
+        data['game'] = self.object.game_no
+        data['name'] = self.object.unit
+        data['init_options'] = self.object.init_options
+        data['_miscellany'] = {}
+        data.update(self.object.stats)
+        morph = morph_class.from_dict(data)
         context['init_options'] = {self.init_option_dict[key]: value for key, value in self.object.init_options.items()}
+        context['stats'] = StatsBundler.init_forecast(morph)
         return context
 
     def get_object(self):

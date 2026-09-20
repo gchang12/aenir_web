@@ -4,32 +4,60 @@
 {% block main %}
 <h1>{{ object.name }}</h1>
 <div id="unit_profile">
-  <figure class="unit_identity">
-    <img src="{% get_static_prefix %}dracogate/images/fe{{object.game_no}}/characters/{{object.unit}}.png" />
-    <figcaption>
-      <table>
-        <tbody>
-          <tr>
-            <th>Game</th>
-            <td>FE{{object.game_no}}</td>
-          </tr>
-          <tr>
-            <th>Unit</th>
-            <td>{{object.unit}}</td>
-          </tr>
-          {% for key, value in init_options.items %}
-          <tr>
-            <th>{{ key }}</th>
-            <td>{{ value }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </figcaption>
-  </figure>
-  <table>
-    <tbody>
-    </tbody>
-  </table>
+  <article>
+    <h2>Profile</h2>
+    <figure class="unit_identity">
+      <img src="{% get_static_prefix %}dracogate/images/fe{{object.game_no}}/characters/{{object.unit}}.png" />
+      <figcaption>
+        <table>
+          <tbody>
+            <tr>
+              <th>Game</th>
+              <td>FE{{object.game_no}}</td>
+            </tr>
+            <tr>
+              <th>Unit</th>
+              <td>{{object.unit}}</td>
+            </tr>
+            {% for key, value in init_options.items %}
+            <tr>
+              <th>{{ key }}</th>
+              <td>{{ value }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </figcaption>
+    </figure>
+  </article>
+  <article>
+    <h2>Stats</h2>
+    <table>
+      <tbody>
+        {% for stat in stats %}
+        <tr>
+          <th>{{ stat.name }}</th>
+          <td>{{ stat.base }}</td>
+          <td>
+            <meter value="{{ stat.base }}" min="0" max="{{ stat.absmax }}" high="{{ stat.max }}" optimum="{{ stat.max }}">
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </article>
+  <article>
+    <h2>History</h2>
+    <table>
+      <tbody>
+        {% for event, value in history %}
+        <tr>
+          <th>{{ event }}</th>
+          <td>{{ value }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </article>
 </div>
 {% endblock %}
