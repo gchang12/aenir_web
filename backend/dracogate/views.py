@@ -96,7 +96,7 @@ class UnitConfirmView(FormView):
     """
     """
     template_name = "dracogate/unit_confirm.html"
-    success_url = reverse_lazy("dracogate:morph_select")
+    success_url = reverse_lazy("dracogate:morph_list")
 
     def get_context_data(self):
         """
@@ -147,13 +147,12 @@ class UnitConfirmView(FormView):
         #print("form_valid", form.declared_fields)
         #print("form_valid", form.cleaned_data)
         #print("form_valid", self.route_params)
-        vmorph = VirtualMorph(
+        VirtualMorph.objects.create(
             owner=(self.request.user if self.request.user.is_authenticated else None),
             game_no=self.route_params.pop("game_no"),
             unit=self.route_params.pop("unit"),
             init_options=form.cleaned_data,
         )
-        vmorph.save()
         return super().form_valid(form)
 
 class UnitConfirmForecast(TemplateView):
@@ -175,8 +174,18 @@ class UnitConfirmForecast(TemplateView):
         #print(context)
         return context
 
-class MorphSelectView(base.TemplateView):
+class MorphListView(ListView):
     """
     """
-    template_name = "dracogate/morph_select.html"
+    template_name = "dracogate/morph_list.html"
+
+class MorphDetailView(DetailView):
+    """
+    """
+    template_name = "dracogate/morph_detail.html"
+
+class LevelUpView(FormView):
+    """
+    """
+    template_name = "dracogate/level_up.html"
 
