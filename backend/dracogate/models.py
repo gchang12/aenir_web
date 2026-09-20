@@ -146,6 +146,10 @@ class VirtualMorph(models.Model):
         try:
             self.morph.level_up(num_levels)
             param_bounds = {}
+            self.history.append(
+                ("level_up", {"num_levels": num_levels})
+            )
+            self.stats = self.morph.as_dict()
         except LevelUpError as e:
             min_lv, max_lv = e.level_range
             param_bounds = {

@@ -403,6 +403,12 @@ class LevelUpTests(TestCase):
         """
         param_bounds = self.vmorph.level_up(19)
         self.assertDictEqual(param_bounds, {})
+        self.assertListEqual(
+            self.vmorph.history,
+            [
+                ("level_up", {'num_levels': 19})
+            ],
+        )
 
     def test_level_up__virtualmorph3(self):
         """
@@ -410,6 +416,12 @@ class LevelUpTests(TestCase):
         self.vmorph.level_up(19)
         param_bounds = self.vmorph.level_up(1)
         self.assertDictEqual(param_bounds, {"min_lv": None, "max_lv": 20})
+        self.assertListEqual(
+            self.vmorph.history,
+            [
+                ("level_up", {'num_levels': 19})
+            ],
+        )
 
     def test_level_up__formbuilder1(self):
         """
