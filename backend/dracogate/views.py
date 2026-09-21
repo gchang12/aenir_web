@@ -254,6 +254,7 @@ class MorphDetailView(DetailView):
             "use_stat_booster",
             "shapeshift",
             "set_bands",
+            "set_demiband",
         ),
     }
 
@@ -264,8 +265,9 @@ class MorphDetailView(DetailView):
         morph = self.object.init()
         context['init_options'] = {self.init_option_dict[key]: value for key, value in self.object.init_options.items()}
         context['stats'] = StatsBundler.init_forecast(morph)
+        app_name = "dracogate"
         context['actions'] = map(
-            lambda action: ("dracogate:" + action, self.action_name_dict[action]),
+            lambda action: (app_name + ":" + action, self.action_name_dict[action]),
             self.actions_by_game[self.object.game_no],
         )
         context['history'] = self.object.history
