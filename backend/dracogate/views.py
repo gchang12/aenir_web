@@ -331,11 +331,16 @@ class ActionForecastView(DetailView):
         num_levels = int(self.request.GET["target_lv"]) - self.object.morph.current_lv
         self.object.level_up(num_levels)
 
-class LevelUpView(FormView, DetailView):
+class MorphActionView(FormView, DetailView):
     """
     """
-    template_name = "dracogate/level_up.html"
+    template_name = "dracogate/morph_action.html"
     model = VirtualMorph
+    action = {
+        "title": None,
+        "name": None,
+        "stat_type": None,
+    }
 
     def get_object(self):
         """
@@ -348,9 +353,25 @@ class LevelUpView(FormView, DetailView):
     def get_context_data(self, **kwds):
         """
         """
+        context = super().get_context_data(**kwds)
+        context['action'] = self.action
+        return context
+
+class LevelUpView(MorphActionView):
+    """
+    """
+    action = {
+        "title": "Level Up",
+        "name": "level_up",
+        "stat_type": "bases",
+    }
+
+    def get_context_data(self, **kwds):
+        """
+        """
+        context = super().get_context_data(**kwds)
         morph = self.object.morph
         is_success = not (morph.max_level == morph.current_lv)
-        context = super().get_context_data(**kwds)
         context['is_success'] = is_success
         return context
 

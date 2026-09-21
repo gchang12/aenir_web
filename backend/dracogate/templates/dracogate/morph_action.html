@@ -3,11 +3,11 @@
 
 {% block main %}
 <h1>{{ object.name }}</h1>
-<h2>Level Up</h2>
+<h2>{{action.title}}</h2>
 <img src="{% get_static_prefix %}dracogate/images/fe{{object.game_no}}/characters/{{object.unit}}.png" />
 <form
   method="post"
-  hx-get="{% url 'dracogate:action_forecast' object.id %}?action=level_up&stat_type=bases"
+  hx-get="{% url 'dracogate:action_forecast' object.id %}?action={{action.name}}&stat_type={{action.stat_type}}"
   hx-target="#action_forecast"
   hx-trigger="change"
   >
@@ -16,7 +16,7 @@
   <button{% if not is_success %} disabled{% endif %}>Confirm</button>
 </form>
 <div id="action_forecast"
-  hx-get="{% url 'dracogate:action_forecast' object.id %}?stat_type=bases"
+  hx-get="{% url 'dracogate:action_forecast' object.id %}?stat_type={{action.stat_type}}"
   hx-trigger="load"
   >
 </div>
