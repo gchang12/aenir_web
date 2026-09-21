@@ -186,7 +186,7 @@ class MorphListView(ListView):
         """
         """
         context = super().get_context_data(**kwargs)
-        print(context)
+        #print(context)
         return context
 
     def get_queryset(self):
@@ -299,7 +299,11 @@ class ActionForecastView(DetailView):
         stat_type = self.request.GET['stat_type']
         context = super().get_context_data(**kwds)
         morph = self.object.morph.copy()
-        context['stats_before'] = {
+        context['before'] = {
+            "unit_class": morph.current_cls,
+            "unit_lv": morph.current_lv,
+        }
+        context['before']['numeric_stats'] = {
             "bases": StatsBundler.action_forecast_bases,
             "growths": StatsBundler.action_forecast_growths,
         }[stat_type](morph, None)
@@ -311,7 +315,11 @@ class ActionForecastView(DetailView):
             "bases": (self.object.morph.current_stats > morph.current_stats).as_dict,
             "growths": (self.object.morph.growth_rates > morph.growth_rates).as_dict,
         }[stat_type]()
-        context['stats_after'] = {
+        context['after'] = {
+            "unit_class": self.object.morph.current_cls,
+            "unit_lv": self.object.morph.current_lv,
+        }
+        context['after']['numeric_stats'] = {
             "bases": StatsBundler.action_forecast_bases(self.object.morph, delta_dict),
             "growths": StatsBundler.action_forecast_bases(self.object.morph, delta_dict),
         }[stat_type]
@@ -340,7 +348,8 @@ class LevelUpView(FormView, DetailView):
     def get_context_data(self, **kwds):
         """
         """
-        (is_success, _) = self.object.level_up(1)
+        morph = self.object.morph
+        is_success = not (morph.max_level == morph.current_lv)
         context = super().get_context_data(**kwds)
         context['is_success'] = is_success
         return context
@@ -350,10 +359,10 @@ class LevelUpView(FormView, DetailView):
         """
         #print(dir(self), self.object, kwds, id)
         try:
-            (is_success, param_bounds) = self.object.level_up(0)
+            (_, param_bounds) = self.object.level_up(0)
         except AttributeError:
             self.object = self.get_object()
-            (is_success, param_bounds) = self.object.level_up(0)
+            (_, param_bounds) = self.object.level_up(0)
         if self.object.morph.current_lv == self.object.morph.max_level:
             param_bounds['min_lv'] = None
         form_class = ActionFormBuilder.level_up(param_bounds)

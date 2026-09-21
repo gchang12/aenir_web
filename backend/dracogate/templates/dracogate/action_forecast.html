@@ -1,34 +1,52 @@
-<div id="action_forecast">
-  <figure>
-    <figcaption>Before</figcaption>
-    <table>
-      <tbody>
-        {% for stat in stats_before %}
-        <tr>
-          <th>{{ stat.name }}</th>
-          <td>{{ stat.value }}</td>
-          <td>
-            <meter min="0" high="{{ stat.max }}" optimum="{{ stat.max }}" max="{{ stat.absmax }}" value="{{ stat.value }}">
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </figure>
-  <figure>
-    <figcaption>After</figcaption>
-    <table>
-      <tbody>
-        {% for stat in stats_after %}
-        <tr>
-          <th>{{ stat.name }}</th>
-          <td>{{ stat.value }}</td>
-          <td class="stat{% if stat.delta > 0 %} increased{% elif stat.delta < 0 %} decreased{% endif %}">
-            <meter min="0" high="{{ stat.max }}" optimum="{{ stat.max }}" max="{{ stat.absmax }}" value="{{ stat.value }}">
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </figure>
-</div>
+<figure>
+  <figcaption><h3>Before</h3></figcaption>
+  <table>
+    <thead>
+      <tr>
+        <th>Class</th>
+        <td>{{before.unit_class}}</td>
+      </tr>
+      <tr>
+        <th>Level</th>
+        <td>{{before.unit_lv}}</td>
+      </tr>
+    </thead>
+    <tbody>
+      {% for stat in before.numeric_stats %}
+      <tr>
+        <th>{{ stat.name }}</th>
+        <td>{{ stat.value }}</td>
+        <td>
+          <meter min="0" high="{{ stat.max }}" optimum="{{ stat.max }}" max="{{ stat.absmax }}" value="{{ stat.value }}">
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</figure>
+<figure>
+  <figcaption><h3>After</h3></figcaption>
+  <table>
+    <thead>
+      <tr>
+        <th>Class</th>
+        <td>{{after.unit_class}}</td>
+      </tr>
+      <tr>
+        <th>Level</th>
+        <td>{{after.unit_lv}}</td>
+      </tr>
+    </thead>
+    <tbody>
+      {% for stat in after.numeric_stats %}
+      <tr>
+        <th>{{ stat.name }}</th>
+        <td>{{ stat.value }}</td>
+        <td class="stat{% if stat.delta > 0 %} increased{% elif stat.delta < 0 %} decreased{% endif %}">
+          <meter min="0" high="{{ stat.max }}" optimum="{{ stat.max }}" max="{{ stat.absmax }}" value="{{ stat.value }}">
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</figure>

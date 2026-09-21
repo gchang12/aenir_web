@@ -97,6 +97,7 @@ class ActionFormBuilder:
     def level_up(param_bounds):
         """
         """
+        #print(param_bounds)
         class LevelUpForm(forms.Form):
             """
             """

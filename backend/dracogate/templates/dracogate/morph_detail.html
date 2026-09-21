@@ -54,9 +54,16 @@
       </tbody>
     </table>
   </article>
+  {% if history %}
   <article>
     <h2>History</h2>
     <table>
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th>Parameters</th>
+        </tr>
+      </thead>
       <tbody>
         {% for event, value in history %}
         <tr>
@@ -67,6 +74,7 @@
       </tbody>
     </table>
   </article>
+  {% endif %}
   <article>
     <h2>Actions</h2>
     <menu>
