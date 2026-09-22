@@ -111,6 +111,23 @@ class ActionFormBuilder:
             )
         return LevelUpForm
 
+    @staticmethod
+    def promote(param_bounds):
+        """
+        """
+        choices = ([] if param_bounds is None else [(choice, choice) for choice in param_bounds["promotions"]])
+        class PromoteForm(forms.Form):
+            """
+            """
+            promo_cls = forms.ChoiceField(
+                initial="",
+                choices=choices,
+                required=True,
+                label="Promotion",
+                disabled=param_bounds is None,
+            )
+        return PromoteForm
+
 '''
     def __init__(self, name: str, *, father: str | None = None):
     def __init__(self, name: str):
