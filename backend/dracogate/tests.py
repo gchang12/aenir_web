@@ -4,6 +4,8 @@
 #import json
 #import html
 
+import unittest
+
 from django.test import TestCase
 import django.forms
 from django.urls import reverse
@@ -574,3 +576,215 @@ class LevelUpTests(TestCase):
         for value in values:
             self.assertContains(response, value)
 
+
+class PromoteTests(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        game_no = 6
+        unit = "Roy"
+        init_options = {}
+        self.user = User.objects.create()
+        self.vmorph = VirtualMorph.objects.create(
+            owner=self.user,
+            game_no=game_no,
+            unit=unit,
+            init_options=init_options,
+        )
+        self.vmorph.morph = get_morph(game_no, unit, **init_options)
+
+    def test_promote__virtualmorph1(self):
+        """
+        """
+        (is_success, param_bounds) = self.vmorph.promote("")
+        expected1 = {"promotions": ["Master Lord"]}
+        expected2 = True
+        self.assertDictEqual(param_bounds, expected1)
+        self.assertIs(is_success, expected2)
+
+    def test_promote__virtualmorph2(self):
+        """
+        """
+        promo_cls = "Master Lord"
+        expected1 = {"promotions": ["Master Lord"]}
+        expected2 = [
+            ("promote", {'promo_cls': promo_cls})
+        ]
+        expected3 = True
+        (is_success, param_bounds) = self.vmorph.promote(promo_cls)
+        self.assertDictEqual(param_bounds, expected1)
+        self.assertListEqual(
+            self.vmorph.history,
+            expected2,
+        )
+        self.assertIs(is_success, expected3)
+
+    @unittest.skip("")
+    def test_promote__formbuilder1(self):
+        """
+        """
+        field = "target_lv"
+        expected2 = 2
+        expected3 = 20
+        (_, param_bounds) = self.vmorph.promote(0)
+        form_class = ActionFormBuilder.promote(param_bounds)
+        self.assertIn(field, form_class.declared_fields)
+        self.assertEqual(form_class.declared_fields[field].min_value, expected2)
+        self.assertEqual(form_class.declared_fields[field].max_value, expected3)
+
+    @unittest.skip("")
+    def test_promote__formbuilder3(self):
+        """
+        """
+        field = "target_lv"
+        expected2 = 20
+        expected3 = 20
+        expected4 = True
+        # pretend Roy is at max level
+        self.vmorph.promote(19)
+        # try to get param_bounds
+        (_, param_bounds) = self.vmorph.promote(0)
+        if self.vmorph.morph.current_lv == self.vmorph.morph.max_level:
+            param_bounds['min_lv'] = None
+        # get form class
+        form_class = ActionFormBuilder.promote(param_bounds)
+        # test form class
+        self.assertIn(field, form_class.declared_fields)
+        self.assertEqual(form_class.declared_fields[field].min_value, expected2)
+        self.assertEqual(form_class.declared_fields[field].max_value, expected3)
+        self.assertIs(form_class.declared_fields[field].disabled, expected4)
+
+    @unittest.skip("")
+    def test_promote__forecast(self):
+        """
+        """
+        url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
+        query_params = {"action": "promote", "stat_type": "bases", "target_lv": "20"}
+        response = self.client.get(url, query_params=query_params)
+        # HP values
+        values = ("33.2", "18.0")
+        for value in values:
+            self.assertContains(response, value)
+
+    @unittest.skip("")
+    def test_promote__view_post(self):
+        """
+        """
+        expected = [["promote", {"num_levels": 19}]]
+        field = "target_lv"
+        url = reverse("dracogate:promote", kwargs={"id": self.vmorph.id})
+        data = {field: 20}
+        response = self.client.post(url, data=data)
+        self.assertLess(response.status_code, 400)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        morph = vmorph.init()
+        self.assertEqual(morph.current_lv, data[field])
+        self.assertListEqual(vmorph.history, expected)
+        # test for existence of actions in morph_detail
+        url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
+        response = self.client.get(url)
+        values = (
+            "promote",
+            #html.unescape(json.dumps(expected[0][1])),
+            "num_levels",
+            "19",
+        )
+        for value in values:
+            self.assertContains(response, value)
+
+
+class PromoteTests2(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        game_no = 8
+        unit = "Ross"
+        init_options = {}
+        self.user = User.objects.create()
+        self.vmorph = VirtualMorph.objects.create(
+            owner=self.user,
+            game_no=game_no,
+            unit=unit,
+            init_options=init_options,
+        )
+        self.vmorph.morph = get_morph(game_no, unit, **init_options)
+        self.vmorph.morph.level_up(9)
+
+    def test_promote__virtualmorph1(self):
+        """
+        """
+        (is_success, param_bounds) = self.vmorph.promote("")
+        expected1 = {"promotions": ("Fighter", "Pirate", "Journeyman (2)")}
+        expected2 = False
+        self.assertDictEqual(param_bounds, expected1)
+        self.assertIs(is_success, expected2)
+
+    def test_promote__virtualmorph2(self):
+        """
+        """
+        promo_cls = "Pirate"
+        expected1 = {"promotions": [promo_cls]}
+        expected2 = [
+            ("promote", {'promo_cls': promo_cls})
+        ]
+        expected3 = True
+        (is_success, param_bounds) = self.vmorph.promote(promo_cls)
+        self.assertDictEqual(param_bounds, expected1)
+        self.assertListEqual(
+            self.vmorph.history,
+            expected2,
+        )
+        self.assertIs(is_success, expected3)
+
+
+class PromoteTests2(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        game_no = 5
+        unit = "Lara"
+        init_options = {}
+        self.user = User.objects.create()
+        self.vmorph = VirtualMorph.objects.create(
+            owner=self.user,
+            game_no=game_no,
+            unit=unit,
+            init_options=init_options,
+        )
+        self.vmorph.morph = get_morph(game_no, unit, **init_options)
+        self.vmorph.morph.level_up(9)
+
+    def test_promote__virtualmorph1(self):
+        """
+        """
+        (is_success, param_bounds) = self.vmorph.promote("")
+        expected1 = {"promotions": ("Thief Fighter", "Dancer")}
+        expected2 = False
+        self.assertDictEqual(param_bounds, expected1)
+        self.assertIs(is_success, expected2)
+
+    def test_promote__virtualmorph2(self):
+        """
+        """
+        promo_cls = "Dancer"
+        expected1 = {"promotions": [promo_cls]}
+        expected2 = [
+            ("promote", {'promo_cls': promo_cls})
+        ]
+        expected3 = True
+        (is_success, param_bounds) = self.vmorph.promote(promo_cls)
+        self.assertDictEqual(param_bounds, expected1)
+        self.assertListEqual(
+            self.vmorph.history,
+            expected2,
+        )
+        self.assertIs(is_success, expected3)

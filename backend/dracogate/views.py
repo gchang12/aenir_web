@@ -400,3 +400,12 @@ class LevelUpView(MorphActionView):
         self.object.save()
         return redirect(reverse("dracogate:morph_detail", kwargs={"id": self.object.id}))
 
+
+class PromoteView(MorphActionView):
+    """
+    """
+    action = {
+        "title": "Promote",
+        "name": "promote",
+        "stat_type": "bases",
+    }

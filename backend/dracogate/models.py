@@ -10,6 +10,7 @@ from django.utils import timezone
 from aenir import (
     get_morph_class,
     LevelUpError,
+    PromotionError,
 )
 
 User = get_user_model()
@@ -167,6 +168,27 @@ class VirtualMorph(models.Model):
                 "min_lv": min_lv,
                 "max_lv": max_lv,
             }
+            is_success = False
+        return (is_success, param_bounds)
+
+    # TODO: Test this!
+    def promote(self, promo_cls: str):
+        """
+        """
+        is_success: bool
+        try:
+            self.morph.promote(promo_cls=promo_cls)
+            param_bounds = {"promotions": [self.morph.current_cls]}
+            self.history.append(
+                ("promote", {'promo_cls': promo_cls})
+            )
+            is_success = True
+        except PromotionError as e:
+            param_bounds = {
+                e.Reason.NO_PROMOTIONS: None,
+                e.Reason.LEVEL_TOO_LOW: {"min_promo_level": e.min_promo_level},
+                e.Reason.INVALID_PROMOTION: {"promotions": e.promotion_list},
+            }[e.reason]
             is_success = False
         return (is_success, param_bounds)
 
