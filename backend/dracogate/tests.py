@@ -707,11 +707,11 @@ class PromoteTests2(TestCase):
             init_options=init_options,
         )
         self.vmorph.morph = get_morph(game_no, unit, **init_options)
-        self.vmorph.morph.level_up(9)
 
     def test_promote__virtualmorph1(self):
         """
         """
+        self.vmorph.morph.level_up(9)
         (is_success, param_bounds) = self.vmorph.promote("")
         expected1 = {"promotions": ("Fighter", "Pirate", "Journeyman (2)")}
         expected2 = False
@@ -727,6 +727,7 @@ class PromoteTests2(TestCase):
             ("promote", {'promo_cls': promo_cls})
         ]
         expected3 = True
+        self.vmorph.morph.level_up(9)
         (is_success, param_bounds) = self.vmorph.promote(promo_cls)
         self.assertDictEqual(param_bounds, expected1)
         self.assertListEqual(
@@ -737,21 +738,37 @@ class PromoteTests2(TestCase):
 
     def test_promote__formbuilder1(self):
         """
+        Invalid promotions
         """
         field = "promo_cls"
         expected2 = [(choice, choice) for choice in ("Fighter", "Pirate", "Journeyman (2)")]
+        self.vmorph.morph.level_up(9)
         (_, param_bounds) = self.vmorph.promote("")
+        form_class = ActionFormBuilder.promote(param_bounds)
+        self.assertIn(field, form_class.declared_fields)
+        self.assertEqual(form_class.declared_fields[field].choices, expected2)
+
+    def test_promote__formbuilder2(self):
+        """
+        Level too low.
+        """
+        field = "promo_cls"
+        expected2 = [(choice, choice) for choice in ("Fighter", "Pirate", "Journeyman (2)")]
+        (is_success, param_bounds) = self.vmorph.promote("")
+        self.assertIs(is_success, False)
+        self.assertIs(param_bounds['min_promo_level'], 10)
         form_class = ActionFormBuilder.promote(param_bounds)
         self.assertIn(field, form_class.declared_fields)
         self.assertEqual(form_class.declared_fields[field].choices, expected2)
 
     def test_promote__formbuilder3(self):
         """
+        No promotions
         """
         field = "promo_cls"
         expected4 = True
         # pretend Roy is at max level
-        #self.vmorph.morph.level_up(9)
+        self.vmorph.morph.level_up(9)
         self.vmorph.morph.promote(promo_cls="Journeyman (2)")
         self.vmorph.morph.level_up(9)
         self.vmorph.morph.promote(promo_cls="Journeyman (3)")
@@ -832,6 +849,122 @@ class PromoteTests3(TestCase):
         self.vmorph.morph.promote(promo_cls="Dancer")
         self.vmorph.morph.level_up(9)
         self.vmorph.morph.promote(promo_cls="Thief Fighter")
+        # try to get param_bounds
+        (_, param_bounds) = self.vmorph.promote("")
+        # get form class
+        form_class = ActionFormBuilder.promote(param_bounds)
+        # test form class
+        self.assertIn(field, form_class.declared_fields)
+        self.assertEqual(form_class.declared_fields[field].choices, [])
+        self.assertIs(form_class.declared_fields[field].disabled, expected4)
+
+
+class PromoteTests4(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        game_no = 6
+        unit = "Rutger"
+        init_options = {"hard_mode": False}
+        self.user = User.objects.create()
+        self.vmorph = VirtualMorph.objects.create(
+            owner=self.user,
+            game_no=game_no,
+            unit=unit,
+            init_options=init_options,
+        )
+        self.vmorph.morph = get_morph(game_no, unit, **init_options)
+
+    def test_promote__virtualmorph1(self):
+        """
+        No errors.
+        """
+        promo_cls = "Swordmaster (M)"
+        self.vmorph.morph.level_up(9)
+        (is_success, param_bounds) = self.vmorph.promote(promo_cls)
+        expected1 = {"promotions": [promo_cls]}
+        expected2 = True
+        expected3 = [
+            ("promote", {'promo_cls': promo_cls})
+        ]
+        self.assertDictEqual(param_bounds, expected1)
+        self.assertIs(is_success, expected2)
+        self.assertListEqual(
+            self.vmorph.history,
+            expected3,
+        )
+
+    def test_promote__virtualmorph2(self):
+        """
+        Level too low.
+        """
+        promo_cls = "Swordmaster (M)"
+        expected1 = {"min_promo_level": 10, "promotions": [promo_cls]}
+        expected2 = []
+        expected3 = False
+        (is_success, param_bounds) = self.vmorph.promote(promo_cls)
+        self.assertDictEqual(param_bounds, expected1)
+        self.assertIs(is_success, expected3)
+        self.assertListEqual(
+            self.vmorph.history,
+            expected2,
+        )
+
+    def test_promote__virtualmorph3(self):
+        """
+        Invalid promotion
+        """
+        promo_cls = "Swordmaster (M)"
+        expected1 = {"promotions": [promo_cls]}
+        expected2 = [("promote", {"promo_cls": promo_cls})]
+        expected3 = True
+        self.vmorph.morph.level_up(9)
+        (is_success, param_bounds) = self.vmorph.promote("")
+        self.assertDictEqual(param_bounds, expected1)
+        self.assertIs(is_success, expected3)
+        self.assertListEqual(
+            self.vmorph.history,
+            expected2,
+        )
+
+    def test_promote__virtualmorph4(self):
+        """
+        Level too low and invalid promotion.
+        """
+        promo_cls = "Swordmaster (M)"
+        expected1 = {"min_promo_level": 10, "promotions": [promo_cls]}
+        expected2 = []
+        expected3 = False
+        (is_success, param_bounds) = self.vmorph.promote("")
+        self.assertDictEqual(param_bounds, expected1)
+        self.assertIs(is_success, expected3)
+        self.assertListEqual(
+            self.vmorph.history,
+            expected2,
+        )
+
+    def test_promote__formbuilder1(self):
+        """
+        """
+        field = "promo_cls"
+        expected2 = "Swordmaster (M)"
+        (_, param_bounds) = self.vmorph.promote("")
+        form_class = ActionFormBuilder.promote(param_bounds)
+        self.assertIn(field, form_class.declared_fields)
+        self.assertEqual(form_class.declared_fields[field].choices, [(expected2, expected2)])
+
+    def test_promote__formbuilder3(self):
+        """
+        """
+        field = "promo_cls"
+        expected2 = "Swordmaster (M)"
+        expected4 = True
+        # pretend Roy is at max level
+        self.vmorph.morph.level_up(9)
+        self.vmorph.morph.promote()
         # try to get param_bounds
         (_, param_bounds) = self.vmorph.promote("")
         # get form class

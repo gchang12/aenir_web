@@ -171,7 +171,6 @@ class VirtualMorph(models.Model):
             is_success = False
         return (is_success, param_bounds)
 
-    # TODO: Test this!
     def promote(self, promo_cls: str):
         """
         """
@@ -180,13 +179,13 @@ class VirtualMorph(models.Model):
             self.morph.promote(promo_cls=promo_cls)
             param_bounds = {"promotions": [self.morph.current_cls]}
             self.history.append(
-                ("promote", {'promo_cls': promo_cls})
+                ("promote", {'promo_cls': self.morph.current_cls})
             )
             is_success = True
         except PromotionError as e:
             param_bounds = {
                 e.Reason.NO_PROMOTIONS: None,
-                e.Reason.LEVEL_TOO_LOW: {"min_promo_level": e.min_promo_level},
+                e.Reason.LEVEL_TOO_LOW: {"min_promo_level": e.min_promo_level, "promotions": e.promotion_list},
                 e.Reason.INVALID_PROMOTION: {"promotions": e.promotion_list},
             }[e.reason]
             is_success = False
