@@ -2,6 +2,10 @@
 """
 
 from django import forms
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+
+from aenir import PromotionError
 
 class InitFormBuilder:
     """
@@ -109,17 +113,37 @@ class ActionFormBuilder:
                 disabled=param_bounds['min_lv'] is None,
                 label="Target Level",
             )
+
         return LevelUpForm
 
     @staticmethod
-    def promote(param_bounds):
+    def promote(param_bounds, morph):
         """
         """
         choices = ([] if param_bounds is None else [(choice, choice) for choice in param_bounds["promotions"]])
+
+        class PromotionClassField(forms.ChoiceField):
+            """
+            """
+
+            def validate(self, value):
+                """
+                """
+                super().validate(value)
+                try:
+                    morph.promote(promo_cls=value)
+                except PromotionError as e:
+                    if e.reason == e.Reason.LEVEL_TOO_LOW:
+                        raise ValidationError(
+                            _("%(name)s has to be at least level %(min_promo_level)d to promote to '%(value)s'."),
+                            params={"min_promo_level": morph.min_promo_level, "value": value, "name": morph.name},
+                        )
+                return True
+
         class PromoteForm(forms.Form):
             """
             """
-            promo_cls = forms.ChoiceField(
+            promo_cls = PromotionClassField(
                 initial="",
                 choices=choices,
                 required=True,

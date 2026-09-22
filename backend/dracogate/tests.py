@@ -628,7 +628,7 @@ class PromoteTests(TestCase):
         field = "promo_cls"
         expected2 = "Master Lord"
         (_, param_bounds) = self.vmorph.promote("")
-        form_class = ActionFormBuilder.promote(param_bounds)
+        form_class = ActionFormBuilder.promote(param_bounds, self.vmorph.morph)
         self.assertIn(field, form_class.declared_fields)
         self.assertEqual(form_class.declared_fields[field].choices, [(expected2, expected2)])
 
@@ -644,7 +644,7 @@ class PromoteTests(TestCase):
         # try to get param_bounds
         (_, param_bounds) = self.vmorph.promote("")
         # get form class
-        form_class = ActionFormBuilder.promote(param_bounds)
+        form_class = ActionFormBuilder.promote(param_bounds, self.vmorph.morph)
         # test form class
         self.assertIn(field, form_class.declared_fields)
         self.assertEqual(form_class.declared_fields[field].choices, [])
@@ -744,7 +744,7 @@ class PromoteTests2(TestCase):
         expected2 = [(choice, choice) for choice in ("Fighter", "Pirate", "Journeyman (2)")]
         self.vmorph.morph.level_up(9)
         (_, param_bounds) = self.vmorph.promote("")
-        form_class = ActionFormBuilder.promote(param_bounds)
+        form_class = ActionFormBuilder.promote(param_bounds, self.vmorph.morph)
         self.assertIn(field, form_class.declared_fields)
         self.assertEqual(form_class.declared_fields[field].choices, expected2)
 
@@ -757,9 +757,12 @@ class PromoteTests2(TestCase):
         (is_success, param_bounds) = self.vmorph.promote("")
         self.assertIs(is_success, False)
         self.assertIs(param_bounds['min_promo_level'], 10)
-        form_class = ActionFormBuilder.promote(param_bounds)
+        form_class = ActionFormBuilder.promote(param_bounds, self.vmorph.morph)
         self.assertIn(field, form_class.declared_fields)
         self.assertEqual(form_class.declared_fields[field].choices, expected2)
+        form = form_class({"promo_cls": "Pirate"})
+        self.assertIs(form.is_valid(), False)
+        self.assertDictEqual(form.cleaned_data, {})
 
     def test_promote__formbuilder3(self):
         """
@@ -775,7 +778,7 @@ class PromoteTests2(TestCase):
         # try to get param_bounds
         (_, param_bounds) = self.vmorph.promote("")
         # get form class
-        form_class = ActionFormBuilder.promote(param_bounds)
+        form_class = ActionFormBuilder.promote(param_bounds, self.vmorph.morph)
         # test form class
         self.assertIn(field, form_class.declared_fields)
         self.assertEqual(form_class.declared_fields[field].choices, [])
@@ -835,7 +838,7 @@ class PromoteTests3(TestCase):
         field = "promo_cls"
         expected2 = [(choice, choice) for choice in ("Thief Fighter", "Dancer")]
         (_, param_bounds) = self.vmorph.promote("")
-        form_class = ActionFormBuilder.promote(param_bounds)
+        form_class = ActionFormBuilder.promote(param_bounds, self.vmorph.morph)
         self.assertIn(field, form_class.declared_fields)
         self.assertEqual(form_class.declared_fields[field].choices, expected2)
 
@@ -852,7 +855,7 @@ class PromoteTests3(TestCase):
         # try to get param_bounds
         (_, param_bounds) = self.vmorph.promote("")
         # get form class
-        form_class = ActionFormBuilder.promote(param_bounds)
+        form_class = ActionFormBuilder.promote(param_bounds, self.vmorph.morph)
         # test form class
         self.assertIn(field, form_class.declared_fields)
         self.assertEqual(form_class.declared_fields[field].choices, [])
@@ -952,7 +955,7 @@ class PromoteTests4(TestCase):
         field = "promo_cls"
         expected2 = "Swordmaster (M)"
         (_, param_bounds) = self.vmorph.promote("")
-        form_class = ActionFormBuilder.promote(param_bounds)
+        form_class = ActionFormBuilder.promote(param_bounds, self.vmorph.morph)
         self.assertIn(field, form_class.declared_fields)
         self.assertEqual(form_class.declared_fields[field].choices, [(expected2, expected2)])
 
@@ -968,7 +971,7 @@ class PromoteTests4(TestCase):
         # try to get param_bounds
         (_, param_bounds) = self.vmorph.promote("")
         # get form class
-        form_class = ActionFormBuilder.promote(param_bounds)
+        form_class = ActionFormBuilder.promote(param_bounds, self.vmorph.morph)
         # test form class
         self.assertIn(field, form_class.declared_fields)
         self.assertEqual(form_class.declared_fields[field].choices, [])
