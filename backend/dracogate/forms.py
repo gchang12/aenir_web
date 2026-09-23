@@ -133,7 +133,7 @@ class ActionFormBuilder:
                 super().validate(value)
                 try:
                     #print("PromotionClassField")
-                    morph.promote(promo_cls=value)
+                    morph.copy().promote(promo_cls=value)
                 except PromotionError as e:
                     if e.reason == e.Reason.LEVEL_TOO_LOW:
                         raise ValidationError(

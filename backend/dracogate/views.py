@@ -423,13 +423,13 @@ class PromoteView(MorphActionView):
     def get_context_data(self, **kwds):
         """
         """
-        print('get_context_data')
+        #print('get_context_data')
         context = super().get_context_data(**kwds)
         morph = self.object.morph.copy()
         is_success: bool
         try:
-            print(morph.current_cls)
-            morph.promote()
+            #print(morph.current_cls)
+            morph.promote("")
             is_success = True
         except PromotionError as e:
             is_success = {
@@ -437,8 +437,8 @@ class PromoteView(MorphActionView):
                 e.Reason.LEVEL_TOO_LOW: True,
                 e.Reason.INVALID_PROMOTION: True,
             }[e.reason]
-            print(e.reason)
-        print(is_success)
+            #print(e.reason)
+        #print(is_success)
         context['is_success'] = is_success
         return context
 
@@ -446,7 +446,7 @@ class PromoteView(MorphActionView):
         """
         """
         #print(dir(self), self.object, kwds, id)
-        print('get_form_class')
+        #print('get_form_class')
         try:
             (_, param_bounds) = self.object.promote("")
         except AttributeError:
@@ -460,6 +460,7 @@ class PromoteView(MorphActionView):
         """
         promo_cls = form.cleaned_data['promo_cls']
         #print(self.object.morph.current_stats.as_dict())
+        #print(promo_cls)
         self.object.promote(promo_cls)
         self.object.save()
         return redirect(reverse("dracogate:morph_detail", kwargs={"id": self.object.id}))

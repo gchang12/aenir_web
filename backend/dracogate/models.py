@@ -182,6 +182,7 @@ class VirtualMorph(models.Model):
             )
             param_bounds = {}
             is_success = True
+            #print(self.history)
         except PromotionError as e:
             param_bounds = {
                 e.Reason.NO_PROMOTIONS: None,
@@ -189,6 +190,8 @@ class VirtualMorph(models.Model):
                 e.Reason.INVALID_PROMOTION: {"promotions": e.promotion_list},
             }[e.reason]
             is_success = False
+            #print(e.reason)
+        #print(is_success)
         return (is_success, param_bounds)
 
 '''
