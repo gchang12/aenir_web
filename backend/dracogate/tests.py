@@ -600,8 +600,8 @@ class PromoteTests(TestCase):
         """
         """
         (is_success, param_bounds) = self.vmorph.promote("")
-        expected1 = {"promotions": ["Master Lord"]}
-        expected2 = True
+        expected1 = {"promotions": ("Master Lord",)}
+        expected2 = False
         self.assertDictEqual(param_bounds, expected1)
         self.assertIs(is_success, expected2)
 
@@ -609,7 +609,7 @@ class PromoteTests(TestCase):
         """
         """
         promo_cls = "Master Lord"
-        expected1 = {"promotions": ["Master Lord"]}
+        expected1 = {}
         expected2 = [
             ("promote", {'promo_cls': promo_cls})
         ]
@@ -626,11 +626,12 @@ class PromoteTests(TestCase):
         """
         """
         field = "promo_cls"
-        expected2 = "Master Lord"
+        promo_cls = "Master Lord"
+        expected2 = [('', ''), (promo_cls, promo_cls)]
         (_, param_bounds) = self.vmorph.promote("")
         form_class = ActionFormBuilder.promote(param_bounds, self.vmorph.morph)
         self.assertIn(field, form_class.declared_fields)
-        self.assertEqual(form_class.declared_fields[field].choices, [(expected2, expected2)])
+        self.assertEqual(form_class.declared_fields[field].choices, expected2)
 
     def test_promote__formbuilder3(self):
         """
@@ -640,14 +641,14 @@ class PromoteTests(TestCase):
         expected4 = True
         # pretend Roy is at max level
         self.vmorph.morph.level_up(9)
-        self.vmorph.morph.promote()
+        self.vmorph.morph.promote(expected2)
         # try to get param_bounds
         (_, param_bounds) = self.vmorph.promote("")
         # get form class
         form_class = ActionFormBuilder.promote(param_bounds, self.vmorph.morph)
         # test form class
         self.assertIn(field, form_class.declared_fields)
-        self.assertEqual(form_class.declared_fields[field].choices, [])
+        self.assertEqual(form_class.declared_fields[field].choices, [("", "")])
         self.assertIs(form_class.declared_fields[field].disabled, expected4)
 
     @unittest.skip("")
@@ -655,10 +656,10 @@ class PromoteTests(TestCase):
         """
         """
         url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
-        query_params = {"action": "promote", "stat_type": "bases", "target_lv": "20"}
+        query_params = {"action": "promote", "promo_cls": "Master Lord", "stat_type": "bases"}
         response = self.client.get(url, query_params=query_params)
         # HP values
-        values = ("33.2", "18.0")
+        values = ("22.0", "18.0")
         for value in values:
             self.assertContains(response, value)
 
@@ -667,9 +668,9 @@ class PromoteTests(TestCase):
         """
         """
         expected = [["promote", {"num_levels": 19}]]
-        field = "target_lv"
+        field = "promo_cls"
         url = reverse("dracogate:promote", kwargs={"id": self.vmorph.id})
-        data = {field: 20}
+        data = {field: "Master Lord"}
         response = self.client.post(url, data=data)
         self.assertLess(response.status_code, 400)
         vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
@@ -722,7 +723,7 @@ class PromoteTests2(TestCase):
         """
         """
         promo_cls = "Pirate"
-        expected1 = {"promotions": [promo_cls]}
+        expected1 = {}
         expected2 = [
             ("promote", {'promo_cls': promo_cls})
         ]
@@ -742,6 +743,7 @@ class PromoteTests2(TestCase):
         """
         field = "promo_cls"
         expected2 = [(choice, choice) for choice in ("Fighter", "Pirate", "Journeyman (2)")]
+        expected2.insert(0, ("", ""))
         self.vmorph.morph.level_up(9)
         (_, param_bounds) = self.vmorph.promote("")
         form_class = ActionFormBuilder.promote(param_bounds, self.vmorph.morph)
@@ -754,6 +756,7 @@ class PromoteTests2(TestCase):
         """
         field = "promo_cls"
         expected2 = [(choice, choice) for choice in ("Fighter", "Pirate", "Journeyman (2)")]
+        expected2.insert(0, ("", ""))
         (is_success, param_bounds) = self.vmorph.promote("")
         self.assertIs(is_success, False)
         self.assertIs(param_bounds['min_promo_level'], 10)
@@ -781,7 +784,7 @@ class PromoteTests2(TestCase):
         form_class = ActionFormBuilder.promote(param_bounds, self.vmorph.morph)
         # test form class
         self.assertIn(field, form_class.declared_fields)
-        self.assertEqual(form_class.declared_fields[field].choices, [])
+        self.assertEqual(form_class.declared_fields[field].choices, [("", "")])
         self.assertIs(form_class.declared_fields[field].disabled, expected4)
 
 
@@ -819,7 +822,7 @@ class PromoteTests3(TestCase):
         """
         """
         promo_cls = "Dancer"
-        expected1 = {"promotions": [promo_cls]}
+        expected1 = {}
         expected2 = [
             ("promote", {'promo_cls': promo_cls})
         ]
@@ -837,6 +840,7 @@ class PromoteTests3(TestCase):
         """
         field = "promo_cls"
         expected2 = [(choice, choice) for choice in ("Thief Fighter", "Dancer")]
+        expected2.insert(0, ("", ""))
         (_, param_bounds) = self.vmorph.promote("")
         form_class = ActionFormBuilder.promote(param_bounds, self.vmorph.morph)
         self.assertIn(field, form_class.declared_fields)
@@ -858,7 +862,7 @@ class PromoteTests3(TestCase):
         form_class = ActionFormBuilder.promote(param_bounds, self.vmorph.morph)
         # test form class
         self.assertIn(field, form_class.declared_fields)
-        self.assertEqual(form_class.declared_fields[field].choices, [])
+        self.assertEqual(form_class.declared_fields[field].choices, [("", "")])
         self.assertIs(form_class.declared_fields[field].disabled, expected4)
 
 
@@ -888,7 +892,7 @@ class PromoteTests4(TestCase):
         promo_cls = "Swordmaster (M)"
         self.vmorph.morph.level_up(9)
         (is_success, param_bounds) = self.vmorph.promote(promo_cls)
-        expected1 = {"promotions": [promo_cls]}
+        expected1 = {}
         expected2 = True
         expected3 = [
             ("promote", {'promo_cls': promo_cls})
@@ -921,9 +925,9 @@ class PromoteTests4(TestCase):
         Invalid promotion
         """
         promo_cls = "Swordmaster (M)"
-        expected1 = {"promotions": [promo_cls]}
-        expected2 = [("promote", {"promo_cls": promo_cls})]
-        expected3 = True
+        expected1 = {"promotions": (promo_cls,)}
+        expected2 = []
+        expected3 = False
         self.vmorph.morph.level_up(9)
         (is_success, param_bounds) = self.vmorph.promote("")
         self.assertDictEqual(param_bounds, expected1)
@@ -953,11 +957,12 @@ class PromoteTests4(TestCase):
         """
         """
         field = "promo_cls"
-        expected2 = "Swordmaster (M)"
+        promo_cls = "Swordmaster (M)"
+        expected2 = [("", ""), (promo_cls, promo_cls)]
         (_, param_bounds) = self.vmorph.promote("")
         form_class = ActionFormBuilder.promote(param_bounds, self.vmorph.morph)
         self.assertIn(field, form_class.declared_fields)
-        self.assertEqual(form_class.declared_fields[field].choices, [(expected2, expected2)])
+        self.assertEqual(form_class.declared_fields[field].choices, expected2)
 
     def test_promote__formbuilder3(self):
         """
@@ -967,13 +972,13 @@ class PromoteTests4(TestCase):
         expected4 = True
         # pretend Roy is at max level
         self.vmorph.morph.level_up(9)
-        self.vmorph.morph.promote()
+        self.vmorph.morph.promote(expected2)
         # try to get param_bounds
         (_, param_bounds) = self.vmorph.promote("")
         # get form class
         form_class = ActionFormBuilder.promote(param_bounds, self.vmorph.morph)
         # test form class
         self.assertIn(field, form_class.declared_fields)
-        self.assertEqual(form_class.declared_fields[field].choices, [])
+        self.assertEqual(form_class.declared_fields[field].choices, [("", "")])
         self.assertIs(form_class.declared_fields[field].disabled, expected4)
 

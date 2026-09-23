@@ -121,6 +121,7 @@ class ActionFormBuilder:
         """
         """
         choices = ([] if param_bounds is None else [(choice, choice) for choice in param_bounds["promotions"]])
+        choices.insert(0, ("", ""))
 
         class PromotionClassField(forms.ChoiceField):
             """
@@ -131,11 +132,12 @@ class ActionFormBuilder:
                 """
                 super().validate(value)
                 try:
+                    #print("PromotionClassField")
                     morph.promote(promo_cls=value)
                 except PromotionError as e:
                     if e.reason == e.Reason.LEVEL_TOO_LOW:
                         raise ValidationError(
-                            _("%(name)s has to be at least level %(min_promo_level)d to promote to '%(value)s'."),
+                            _("'%(name)s' has to be at least level [%(min_promo_level)d] to promote to '%(value)s'."),
                             params={"min_promo_level": morph.min_promo_level, "value": value, "name": morph.name},
                         )
                 return True

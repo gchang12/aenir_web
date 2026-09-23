@@ -15,6 +15,7 @@ from django.shortcuts import redirect
 from aenir.games import FireEmblemGame
 from aenir import (
     InitError,
+    PromotionError,
     get_morph,
     get_morph_class,
 )
@@ -312,6 +313,7 @@ class ActionForecastView(DetailView):
         {
             None: lambda: None,
             "level_up": self.level_up,
+            "promote": self.promote,
         }[action]()
         delta_dict = {
             "bases": (self.object.morph.current_stats > morph.current_stats).as_dict,
@@ -332,6 +334,12 @@ class ActionForecastView(DetailView):
         """
         num_levels = int(self.request.GET["target_lv"]) - self.object.morph.current_lv
         self.object.level_up(num_levels)
+
+    def promote(self):
+        """
+        """
+        promo_cls = self.request.GET["promo_cls"]
+        self.object.promote(promo_cls)
 
 class MorphActionView(FormView, DetailView):
     """
@@ -409,3 +417,48 @@ class PromoteView(MorphActionView):
         "name": "promote",
         "stat_type": "bases",
     }
+
+    def get_context_data(self, **kwds):
+        """
+        """
+        print('get_context_data')
+        context = super().get_context_data(**kwds)
+        morph = self.object.morph.copy()
+        is_success: bool
+        try:
+            print(morph.current_cls)
+            morph.promote()
+            is_success = True
+        except PromotionError as e:
+            is_success = {
+                e.Reason.NO_PROMOTIONS: False,
+                e.Reason.LEVEL_TOO_LOW: True,
+                e.Reason.INVALID_PROMOTION: True,
+            }[e.reason]
+            print(e.reason)
+        print(is_success)
+        context['is_success'] = is_success
+        return context
+
+    def get_form_class(self, **kwds):
+        """
+        """
+        #print(dir(self), self.object, kwds, id)
+        print('get_form_class')
+        try:
+            (_, param_bounds) = self.object.promote("")
+        except AttributeError:
+            self.object = self.get_object()
+            (_, param_bounds) = self.object.promote("")
+        form_class = ActionFormBuilder.promote(param_bounds, self.object.morph)
+        return form_class
+
+    def form_valid(self, form):
+        """
+        """
+        promo_cls = form.cleaned_data['promo_cls']
+        #print(self.object.morph.current_stats.as_dict())
+        self.object.promote(promo_cls)
+        self.object.save()
+        return redirect(reverse("dracogate:morph_detail", kwargs={"id": self.object.id}))
+

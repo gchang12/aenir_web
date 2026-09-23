@@ -177,10 +177,10 @@ class VirtualMorph(models.Model):
         is_success: bool
         try:
             self.morph.promote(promo_cls=promo_cls)
-            param_bounds = {"promotions": [self.morph.current_cls]}
             self.history.append(
                 ("promote", {'promo_cls': self.morph.current_cls})
             )
+            param_bounds = {}
             is_success = True
         except PromotionError as e:
             param_bounds = {
