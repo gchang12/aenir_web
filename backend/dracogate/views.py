@@ -272,6 +272,8 @@ class MorphDetailView(DetailView):
             self.actions_by_game[self.object.game_no],
         )
         context['history'] = self.object.history
+        context["unit_class"] = morph.current_cls
+        context["unit_lv"] = morph.current_lv
         return context
 
     def get_object(self):

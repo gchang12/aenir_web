@@ -41,6 +41,16 @@
   <article>
     <h2>Stats</h2>
     <table>
+      <thead>
+        <tr>
+          <th>Class</th>
+          <td>{{ unit_class }}</td>
+        </tr>
+        <tr>
+          <th>Level</th>
+          <td>{{ unit_lv }}</td>
+        </tr>
+      </thead>
       <tbody>
         {% for stat in stats %}
         <tr>
