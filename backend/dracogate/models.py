@@ -77,7 +77,6 @@ class StatsBundler:
         for indexno, stat in enumerate(morph.Stats.STAT_LIST()):
             growth = getattr(morph.growth_rates, stat)
             max_ = getattr(morph.max_stats, stat)
-            absmax = absmax_stats[indexno]
             if delta_dict is not None:
                 delta = (None if delta_dict[stat] is None else delta_dict[stat] / 100)
             else:
@@ -137,6 +136,7 @@ class VirtualMorph(models.Model):
         morph = morph_class.from_dict(self.stats)
         #morph = get_morph(self.game_no, self.unit, **self.init_options)
         #for action, params in self.history: getattr(morph, action)(**params)
+        #print(morph._miscellany)
         self.morph = morph
         return morph
 
@@ -215,20 +215,24 @@ class VirtualMorph(models.Model):
             raise e
         return (is_success, param_bounds)
 
-    def use_afas_drops(self):
+    def use_afas_drops(self, to_consume):
         """
         """
         is_success: bool
-        try:
-            self.morph.use_afas_drops()
-            self.history.append(
-                ("use_afas_drops", {}),
-            )
-            is_success = True
-            param_bounds = {}
-        except GrowthsItemError as e:
+        if to_consume is True:
+            try:
+                self.morph.use_afas_drops()
+                self.history.append(
+                    ("use_afas_drops", {}),
+                )
+                is_success = True
+                param_bounds = {}
+            except GrowthsItemError as e:
+                is_success = False
+                param_bounds = None
+        else:
             is_success = False
-            param_bounds = None
+            param_bounds = {}
         return (is_success, param_bounds)
 
 '''

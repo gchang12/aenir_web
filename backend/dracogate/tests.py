@@ -1453,7 +1453,7 @@ class UseAfasDropsTests(TestCase):
         """
         No errors.
         """
-        (is_success, param_bounds) = self.vmorph.use_afas_drops()
+        (is_success, param_bounds) = self.vmorph.use_afas_drops(True)
         expected1 = {}
         expected2 = True
         expected3 = [
@@ -1473,8 +1473,23 @@ class UseAfasDropsTests(TestCase):
         expected2 = []
         expected3 = False
         self.vmorph.morph.use_afas_drops()
-        (is_success, param_bounds) = self.vmorph.use_afas_drops()
+        (is_success, param_bounds) = self.vmorph.use_afas_drops(True)
         self.assertIsNone(param_bounds)
+        self.assertIs(is_success, expected3)
+        self.assertListEqual(
+            self.vmorph.history,
+            expected2,
+        )
+
+    def test_use_afas_drops__virtualmorph3(self):
+        """
+        Refuse to use Afa's Drops.
+        """
+        expected2 = []
+        expected3 = False
+        self.vmorph.morph.use_afas_drops()
+        (is_success, param_bounds) = self.vmorph.use_afas_drops(False)
+        self.assertDictEqual(param_bounds, {})
         self.assertIs(is_success, expected3)
         self.assertListEqual(
             self.vmorph.history,
@@ -1485,7 +1500,7 @@ class UseAfasDropsTests(TestCase):
         """
         """
         field = "to_consume"
-        (_, param_bounds) = self.vmorph.use_afas_drops()
+        (_, param_bounds) = self.vmorph.use_afas_drops(False)
         form_class = ActionFormBuilder.use_afas_drops(param_bounds, self.vmorph.morph)
         self.assertIn(field, form_class.declared_fields)
 
@@ -1495,7 +1510,7 @@ class UseAfasDropsTests(TestCase):
         """
         field = "to_consume"
         # try to get param_bounds
-        (_, param_bounds) = self.vmorph.use_afas_drops()
+        (_, param_bounds) = self.vmorph.use_afas_drops(False)
         # get form class
         self.vmorph.morph.use_afas_drops()
         form_class = ActionFormBuilder.use_afas_drops(param_bounds, self.vmorph.morph)
@@ -1508,76 +1523,109 @@ class UseAfasDropsTests(TestCase):
         """
         field = "to_consume"
         # try to get param_bounds
-        (_, param_bounds) = self.vmorph.use_afas_drops()
+        (_, param_bounds) = self.vmorph.use_afas_drops(False)
         # get form class
         form_class = ActionFormBuilder.use_afas_drops(param_bounds, self.vmorph.morph)
         form = form_class({"to_consume": False})
         self.assertIs(form.is_valid(), False)
 
-    @unittest.skip
-    def test_use_afas_drops__forecast__fail(self):
-        """
-        """
-        field = "item_name"
-        value = "Speedwings"
-        url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
-        query_params = {"action": "use_afas_drops", field: value, "stat_type": "bases"}
-        response = self.client.get(url, query_params=query_params)
-        # HP values
-        values = ("20.0", "38.3")
-        for value in values:
-            self.assertContains(response, value)
-        # NOTE: Technically proves nothing, just the presence of the before-values.
-
-    @unittest.skip
     def test_use_afas_drops__forecast(self):
         """
         """
-        field = "item_name"
-        value = "Angelic Robe"
+        field = "to_consume"
+        value = "on"
         url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
-        query_params = {"action": "use_afas_drops", field: value, "stat_type": "bases"}
+        query_params = {"action": "use_afas_drops", field: value, "stat_type": "growths"}
         response = self.client.get(url, query_params=query_params)
         # HP values
-        values = ("45.3", "38.3")
+        values = ("20", "15")
         for value in values:
             self.assertContains(response, value)
+        # TODO: with self.assertRaises(...): self.assertContains for ...forecast__fail methods
+        # NOTE: Technically proves nothing, just the presence of the before-values.
 
-    @unittest.skip
+    def test_use_afas_drops__forecast__fail(self):
+        """
+        """
+        field = "to_consume"
+        value = "off"
+        url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
+        query_params = {"action": "use_afas_drops", "stat_type": "growths"}
+        self.vmorph.morph.use_afas_drops()
+        self.vmorph.save()
+        #print(self.vmorph.morph._miscellany is not None)
+        #print(self.vmorph.morph.growth_rates.as_dict())
+        response = self.client.get(url, query_params=query_params)
+        # HP values
+        values = ("20", "50")
+        for value in values:
+            self.assertContains(response, value)
+        values = ("15", "45")
+        for value in values:
+            with self.assertRaises(AssertionError):
+                self.assertContains(response, value)
+
     def test_use_afas_drops__view_post__fail(self):
         """
+        Already used Afa's Drops.
         """
-        field = "item_name"
-        value = "Speedwings"
-        expected = [["use_afas_drops", {field: value}]]
+        field = "to_consume"
+        value = "on"
+        expected = [["use_afas_drops", {}]]
         url = reverse("dracogate:use_afas_drops", kwargs={"id": self.vmorph.id})
         data = {field: value}
+        self.vmorph.morph.use_afas_drops()
+        self.vmorph.save()
         response = self.client.post(url, data=data)
         self.assertEqual(response.status_code, 200)
-        values = ("cannot use", "Speedwings", "Spd", "is maxed")
+        #values = ("Afa", "Drops", "already used", self.vmorph.morph.name)
+        # NOTE: Because upon using Afa's Drops, the checkbox is disabled initially, and the form containing it is submitted, resulting in the error message.
+        values = ("field", "required")
         for value in values:
             self.assertContains(response, value)
         vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
         morph = vmorph.init()
-        self.assertEqual(morph.current_stats.Spd, 20_00)
+        self.assertEqual(morph.growth_rates.Def, 20)
         self.assertListEqual(vmorph.history, [])
 
-    @unittest.skip
+    def test_use_afas_drops__view_post__fail2(self):
+        """
+        Did not use Afa's Drops.
+        """
+        field = "to_consume"
+        value = "off"
+        morph = self.vmorph.morph
+        expected = [["use_afas_drops", {}]]
+        url = reverse("dracogate:use_afas_drops", kwargs={"id": self.vmorph.id})
+        data = {}
+        self.assertEqual(morph.growth_rates.Def, 15)
+        response = self.client.post(url, data=data)
+        self.assertLess(response.status_code, 400)
+        values = ("field", "required")
+        for value in values:
+            self.assertContains(response, value)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        morph = vmorph.init()
+        self.assertEqual(morph.growth_rates.Def, 15)
+        self.assertListEqual(vmorph.history, [])
+
     def test_use_afas_drops__view_post(self):
         """
         """
         #self.vmorph.morph.level_up(9)
         #self.vmorph.save()
-        field = "item_name"
-        value = "Angelic Robe"
-        expected = [["use_afas_drops", {field: value}]]
+        morph = self.vmorph.morph
+        field = "to_consume"
+        value = "on"
+        expected = [["use_afas_drops", {}]]
         url = reverse("dracogate:use_afas_drops", kwargs={"id": self.vmorph.id})
         data = {field: value}
+        self.assertEqual(morph.growth_rates.Def, 15)
         response = self.client.post(url, data=data)
         self.assertLess(response.status_code, 400)
         vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
         morph = vmorph.init()
-        self.assertEqual(morph.current_stats.HP, 45_30)
+        self.assertEqual(morph.growth_rates.Def, 20)
         self.assertListEqual(vmorph.history, expected)
         # test for existence of actions in morph_detail
         url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})

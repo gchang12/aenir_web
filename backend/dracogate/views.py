@@ -317,6 +317,7 @@ class ActionForecastView(DetailView):
             "level_up": self.level_up,
             "promote": self.promote,
             "use_stat_booster": self.use_stat_booster,
+            "use_afas_drops": self.use_afas_drops,
         }[action]()
         delta_dict = {
             "bases": (self.object.morph.current_stats > morph.current_stats).as_dict,
@@ -328,7 +329,7 @@ class ActionForecastView(DetailView):
         }
         context['after']['numeric_stats'] = {
             "bases": StatsBundler.action_forecast_bases(self.object.morph, delta_dict),
-            "growths": StatsBundler.action_forecast_bases(self.object.morph, delta_dict),
+            "growths": StatsBundler.action_forecast_growths(self.object.morph, delta_dict),
         }[stat_type]
         return context
 
@@ -349,6 +350,12 @@ class ActionForecastView(DetailView):
         """
         item_name = self.request.GET["item_name"]
         self.object.use_stat_booster(item_name)
+
+    def use_afas_drops(self):
+        """
+        """
+        to_consume = self.request.GET.get("to_consume")
+        self.object.use_afas_drops(to_consume == "on")
 
 class MorphActionView(FormView, DetailView):
     """
@@ -509,4 +516,44 @@ class UseStatBoosterView(MorphActionView):
         self.object.use_stat_booster(item_name)
         self.object.save()
         return redirect(reverse("dracogate:morph_detail", kwargs={"id": self.object.id}))
+
+# TODO: For all: Redirect user to create morph if he does not own morph.
+# TODO: Redirect if morph is from FE4
+class UseAfasDropsView(MorphActionView):
+    """
+    """
+    action = {
+        "title": "Use Afa's Drops",
+        "name": "use_afas_drops",
+        "stat_type": "growths",
+    }
+
+    def get_context_data(self, **kwds):
+        """
+        """
+        context = super().get_context_data(**kwds)
+        is_success: bool = self.object.morph._miscellany["Afa's Drops"] is None
+        #print(self.object.morph._miscellany)
+        context['is_success'] = is_success
+        return context
+
+    def get_form_class(self, **kwds):
+        """
+        """
+        try:
+            (_, param_bounds) = self.object.use_afas_drops(False)
+        except AttributeError:
+            self.object = self.get_object()
+            (_, param_bounds) = self.object.use_afas_drops(False)
+        form_class = ActionFormBuilder.use_afas_drops(param_bounds, self.object.morph)
+        return form_class
+
+    def form_valid(self, form):
+        """
+        """
+        #to_consume = form.cleaned_data['to_consume']
+        self.object.use_afas_drops(True)
+        self.object.save()
+        return redirect(reverse("dracogate:morph_detail", kwargs={"id": self.object.id}))
+
 

@@ -232,6 +232,7 @@ class ActionFormBuilder:
             to_consume = ToConsumeField(
                 initial=False,
                 required=True,
+                disabled=morph._miscellany["Afa's Drops"] is not None,
                 label="Use Afa's Drops",
             )
         return UseAfasDropsForm
