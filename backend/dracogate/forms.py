@@ -5,7 +5,10 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-from aenir import PromotionError
+from aenir import (
+    PromotionError,
+    StatBoosterError,
+)
 
 class InitFormBuilder:
     """
@@ -153,6 +156,43 @@ class ActionFormBuilder:
                 disabled=param_bounds is None,
             )
         return PromoteForm
+
+    @staticmethod
+    def use_stat_booster(param_bounds, morph):
+        """
+        """
+        choices = [(choice, choice) for choice in param_bounds["stat_boosters"]]
+        choices.insert(0, ("", ""))
+
+        class StatBoosterField(forms.ChoiceField):
+            """
+            """
+
+            def validate(self, value):
+                """
+                """
+                super().validate(value)
+                (stat_name, _bonus) = morph.stat_boosters[value]
+                try:
+                    morph.copy().use_stat_booster(item_name=value)
+                except StatBoosterError as e:
+                    if e.reason == e.Reason.STAT_IS_MAXED:
+                        raise ValidationError(
+                            _("%(name)s cannot use %(item_name)s. %(stat_name)s is maxed."),
+                            params={"item_name": value, "name": morph.name, "stat_name": stat_name},
+                        )
+                return True
+
+        class UseStatBoosterForm(forms.Form):
+            """
+            """
+            item_name = StatBoosterField(
+                initial="",
+                choices=choices,
+                required=True,
+                label="Stat Booster",
+            )
+        return UseStatBoosterForm
 
 '''
     def __init__(self, name: str, *, father: str | None = None):

@@ -1247,36 +1247,40 @@ class UseStatBoosterTests(TestCase):
             expected2,
         )
 
-    @unittest.skip
     def test_use_stat_booster__formbuilder1(self):
         """
         """
         field = "item_name"
-        promo_cls = "Swordmaster (M)"
-        expected2 = [("", ""), (promo_cls, promo_cls)]
+        item_name = "Energy Ring"
+        expected2 = [(choice, choice) for choice in (
+            "",
+            "Angelic Robe",
+            "Energy Ring",
+            "Secret Book",
+            "Speedwings",
+            "Goddess Icon",
+            "Dragonshield",
+            "Talisman",
+            "Boots",
+            "Body Ring",
+        )]
         (_, param_bounds) = self.vmorph.use_stat_booster("")
         form_class = ActionFormBuilder.use_stat_booster(param_bounds, self.vmorph.morph)
         self.assertIn(field, form_class.declared_fields)
         self.assertEqual(form_class.declared_fields[field].choices, expected2)
 
-    @unittest.skip
     def test_use_stat_booster__formbuilder2(self):
         """
+        Check validation.
         """
         field = "item_name"
-        expected2 = "Swordmaster (M)"
-        expected4 = True
-        # pretend Roy is at max level
-        self.vmorph.morph.level_up(9)
-        self.vmorph.morph.use_stat_booster(expected2)
+        item_name = "Speedwings"
         # try to get param_bounds
         (_, param_bounds) = self.vmorph.use_stat_booster("")
         # get form class
         form_class = ActionFormBuilder.use_stat_booster(param_bounds, self.vmorph.morph)
-        # test form class
-        self.assertIn(field, form_class.declared_fields)
-        self.assertEqual(form_class.declared_fields[field].choices, [("", "")])
-        self.assertIs(form_class.declared_fields[field].disabled, expected4)
+        form = form_class({"item_name": "Speedwings"})
+        self.assertIs(form.is_valid(), False)
 
     @unittest.skip
     def test_use_stat_booster__forecast__fail(self):
@@ -1380,3 +1384,26 @@ class UseStatBoosterTests2(TestCase):
         """
         with self.assertRaises(NotImplementedError) as e:
             self.vmorph.use_stat_booster("")
+
+    def test_use_stat_booster__formbuilder1(self):
+        """
+        """
+        field = "item_name"
+        item_name = "Energy Ring"
+        param_bounds = {"stat_boosters": (
+            "",
+            "Angelic Robe",
+            "Energy Ring",
+            "Secret Book",
+            "Speedwings",
+            "Goddess Icon",
+            "Dragonshield",
+            "Talisman",
+            "Boots",
+            "Body Ring",
+        )}
+        form_class = ActionFormBuilder.use_stat_booster(param_bounds, self.vmorph.morph)
+        form = form_class({field: item_name})
+        with self.assertRaises(TypeError):
+            form.is_valid()
+
