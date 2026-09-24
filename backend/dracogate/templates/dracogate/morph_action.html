@@ -15,10 +15,13 @@
   {{ form }}
   <button{% if not is_success %} disabled{% endif %}>Confirm</button>
 </form>
-<div id="action_forecast"
-  hx-get="{% url 'dracogate:action_forecast' object.id %}?stat_type={{action.stat_type}}"
-  hx-trigger="load"
-  >
-</div>
+<article>
+  <h3>{% if action.stat_type == "bases" %}Bases{% else %}Growths{% endif %}</h3>
+  <div id="action_forecast"
+    hx-get="{% url 'dracogate:action_forecast' object.id %}?stat_type={{action.stat_type}}"
+    hx-trigger="load"
+    >
+  </div>
+</article>
 {% endblock %}
 
