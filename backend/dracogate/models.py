@@ -14,6 +14,7 @@ from aenir import (
     PromotionError,
     StatBoosterError,
     GrowthsItemError,
+    ScrollError,
 )
 
 User = get_user_model()
@@ -215,7 +216,7 @@ class VirtualMorph(models.Model):
             raise e
         return (is_success, param_bounds)
 
-    def use_afas_drops(self, to_consume):
+    def use_afas_drops(self, to_consume: bool):
         """
         """
         is_success: bool
@@ -234,6 +235,44 @@ class VirtualMorph(models.Model):
             is_success = False
             param_bounds = {}
         return (is_success, param_bounds)
+
+    # TODO: Test
+    def set_scrolls(self, scrolls: list[str]):
+        """
+        """
+        is_success: bool
+        try:
+            self.morph.set_scrolls(scrolls)
+            param_bounds = {}
+            is_success = True
+        except ScrollError as e:
+            param_bounds = {"scrolls": None}
+            param_bounds["scrolls"] = {
+                ScrollError.NOT_FOUND: tuple(self.morph.scroll_dict),
+            }[e.reason]
+            is_success = False
+        raise (is_success, param_bounds)
+
+    # TODO: Test
+    def shapeshift(self, to_shapeshift: bool):
+        """
+        """
+        is_success: bool
+        if self.morph.is_laguz is False:
+            is_success = False
+            param_bounds = None
+        else:
+            if to_shapeshift is False:
+                param_bounds = {"cls_to_transform_to": self.morph._miscellany["cls_to_transform_to"]}
+                is_success = False
+            else:
+                {
+                    True: self.morph.revert,
+                    False: self.morph.transform,
+                }[self.morph._miscellany["is_transformed"]]()
+                param_bounds = None
+                is_success = True
+        raise (is_success, param_bounds)
 
 '''
     def path_to(cls, file: str) -> str:
