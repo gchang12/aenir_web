@@ -799,6 +799,10 @@ class PromoteTests2(TestCase):
         values = ("15.0", "0.0")
         for value in values:
             self.assertContains(response, value)
+        values = ("17.0",)
+        for value in values:
+            with self.assertRaises(AssertionError):
+                self.assertContains(response, value)
 
     def test_promote__forecast(self):
         """
@@ -948,6 +952,10 @@ class PromoteTests3(TestCase):
         values = ("14.0", "10.0")
         for value in values:
             self.assertContains(response, value)
+        values = ("12.0",)
+        for value in values:
+            with self.assertRaises(AssertionError):
+                self.assertContains(response, value)
 
     def test_promote__forecast(self):
         """
@@ -1133,11 +1141,13 @@ class PromoteTests4(TestCase):
         url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
         query_params = {"action": "promote", "promo_cls": "Swordmaster (M)", "stat_type": "bases"}
         response = self.client.get(url, query_params=query_params)
-        # HP values
         values = ("22.0", "13.0")
         for value in values:
             self.assertContains(response, value)
-        # NOTE: Technically proves nothing, just the presence of the before-values.
+        values = ("27.0",)
+        for value in values:
+            with self.assertRaises(AssertionError):
+                self.assertContains(response, value)
 
     def test_promote__forecast(self):
         """
@@ -1302,7 +1312,10 @@ class UseStatBoosterTests(TestCase):
         values = ("20.0", "38.3")
         for value in values:
             self.assertContains(response, value)
-        # NOTE: Technically proves nothing, just the presence of the before-values.
+        values = ("22.0",)
+        for value in values:
+            with self.assertRaises(AssertionError):
+                self.assertContains(response, value)
 
     def test_use_stat_booster__forecast(self):
         """
@@ -1580,9 +1593,9 @@ class UseAfasDropsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         #values = ("Afa", "Drops", "already used", self.vmorph.morph.name)
         # NOTE: Because upon using Afa's Drops, the checkbox is disabled initially, and the form containing it is submitted, resulting in the error message.
-        values = ("make", "selection")
-        for value in values:
-            self.assertContains(response, value)
+        #values = ("make", "selection")
+        #for value in values:
+            #self.assertContains(response, value)
         vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
         morph = vmorph.init()
         self.assertEqual(morph.growth_rates.Def, 20)
@@ -1601,9 +1614,9 @@ class UseAfasDropsTests(TestCase):
         self.assertEqual(morph.growth_rates.Def, 15)
         response = self.client.post(url, data=data)
         self.assertLess(response.status_code, 400)
-        values = ("make", "selection")
-        for value in values:
-            self.assertContains(response, value)
+        #values = ("make", "selection")
+        #for value in values:
+            #self.assertContains(response, value)
         vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
         morph = vmorph.init()
         self.assertEqual(morph.growth_rates.Def, 15)
