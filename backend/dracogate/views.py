@@ -465,3 +465,39 @@ class PromoteView(MorphActionView):
         self.object.save()
         return redirect(reverse("dracogate:morph_detail", kwargs={"id": self.object.id}))
 
+class UseStatBoosterView(MorphActionView):
+    """
+    """
+    action = {
+        "title": "Use Stat Booster",
+        "name": "use_stat_booster",
+        "stat_type": "bases",
+    }
+
+    def get_context_data(self, **kwds):
+        """
+        """
+        context = super().get_context_data(**kwds)
+        is_success: bool = True
+        context['is_success'] = is_success
+        return context
+
+    def get_form_class(self, **kwds):
+        """
+        """
+        try:
+            (_, param_bounds) = self.object.use_stat_booster("")
+        except AttributeError:
+            self.object = self.get_object()
+            (_, param_bounds) = self.object.use_stat_booster("")
+        form_class = ActionFormBuilder.use_stat_booster(param_bounds, self.object.morph)
+        return form_class
+
+    def form_valid(self, form):
+        """
+        """
+        item_name = form.cleaned_data['item_name']
+        self.object.use_stat_booster(item_name)
+        self.object.save()
+        return redirect(reverse("dracogate:morph_detail", kwargs={"id": self.object.id}))
+

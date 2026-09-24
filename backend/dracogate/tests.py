@@ -566,6 +566,7 @@ class LevelUpTests(TestCase):
         self.assertListEqual(vmorph.history, expected)
         # test for existence of actions in morph_detail
         url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
+        self.assertRedirects(response, url)
         response = self.client.get(url)
         values = (
             "level_up",
@@ -678,6 +679,7 @@ class PromoteTests(TestCase):
         self.assertListEqual(vmorph.history, expected)
         # test for existence of actions in morph_detail
         url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
+        self.assertRedirects(response, url)
         response = self.client.get(url)
         values = (
             "promote",
@@ -846,6 +848,7 @@ class PromoteTests2(TestCase):
         self.assertListEqual(vmorph.history, expected)
         # test for existence of actions in morph_detail
         url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
+        self.assertRedirects(response, url)
         response = self.client.get(url)
         values = (
             "promote",
@@ -994,6 +997,7 @@ class PromoteTests3(TestCase):
         self.assertListEqual(vmorph.history, expected)
         # test for existence of actions in morph_detail
         url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
+        self.assertRedirects(response, url)
         response = self.client.get(url)
         values = (
             "promote",
@@ -1183,6 +1187,7 @@ class PromoteTests4(TestCase):
         self.assertListEqual(vmorph.history, expected)
         # test for existence of actions in morph_detail
         url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
+        self.assertRedirects(response, url)
         response = self.client.get(url)
         values = (
             "promote",
@@ -1347,6 +1352,7 @@ class UseStatBoosterTests(TestCase):
         self.assertListEqual(vmorph.history, expected)
         # test for existence of actions in morph_detail
         url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
+        self.assertRedirects(response, url)
         response = self.client.get(url)
         values = (
             "use_stat_booster",
