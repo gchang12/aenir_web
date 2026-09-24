@@ -13,6 +13,7 @@ from aenir import (
     LevelUpError,
     PromotionError,
     StatBoosterError,
+    GrowthsItemError,
 )
 
 User = get_user_model()
@@ -214,6 +215,22 @@ class VirtualMorph(models.Model):
             raise e
         return (is_success, param_bounds)
 
+    def use_afas_drops(self):
+        """
+        """
+        is_success: bool
+        try:
+            self.morph.use_afas_drops()
+            self.history.append(
+                ("use_afas_drops", {}),
+            )
+            is_success = True
+            param_bounds = {}
+        except GrowthsItemError as e:
+            is_success = False
+            param_bounds = None
+        return (is_success, param_bounds)
+
 '''
     def path_to(cls, file: str) -> str:
     def query_db(
@@ -244,7 +261,7 @@ class VirtualMorph(models.Model):
     def get_promotion_item(self) -> str | None:
     def roundup_stats(dictlike: dict[str, int]):
 '''
-
+#
 '''
     def level_up(self, num_levels: int) -> None:
     def promote(self, *, promo_cls=None) -> None:

@@ -14,6 +14,7 @@ from django.contrib.auth import get_user_model
 from aenir import (
     get_morph,
     InitError,
+    GrowthsItemError,
 )
 
 from dracogate.forms import (
@@ -1423,4 +1424,174 @@ class UseStatBoosterTests2(TestCase):
         data = {field: value}
         with self.assertRaises(NotImplementedError):
             self.client.post(url, data=data)
+
+
+class UseAfasDropsTests(TestCase):
+    """
+    """
+
+    # https://serenesforest.net/blazing-sword/characters/average-stats/nino/
+    def setUp(self):
+        """
+        """
+        game_no = 7
+        unit = "Nino"
+        init_options = {}
+        self.user = User.objects.create()
+        self.vmorph = VirtualMorph.objects.create(
+            owner=self.user,
+            game_no=game_no,
+            unit=unit,
+            init_options=init_options,
+        )
+        self.vmorph.morph = get_morph(game_no, unit, **init_options)
+        #self.vmorph.morph.level_up(20 - self.vmorph.morph.current_lv)
+        #print(self.vmorph.morph._miscellany)
+        #self.vmorph.save()
+
+    def test_use_afas_drops__virtualmorph1(self):
+        """
+        No errors.
+        """
+        (is_success, param_bounds) = self.vmorph.use_afas_drops()
+        expected1 = {}
+        expected2 = True
+        expected3 = [
+            ("use_afas_drops", {})
+        ]
+        self.assertDictEqual(param_bounds, expected1)
+        self.assertIs(is_success, expected2)
+        self.assertListEqual(
+            self.vmorph.history,
+            expected3,
+        )
+
+    def test_use_afas_drops__virtualmorph2(self):
+        """
+        Afa's Drops is used already.
+        """
+        expected2 = []
+        expected3 = False
+        self.vmorph.morph.use_afas_drops()
+        (is_success, param_bounds) = self.vmorph.use_afas_drops()
+        self.assertIsNone(param_bounds)
+        self.assertIs(is_success, expected3)
+        self.assertListEqual(
+            self.vmorph.history,
+            expected2,
+        )
+
+    @unittest.skip
+    def test_use_afas_drops__formbuilder1(self):
+        """
+        """
+        field = "item_name"
+        item_name = "Energy Ring"
+        expected2 = [(choice, choice) for choice in (
+            "",
+            "Angelic Robe",
+            "Energy Ring",
+            "Secret Book",
+            "Speedwings",
+            "Goddess Icon",
+            "Dragonshield",
+            "Talisman",
+            "Boots",
+            "Body Ring",
+        )]
+        (_, param_bounds) = self.vmorph.use_afas_drops("")
+        form_class = ActionFormBuilder.use_afas_drops(param_bounds, self.vmorph.morph)
+        self.assertIn(field, form_class.declared_fields)
+        self.assertEqual(form_class.declared_fields[field].choices, expected2)
+
+    @unittest.skip
+    def test_use_afas_drops__formbuilder2(self):
+        """
+        Check validation.
+        """
+        field = "item_name"
+        item_name = "Speedwings"
+        # try to get param_bounds
+        (_, param_bounds) = self.vmorph.use_afas_drops("")
+        # get form class
+        form_class = ActionFormBuilder.use_afas_drops(param_bounds, self.vmorph.morph)
+        form = form_class({"item_name": "Speedwings"})
+        self.assertIs(form.is_valid(), False)
+
+    @unittest.skip
+    def test_use_afas_drops__forecast__fail(self):
+        """
+        """
+        field = "item_name"
+        value = "Speedwings"
+        url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
+        query_params = {"action": "use_afas_drops", field: value, "stat_type": "bases"}
+        response = self.client.get(url, query_params=query_params)
+        # HP values
+        values = ("20.0", "38.3")
+        for value in values:
+            self.assertContains(response, value)
+        # NOTE: Technically proves nothing, just the presence of the before-values.
+
+    @unittest.skip
+    def test_use_afas_drops__forecast(self):
+        """
+        """
+        field = "item_name"
+        value = "Angelic Robe"
+        url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
+        query_params = {"action": "use_afas_drops", field: value, "stat_type": "bases"}
+        response = self.client.get(url, query_params=query_params)
+        # HP values
+        values = ("45.3", "38.3")
+        for value in values:
+            self.assertContains(response, value)
+
+    @unittest.skip
+    def test_use_afas_drops__view_post__fail(self):
+        """
+        """
+        field = "item_name"
+        value = "Speedwings"
+        expected = [["use_afas_drops", {field: value}]]
+        url = reverse("dracogate:use_afas_drops", kwargs={"id": self.vmorph.id})
+        data = {field: value}
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 200)
+        values = ("cannot use", "Speedwings", "Spd", "is maxed")
+        for value in values:
+            self.assertContains(response, value)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        morph = vmorph.init()
+        self.assertEqual(morph.current_stats.Spd, 20_00)
+        self.assertListEqual(vmorph.history, [])
+
+    @unittest.skip
+    def test_use_afas_drops__view_post(self):
+        """
+        """
+        #self.vmorph.morph.level_up(9)
+        #self.vmorph.save()
+        field = "item_name"
+        value = "Angelic Robe"
+        expected = [["use_afas_drops", {field: value}]]
+        url = reverse("dracogate:use_afas_drops", kwargs={"id": self.vmorph.id})
+        data = {field: value}
+        response = self.client.post(url, data=data)
+        self.assertLess(response.status_code, 400)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        morph = vmorph.init()
+        self.assertEqual(morph.current_stats.HP, 45_30)
+        self.assertListEqual(vmorph.history, expected)
+        # test for existence of actions in morph_detail
+        url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
+        self.assertRedirects(response, url)
+        response = self.client.get(url)
+        values = (
+            "use_afas_drops",
+            #html.unescape(json.dumps(expected[0][1])),
+            "{}",
+        )
+        for value in values:
+            self.assertContains(response, value)
 
