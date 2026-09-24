@@ -8,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from aenir import (
     PromotionError,
     StatBoosterError,
+    GrowthsItemError,
 )
 
 class InitFormBuilder:
@@ -193,6 +194,48 @@ class ActionFormBuilder:
                 label="Stat Booster",
             )
         return UseStatBoosterForm
+
+    @staticmethod
+    def use_afas_drops(param_bounds, morph):
+        """
+        """
+
+        class ToConsumeField(forms.BooleanField):
+            """
+            """
+
+            def validate(self, value):
+                """
+                """
+                super().validate(value)
+                if value is True:
+                    try:
+                        morph.copy().use_afas_drops()
+                    except GrowthsItemError:
+                        raise ValidationError(
+                            _("%(name)s has already used Afa's Drops."),
+                            params={"name": morph.name},
+                        )
+                elif value is False:
+                    raise ValidationError(
+                        _("Please make a selection."),
+                        params={"name": morph.name},
+                    )
+                else:
+                    print("use_afas_drops", value)
+                    raise Exception
+                return True
+
+        class UseAfasDropsForm(forms.Form):
+            """
+            """
+            to_consume = ToConsumeField(
+                initial=False,
+                required=True,
+                label="Use Afa's Drops",
+            )
+        return UseAfasDropsForm
+
 
 '''
     def __init__(self, name: str, *, father: str | None = None):

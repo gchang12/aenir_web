@@ -1481,41 +1481,37 @@ class UseAfasDropsTests(TestCase):
             expected2,
         )
 
-    @unittest.skip
     def test_use_afas_drops__formbuilder1(self):
         """
         """
-        field = "item_name"
-        item_name = "Energy Ring"
-        expected2 = [(choice, choice) for choice in (
-            "",
-            "Angelic Robe",
-            "Energy Ring",
-            "Secret Book",
-            "Speedwings",
-            "Goddess Icon",
-            "Dragonshield",
-            "Talisman",
-            "Boots",
-            "Body Ring",
-        )]
-        (_, param_bounds) = self.vmorph.use_afas_drops("")
+        field = "to_consume"
+        (_, param_bounds) = self.vmorph.use_afas_drops()
         form_class = ActionFormBuilder.use_afas_drops(param_bounds, self.vmorph.morph)
         self.assertIn(field, form_class.declared_fields)
-        self.assertEqual(form_class.declared_fields[field].choices, expected2)
 
-    @unittest.skip
     def test_use_afas_drops__formbuilder2(self):
         """
         Check validation.
         """
-        field = "item_name"
-        item_name = "Speedwings"
+        field = "to_consume"
         # try to get param_bounds
-        (_, param_bounds) = self.vmorph.use_afas_drops("")
+        (_, param_bounds) = self.vmorph.use_afas_drops()
+        # get form class
+        self.vmorph.morph.use_afas_drops()
+        form_class = ActionFormBuilder.use_afas_drops(param_bounds, self.vmorph.morph)
+        form = form_class({"to_consume": True})
+        self.assertIs(form.is_valid(), False)
+
+    def test_use_afas_drops__formbuilder2(self):
+        """
+        Check validation.
+        """
+        field = "to_consume"
+        # try to get param_bounds
+        (_, param_bounds) = self.vmorph.use_afas_drops()
         # get form class
         form_class = ActionFormBuilder.use_afas_drops(param_bounds, self.vmorph.morph)
-        form = form_class({"item_name": "Speedwings"})
+        form = form_class({"to_consume": False})
         self.assertIs(form.is_valid(), False)
 
     @unittest.skip
