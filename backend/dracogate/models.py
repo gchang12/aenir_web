@@ -135,10 +135,11 @@ class VirtualMorph(models.Model):
         data['game'] = self.game_no
         data['name'] = self.unit
         data['init_options'] = self.init_options
-        data['_miscellany'] = {}
+        data['_miscellany'] = {"Stat Boosters": (None if self.game_no == 4 else [])}
         data.update(self.stats)
         morph_class = get_morph_class(self.game_no)
         morph = morph_class.from_dict(data)
+        #print(morph.game, morph.name, morph.init_options, morph._miscellany)
         self.morph = morph
         return morph
 
@@ -161,7 +162,6 @@ class VirtualMorph(models.Model):
             self.history.append(
                 ("level_up", {"num_levels": num_levels})
             )
-            #self.stats = self.morph.as_dict()
             is_success = True
         except LevelUpError as e:
             min_lv, max_lv = e.level_range
@@ -200,6 +200,7 @@ class VirtualMorph(models.Model):
         """
         is_success: bool
         try:
+            #print(self.morph._miscellany)
             self.morph.use_stat_booster(item_name)
             self.history.append(
                 ("use_stat_booster", {"item_name": item_name}),

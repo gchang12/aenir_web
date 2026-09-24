@@ -1218,6 +1218,8 @@ class UseStatBoosterTests(TestCase):
         )
         self.vmorph.morph = get_morph(game_no, unit, **init_options)
         self.vmorph.morph.level_up(20 - self.vmorph.morph.current_lv)
+        #print(self.vmorph.morph._miscellany)
+        self.vmorph.save()
 
     def test_use_stat_booster__virtualmorph1(self):
         """
@@ -1287,68 +1289,66 @@ class UseStatBoosterTests(TestCase):
         form = form_class({"item_name": "Speedwings"})
         self.assertIs(form.is_valid(), False)
 
-    @unittest.skip
     def test_use_stat_booster__forecast__fail(self):
         """
         """
+        field = "item_name"
+        value = "Speedwings"
         url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
-        query_params = {"action": "use_stat_booster", "promo_cls": "Swordmaster (M)", "stat_type": "bases"}
+        query_params = {"action": "use_stat_booster", field: value, "stat_type": "bases"}
         response = self.client.get(url, query_params=query_params)
         # HP values
-        values = ("22.0", "13.0")
+        values = ("20.0", "38.3")
         for value in values:
             self.assertContains(response, value)
         # NOTE: Technically proves nothing, just the presence of the before-values.
 
-    @unittest.skip
     def test_use_stat_booster__forecast(self):
         """
         """
-        self.vmorph.morph.level_up(16)
-        self.vmorph.save()
+        field = "item_name"
+        value = "Angelic Robe"
         url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
-        query_params = {"action": "use_stat_booster", "promo_cls": "Swordmaster (M)", "stat_type": "bases"}
+        query_params = {"action": "use_stat_booster", field: value, "stat_type": "bases"}
         response = self.client.get(url, query_params=query_params)
         # HP values
-        values = ("34.8", "39.8")
+        values = ("45.3", "38.3")
         for value in values:
             self.assertContains(response, value)
 
-    @unittest.skip
     def test_use_stat_booster__view_post__fail(self):
         """
         """
-        field = "promo_cls"
-        promo_cls = "Swordmaster (M)"
-        expected = [["use_stat_booster", {"promo_cls": promo_cls}]]
+        field = "item_name"
+        value = "Speedwings"
+        expected = [["use_stat_booster", {field: value}]]
         url = reverse("dracogate:use_stat_booster", kwargs={"id": self.vmorph.id})
-        data = {field: promo_cls}
+        data = {field: value}
         response = self.client.post(url, data=data)
         self.assertEqual(response.status_code, 200)
-        values = ("10", "at least level", "Swordmaster (M)")
+        values = ("cannot use", "Speedwings", "Spd", "is maxed")
         for value in values:
             self.assertContains(response, value)
         vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
         morph = vmorph.init()
-        self.assertEqual(morph.current_cls, "Myrmidon")
+        self.assertEqual(morph.current_stats.Spd, 20_00)
         self.assertListEqual(vmorph.history, [])
 
-    @unittest.skip
     def test_use_stat_booster__view_post(self):
         """
         """
-        self.vmorph.morph.level_up(9)
-        self.vmorph.save()
-        field = "promo_cls"
-        promo_cls = "Swordmaster (M)"
-        expected = [["use_stat_booster", {"promo_cls": promo_cls}]]
+        #self.vmorph.morph.level_up(9)
+        #self.vmorph.save()
+        field = "item_name"
+        value = "Angelic Robe"
+        expected = [["use_stat_booster", {field: value}]]
         url = reverse("dracogate:use_stat_booster", kwargs={"id": self.vmorph.id})
-        data = {field: promo_cls}
+        data = {field: value}
         response = self.client.post(url, data=data)
         self.assertLess(response.status_code, 400)
         vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
         morph = vmorph.init()
-        self.assertEqual(morph.current_cls, data[field])
+        self.assertEqual(morph.current_stats.HP, 45_30)
         self.assertListEqual(vmorph.history, expected)
         # test for existence of actions in morph_detail
         url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
@@ -1357,8 +1357,8 @@ class UseStatBoosterTests(TestCase):
         values = (
             "use_stat_booster",
             #html.unescape(json.dumps(expected[0][1])),
-            "promo_cls",
-            "Swordmaster (M)",
+            "item_name",
+            "Angelic Robe",
         )
         for value in values:
             self.assertContains(response, value)
@@ -1412,4 +1412,15 @@ class UseStatBoosterTests2(TestCase):
         form = form_class({field: item_name})
         with self.assertRaises(TypeError):
             form.is_valid()
+
+    def test_use_stat_booster__view_post__fail(self):
+        """
+        """
+        field = "item_name"
+        value = "Speedwings"
+        expected = [["use_stat_booster", {field: value}]]
+        url = reverse("dracogate:use_stat_booster", kwargs={"id": self.vmorph.id})
+        data = {field: value}
+        with self.assertRaises(NotImplementedError):
+            self.client.post(url, data=data)
 

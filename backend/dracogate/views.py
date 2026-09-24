@@ -316,6 +316,7 @@ class ActionForecastView(DetailView):
             None: lambda: None,
             "level_up": self.level_up,
             "promote": self.promote,
+            "use_stat_booster": self.use_stat_booster,
         }[action]()
         delta_dict = {
             "bases": (self.object.morph.current_stats > morph.current_stats).as_dict,
@@ -342,6 +343,12 @@ class ActionForecastView(DetailView):
         """
         promo_cls = self.request.GET["promo_cls"]
         self.object.promote(promo_cls)
+
+    def use_stat_booster(self):
+        """
+        """
+        item_name = self.request.GET["item_name"]
+        self.object.use_stat_booster(item_name)
 
 class MorphActionView(FormView, DetailView):
     """
