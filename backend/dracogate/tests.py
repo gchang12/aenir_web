@@ -1639,3 +1639,67 @@ class UseAfasDropsTests(TestCase):
         for value in values:
             self.assertContains(response, value)
 
+
+class UseAfasDropsTests2(TestCase):
+    """
+    """
+
+    # https://serenesforest.net/blazing-sword/characters/average-stats/nino/
+    def setUp(self):
+        """
+        """
+        game_no = 6
+        unit = "Roy"
+        init_options = {}
+        self.user = User.objects.create()
+        self.vmorph = VirtualMorph.objects.create(
+            owner=self.user,
+            game_no=game_no,
+            unit=unit,
+            init_options=init_options,
+        )
+        self.vmorph.morph = get_morph(game_no, unit, **init_options)
+        #self.vmorph.morph.level_up(20 - self.vmorph.morph.current_lv)
+        #print(self.vmorph.morph._miscellany)
+        #self.vmorph.save()
+
+    def test_use_afas_drops__virtualmorph1(self):
+        """
+        """
+        with self.assertRaises(AttributeError):
+            self.vmorph.use_afas_drops(True)
+
+    def test_use_afas_drops__formbuilder1(self):
+        """
+        """
+        field = "to_consume"
+        param_bounds = {}
+        with self.assertRaises(KeyError): 
+            ActionFormBuilder.use_afas_drops(param_bounds, self.vmorph.morph)
+
+    def test_use_afas_drops__forecast(self):
+        """
+        """
+        field = "to_consume"
+        value = "on"
+        url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
+        query_params = {"action": "use_afas_drops", field: value, "stat_type": "growths"}
+        with self.assertRaises(AttributeError):
+            self.client.get(url, query_params=query_params)
+        # TODO: with self.assertRaises(...): self.assertContains for ...forecast__fail methods
+        # NOTE: Technically proves nothing, just the presence of the before-values.
+
+    def test_use_afas_drops__view_post(self):
+        """
+        """
+        #self.vmorph.morph.level_up(9)
+        #self.vmorph.save()
+        morph = self.vmorph.morph
+        field = "to_consume"
+        value = "on"
+        expected = [["use_afas_drops", {}]]
+        url = reverse("dracogate:use_afas_drops", kwargs={"id": self.vmorph.id})
+        data = {field: value}
+        with self.assertRaises(KeyError):
+            self.client.post(url, data=data)
+

@@ -265,7 +265,7 @@ class VirtualMorph(models.Model):
     def get_promotion_item(self) -> str | None:
     def roundup_stats(dictlike: dict[str, int]):
 '''
-#
+
 '''
     def level_up(self, num_levels: int) -> None:
     def promote(self, *, promo_cls=None) -> None:
