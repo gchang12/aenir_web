@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from aenir import (
+    get_morph,
     get_morph_class,
     LevelUpError,
     PromotionError,
@@ -131,15 +132,8 @@ class VirtualMorph(models.Model):
     def init(self):
         """
         """
-        data = {}
-        data['game'] = self.game_no
-        data['name'] = self.unit
-        data['init_options'] = self.init_options
-        data['_miscellany'] = {"Stat Boosters": (None if self.game_no == 4 else [])}
-        data.update(self.stats)
         morph_class = get_morph_class(self.game_no)
-        morph = morph_class.from_dict(data)
-        #print(morph.game, morph.name, morph.init_options, morph._miscellany)
+        morph = morph_class.from_dict(self.stats)
         self.morph = morph
         return morph
 
@@ -149,7 +143,8 @@ class VirtualMorph(models.Model):
         try:
             self.stats = self.morph.as_dict()
         except AttributeError:
-            pass
+            self.morph = get_morph(self.game_no, self.unit, **self.init_options)
+            self.stats = self.morph.as_dict()
         return super().save(**kwds)
 
     def level_up(self, num_levels: int):
@@ -272,3 +267,4 @@ class VirtualMorph(models.Model):
     def equip_demi_band(self):
     def unequip_demi_band(self):
 '''
+

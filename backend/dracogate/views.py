@@ -472,6 +472,8 @@ class PromoteView(MorphActionView):
         self.object.save()
         return redirect(reverse("dracogate:morph_detail", kwargs={"id": self.object.id}))
 
+# TODO: For all: Redirect user to create morph if he does not own morph.
+# TODO: Redirect if morph is from FE4
 class UseStatBoosterView(MorphActionView):
     """
     """
