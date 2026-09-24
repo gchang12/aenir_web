@@ -11,6 +11,7 @@ from aenir import (
     get_morph_class,
     LevelUpError,
     PromotionError,
+    StatBoosterError,
 )
 
 User = get_user_model()
@@ -192,6 +193,27 @@ class VirtualMorph(models.Model):
             is_success = False
             #print(e.reason)
         #print(is_success)
+        return (is_success, param_bounds)
+
+    def use_stat_booster(self, item_name: str):
+        """
+        """
+        is_success: bool
+        try:
+            self.morph.use_stat_booster(item_name)
+            self.history.append(
+                ("use_stat_booster", {"item_name": item_name}),
+            )
+            param_bounds = {}
+            is_success = True
+        except StatBoosterError as e:
+            param_bounds = {
+                StatBoosterError.Reason.NOT_FOUND: {"stat_boosters": e.valid_stat_boosters},
+                StatBoosterError.Reason.STAT_IS_MAXED: None,
+            }[e.reason]
+            is_success = False
+        except NotImplementedError as e:
+            raise e
         return (is_success, param_bounds)
 
 '''
