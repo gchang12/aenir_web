@@ -651,7 +651,6 @@ class PromoteTests(TestCase):
         self.assertEqual(form_class.declared_fields[field].choices, [("", "")])
         self.assertIs(form_class.declared_fields[field].disabled, expected4)
 
-    @unittest.skip("")
     def test_promote__forecast(self):
         """
         """
@@ -663,19 +662,19 @@ class PromoteTests(TestCase):
         for value in values:
             self.assertContains(response, value)
 
-    @unittest.skip("")
     def test_promote__view_post(self):
         """
         """
-        expected = [["promote", {"num_levels": 19}]]
         field = "promo_cls"
+        promo_cls = "Master Lord"
+        expected = [["promote", {"promo_cls": promo_cls}]]
         url = reverse("dracogate:promote", kwargs={"id": self.vmorph.id})
-        data = {field: "Master Lord"}
+        data = {field: promo_cls}
         response = self.client.post(url, data=data)
         self.assertLess(response.status_code, 400)
         vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
         morph = vmorph.init()
-        self.assertEqual(morph.current_lv, data[field])
+        self.assertEqual(morph.current_cls, data[field])
         self.assertListEqual(vmorph.history, expected)
         # test for existence of actions in morph_detail
         url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
@@ -683,8 +682,8 @@ class PromoteTests(TestCase):
         values = (
             "promote",
             #html.unescape(json.dumps(expected[0][1])),
-            "num_levels",
-            "19",
+            "promo_cls",
+            "Master Lord",
         )
         for value in values:
             self.assertContains(response, value)
@@ -787,6 +786,76 @@ class PromoteTests2(TestCase):
         self.assertEqual(form_class.declared_fields[field].choices, [("", "")])
         self.assertIs(form_class.declared_fields[field].disabled, expected4)
 
+    def test_promote__forecast__fail(self):
+        """
+        """
+        url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
+        query_params = {"action": "promote", "promo_cls": "Pirate", "stat_type": "bases"}
+        response = self.client.get(url, query_params=query_params)
+        # HP values
+        values = ("15.0", "0.0")
+        for value in values:
+            self.assertContains(response, value)
+
+    def test_promote__forecast(self):
+        """
+        """
+        self.vmorph.morph.level_up(9)
+        self.vmorph.save()
+        url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
+        query_params = {"action": "promote", "promo_cls": "Pirate", "stat_type": "bases"}
+        response = self.client.get(url, query_params=query_params)
+        # HP values
+        values = ("21.3", "23.3")
+        for value in values:
+            self.assertContains(response, value)
+
+    def test_promote__view_post__fail(self):
+        """
+        """
+        field = "promo_cls"
+        promo_cls = "Pirate"
+        expected = [["promote", {"promo_cls": promo_cls}]]
+        url = reverse("dracogate:promote", kwargs={"id": self.vmorph.id})
+        data = {field: promo_cls}
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 200)
+        values = ("10", "at least level", "Pirate")
+        for value in values:
+            self.assertContains(response, value)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        morph = vmorph.init()
+        self.assertEqual(morph.current_cls, "Journeyman")
+        self.assertListEqual(vmorph.history, [])
+
+    def test_promote__view_post(self):
+        """
+        """
+        self.vmorph.morph.level_up(9)
+        self.vmorph.save()
+        field = "promo_cls"
+        promo_cls = "Pirate"
+        expected = [["promote", {"promo_cls": promo_cls}]]
+        url = reverse("dracogate:promote", kwargs={"id": self.vmorph.id})
+        data = {field: promo_cls}
+        response = self.client.post(url, data=data)
+        self.assertLess(response.status_code, 400)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        morph = vmorph.init()
+        self.assertEqual(morph.current_cls, data[field])
+        self.assertListEqual(vmorph.history, expected)
+        # test for existence of actions in morph_detail
+        url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
+        response = self.client.get(url)
+        values = (
+            "promote",
+            #html.unescape(json.dumps(expected[0][1])),
+            "promo_cls",
+            "Pirate",
+        )
+        for value in values:
+            self.assertContains(response, value)
+
 
 
 class PromoteTests3(TestCase):
@@ -864,6 +933,77 @@ class PromoteTests3(TestCase):
         self.assertIn(field, form_class.declared_fields)
         self.assertEqual(form_class.declared_fields[field].choices, [("", "")])
         self.assertIs(form_class.declared_fields[field].disabled, expected4)
+
+    def test_promote__forecast__fail(self):
+        """
+        """
+        url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
+        query_params = {"action": "promote", "promo_cls": "Thief Fighter", "stat_type": "bases"}
+        response = self.client.get(url, query_params=query_params)
+        # HP values
+        values = ("14.0", "10.0")
+        for value in values:
+            self.assertContains(response, value)
+
+    def test_promote__forecast(self):
+        """
+        """
+        #self.vmorph.morph.level_up(9)
+        #self.vmorph.save()
+        url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
+        query_params = {"action": "promote", "promo_cls": "Dancer", "stat_type": "bases"}
+        response = self.client.get(url, query_params=query_params)
+        # HP values
+        values = ("10.0", "5.0")
+        for value in values:
+            self.assertContains(response, value)
+
+    def test_promote__view_post__fail(self):
+        """
+        """
+        field = "promo_cls"
+        promo_cls = "Thief Fighter"
+        expected = [["promote", {"promo_cls": promo_cls}]]
+        url = reverse("dracogate:promote", kwargs={"id": self.vmorph.id})
+        data = {field: promo_cls}
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 200)
+        values = ("10", "at least level", "Thief Fighter")
+        for value in values:
+            self.assertContains(response, value)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        morph = vmorph.init()
+        self.assertEqual(morph.current_cls, "Thief")
+        self.assertListEqual(vmorph.history, [])
+
+    def test_promote__view_post(self):
+        """
+        """
+        self.vmorph.morph.level_up(9)
+        self.vmorph.save()
+        field = "promo_cls"
+        promo_cls = "Dancer"
+        expected = [["promote", {"promo_cls": promo_cls}]]
+        url = reverse("dracogate:promote", kwargs={"id": self.vmorph.id})
+        data = {field: promo_cls}
+        response = self.client.post(url, data=data)
+        self.assertLess(response.status_code, 400)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        morph = vmorph.init()
+        self.assertEqual(morph.current_cls, data[field])
+        self.assertListEqual(vmorph.history, expected)
+        # test for existence of actions in morph_detail
+        url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
+        response = self.client.get(url)
+        values = (
+            "promote",
+            #html.unescape(json.dumps(expected[0][1])),
+            "promo_cls",
+            "Dancer",
+        )
+        for value in values:
+            self.assertContains(response, value)
+
 
 
 class PromoteTests4(TestCase):
@@ -981,4 +1121,76 @@ class PromoteTests4(TestCase):
         self.assertIn(field, form_class.declared_fields)
         self.assertEqual(form_class.declared_fields[field].choices, [("", "")])
         self.assertIs(form_class.declared_fields[field].disabled, expected4)
+
+    def test_promote__forecast__fail(self):
+        """
+        """
+        url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
+        query_params = {"action": "promote", "promo_cls": "Swordmaster (M)", "stat_type": "bases"}
+        response = self.client.get(url, query_params=query_params)
+        # HP values
+        values = ("22.0", "13.0")
+        for value in values:
+            self.assertContains(response, value)
+        # NOTE: Technically proves nothing, just the presence of the before-values.
+
+    def test_promote__forecast(self):
+        """
+        """
+        self.vmorph.morph.level_up(16)
+        self.vmorph.save()
+        url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
+        query_params = {"action": "promote", "promo_cls": "Swordmaster (M)", "stat_type": "bases"}
+        response = self.client.get(url, query_params=query_params)
+        # HP values
+        values = ("34.8", "39.8")
+        for value in values:
+            self.assertContains(response, value)
+
+    def test_promote__view_post__fail(self):
+        """
+        """
+        field = "promo_cls"
+        promo_cls = "Swordmaster (M)"
+        expected = [["promote", {"promo_cls": promo_cls}]]
+        url = reverse("dracogate:promote", kwargs={"id": self.vmorph.id})
+        data = {field: promo_cls}
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 200)
+        values = ("10", "at least level", "Swordmaster (M)")
+        for value in values:
+            self.assertContains(response, value)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        morph = vmorph.init()
+        self.assertEqual(morph.current_cls, "Myrmidon")
+        self.assertListEqual(vmorph.history, [])
+
+    def test_promote__view_post(self):
+        """
+        """
+        self.vmorph.morph.level_up(9)
+        self.vmorph.save()
+        field = "promo_cls"
+        promo_cls = "Swordmaster (M)"
+        expected = [["promote", {"promo_cls": promo_cls}]]
+        url = reverse("dracogate:promote", kwargs={"id": self.vmorph.id})
+        data = {field: promo_cls}
+        response = self.client.post(url, data=data)
+        self.assertLess(response.status_code, 400)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        morph = vmorph.init()
+        self.assertEqual(morph.current_cls, data[field])
+        self.assertListEqual(vmorph.history, expected)
+        # test for existence of actions in morph_detail
+        url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
+        response = self.client.get(url)
+        values = (
+            "promote",
+            #html.unescape(json.dumps(expected[0][1])),
+            "promo_cls",
+            "Swordmaster (M)",
+        )
+        for value in values:
+            self.assertContains(response, value)
+
 
