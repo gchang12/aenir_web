@@ -1533,7 +1533,7 @@ class UseAfasDropsTests(TestCase):
         """
         """
         field = "to_consume"
-        value = "on"
+        value = "True"
         url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
         query_params = {"action": "use_afas_drops", field: value, "stat_type": "growths"}
         response = self.client.get(url, query_params=query_params)
@@ -1548,7 +1548,7 @@ class UseAfasDropsTests(TestCase):
         """
         """
         field = "to_consume"
-        value = "off"
+        value = "False"
         url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
         query_params = {"action": "use_afas_drops", "stat_type": "growths"}
         self.vmorph.morph.use_afas_drops()
@@ -1570,7 +1570,7 @@ class UseAfasDropsTests(TestCase):
         Already used Afa's Drops.
         """
         field = "to_consume"
-        value = "on"
+        value = "True"
         expected = [["use_afas_drops", {}]]
         url = reverse("dracogate:use_afas_drops", kwargs={"id": self.vmorph.id})
         data = {field: value}
@@ -1580,7 +1580,7 @@ class UseAfasDropsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         #values = ("Afa", "Drops", "already used", self.vmorph.morph.name)
         # NOTE: Because upon using Afa's Drops, the checkbox is disabled initially, and the form containing it is submitted, resulting in the error message.
-        values = ("field", "required")
+        values = ("make", "selection")
         for value in values:
             self.assertContains(response, value)
         vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
@@ -1593,7 +1593,7 @@ class UseAfasDropsTests(TestCase):
         Did not use Afa's Drops.
         """
         field = "to_consume"
-        value = "off"
+        value = "False"
         morph = self.vmorph.morph
         expected = [["use_afas_drops", {}]]
         url = reverse("dracogate:use_afas_drops", kwargs={"id": self.vmorph.id})
@@ -1601,7 +1601,7 @@ class UseAfasDropsTests(TestCase):
         self.assertEqual(morph.growth_rates.Def, 15)
         response = self.client.post(url, data=data)
         self.assertLess(response.status_code, 400)
-        values = ("field", "required")
+        values = ("make", "selection")
         for value in values:
             self.assertContains(response, value)
         vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
@@ -1616,7 +1616,7 @@ class UseAfasDropsTests(TestCase):
         #self.vmorph.save()
         morph = self.vmorph.morph
         field = "to_consume"
-        value = "on"
+        value = "True"
         expected = [["use_afas_drops", {}]]
         url = reverse("dracogate:use_afas_drops", kwargs={"id": self.vmorph.id})
         data = {field: value}
@@ -1681,7 +1681,7 @@ class UseAfasDropsTests2(TestCase):
         """
         """
         field = "to_consume"
-        value = "on"
+        value = "True"
         url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
         query_params = {"action": "use_afas_drops", field: value, "stat_type": "growths"}
         with self.assertRaises(AttributeError):
@@ -1696,7 +1696,7 @@ class UseAfasDropsTests2(TestCase):
         #self.vmorph.save()
         morph = self.vmorph.morph
         field = "to_consume"
-        value = "on"
+        value = "True"
         expected = [["use_afas_drops", {}]]
         url = reverse("dracogate:use_afas_drops", kwargs={"id": self.vmorph.id})
         data = {field: value}

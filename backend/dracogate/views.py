@@ -355,7 +355,7 @@ class ActionForecastView(DetailView):
         """
         """
         to_consume = self.request.GET.get("to_consume")
-        self.object.use_afas_drops(to_consume == "on")
+        self.object.use_afas_drops(to_consume == "True")
 
 class MorphActionView(FormView, DetailView):
     """

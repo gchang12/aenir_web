@@ -199,8 +199,11 @@ class ActionFormBuilder:
     def use_afas_drops(param_bounds, morph):
         """
         """
+        #choices = [('', ''), ('on', 'on')]
+        #choices.insert(0, ("", ""))
+        choices = (False, True)
 
-        class ToConsumeField(forms.BooleanField):
+        class ToConsumeField(forms.NullBooleanField):
             """
             """
 
@@ -216,14 +219,11 @@ class ActionFormBuilder:
                             _("%(name)s has already used Afa's Drops."),
                             params={"name": morph.name},
                         )
-                elif value is False:
+                elif value in (None, False):
                     raise ValidationError(
                         _("Please make a selection."),
                         params={"name": morph.name},
                     )
-                else:
-                    print("use_afas_drops", value)
-                    raise Exception
                 return True
 
         class UseAfasDropsForm(forms.Form):
@@ -234,6 +234,9 @@ class ActionFormBuilder:
                 required=True,
                 disabled=morph._miscellany["Afa's Drops"] is not None,
                 label="Use Afa's Drops",
+                widget=forms.Select(
+                    choices=[(choice, choice) for choice in choices],
+                ),
             )
         return UseAfasDropsForm
 
