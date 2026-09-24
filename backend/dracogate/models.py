@@ -134,6 +134,8 @@ class VirtualMorph(models.Model):
         """
         morph_class = get_morph_class(self.game_no)
         morph = morph_class.from_dict(self.stats)
+        #morph = get_morph(self.game_no, self.unit, **self.init_options)
+        #for action, params in self.history: getattr(morph, action)(**params)
         self.morph = morph
         return morph
 
