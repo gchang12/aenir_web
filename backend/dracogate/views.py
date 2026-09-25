@@ -319,6 +319,7 @@ class ActionForecastView(DetailView):
             "use_stat_booster": self.use_stat_booster,
             "use_afas_drops": self.use_afas_drops,
             "set_scrolls": self.set_scrolls,
+            "shapeshift": self.shapeshift,
         }[action]()
         delta_dict = {
             "bases": (self.object.morph.current_stats > morph.current_stats).as_dict,
@@ -363,6 +364,12 @@ class ActionForecastView(DetailView):
         """
         scrolls = self.request.GET.getlist("scrolls")
         self.object.set_scrolls(scrolls)
+
+    def shapeshift(self):
+        """
+        """
+        to_shapeshift = self.request.GET["to_shapeshift"]
+        self.object.shapeshift(to_shapeshift == "True")
 
 class MorphActionView(FormView, DetailView):
     """
@@ -602,4 +609,41 @@ class SetScrollsView(MorphActionView):
         self.object.set_scrolls(scrolls)
         self.object.save()
         return redirect(reverse("dracogate:morph_detail", kwargs={"id": self.object.id}))
+
+class ShapeshiftView(MorphActionView):
+    """
+    """
+    action = {
+        "title": "Shapeshift",
+        "name": "shapeshift",
+        "stat_type": "bases",
+    }
+
+    def get_context_data(self, **kwds):
+        """
+        """
+        context = super().get_context_data(**kwds)
+        is_success: bool = self.object.morph.is_laguz is True
+        context['is_success'] = is_success
+        return context
+
+    def get_form_class(self, **kwds):
+        """
+        """
+        try:
+            (_, param_bounds) = self.object.shapeshift(False)
+        except AttributeError:
+            self.object = self.get_object()
+            (_, param_bounds) = self.object.shapeshift(False)
+        form_class = ActionFormBuilder.shapeshift(param_bounds, self.object.morph)
+        return form_class
+
+    def form_valid(self, form):
+        """
+        """
+        to_shapeshift = form.cleaned_data['to_shapeshift']
+        self.object.shapeshift(to_shapeshift)
+        self.object.save()
+        return redirect(reverse("dracogate:morph_detail", kwargs={"id": self.object.id}))
+
 

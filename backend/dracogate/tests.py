@@ -2025,111 +2025,90 @@ class ShapeshiftTests(TestCase):
         form = form_class({field: value})
         self.assertIs(form.is_valid(), False)
 
-    @unittest.skip
     def test_shapeshift__forecast(self):
         """
         """
-        field = "to_consume"
+        field = "to_shapeshift"
         value = "True"
         url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
-        query_params = {"action": "shapeshift", field: value, "stat_type": "growths"}
+        query_params = {"action": "shapeshift", field: value, "stat_type": "bases"}
         response = self.client.get(url, query_params=query_params)
         # HP values
-        values = ("20", "15")
+        values = ("Beast tribe (Cat F)", "Cat (F)")
         for value in values:
             self.assertContains(response, value)
 
-    @unittest.skip
     def test_shapeshift__forecast__fail(self):
         """
         """
-        field = "to_consume"
+        field = "to_shapeshift"
         value = "False"
         url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
-        query_params = {"action": "shapeshift", "stat_type": "growths"}
-        self.vmorph.morph.shapeshift()
-        self.vmorph.save()
+        query_params = {"action": "shapeshift", field: value, "stat_type": "bases"}
         response = self.client.get(url, query_params=query_params)
         # HP values
-        values = ("20", "50")
+        values = ("Beast tribe (Cat F)",)
         for value in values:
             self.assertContains(response, value)
-        values = ("15", "45")
+        values = ("Cat (F)",)
         for value in values:
             with self.assertRaises(AssertionError):
                 self.assertContains(response, value)
 
-    @unittest.skip
-    def test_shapeshift__view_post__fail(self):
-        """
-        Already used Afa's Drops.
-        """
-        field = "to_consume"
-        value = "True"
-        expected = [["shapeshift", {}]]
-        url = reverse("dracogate:shapeshift", kwargs={"id": self.vmorph.id})
-        data = {field: value}
-        self.vmorph.morph.shapeshift()
-        self.vmorph.save()
-        response = self.client.post(url, data=data)
-        self.assertEqual(response.status_code, 200)
-        values = ("Please select", "True",)
-        for value in values:
-            self.assertContains(response, value)
-        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
-        morph = vmorph.init()
-        self.assertEqual(morph.growth_rates.Def, 20)
-        self.assertListEqual(vmorph.history, [])
-
-    @unittest.skip
-    def test_shapeshift__view_post__fail2(self):
-        """
-        Did not use Afa's Drops.
-        """
-        field = "to_consume"
-        value = "False"
-        morph = self.vmorph.morph
-        expected = [["shapeshift", {}]]
-        url = reverse("dracogate:shapeshift", kwargs={"id": self.vmorph.id})
-        data = {}
-        self.assertEqual(morph.growth_rates.Def, 15)
-        response = self.client.post(url, data=data)
-        self.assertLess(response.status_code, 400)
-        values = ("Please select", "True",)
-        for value in values:
-            self.assertContains(response, value)
-        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
-        morph = vmorph.init()
-        self.assertEqual(morph.growth_rates.Def, 15)
-        self.assertListEqual(vmorph.history, [])
-
-    @unittest.skip
     def test_shapeshift__view_post(self):
         """
         """
         morph = self.vmorph.morph
-        field = "to_consume"
+        field = "to_shapeshift"
         value = "True"
-        expected = [["shapeshift", {}]]
+        expected = [["transform", {}]]
         url = reverse("dracogate:shapeshift", kwargs={"id": self.vmorph.id})
         data = {field: value}
-        self.assertEqual(morph.growth_rates.Def, 15)
+        self.assertEqual(morph.current_cls, "Beast tribe (Cat F)")
         response = self.client.post(url, data=data)
         self.assertLess(response.status_code, 400)
         vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
         morph = vmorph.init()
-        self.assertEqual(morph.growth_rates.Def, 20)
+        self.assertEqual(morph.current_cls, "Cat (F)")
         self.assertListEqual(vmorph.history, expected)
         # test for existence of actions in morph_detail
         url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
         self.assertRedirects(response, url)
         response = self.client.get(url)
         values = (
-            "shapeshift",
+            "transform",
             "{}",
         )
         for value in values:
             self.assertContains(response, value)
+
+    def test_shapeshift__view_post__fail(self):
+        """
+        """
+        morph = self.vmorph.morph
+        field = "to_shapeshift"
+        value = "False"
+        expected = []
+        url = reverse("dracogate:shapeshift", kwargs={"id": self.vmorph.id})
+        data = {field: value}
+        self.assertEqual(morph.current_cls, "Beast tribe (Cat F)")
+        response = self.client.post(url, data=data)
+        self.assertLess(response.status_code, 400)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        morph = vmorph.init()
+        self.assertEqual(morph.current_cls, "Beast tribe (Cat F)")
+        self.assertListEqual(vmorph.history, expected)
+        # test for existence of actions in morph_detail
+        url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
+        #self.assertRedirects(response, url)
+        response = self.client.get(url)
+        values = (
+            "transform",
+            "{}",
+        )
+        for value in values:
+            with self.assertRaises(AssertionError):
+                self.assertContains(response, value)
 
 
 class ShapeshiftTests2(TestCase):
@@ -2177,26 +2156,42 @@ class ShapeshiftTests2(TestCase):
         form = form_class({field: True})
         self.assertIs(form.is_valid(), False)
 
-    @unittest.skip
     def test_shapeshift__forecast(self):
         """
         """
-        field = "to_consume"
+        field = "to_shapeshift"
         value = "True"
         url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
-        query_params = {"action": "shapeshift", field: value, "stat_type": "growths"}
-        with self.assertRaises(AttributeError):
-            self.client.get(url, query_params=query_params)
+        query_params = {"action": "shapeshift", field: value, "stat_type": "bases"}
+        self.client.get(url, query_params=query_params)
 
-    @unittest.skip
     def test_shapeshift__view_post(self):
         """
         """
         morph = self.vmorph.morph
-        field = "to_consume"
+        field = "to_shapeshift"
         value = "True"
-        expected = [["shapeshift", {}]]
         url = reverse("dracogate:shapeshift", kwargs={"id": self.vmorph.id})
         data = {field: value}
-        with self.assertRaises(KeyError):
-            self.client.post(url, data=data)
+        #with self.assertRaises(KeyError):
+        response = self.client.post(url, data=data)
+        values = ("Ike", "not a laguz", "cannot shapeshift")
+        for value in values:
+            self.assertContains(response, value)
+        self.assertListEqual(morph.history, [])
+
+    def test_shapeshift__view_post2(self):
+        """
+        """
+        morph = self.vmorph.morph
+        field = "to_shapeshift"
+        value = "False"
+        url = reverse("dracogate:shapeshift", kwargs={"id": self.vmorph.id})
+        data = {field: value}
+        #with self.assertRaises(KeyError):
+        response = self.client.post(url, data=data)
+        values = ("Ike", "not a laguz", "cannot shapeshift")
+        for value in values:
+            self.assertContains(response, value)
+        self.assertListEqual(morph.history, [])
+
