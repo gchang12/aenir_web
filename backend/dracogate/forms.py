@@ -10,6 +10,8 @@ from aenir import (
     StatBoosterError,
     GrowthsItemError,
     ScrollError,
+    BandError,
+    KnightWardError,
 )
 
 class InitFormBuilder:
@@ -374,6 +376,61 @@ class ActionFormBuilder:
                 ),
             )
         return UseAfasDropsForm
+
+    @staticmethod
+    def set_bands(param_bounds, morph):
+        """
+        """
+        _morph = morph.copy()
+
+        class SetBandsForm(forms.Form):
+            """
+            """
+            bands = forms.MultipleChoiceField(
+                choices=[(choice, choice) for choice in param_bounds["bands"]],
+                required=True,
+                label="Bands",
+            )
+            knight_ward = forms.NullBooleanField(
+                initial=False,
+                required=True,
+                disabled=_morph.is_knight is False,
+                label="Equip Knight Ward",
+                widget=forms.Select(
+                    choices=[(False, "No"), (True, "Yes")],
+                ),
+            )
+
+            def clean(self):
+                """
+                """
+                cleaned_data = super().clean()
+                bands = []
+                if "Demi Band" in morph._miscellany["equipped_bands"]:
+                    _morph.unequip_demi_band()
+                    # ensure no duplicates are present.
+                    if "Demi Band" not in bands:
+                        bands.append("Demi Band")
+                if "Knight Ward" in morph._miscellany["equipped_bands"]:
+                    _morph.unequip_knight_ward()
+                    # ensure no duplicates are present.
+                    if "Knight Ward" not in bands:
+                        bands.append("Knight Ward")
+                if cleaned_data['knight_ward'] is True and "Knight Ward" not in bands:
+                    bands.append("Knight Ward")
+                bands.extend(cleaned_data['bands'])
+                try:
+                    _morph.set_bands(bands)
+                except BandError as e:
+                    if e.reason == BandError.Reason.NO_INVENTORY_SPACE:
+                        raise ValidationError(
+                            _("Too many bands (%(item_count)d). Max: %(max_item_count)d"),
+                            params={"item_count": len(bands), "max_item_count": morph.inventory_size},
+                            code="NO_INVENTORY_SPACE",
+                        )
+                return cleaned_data
+
+        return SetBandsForm
 
 
 '''

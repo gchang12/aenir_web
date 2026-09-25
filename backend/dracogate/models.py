@@ -15,6 +15,8 @@ from aenir import (
     StatBoosterError,
     GrowthsItemError,
     ScrollError,
+    BandError,
+    KnightWardError,
 )
 
 User = get_user_model()
@@ -279,6 +281,7 @@ class VirtualMorph(models.Model):
                 is_success = True
         return (is_success, param_bounds)
 
+    # TODO: Test!
     def set_demiband(self, to_set: bool):
         """
         """
@@ -286,6 +289,31 @@ class VirtualMorph(models.Model):
     def set_bands(self, bands: list[str]):
         """
         """
+        is_success: bool
+        #demi_band_was_on = False
+        if "Demi Band" in self.morph._miscellany["equipped_bands"]:
+            self.morph.unequip_demi_band()
+            if "Demi Band" not in bands:
+                bands.append("Demi Band")
+        if "Knight Ward" in self.morph._miscellany["equipped_bands"]:
+            self.morph.unequip_knight_ward()
+            if "Knight Ward" not in bands:
+                bands.append("Knight Ward")
+        try:
+            self.morph.set_bands(bands)
+            self.history.append(
+                ("set_bands", {"bands": bands}),
+            )
+            param_bounds = {}
+            is_success = True
+        except (KnightWardError, BandError) as e:
+            param_bounds = {
+                BandError.Reason.NOT_FOUND: {"bands": tuple(self.morph.band_dict)},
+                BandError.Reason.NO_INVENTORY_SPACE: {"inventory_size": self.morph.inventory_size},
+                KnightWardError.Reason.NOT_A_KNIGHT: None,
+            }[e.reason]
+            is_success = False
+        return (is_success, param_bounds)
 
     def use_metiss_tome(self, to_consume: bool):
         """

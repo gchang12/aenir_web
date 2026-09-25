@@ -2454,3 +2454,493 @@ class UseMetissTomeTests2(TestCase):
         with self.assertRaises(KeyError):
             self.client.post(url, data=data)
 
+
+class SetBandsTests2(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        game_no = 9
+        unit = "Lethe"
+        init_options = {}
+        self.user = User.objects.create()
+        self.vmorph = VirtualMorph.objects.create(
+            owner=self.user,
+            game_no=game_no,
+            unit=unit,
+            init_options=init_options,
+        )
+
+    def test_set_bands__virtualmorph1(self):
+        """
+        No errors.
+        """
+        field = "bands"
+        value = ["Sword Band"]
+        self.vmorph.morph.equip_demi_band()
+        self.assertIn("Demi Band", self.vmorph.morph._miscellany["equipped_bands"])
+        (is_success, param_bounds) = self.vmorph.set_bands(value)
+        expected1 = {}
+        expected2 = True
+        expected3 = [
+            ("set_bands", {field: value})
+        ]
+        self.assertDictEqual(param_bounds, expected1)
+        self.assertIs(is_success, expected2)
+        self.assertListEqual(
+            self.vmorph.history,
+            expected3,
+        )
+        self.assertIn("Demi Band", self.vmorph.morph._miscellany["equipped_bands"])
+
+    def test_set_bands__virtualmorph2(self):
+        """
+        Non-knight trying to equip Knight Ward.
+        """
+        field = "bands"
+        value = ["Knight Ward"]
+        (is_success, param_bounds) = self.vmorph.set_bands(value)
+        expected1 = {}
+        expected2 = False
+        expected3 = [
+        ]
+        self.assertIsNone(param_bounds)
+        self.assertIs(is_success, expected2)
+        self.assertListEqual(
+            self.vmorph.history,
+            expected3,
+        )
+
+    def test_set_bands__virtualmorph3(self):
+        """
+        Even if set_bands doesn't work, Demi Band is retained.
+        """
+        field = "bands"
+        value = [""]
+        self.vmorph.morph.equip_demi_band()
+        self.vmorph.save()
+        self.assertIn("Demi Band", self.vmorph.morph._miscellany["equipped_bands"])
+        (is_success, param_bounds) = self.vmorph.set_bands(value)
+        expected2 = False
+        expected3 = [ ]
+        self.assertIs(is_success, expected2)
+        self.assertListEqual(
+            self.vmorph.history,
+            expected3,
+        )
+        vmorph = VirtualMorph.objects.get()
+        vmorph.init()
+        self.assertIn("Demi Band", vmorph.morph._miscellany["equipped_bands"])
+
+    def test_set_bands__formbuilder1(self):
+        """
+        """
+        field = "bands"
+        value = ["Sword Band"]
+        field2 = "knight_ward"
+        value2 = False
+        expected2 = [(choice, choice) for choice in (
+            'Sword Band',
+            'Soldier Band',
+            'Fighter Band',
+            'Archer Band',
+            'Knight Band',
+            'Paladin Band',
+            'Pegasus Band',
+            'Wyvern Band',
+            'Mage Band',
+            'Priest Band',
+            'Thief Band',
+        )]
+        (_, param_bounds) = self.vmorph.set_bands([""])
+        self.vmorph.morph.equip_demi_band()
+        form_class = ActionFormBuilder.set_bands(param_bounds, self.vmorph.morph)
+        self.assertIn(field, form_class.declared_fields)
+        self.assertIn(field2, form_class.declared_fields)
+        self.assertEqual(form_class.declared_fields[field].choices, expected2)
+        form = form_class({field: value, field2: value2})
+        self.assertIs(form.is_valid(), True)
+        self.assertIn("Demi Band", self.vmorph.morph._miscellany["equipped_bands"])
+
+    def test_set_bands__formbuilder2(self):
+        """
+        Demi Band is retained even after failed validation.
+        """
+        field = "bands"
+        value = ["Sword Band"]
+        field2 = "knight_ward"
+        value2 = True
+        expected2 = [(choice, choice) for choice in (
+            'Sword Band',
+            'Soldier Band',
+            'Fighter Band',
+            'Archer Band',
+            'Knight Band',
+            'Paladin Band',
+            'Pegasus Band',
+            'Wyvern Band',
+            'Mage Band',
+            'Priest Band',
+            'Thief Band',
+        )]
+        (_, param_bounds) = self.vmorph.set_bands([""])
+        self.vmorph.morph.equip_demi_band()
+        form_class = ActionFormBuilder.set_bands(param_bounds, self.vmorph.morph)
+        form = form_class({field: value, field2: value2})
+        self.assertIs(form.is_valid(), True)
+        self.assertIn("Demi Band", self.vmorph.morph._miscellany["equipped_bands"])
+
+    def test_set_bands__view_post__fail(self):
+        """
+        Assert that Demi Band is retained after failed POST.
+        """
+        field = "bands"
+        value = [
+            'Sword Band',
+            'Soldier Band',
+            'Fighter Band',
+            'Archer Band',
+            'Knight Band',
+            'Paladin Band',
+            'Pegasus Band',
+            'Wyvern Band',
+            'Mage Band',
+            'Priest Band',
+            'Thief Band',
+        ]
+        field2 = "knight_ward"
+        value2 = False
+        self.vmorph.morph.equip_demi_band()
+        self.vmorph.save()
+        url = reverse("dracogate:set_bands", kwargs={"id": self.vmorph.id})
+        data = {field: value, field2: value2}
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 200)
+        values = ("Max: 8", "(11)", "Too many bands")
+        for value in values:
+            self.assertContains(response, value)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        self.assertListEqual(vmorph.history, [])
+        morph = vmorph.init()
+        self.assertIn("Demi Band", morph._miscellany["equipped_bands"])
+
+    def test_set_bands__view_post(self):
+        """
+        Assert success.
+        """
+        field = "bands"
+        value = [
+            "Sword Band",
+            "Mage Band",
+        ]
+        field2 = "knight_ward"
+        value2 = False
+        data = {field: value, field2: value2}
+        expected = [["set_bands", {"bands": value}]]
+        url = reverse("dracogate:set_bands", kwargs={"id": self.vmorph.id})
+        response = self.client.post(url, data=data)
+        self.assertLess(response.status_code, 400)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        morph = vmorph.init()
+        self.assertIn("Sword Band", morph._miscellany["equipped_bands"])
+        self.assertIn("Mage Band", morph._miscellany["equipped_bands"])
+        self.assertListEqual(vmorph.history, expected)
+        # test for existence of actions in morph_detail
+        url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
+        self.assertRedirects(response, url)
+        response = self.client.get(url)
+        values = (
+            "set_bands",
+            "bands",
+            "Mage Band",
+            "Sword Band",
+        )
+        for value in values:
+            self.assertContains(response, value)
+        morph = VirtualMorph.objects.get(id=self.vmorph.id).init()
+
+
+class SetBandsTests(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        game_no = 9
+        unit = "Oscar"
+        init_options = {}
+        self.user = User.objects.create()
+        self.vmorph = VirtualMorph.objects.create(
+            owner=self.user,
+            game_no=game_no,
+            unit=unit,
+            init_options=init_options,
+        )
+
+    def test_set_bands__virtualmorph1(self):
+        """
+        No errors.
+        """
+        field = "bands"
+        value = ["Knight Ward"]
+        (is_success, param_bounds) = self.vmorph.set_bands(value)
+        expected1 = {}
+        expected2 = True
+        expected3 = [
+            ("set_bands", {field: value})
+        ]
+        self.assertDictEqual(param_bounds, expected1)
+        self.assertIs(is_success, expected2)
+        self.assertListEqual(
+            self.vmorph.history,
+            expected3,
+        )
+
+    def test_set_bands__virtualmorph2(self):
+        """
+        Scroll DNE.
+        """
+        field = "bands"
+        value = [""]
+        expected2 = {field: (
+            'Sword Band',
+            'Soldier Band',
+            'Fighter Band',
+            'Archer Band',
+            'Knight Band',
+            'Paladin Band',
+            'Pegasus Band',
+            'Wyvern Band',
+            'Mage Band',
+            'Priest Band',
+            'Thief Band',
+        )}
+        expected3 = False
+        (is_success, param_bounds) = self.vmorph.set_bands(value)
+        self.assertDictEqual(param_bounds, expected2)
+        self.assertIs(is_success, expected3)
+        self.assertListEqual(
+            self.vmorph.history,
+            [],
+        )
+
+    def test_set_bands__virtualmorph3(self):
+        """
+        Too many bands
+        """
+        field = "bands"
+        value = [
+            'Sword Band',
+            'Soldier Band',
+            'Fighter Band',
+            'Archer Band',
+            'Knight Band',
+            'Paladin Band',
+            'Pegasus Band',
+            'Wyvern Band',
+            'Mage Band',
+            'Priest Band',
+            'Thief Band',
+        ]
+        expected2 = {"inventory_size": 8}
+        expected3 = False
+        (is_success, param_bounds) = self.vmorph.set_bands(value)
+        self.assertDictEqual(param_bounds, expected2)
+        self.assertIs(is_success, expected3)
+        self.assertListEqual(
+            self.vmorph.history,
+            [],
+        )
+
+    def test_set_bands__virtualmorph3(self):
+        """
+        Knight Ward is retained after failure.
+        """
+        field = "bands"
+        value = [""]
+        expected3 = False
+        self.vmorph.morph.equip_knight_ward()
+        self.assertIn("Knight Ward", self.vmorph.morph._miscellany['equipped_bands'])
+        self.vmorph.save()
+        (is_success, _) = self.vmorph.set_bands(value)
+        self.assertIs(is_success, expected3)
+        self.assertListEqual(
+            self.vmorph.history,
+            [],
+        )
+        vmorph = VirtualMorph.objects.get()
+        vmorph.init()
+        self.assertIn("Knight Ward", vmorph.morph._miscellany['equipped_bands'])
+
+    def test_set_bands__formbuilder1(self):
+        """
+        """
+        field = "bands"
+        value = ["Sword Band"]
+        field2 = "knight_ward"
+        value2 = True
+        expected2 = [(choice, choice) for choice in (
+            'Sword Band',
+            'Soldier Band',
+            'Fighter Band',
+            'Archer Band',
+            'Knight Band',
+            'Paladin Band',
+            'Pegasus Band',
+            'Wyvern Band',
+            'Mage Band',
+            'Priest Band',
+            'Thief Band',
+        )]
+        (_, param_bounds) = self.vmorph.set_bands([""])
+        form_class = ActionFormBuilder.set_bands(param_bounds, self.vmorph.morph)
+        self.assertIn(field, form_class.declared_fields)
+        self.assertIn(field2, form_class.declared_fields)
+        self.assertEqual(form_class.declared_fields[field].choices, expected2)
+        form = form_class({field: value, field2: value2})
+        self.assertIs(form.is_valid(), True)
+
+    def test_set_bands__formbuilder2(self):
+        """
+        Assert that Knight Ward is retained after failed validation.
+        """
+        field = "bands"
+        value = [
+            'Sword Band',
+            'Soldier Band',
+            'Fighter Band',
+            'Archer Band',
+            'Knight Band',
+            'Paladin Band',
+            'Pegasus Band',
+            'Wyvern Band',
+            'Mage Band',
+            'Priest Band',
+            'Thief Band',
+        ]
+        field2 = "knight_ward"
+        value2 = False
+        self.vmorph.morph.equip_knight_ward()
+        self.vmorph.save()
+        # try to get param_bounds
+        (_, param_bounds) = self.vmorph.set_bands([""])
+        # get form class
+        form_class = ActionFormBuilder.set_bands(param_bounds, self.vmorph.morph)
+        form = form_class({field: value, field2: value2})
+        self.assertIs(form.is_valid(), False)
+        morph = VirtualMorph.objects.get().init()
+        self.assertIn("Knight Ward", morph._miscellany["equipped_bands"])
+
+    def test_set_bands__forecast__fail(self):
+        """
+        """
+        field = "bands"
+        value = [
+            'Sword Band',
+            'Soldier Band',
+            'Fighter Band',
+            'Archer Band',
+            'Knight Band',
+            'Paladin Band',
+            'Pegasus Band',
+            'Wyvern Band',
+            'Mage Band',
+            'Priest Band',
+            'Thief Band',
+        ]
+        url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
+        query_params = {"action": "set_bands", field: value, "stat_type": "growths"}
+        response = self.client.get(url, query_params=query_params)
+        self.assertEqual(response.status_code, 200)
+
+    def test_set_bands__forecast(self):
+        """
+        """
+        field = "bands"
+        value = [
+            "Sword Band",
+            #"Mage Band",
+        ]
+        field2 = "knight_ward"
+        value2 = True
+        url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
+        query_params = {"action": "set_bands", field: value, field2: value2, "stat_type": "growths"}
+        response = self.client.get(url, query_params=query_params)
+        # Spd, Skl, Lck
+        values = ("45", "75", "50", "55", "30", "35")
+        for value in values:
+            self.assertContains(response, value)
+
+    def test_set_bands__view_post__fail(self):
+        """
+        Assert that Knight Ward is retained after failed POST.
+        """
+        field = "bands"
+        value = [
+            'Sword Band',
+            'Soldier Band',
+            'Fighter Band',
+            'Archer Band',
+            'Knight Band',
+            'Paladin Band',
+            'Pegasus Band',
+            'Wyvern Band',
+            'Mage Band',
+            'Priest Band',
+            'Thief Band',
+        ]
+        field2 = "knight_ward"
+        value2 = False
+        self.vmorph.morph.equip_knight_ward()
+        self.vmorph.save()
+        url = reverse("dracogate:set_bands", kwargs={"id": self.vmorph.id})
+        data = {field: value, field2: value2}
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 200)
+        values = ("Max: 8", "(11)", "Too many bands")
+        for value in values:
+            self.assertContains(response, value)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        self.assertListEqual(vmorph.history, [])
+        morph = vmorph.init()
+        self.assertIn("Knight Ward", morph._miscellany["equipped_bands"])
+
+    def test_set_bands__view_post(self):
+        """
+        Assert success
+        """
+        field = "bands"
+        value = [
+            "Sword Band",
+            "Mage Band",
+        ]
+        field2 = "knight_ward"
+        value2 = True
+        data = {field: value, field2: value2}
+        expected = [["set_bands", {"bands": value + ["Knight Ward"]}]]
+        url = reverse("dracogate:set_bands", kwargs={"id": self.vmorph.id})
+        response = self.client.post(url, data=data)
+        self.assertLess(response.status_code, 400)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        morph = vmorph.init()
+        self.assertIn("Sword Band", morph._miscellany["equipped_bands"])
+        self.assertIn("Mage Band", morph._miscellany["equipped_bands"])
+        self.assertIn("Knight Ward", morph._miscellany["equipped_bands"])
+        self.assertListEqual(vmorph.history, expected)
+        # test for existence of actions in morph_detail
+        url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
+        self.assertRedirects(response, url)
+        response = self.client.get(url)
+        values = (
+            "set_bands",
+            "bands",
+            "Mage Band",
+            "Sword Band",
+            "Knight Ward",
+        )
+        for value in values:
+            self.assertContains(response, value)
+
