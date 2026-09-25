@@ -2612,6 +2612,32 @@ class SetBandsTests2(TestCase):
         self.assertIs(form.is_valid(), True)
         self.assertIn("Demi Band", self.vmorph.morph._miscellany["equipped_bands"])
 
+    def test_set_bands__formbuilder3(self):
+        """
+        knight_ward is False initially.
+        """
+        field = "bands"
+        value = ["Sword Band"]
+        field2 = "knight_ward"
+        value2 = False
+        expected2 = [(choice, choice) for choice in (
+            'Sword Band',
+            'Soldier Band',
+            'Fighter Band',
+            'Archer Band',
+            'Knight Band',
+            'Paladin Band',
+            'Pegasus Band',
+            'Wyvern Band',
+            'Mage Band',
+            'Priest Band',
+            'Thief Band',
+        )]
+        (_, param_bounds) = self.vmorph.set_bands([""])
+        self.vmorph.morph.equip_demi_band()
+        form_class = ActionFormBuilder.set_bands(param_bounds, self.vmorph.morph)
+        self.assertIs(form_class.declared_fields["knight_ward"].initial, False)
+
     def test_set_bands__view_post__fail(self):
         """
         Assert that Demi Band is retained after failed POST.

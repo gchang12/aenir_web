@@ -809,3 +809,4 @@ class CompareMorphsView(TemplateView):
     """
     template_name = "dracogate/compare_morphs.html"
     # toggle stat_type: growths vs bases
+
