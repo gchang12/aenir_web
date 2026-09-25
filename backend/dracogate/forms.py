@@ -44,7 +44,7 @@ class InitFormBuilder:
     def hard_mode(choices):
         """
         """
-        choices = [(False, "Hard"), (True, "Normal")]
+        choices = [(False, "Normal"), (True, "Hard")]
         return forms.NullBooleanField(
             required=True,
             initial=False,
@@ -64,7 +64,7 @@ class InitFormBuilder:
             step_size=1,
             required=True,
             initial=choices[0],
-            label="Number of Declines",
+            label="Declines",
         )
 
     @staticmethod
@@ -82,13 +82,13 @@ class InitFormBuilder:
     def lyn_mode(choices):
         """
         """
-        choices = [(False, "Eliwood/Hector"), (True, "Lyn")]
+        choices = [(False, "Main"), (True, "Tutorial")]
         return forms.NullBooleanField(
             required=True,
             initial=False,
-            label="Mode",
+            label="Campaign",
             widget=forms.Select(
-                choices=((choice, choice) for choice in choices),
+                choices=choices,
             ),
         )
 
