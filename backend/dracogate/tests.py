@@ -2195,3 +2195,262 @@ class ShapeshiftTests2(TestCase):
             self.assertContains(response, value)
         self.assertListEqual(morph.history, [])
 
+
+class UseMetissTomeTests(TestCase):
+    """
+    """
+
+    # https://serenesforest.net/blazing-sword/characters/average-stats/nino/
+    def setUp(self):
+        """
+        """
+        game_no = 8
+        unit = "Eirika"
+        init_options = {}
+        self.user = User.objects.create()
+        self.vmorph = VirtualMorph.objects.create(
+            owner=self.user,
+            game_no=game_no,
+            unit=unit,
+            init_options=init_options,
+        )
+        self.vmorph.init()
+
+    def test_use_metiss_tome__virtualmorph1(self):
+        """
+        No errors.
+        """
+        (is_success, param_bounds) = self.vmorph.use_metiss_tome(True)
+        expected1 = {}
+        expected2 = True
+        expected3 = [
+            ("use_metiss_tome", {})
+        ]
+        self.assertDictEqual(param_bounds, expected1)
+        self.assertIs(is_success, expected2)
+        self.assertListEqual(
+            self.vmorph.history,
+            expected3,
+        )
+
+    def test_use_metiss_tome__virtualmorph2(self):
+        """
+        Metis's Tome is used already.
+        """
+        expected2 = []
+        expected3 = False
+        self.vmorph.morph.use_metiss_tome()
+        (is_success, param_bounds) = self.vmorph.use_metiss_tome(True)
+        self.assertIsNone(param_bounds)
+        self.assertIs(is_success, expected3)
+        self.assertListEqual(
+            self.vmorph.history,
+            expected2,
+        )
+
+    def test_use_metiss_tome__virtualmorph3(self):
+        """
+        Refuse to use Metis's Tome.
+        """
+        expected2 = []
+        expected3 = False
+        self.vmorph.morph.use_metiss_tome()
+        (is_success, param_bounds) = self.vmorph.use_metiss_tome(False)
+        self.assertDictEqual(param_bounds, {})
+        self.assertIs(is_success, expected3)
+        self.assertListEqual(
+            self.vmorph.history,
+            expected2,
+        )
+
+    def test_use_metiss_tome__formbuilder1(self):
+        """
+        """
+        field = "to_consume"
+        (_, param_bounds) = self.vmorph.use_metiss_tome(False)
+        form_class = ActionFormBuilder.use_metiss_tome(param_bounds, self.vmorph.morph)
+        self.assertIn(field, form_class.declared_fields)
+
+    def test_use_metiss_tome__formbuilder2(self):
+        """
+        Check validation.
+        """
+        field = "to_consume"
+        # try to get param_bounds
+        (_, param_bounds) = self.vmorph.use_metiss_tome(False)
+        # get form class
+        self.vmorph.morph.use_metiss_tome()
+        form_class = ActionFormBuilder.use_metiss_tome(param_bounds, self.vmorph.morph)
+        form = form_class({"to_consume": True})
+        self.assertIs(form.is_valid(), False)
+
+    def test_use_metiss_tome__formbuilder3(self):
+        """
+        Check validation.
+        """
+        field = "to_consume"
+        # try to get param_bounds
+        (_, param_bounds) = self.vmorph.use_metiss_tome(False)
+        # get form class
+        form_class = ActionFormBuilder.use_metiss_tome(param_bounds, self.vmorph.morph)
+        form = form_class({"to_consume": False})
+        self.assertIs(form.is_valid(), False)
+
+    def test_use_metiss_tome__forecast(self):
+        """
+        """
+        field = "to_consume"
+        value = "True"
+        url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
+        query_params = {"action": "use_metiss_tome", field: value, "stat_type": "growths"}
+        response = self.client.get(url, query_params=query_params)
+        # HP values
+        values = ("60", "65")
+        for value in values:
+            self.assertContains(response, value)
+
+    def test_use_metiss_tome__forecast__fail(self):
+        """
+        """
+        field = "to_consume"
+        value = "False"
+        url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
+        query_params = {"action": "use_metiss_tome", "stat_type": "growths"}
+        self.vmorph.morph.use_metiss_tome()
+        self.vmorph.save()
+        response = self.client.get(url, query_params=query_params)
+        # HP values
+        values = ("35", "75")
+        for value in values:
+            self.assertContains(response, value)
+        values = ("30", "70")
+        for value in values:
+            with self.assertRaises(AssertionError):
+                self.assertContains(response, value)
+
+    def test_use_metiss_tome__view_post__fail(self):
+        """
+        Already used Metis's Tome.
+        """
+        field = "to_consume"
+        value = "True"
+        expected = [["use_metiss_tome", {}]]
+        url = reverse("dracogate:use_metiss_tome", kwargs={"id": self.vmorph.id})
+        data = {field: value}
+        self.vmorph.morph.use_metiss_tome()
+        self.vmorph.save()
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 200)
+        values = ("Please select", "True",)
+        for value in values:
+            self.assertContains(response, value)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        morph = vmorph.init()
+        self.assertEqual(morph.growth_rates.Def, 35)
+        self.assertListEqual(vmorph.history, [])
+
+    def test_use_metiss_tome__view_post__fail2(self):
+        """
+        Did not use Afa's Drops.
+        """
+        field = "to_consume"
+        value = "False"
+        morph = self.vmorph.morph
+        expected = [["use_metiss_tome", {}]]
+        url = reverse("dracogate:use_metiss_tome", kwargs={"id": self.vmorph.id})
+        data = {}
+        self.assertEqual(morph.growth_rates.Def, 30)
+        response = self.client.post(url, data=data)
+        self.assertLess(response.status_code, 400)
+        values = ("Please select", "True",)
+        for value in values:
+            self.assertContains(response, value)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        morph = vmorph.init()
+        self.assertEqual(morph.growth_rates.Def, 30)
+        self.assertListEqual(vmorph.history, [])
+
+    def test_use_metiss_tome__view_post(self):
+        """
+        """
+        morph = self.vmorph.morph
+        field = "to_consume"
+        value = "True"
+        expected = [["use_metiss_tome", {}]]
+        url = reverse("dracogate:use_metiss_tome", kwargs={"id": self.vmorph.id})
+        data = {field: value}
+        self.assertEqual(morph.growth_rates.Def, 30)
+        response = self.client.post(url, data=data)
+        self.assertLess(response.status_code, 400)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        morph = vmorph.init()
+        self.assertEqual(morph.growth_rates.Def, 35)
+        self.assertListEqual(vmorph.history, expected)
+        # test for existence of actions in morph_detail
+        url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
+        self.assertRedirects(response, url)
+        response = self.client.get(url)
+        values = (
+            "use_metiss_tome",
+            "{}",
+        )
+        for value in values:
+            self.assertContains(response, value)
+
+
+class UseMetissTomeTests2(TestCase):
+    """
+    """
+
+    # https://serenesforest.net/blazing-sword/characters/average-stats/nino/
+    def setUp(self):
+        """
+        """
+        game_no = 6
+        unit = "Roy"
+        init_options = {}
+        self.user = User.objects.create()
+        self.vmorph = VirtualMorph.objects.create(
+            owner=self.user,
+            game_no=game_no,
+            unit=unit,
+            init_options=init_options,
+        )
+        self.vmorph.init()
+
+    def test_use_metiss_tome__virtualmorph1(self):
+        """
+        """
+        with self.assertRaises(AttributeError):
+            self.vmorph.use_metiss_tome(True)
+
+    def test_use_metiss_tome__formbuilder1(self):
+        """
+        """
+        field = "to_consume"
+        param_bounds = {}
+        with self.assertRaises(KeyError): 
+            ActionFormBuilder.use_metiss_tome(param_bounds, self.vmorph.morph)
+
+    def test_use_metiss_tome__forecast(self):
+        """
+        """
+        field = "to_consume"
+        value = "True"
+        url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
+        query_params = {"action": "use_metiss_tome", field: value, "stat_type": "growths"}
+        with self.assertRaises(AttributeError):
+            self.client.get(url, query_params=query_params)
+
+    def test_use_metiss_tome__view_post(self):
+        """
+        """
+        morph = self.vmorph.morph
+        field = "to_consume"
+        value = "True"
+        expected = [["use_metiss_tome", {}]]
+        url = reverse("dracogate:use_metiss_tome", kwargs={"id": self.vmorph.id})
+        data = {field: value}
+        with self.assertRaises(KeyError):
+            self.client.post(url, data=data)
+

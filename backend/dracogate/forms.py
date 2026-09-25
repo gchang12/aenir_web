@@ -328,6 +328,52 @@ class ActionFormBuilder:
 
         return ShapeshiftForm
 
+    @staticmethod
+    def use_metiss_tome(param_bounds, morph):
+        """
+        """
+        #choices = [('', ''), ('on', 'on')]
+        #choices.insert(0, ("", ""))
+        choices = (False, True)
+
+        class ToConsumeField(forms.NullBooleanField):
+            """
+            """
+
+            def validate(self, value):
+                """
+                """
+                super().validate(value)
+                if value is True:
+                    try:
+                        morph.copy().use_metiss_tome()
+                    except GrowthsItemError:
+                        raise ValidationError(
+                            _("%(name)s has already used Metis's Tome."),
+                            params={"name": morph.name},
+                            code="ALREADY_CONSUMED",
+                        )
+                elif value in (None, False):
+                    raise ValidationError(
+                        _("Please select 'True' to use your Metis's Tome."),
+                        params={"name": morph.name},
+                        code="no_selection",
+                    )
+                return True
+
+        class UseAfasDropsForm(forms.Form):
+            """
+            """
+            to_consume = ToConsumeField(
+                initial=False,
+                required=True,
+                disabled=morph._miscellany["Metis's Tome"] is not None,
+                label="Use Metis's Tome",
+                widget=forms.Select(
+                    choices=[(choice, choice) for choice in choices],
+                ),
+            )
+        return UseAfasDropsForm
 
 
 '''

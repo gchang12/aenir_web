@@ -279,6 +279,34 @@ class VirtualMorph(models.Model):
                 is_success = True
         return (is_success, param_bounds)
 
+    def set_demiband(self, to_set: bool):
+        """
+        """
+
+    def set_bands(self, bands: list[str]):
+        """
+        """
+
+    def use_metiss_tome(self, to_consume: bool):
+        """
+        """
+        is_success: bool
+        if to_consume is True:
+            try:
+                self.morph.use_metiss_tome()
+                self.history.append(
+                    ("use_metiss_tome", {}),
+                )
+                is_success = True
+                param_bounds = {}
+            except GrowthsItemError as e:
+                is_success = False
+                param_bounds = None
+        else:
+            is_success = False
+            param_bounds = {}
+        return (is_success, param_bounds)
+
 '''
     def path_to(cls, file: str) -> str:
     def query_db(
