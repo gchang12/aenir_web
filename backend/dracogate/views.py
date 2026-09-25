@@ -328,6 +328,8 @@ class ActionForecastView(DetailView):
             "bases": (self.object.morph.current_stats > morph.current_stats).as_dict,
             "growths": (self.object.morph.growth_rates > morph.growth_rates).as_dict,
         }[stat_type]()
+        for stat in self.object.morph.Stats.ZERO_GROWTH_STAT_LIST():
+            delta_dict[stat] = getattr(self.object.morph.current_stats, stat) - getattr(morph.current_stats, stat)
         context['after'] = {
             "unit_class": self.object.morph.current_cls,
             "unit_lv": self.object.morph.current_lv,
