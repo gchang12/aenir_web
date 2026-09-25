@@ -139,7 +139,6 @@ class VirtualMorph(models.Model):
         morph = morph_class.from_dict(self.stats)
         #morph = get_morph(self.game_no, self.unit, **self.init_options)
         #for action, params in self.history: getattr(morph, action)(**params)
-        #print(morph._miscellany)
         self.morph = morph
         return morph
 
@@ -315,11 +314,17 @@ class VirtualMorph(models.Model):
         """
         is_success: bool
         #demi_band_was_on = False
+        was_on = {
+            "Demi Band": False,
+            "Knight Ward": False,
+        }
         if "Demi Band" in self.morph._miscellany["equipped_bands"]:
+            was_on["Demi Band"] = True
             self.morph.unequip_demi_band()
             if "Demi Band" not in bands:
                 bands.append("Demi Band")
         if "Knight Ward" in self.morph._miscellany["equipped_bands"]:
+            was_on["Knight Ward"] = True
             self.morph.unequip_knight_ward()
             if "Knight Ward" not in bands:
                 bands.append("Knight Ward")
@@ -331,11 +336,16 @@ class VirtualMorph(models.Model):
             param_bounds = {}
             is_success = True
         except (KnightWardError, BandError) as e:
+            valid_bands = (tuple(self.morph.band_dict) if not e.valid_bands else tuple(key for key, value in e.valid_bands.items() if value is True))
             param_bounds = {
-                BandError.Reason.NOT_FOUND: {"bands": tuple(self.morph.band_dict)},
+                BandError.Reason.NOT_FOUND: {"bands": valid_bands},
                 BandError.Reason.NO_INVENTORY_SPACE: {"inventory_size": self.morph.inventory_size},
                 KnightWardError.Reason.NOT_A_KNIGHT: None,
             }[e.reason]
+            if was_on["Knight Ward"] is True:
+                self.morph.equip_knight_ward()
+            if was_on["Demi Band"] is True:
+                self.morph.equip_demi_band()
             is_success = False
         return (is_success, param_bounds)
 

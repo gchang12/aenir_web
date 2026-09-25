@@ -479,7 +479,6 @@ class ActionFormBuilder:
                 else:
                     action = "equip_demi_band"
                 try:
-                    #print(action, len(_morph._miscellany["equipped_bands"]))
                     getattr(_morph, action)()
                 except DemiBandError as e:
                     if e.reason == DemiBandError.Reason.NO_INVENTORY_SPACE:
