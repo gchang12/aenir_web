@@ -6,6 +6,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+from django.urls import reverse_lazy, reverse
 
 from aenir import (
     get_morph,
@@ -369,6 +370,16 @@ class VirtualMorph(models.Model):
             is_success = False
             param_bounds = {}
         return (is_success, param_bounds)
+
+    def get_absolute_url(self):
+        """
+        """
+        return reverse("dracogate:morph_detail", kwargs={"id": self.id})
+
+    def __str__(self):
+        """
+        """
+        return "FE%(game_no)d %(unit)s" % {"game_no": self.game_no, "unit": self.unit}
 
 '''
     def path_to(cls, file: str) -> str:

@@ -2,4 +2,47 @@
 {% load static %}
 
 {% block main %}
+<div id="rename_morph">
+  <h1>Rename Morph</h1>
+  <figure>
+    <img src="{% get_static_prefix %}dracogate/images/fe{{object.game_no}}/characters/{{object.unit}}.png" />
+    <figcaption>
+      <table>
+        <tbody>
+          <tr>
+            <th>Game</th>
+            <td>FE{{object.game_no}}</td>
+          </tr>
+          <tr>
+            <th>Unit</th>
+            <td>{{object.unit}}</td>
+          </tr>
+          {% for key, value in init_options.items %}
+          <tr>
+            {% if key == "Hard Mode" %}
+            <th>Difficulty</th>
+            <td>{% if value == True %}Hard{% else %}Normal{% endif %}</td>
+            {% elif key == "Lyn Mode" %}
+            <th>Campaign</th>
+            <td>{% if value == True %}Tutorial{% else %}Main{% endif %}</td>
+            {% else %}
+            <th>{{ key }}</th>
+            <td>{{ value }}</td>
+            {% endif %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <form method="post">
+        {# <div> #}
+          {# <label for="_old_name">Old Name:</label> #}
+          {# <input disabled id="_old_name" name="_old_name" type="text" value="{{ object.name }}" /> #}
+          {# </div> #}
+        {% csrf_token %}
+        {{ form }}
+        <button>Rename</button>
+      </form>
+    </figcaption>
+  </figure>
+</div>
 {% endblock %}

@@ -1,7 +1,6 @@
 """
 """
 
-# TODO: Rename morph
 # TODO: Compare morphs
 # TODO: Make sure user can see and access only his own VirtualMorph objects.
 # TODO: Forbid user from invoking methods that are invalid in a given Morph class.
@@ -796,11 +795,14 @@ class SetDemiBandView(MorphActionView):
         self.object.save()
         return redirect(reverse("dracogate:morph_detail", kwargs={"id": self.object.id}))
 
-class RenameMorphView(TemplateView):
+class RenameMorphView(UpdateView):
     """
     """
     template_name = "dracogate/rename_morph.html"
+    model = VirtualMorph
+    fields = ["name"]
     # Redirect to morph_detail when finished
+    #success_url = reverse_lazy("dracogate:morph_detail", kwargs={"id": self.object.id})
 
 class CompareMorphsView(TemplateView):
     """
