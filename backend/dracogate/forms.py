@@ -283,6 +283,52 @@ class ActionFormBuilder:
             )
         return SetScrollsForm
 
+    @staticmethod
+    def shapeshift(param_bounds, morph):
+        """
+        """
+        cls_to_transform_to = morph._miscellany["cls_to_transform_to"]
+        current_cls = morph.current_cls
+        choices = [(False, current_cls), (True, cls_to_transform_to)]
+
+        class ToShapeshiftField(forms.NullBooleanField):
+            """
+            """
+
+            def validate(self, value):
+                """
+                """
+                super().validate(value)
+                if morph.is_laguz is False:
+                    raise ValidationError(
+                        _("%(name)s is not a laguz and cannot shapeshift."),
+                        params={"name": morph.name},
+                        code="not_a_laguz",
+                    )
+                if value in (None, False):
+                    raise ValidationError(
+                        _("%(name)s is currently a %(current_cls)s. Please select '%(cls_to_transform_to)s' to shapeshift."),
+                        params={"name": morph.name, "current_cls": current_cls, "cls_to_transform_to": cls_to_transform_to},
+                        code="no_selection",
+                    )
+                return True
+
+        class ShapeshiftForm(forms.Form):
+            """
+            """
+            to_shapeshift = ToShapeshiftField(
+                initial=False,
+                required=True,
+                disabled=morph.is_laguz is False,
+                label="Shapeshift",
+                widget=forms.Select(
+                    choices=choices,
+                ),
+            )
+
+        return ShapeshiftForm
+
+
 
 '''
     def __init__(self, name: str, *, father: str | None = None):

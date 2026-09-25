@@ -1508,7 +1508,7 @@ class UseAfasDropsTests(TestCase):
         form = form_class({"to_consume": True})
         self.assertIs(form.is_valid(), False)
 
-    def test_use_afas_drops__formbuilder2(self):
+    def test_use_afas_drops__formbuilder3(self):
         """
         Check validation.
         """
@@ -2001,40 +2001,28 @@ class ShapeshiftTests(TestCase):
             expected2,
         )
 
-    @unittest.skip
     def test_shapeshift__formbuilder1(self):
         """
         """
-        field = "to_consume"
+        field = "to_shapeshift"
+        choices = [(False, 'Beast tribe (Cat F)'), (True, 'Cat (F)')]
         (_, param_bounds) = self.vmorph.shapeshift(False)
         form_class = ActionFormBuilder.shapeshift(param_bounds, self.vmorph.morph)
         self.assertIn(field, form_class.declared_fields)
+        self.assertEqual(form_class.declared_fields[field].widget.choices, choices)
+        self.assertEqual(self.vmorph.morph.current_cls, "Beast tribe (Cat F)")
+        self.assertEqual(self.vmorph.morph._miscellany["cls_to_transform_to"], "Cat (F)")
+        form = form_class({field: True})
+        self.assertIs(form.is_valid(), True)
 
-    @unittest.skip
     def test_shapeshift__formbuilder2(self):
         """
-        Check validation.
         """
-        field = "to_consume"
-        # try to get param_bounds
+        field = "to_shapeshift"
+        value = False
         (_, param_bounds) = self.vmorph.shapeshift(False)
-        # get form class
-        self.vmorph.morph.shapeshift()
         form_class = ActionFormBuilder.shapeshift(param_bounds, self.vmorph.morph)
-        form = form_class({"to_consume": True})
-        self.assertIs(form.is_valid(), False)
-
-    @unittest.skip
-    def test_shapeshift__formbuilder2(self):
-        """
-        Check validation.
-        """
-        field = "to_consume"
-        # try to get param_bounds
-        (_, param_bounds) = self.vmorph.shapeshift(False)
-        # get form class
-        form_class = ActionFormBuilder.shapeshift(param_bounds, self.vmorph.morph)
-        form = form_class({"to_consume": False})
+        form = form_class({field: value})
         self.assertIs(form.is_valid(), False)
 
     @unittest.skip
@@ -2177,14 +2165,17 @@ class ShapeshiftTests2(TestCase):
         self.assertIs(is_success, False)
         self.assertIsNone(param_bounds)
 
-    @unittest.skip
     def test_shapeshift__formbuilder1(self):
         """
+        Test that form does not work for non-laguz.
         """
-        field = "to_consume"
+        field = "to_shapeshift"
         param_bounds = {}
-        with self.assertRaises(KeyError): 
-            ActionFormBuilder.shapeshift(param_bounds, self.vmorph.morph)
+        form_class = ActionFormBuilder.shapeshift(param_bounds, self.vmorph.morph)
+        self.assertIn(field, form_class.declared_fields)
+        self.assertIs(form_class.declared_fields[field].disabled, True)
+        form = form_class({field: True})
+        self.assertIs(form.is_valid(), False)
 
     @unittest.skip
     def test_shapeshift__forecast(self):
