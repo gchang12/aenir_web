@@ -22,8 +22,6 @@ from dracogate.models import VirtualMorph
 
 User = get_user_model()
 
-# TODO: Consider actually initializing morphs via VirtualMorph.init to simulate actual website workflow.
-
 class InitFormBuilderTests(TestCase):
     """
     """
@@ -459,7 +457,7 @@ class LevelUpTests(TestCase):
             unit=unit,
             init_options=init_options,
         )
-        self.vmorph.morph = get_morph(game_no, unit, **init_options)
+        self.vmorph.init()
 
     def test_level_up__virtualmorph1(self):
         """
@@ -590,7 +588,7 @@ class PromoteTests(TestCase):
             unit=unit,
             init_options=init_options,
         )
-        self.vmorph.morph = get_morph(game_no, unit, **init_options)
+        self.vmorph.init()
 
     def test_promote__virtualmorph1(self):
         """
@@ -702,7 +700,7 @@ class PromoteTests2(TestCase):
             unit=unit,
             init_options=init_options,
         )
-        self.vmorph.morph = get_morph(game_no, unit, **init_options)
+        self.vmorph.init()
 
     def test_promote__virtualmorph1(self):
         """
@@ -875,7 +873,7 @@ class PromoteTests3(TestCase):
             unit=unit,
             init_options=init_options,
         )
-        self.vmorph.morph = get_morph(game_no, unit, **init_options)
+        self.vmorph.init()
         self.vmorph.morph.level_up(9)
 
     def test_promote__virtualmorph1(self):
@@ -1024,7 +1022,7 @@ class PromoteTests4(TestCase):
             unit=unit,
             init_options=init_options,
         )
-        self.vmorph.morph = get_morph(game_no, unit, **init_options)
+        self.vmorph.init()
 
     def test_promote__virtualmorph1(self):
         """
@@ -1214,7 +1212,7 @@ class UseStatBoosterTests(TestCase):
             unit=unit,
             init_options=init_options,
         )
-        self.vmorph.morph = get_morph(game_no, unit, **init_options)
+        self.vmorph.init()
         self.vmorph.morph.level_up(20 - self.vmorph.morph.current_lv)
         self.vmorph.save()
 
@@ -1379,7 +1377,7 @@ class UseStatBoosterTests2(TestCase):
             unit=unit,
             init_options=init_options,
         )
-        self.vmorph.morph = get_morph(game_no, unit, **init_options)
+        self.vmorph.init()
 
     def test_use_stat_booster__virtualmorph(self):
         """
@@ -1440,7 +1438,7 @@ class UseAfasDropsTests(TestCase):
             unit=unit,
             init_options=init_options,
         )
-        self.vmorph.morph = get_morph(game_no, unit, **init_options)
+        self.vmorph.init()
 
     def test_use_afas_drops__virtualmorph1(self):
         """
@@ -1642,7 +1640,7 @@ class UseAfasDropsTests2(TestCase):
             unit=unit,
             init_options=init_options,
         )
-        self.vmorph.morph = get_morph(game_no, unit, **init_options)
+        self.vmorph.init()
 
     def test_use_afas_drops__virtualmorph1(self):
         """
