@@ -236,21 +236,24 @@ class VirtualMorph(models.Model):
             param_bounds = {}
         return (is_success, param_bounds)
 
-    # TODO: Test
     def set_scrolls(self, scrolls: list[str]):
         """
         """
         is_success: bool
         try:
             self.morph.set_scrolls(scrolls)
+            self.history.append(
+                ("set_scrolls", {"scrolls": scrolls}),
+            )
             param_bounds = {}
             is_success = True
         except ScrollError as e:
             param_bounds = {
-                ScrollError.NOT_FOUND: {"scrolls": tuple(self.morph.scroll_dict)},
+                ScrollError.Reason.NOT_FOUND: {"scrolls": tuple(self.morph.scroll_dict)},
+                ScrollError.Reason.NO_INVENTORY_SPACE: {"inventory_size": self.morph.inventory_size},
             }[e.reason]
             is_success = False
-        raise (is_success, param_bounds)
+        return (is_success, param_bounds)
 
     # TODO: Test
     def shapeshift(self, to_shapeshift: bool):

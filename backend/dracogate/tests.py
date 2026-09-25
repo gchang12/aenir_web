@@ -1678,3 +1678,217 @@ class UseAfasDropsTests2(TestCase):
         with self.assertRaises(KeyError):
             self.client.post(url, data=data)
 
+class SetScrollsTests(TestCase):
+    """
+    """
+
+    # https://serenesforest.net/binding-blade/characters/average-stats/hard-mode/rutger/
+    def setUp(self):
+        """
+        """
+        game_no = 5
+        unit = "Leaf"
+        init_options = {}
+        self.user = User.objects.create()
+        self.vmorph = VirtualMorph.objects.create(
+            owner=self.user,
+            game_no=game_no,
+            unit=unit,
+            init_options=init_options,
+        )
+        self.vmorph.init()
+        self.vmorph.morph.level_up(20 - self.vmorph.morph.current_lv)
+        self.vmorph.save()
+
+    def test_set_scrolls__virtualmorph1(self):
+        """
+        No errors.
+        """
+        field = "scrolls"
+        value = ["Odo"]
+        (is_success, param_bounds) = self.vmorph.set_scrolls(value)
+        expected1 = {}
+        expected2 = True
+        expected3 = [
+            ("set_scrolls", {field: value})
+        ]
+        self.assertDictEqual(param_bounds, expected1)
+        self.assertIs(is_success, expected2)
+        self.assertListEqual(
+            self.vmorph.history,
+            expected3,
+        )
+
+    def test_set_scrolls__virtualmorph2(self):
+        """
+        Scroll DNE.
+        """
+        field = "scrolls"
+        value = [""]
+        expected2 = {field: (
+            "Odo",
+            'Baldo',
+            'Hezul',
+            'Dain',
+            'Noba',
+            'Neir',
+            'Ulir',
+            'Tordo',
+            'Fala',
+            'Sety',
+            'Blaggi',
+            'Heim',
+        )}
+        expected3 = False
+        (is_success, param_bounds) = self.vmorph.set_scrolls(value)
+        self.assertDictEqual(param_bounds, expected2)
+        self.assertIs(is_success, expected3)
+        self.assertListEqual(
+            self.vmorph.history,
+            [],
+        )
+
+    def test_set_scrolls__virtualmorph3(self):
+        """
+        Too many scrolls
+        """
+        field = "scrolls"
+        value = [
+            "Odo",
+            'Baldo',
+            'Hezul',
+            'Dain',
+            'Noba',
+            'Neir',
+            'Ulir',
+            'Tordo',
+            'Fala',
+            'Sety',
+            'Blaggi',
+            'Heim',
+        ]
+        expected2 = {"inventory_size": 7}
+        expected3 = False
+        (is_success, param_bounds) = self.vmorph.set_scrolls(value)
+        self.assertDictEqual(param_bounds, expected2)
+        self.assertIs(is_success, expected3)
+        self.assertListEqual(
+            self.vmorph.history,
+            [],
+        )
+
+    @unittest.skip
+    def test_set_scrolls__formbuilder1(self):
+        """
+        """
+        field = "item_name"
+        item_name = "Energy Ring"
+        expected2 = [(choice, choice) for choice in (
+            "",
+            "Angelic Robe",
+            "Energy Ring",
+            "Secret Book",
+            "Speedwings",
+            "Goddess Icon",
+            "Dragonshield",
+            "Talisman",
+            "Boots",
+            "Body Ring",
+        )]
+        (_, param_bounds) = self.vmorph.set_scrolls("")
+        form_class = ActionFormBuilder.set_scrolls(param_bounds, self.vmorph.morph)
+        self.assertIn(field, form_class.declared_fields)
+        self.assertEqual(form_class.declared_fields[field].choices, expected2)
+
+    @unittest.skip
+    def test_set_scrolls__formbuilder2(self):
+        """
+        Check validation.
+        """
+        field = "item_name"
+        item_name = "Speedwings"
+        # try to get param_bounds
+        (_, param_bounds) = self.vmorph.set_scrolls("")
+        # get form class
+        form_class = ActionFormBuilder.set_scrolls(param_bounds, self.vmorph.morph)
+        form = form_class({"item_name": "Speedwings"})
+        self.assertIs(form.is_valid(), False)
+
+    @unittest.skip
+    def test_set_scrolls__forecast__fail(self):
+        """
+        """
+        field = "item_name"
+        value = "Speedwings"
+        url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
+        query_params = {"action": "set_scrolls", field: value, "stat_type": "bases"}
+        response = self.client.get(url, query_params=query_params)
+        # HP values
+        values = ("20.0", "38.3")
+        for value in values:
+            self.assertContains(response, value)
+        values = ("22.0",)
+        for value in values:
+            with self.assertRaises(AssertionError):
+                self.assertContains(response, value)
+
+    @unittest.skip
+    def test_set_scrolls__forecast(self):
+        """
+        """
+        field = "item_name"
+        value = "Angelic Robe"
+        url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
+        query_params = {"action": "set_scrolls", field: value, "stat_type": "bases"}
+        response = self.client.get(url, query_params=query_params)
+        # HP values
+        values = ("45.3", "38.3")
+        for value in values:
+            self.assertContains(response, value)
+
+    @unittest.skip
+    def test_set_scrolls__view_post__fail(self):
+        """
+        """
+        field = "item_name"
+        value = "Speedwings"
+        expected = [["set_scrolls", {field: value}]]
+        url = reverse("dracogate:set_scrolls", kwargs={"id": self.vmorph.id})
+        data = {field: value}
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 200)
+        values = ("cannot use", "Speedwings", "Spd", "is maxed")
+        for value in values:
+            self.assertContains(response, value)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        morph = vmorph.init()
+        self.assertEqual(morph.current_stats.Spd, 20_00)
+        self.assertListEqual(vmorph.history, [])
+
+    @unittest.skip
+    def test_set_scrolls__view_post(self):
+        """
+        """
+        field = "item_name"
+        value = "Angelic Robe"
+        expected = [["set_scrolls", {field: value}]]
+        url = reverse("dracogate:set_scrolls", kwargs={"id": self.vmorph.id})
+        data = {field: value}
+        response = self.client.post(url, data=data)
+        self.assertLess(response.status_code, 400)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        morph = vmorph.init()
+        self.assertEqual(morph.current_stats.HP, 45_30)
+        self.assertListEqual(vmorph.history, expected)
+        # test for existence of actions in morph_detail
+        url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
+        self.assertRedirects(response, url)
+        response = self.client.get(url)
+        values = (
+            "set_scrolls",
+            "item_name",
+            "Angelic Robe",
+        )
+        for value in values:
+            self.assertContains(response, value)
+
