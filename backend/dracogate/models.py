@@ -249,8 +249,9 @@ class VirtualMorph(models.Model):
             param_bounds = {}
             is_success = True
         except ScrollError as e:
+            valid_scrolls = (tuple(self.morph.scroll_dict) if not e.valid_scrolls else tuple(key for key, value in e.valid_scrolls.items() if value is False)) # TODO: Fix this once you update aenir.
             param_bounds = {
-                ScrollError.Reason.NOT_FOUND: {"scrolls": tuple(self.morph.scroll_dict)},
+                ScrollError.Reason.NOT_FOUND: {"scrolls": valid_scrolls},
                 ScrollError.Reason.NO_INVENTORY_SPACE: {"inventory_size": self.morph.inventory_size},
             }[e.reason]
             is_success = False

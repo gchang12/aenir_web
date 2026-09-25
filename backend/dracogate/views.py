@@ -1,7 +1,6 @@
 """
 """
 
-# TODO: Test 'initial' value of SetBandsForm and SetScrollsForm
 # TODO: Rename morph
 # TODO: Compare morphs
 # TODO: Make sure user can see and access only his own VirtualMorph objects.

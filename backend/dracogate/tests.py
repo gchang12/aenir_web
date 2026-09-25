@@ -1697,6 +1697,26 @@ class SetScrollsTests(TestCase):
             init_options=init_options,
         )
 
+    def test_set_scrolls__formbuilder3(self):
+        """
+        Assert that initial value is equal to set of equipped scrolls.
+        """
+        value = [
+            'Odo',
+            'Sety',
+            'Heim',
+        ]
+        self.vmorph.set_scrolls(value)
+        morph = self.vmorph.morph
+        self.vmorph.save()
+        vmorph = VirtualMorph.objects.get()
+        morph = vmorph.init()
+        for v in value:
+            self.assertIn(v, morph._miscellany["equipped_scrolls"])
+        (_, param_bounds) = vmorph.set_scrolls([""])
+        form_class = ActionFormBuilder.set_scrolls(param_bounds, vmorph.morph)
+        self.assertListEqual(form_class.declared_fields["scrolls"].initial, [(choice, choice) for choice in value])
+
     def test_set_scrolls__virtualmorph1(self):
         """
         No errors.
@@ -1723,18 +1743,18 @@ class SetScrollsTests(TestCase):
         field = "scrolls"
         value = [""]
         expected2 = {field: (
-            "Odo",
-            'Baldo',
-            'Hezul',
-            'Dain',
-            'Noba',
-            'Neir',
-            'Ulir',
-            'Tordo',
-            'Fala',
-            'Sety',
-            'Blaggi',
-            'Heim',
+            #"Odo",
+            #'Baldo',
+            #'Hezul',
+            #'Dain',
+            #'Noba',
+            #'Neir',
+            ##'Ulir',
+            #'Tordo',
+            #'Fala',
+            #'Sety',
+            #'Blaggi',
+            #'Heim',
         )}
         expected3 = False
         (is_success, param_bounds) = self.vmorph.set_scrolls(value)
