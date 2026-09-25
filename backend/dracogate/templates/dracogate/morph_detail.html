@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block main %}
-<h1>{{ object.name }}</h1>
+<h1><a href="{% url 'dracogate:rename_morph' object.id %}">{{ object.name }}</a></h1>
 <div id="unit_profile">
   <article>
     <h2>Profile</h2>

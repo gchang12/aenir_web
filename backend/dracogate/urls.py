@@ -22,6 +22,7 @@ urlpatterns = [
     path("<int:id>/set_bands/", views.SetBandsView.as_view(), name="set_bands"),
     path("<int:id>/shapeshift/", views.ShapeshiftView.as_view(), name="shapeshift"),
     path("<int:id>/set_demiband/", views.SetDemiBandView.as_view(), name="set_demiband"),
+    path("<int:id>/rename_morph/", views.RenameMorphView.as_view(), name="rename_morph"),
     path("components/<int:id>/action_forecast/", views.ActionForecastView.as_view(), name="action_forecast"),
-    # TODO: component that allows user to rename the morph
+    path("compare_morphs/", views.CompareMorphsView.as_view(), name="compare_morphs"),
 ]

@@ -1,8 +1,15 @@
 """
 """
 
+# TODO: Make sure user can access only his own VirtualMorph objects.
+# TODO: Make sure user can see only his own VirtualMorph objects.
+# TODO: Forbid user from invoking methods that are invalid in a given Morph class.
+# TODO: Rename morph
+# TODO: Compare morphs
+
 from django.views.generic.edit import (
     FormView,
+    UpdateView,
 )
 from django.views.generic.base import (
     TemplateView,
@@ -790,3 +797,14 @@ class SetDemiBandView(MorphActionView):
         self.object.save()
         return redirect(reverse("dracogate:morph_detail", kwargs={"id": self.object.id}))
 
+class RenameMorphView(TemplateView):
+    """
+    """
+    template_name = "dracogate/rename_morph.html"
+    # Redirect to morph_detail when finished
+
+class CompareMorphsView(TemplateView):
+    """
+    """
+    template_name = "dracogate/compare_morphs.html"
+    # toggle stat_type: growths vs bases
