@@ -41,12 +41,13 @@ class InitFormBuilder:
     def hard_mode(choices):
         """
         """
+        choices = [(False, "Hard"), (True, "Normal")]
         return forms.NullBooleanField(
             required=True,
-            initial=choices[0],
-            label="Hard Mode",
+            initial=False,
+            label="Difficulty",
             widget=forms.Select(
-                choices=((choice, choice) for choice in choices),
+                choices=choices,
             ),
         )
 
@@ -78,10 +79,11 @@ class InitFormBuilder:
     def lyn_mode(choices):
         """
         """
+        choices = [(False, "Eliwood/Hector"), (True, "Lyn")]
         return forms.NullBooleanField(
             required=True,
-            initial=choices[0],
-            label="Lyn Mode",
+            initial=False,
+            label="Mode",
             widget=forms.Select(
                 choices=((choice, choice) for choice in choices),
             ),
