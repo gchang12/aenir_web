@@ -804,9 +804,42 @@ class RenameMorphView(UpdateView):
     # Redirect to morph_detail when finished
     #success_url = reverse_lazy("dracogate:morph_detail", kwargs={"id": self.object.id})
 
-class CompareMorphsView(TemplateView):
+class CompareMorphsView(ListView):
     """
     """
     template_name = "dracogate/compare_morphs.html"
+    model = VirtualMorph
     # toggle stat_type: growths vs bases
+
+    def get_queryset(self):
+        """
+        """
+        return super().get_queryset()
+
+class CompareMorphView(DetailView, FormView):
+    """
+    """
+    template_name = "dracogate/compare_morph.html"
+    model = VirtualMorph
+    # toggle stat_type: growths vs bases
+
+    def get_object(self):
+        """
+        """
+        obj = super().get_object()
+        self.object = obj
+        return obj
+
+class CompareMorphForecastView(DetailView, FormView):
+    """
+    """
+    template_name = "dracogate/compare_morph_forecast.html"
+    model = VirtualMorph
+    # toggle stat_type: growths vs bases
+
+    def get_queryset(self):
+        """
+        """
+        return super().get_queryset()
+
 

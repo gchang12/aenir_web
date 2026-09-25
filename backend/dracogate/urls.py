@@ -25,4 +25,6 @@ urlpatterns = [
     path("<int:pk>/rename_morph/", views.RenameMorphView.as_view(), name="rename_morph"),
     path("components/<int:id>/action_forecast/", views.ActionForecastView.as_view(), name="action_forecast"),
     path("compare_morphs/", views.CompareMorphsView.as_view(), name="compare_morphs"),
+    path("compare_morphs/<int:pk>/", views.CompareMorphForecastView.as_view(), name="compare_morph"),
+    path("components/compare_morphs/<int:pk>/", views.CompareMorphForecastView.as_view(), name="compare_morph_forecast"),
 ]
