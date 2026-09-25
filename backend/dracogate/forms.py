@@ -224,7 +224,7 @@ class ActionFormBuilder:
                         )
                 elif value in (None, False):
                     raise ValidationError(
-                        _("Please select 'True'."),
+                        _("Please select 'True' to use your Afa's Drops."),
                         params={"name": morph.name},
                         code="no_selection",
                     )

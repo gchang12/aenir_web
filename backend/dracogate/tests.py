@@ -1,9 +1,6 @@
 """
 """
 
-#import json
-#import html
-
 import unittest
 
 from django.test import TestCase
@@ -19,12 +16,13 @@ from aenir import (
 
 from dracogate.forms import (
     InitFormBuilder,
-    #LevelUpFormBuilder,
     ActionFormBuilder,
 )
 from dracogate.models import VirtualMorph
 
 User = get_user_model()
+
+# TODO: Consider actually initializing morphs via VirtualMorph.init to simulate actual website workflow.
 
 class InitFormBuilderTests(TestCase):
     """
@@ -102,7 +100,6 @@ class InitFormBuilderTests(TestCase):
         field = form_class.declared_fields["lyn_mode"]
         self.assertIsInstance(field, django.forms.NullBooleanField)
 
-# TODO: Write forms to test init-preview.
 
 class UnitConfirmForecastTests(TestCase):
     """
@@ -277,8 +274,6 @@ class UnitConfirmTests(TestCase):
         self.generate_url = lambda game_no, name: reverse("dracogate:unit_confirm", kwargs={"game_no": game_no, "unit": name})
         self.user = User.objects.create()
         self.client.force_login(self.user)
-        #print(type(self.user))
-        #self.assertFalse(VirtualMorph.objects.all())
 
     def test_father(self):
         """
@@ -571,7 +566,6 @@ class LevelUpTests(TestCase):
         response = self.client.get(url)
         values = (
             "level_up",
-            #html.unescape(json.dumps(expected[0][1])),
             "num_levels",
             "19",
         )
@@ -684,7 +678,6 @@ class PromoteTests(TestCase):
         response = self.client.get(url)
         values = (
             "promote",
-            #html.unescape(json.dumps(expected[0][1])),
             "promo_cls",
             "Master Lord",
         )
@@ -857,7 +850,6 @@ class PromoteTests2(TestCase):
         response = self.client.get(url)
         values = (
             "promote",
-            #html.unescape(json.dumps(expected[0][1])),
             "promo_cls",
             "Pirate",
         )
@@ -929,7 +921,6 @@ class PromoteTests3(TestCase):
         field = "promo_cls"
         expected4 = True
         # pretend Roy is at max level
-        #self.vmorph.morph.level_up(9)
         self.vmorph.morph.promote(promo_cls="Dancer")
         self.vmorph.morph.level_up(9)
         self.vmorph.morph.promote(promo_cls="Thief Fighter")
@@ -960,8 +951,6 @@ class PromoteTests3(TestCase):
     def test_promote__forecast(self):
         """
         """
-        #self.vmorph.morph.level_up(9)
-        #self.vmorph.save()
         url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
         query_params = {"action": "promote", "promo_cls": "Dancer", "stat_type": "bases"}
         response = self.client.get(url, query_params=query_params)
@@ -1010,7 +999,6 @@ class PromoteTests3(TestCase):
         response = self.client.get(url)
         values = (
             "promote",
-            #html.unescape(json.dumps(expected[0][1])),
             "promo_cls",
             "Dancer",
         )
@@ -1202,7 +1190,6 @@ class PromoteTests4(TestCase):
         response = self.client.get(url)
         values = (
             "promote",
-            #html.unescape(json.dumps(expected[0][1])),
             "promo_cls",
             "Swordmaster (M)",
         )
@@ -1229,7 +1216,6 @@ class UseStatBoosterTests(TestCase):
         )
         self.vmorph.morph = get_morph(game_no, unit, **init_options)
         self.vmorph.morph.level_up(20 - self.vmorph.morph.current_lv)
-        #print(self.vmorph.morph._miscellany)
         self.vmorph.save()
 
     def test_use_stat_booster__virtualmorph1(self):
@@ -1351,8 +1337,6 @@ class UseStatBoosterTests(TestCase):
     def test_use_stat_booster__view_post(self):
         """
         """
-        #self.vmorph.morph.level_up(9)
-        #self.vmorph.save()
         field = "item_name"
         value = "Angelic Robe"
         expected = [["use_stat_booster", {field: value}]]
@@ -1370,7 +1354,6 @@ class UseStatBoosterTests(TestCase):
         response = self.client.get(url)
         values = (
             "use_stat_booster",
-            #html.unescape(json.dumps(expected[0][1])),
             "item_name",
             "Angelic Robe",
         )
@@ -1458,9 +1441,6 @@ class UseAfasDropsTests(TestCase):
             init_options=init_options,
         )
         self.vmorph.morph = get_morph(game_no, unit, **init_options)
-        #self.vmorph.morph.level_up(20 - self.vmorph.morph.current_lv)
-        #print(self.vmorph.morph._miscellany)
-        #self.vmorph.save()
 
     def test_use_afas_drops__virtualmorph1(self):
         """
@@ -1554,8 +1534,6 @@ class UseAfasDropsTests(TestCase):
         values = ("20", "15")
         for value in values:
             self.assertContains(response, value)
-        # TODO: with self.assertRaises(...): self.assertContains for ...forecast__fail methods
-        # NOTE: Technically proves nothing, just the presence of the before-values.
 
     def test_use_afas_drops__forecast__fail(self):
         """
@@ -1566,8 +1544,6 @@ class UseAfasDropsTests(TestCase):
         query_params = {"action": "use_afas_drops", "stat_type": "growths"}
         self.vmorph.morph.use_afas_drops()
         self.vmorph.save()
-        #print(self.vmorph.morph._miscellany is not None)
-        #print(self.vmorph.morph.growth_rates.as_dict())
         response = self.client.get(url, query_params=query_params)
         # HP values
         values = ("20", "50")
@@ -1591,8 +1567,6 @@ class UseAfasDropsTests(TestCase):
         self.vmorph.save()
         response = self.client.post(url, data=data)
         self.assertEqual(response.status_code, 200)
-        #values = ("Afa", "Drops", "already used", self.vmorph.morph.name)
-        # NOTE: Because upon using Afa's Drops, the checkbox is disabled initially, and the form containing it is submitted, resulting in the error message.
         values = ("Please select", "True",)
         for value in values:
             self.assertContains(response, value)
@@ -1625,8 +1599,6 @@ class UseAfasDropsTests(TestCase):
     def test_use_afas_drops__view_post(self):
         """
         """
-        #self.vmorph.morph.level_up(9)
-        #self.vmorph.save()
         morph = self.vmorph.morph
         field = "to_consume"
         value = "True"
@@ -1646,7 +1618,6 @@ class UseAfasDropsTests(TestCase):
         response = self.client.get(url)
         values = (
             "use_afas_drops",
-            #html.unescape(json.dumps(expected[0][1])),
             "{}",
         )
         for value in values:
@@ -1672,9 +1643,6 @@ class UseAfasDropsTests2(TestCase):
             init_options=init_options,
         )
         self.vmorph.morph = get_morph(game_no, unit, **init_options)
-        #self.vmorph.morph.level_up(20 - self.vmorph.morph.current_lv)
-        #print(self.vmorph.morph._miscellany)
-        #self.vmorph.save()
 
     def test_use_afas_drops__virtualmorph1(self):
         """
@@ -1699,14 +1667,10 @@ class UseAfasDropsTests2(TestCase):
         query_params = {"action": "use_afas_drops", field: value, "stat_type": "growths"}
         with self.assertRaises(AttributeError):
             self.client.get(url, query_params=query_params)
-        # TODO: with self.assertRaises(...): self.assertContains for ...forecast__fail methods
-        # NOTE: Technically proves nothing, just the presence of the before-values.
 
     def test_use_afas_drops__view_post(self):
         """
         """
-        #self.vmorph.morph.level_up(9)
-        #self.vmorph.save()
         morph = self.vmorph.morph
         field = "to_consume"
         value = "True"
