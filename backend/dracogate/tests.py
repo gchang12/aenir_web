@@ -1593,9 +1593,9 @@ class UseAfasDropsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         #values = ("Afa", "Drops", "already used", self.vmorph.morph.name)
         # NOTE: Because upon using Afa's Drops, the checkbox is disabled initially, and the form containing it is submitted, resulting in the error message.
-        #values = ("make", "selection")
-        #for value in values:
-            #self.assertContains(response, value)
+        values = ("Please select", "True",)
+        for value in values:
+            self.assertContains(response, value)
         vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
         morph = vmorph.init()
         self.assertEqual(morph.growth_rates.Def, 20)
@@ -1614,9 +1614,9 @@ class UseAfasDropsTests(TestCase):
         self.assertEqual(morph.growth_rates.Def, 15)
         response = self.client.post(url, data=data)
         self.assertLess(response.status_code, 400)
-        #values = ("make", "selection")
-        #for value in values:
-            #self.assertContains(response, value)
+        values = ("Please select", "True",)
+        for value in values:
+            self.assertContains(response, value)
         vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
         morph = vmorph.init()
         self.assertEqual(morph.growth_rates.Def, 15)

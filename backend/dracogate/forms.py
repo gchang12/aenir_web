@@ -143,6 +143,7 @@ class ActionFormBuilder:
                         raise ValidationError(
                             _("%(name)s has to be at least level %(min_promo_level)d to promote to '%(value)s'."),
                             params={"min_promo_level": morph.min_promo_level, "value": value, "name": morph.name},
+                            code="LEVEL_TOO_LOW",
                         )
                 return True
 
@@ -181,6 +182,7 @@ class ActionFormBuilder:
                         raise ValidationError(
                             _("%(name)s cannot use %(item_name)s. %(stat_name)s is maxed."),
                             params={"item_name": value, "name": morph.name, "stat_name": stat_name},
+                            code="STAT_IS_MAXED",
                         )
                 return True
 
@@ -218,11 +220,13 @@ class ActionFormBuilder:
                         raise ValidationError(
                             _("%(name)s has already used Afa's Drops."),
                             params={"name": morph.name},
+                            code="ALREADY_CONSUMED",
                         )
                 elif value in (None, False):
                     raise ValidationError(
-                        _("Please make a selection."),
+                        _("Please select 'True'."),
                         params={"name": morph.name},
+                        code="no_selection",
                     )
                 return True
 

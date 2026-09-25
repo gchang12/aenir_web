@@ -246,9 +246,8 @@ class VirtualMorph(models.Model):
             param_bounds = {}
             is_success = True
         except ScrollError as e:
-            param_bounds = {"scrolls": None}
-            param_bounds["scrolls"] = {
-                ScrollError.NOT_FOUND: tuple(self.morph.scroll_dict),
+            param_bounds = {
+                ScrollError.NOT_FOUND: {"scrolls": tuple(self.morph.scroll_dict)},
             }[e.reason]
             is_success = False
         raise (is_success, param_bounds)
