@@ -318,6 +318,7 @@ class ActionForecastView(DetailView):
             "promote": self.promote,
             "use_stat_booster": self.use_stat_booster,
             "use_afas_drops": self.use_afas_drops,
+            "set_scrolls": self.set_scrolls,
         }[action]()
         delta_dict = {
             "bases": (self.object.morph.current_stats > morph.current_stats).as_dict,
@@ -356,6 +357,12 @@ class ActionForecastView(DetailView):
         """
         to_consume = self.request.GET.get("to_consume")
         self.object.use_afas_drops(to_consume == "True")
+
+    def set_scrolls(self):
+        """
+        """
+        scrolls = self.request.GET.getlist("scrolls")
+        self.object.set_scrolls(scrolls)
 
 class MorphActionView(FormView, DetailView):
     """
@@ -556,4 +563,43 @@ class UseAfasDropsView(MorphActionView):
         self.object.save()
         return redirect(reverse("dracogate:morph_detail", kwargs={"id": self.object.id}))
 
+
+
+class SetScrollsView(MorphActionView):
+    """
+    """
+    action = {
+        "title": "Equip Scrolls",
+        "name": "set_scrolls",
+        "stat_type": "growths",
+    }
+
+    def get_context_data(self, **kwds):
+        """
+        """
+        context = super().get_context_data(**kwds)
+        morph = self.object.morph.copy()
+        is_success: bool = True
+        context['is_success'] = is_success
+        return context
+
+    def get_form_class(self, **kwds):
+        """
+        """
+        try:
+            (_, param_bounds) = self.object.set_scrolls([""])
+        except AttributeError:
+            self.object = self.get_object()
+            (_, param_bounds) = self.object.set_scrolls([""])
+        form_class = ActionFormBuilder.set_scrolls(param_bounds, self.object.morph)
+        return form_class
+
+    def form_valid(self, form):
+        """
+        """
+        scrolls = form.cleaned_data['scrolls']
+        #print(scrolls)
+        self.object.set_scrolls(scrolls)
+        self.object.save()
+        return redirect(reverse("dracogate:morph_detail", kwargs={"id": self.object.id}))
 

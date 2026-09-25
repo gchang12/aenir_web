@@ -1827,16 +1827,30 @@ class SetScrollsTests(TestCase):
         form = form_class({field: value})
         self.assertIs(form.is_valid(), False)
 
-    @unittest.skip
     def test_set_scrolls__forecast__fail(self):
         """
         """
-        field = "item_name"
-        value = "Speedwings"
+        field = "scrolls"
+        value = [
+            "Odo",
+            'Baldo',
+            'Hezul',
+            'Dain',
+            'Noba',
+            'Neir',
+            'Ulir',
+            'Tordo',
+            'Fala',
+            'Sety',
+            'Blaggi',
+            'Heim',
+        ]
         url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
-        query_params = {"action": "set_scrolls", field: value, "stat_type": "bases"}
+        query_params = {"action": "set_scrolls", field: value, "stat_type": "growths"}
         response = self.client.get(url, query_params=query_params)
+        self.assertEqual(response.status_code, 200)
         # HP values
+        '''
         values = ("20.0", "38.3")
         for value in values:
             self.assertContains(response, value)
@@ -1844,46 +1858,62 @@ class SetScrollsTests(TestCase):
         for value in values:
             with self.assertRaises(AssertionError):
                 self.assertContains(response, value)
+        '''
 
-    @unittest.skip
     def test_set_scrolls__forecast(self):
         """
         """
-        field = "item_name"
-        value = "Angelic Robe"
+        field = "scrolls"
+        value = [
+            "Odo",
+            "Sety",
+        ]
         url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
-        query_params = {"action": "set_scrolls", field: value, "stat_type": "bases"}
+        query_params = {"action": "set_scrolls", field: value, "stat_type": "growths"}
         response = self.client.get(url, query_params=query_params)
         # HP values
-        values = ("45.3", "38.3")
+        values = ("35", "65", "40", "70")
         for value in values:
             self.assertContains(response, value)
 
-    @unittest.skip
     def test_set_scrolls__view_post__fail(self):
         """
         """
-        field = "item_name"
-        value = "Speedwings"
+        field = "scrolls"
+        value = [
+            "Odo",
+            'Baldo',
+            'Hezul',
+            'Dain',
+            'Noba',
+            'Neir',
+            'Ulir',
+            'Tordo',
+            'Fala',
+            'Sety',
+            'Blaggi',
+            'Heim',
+        ]
         expected = [["set_scrolls", {field: value}]]
         url = reverse("dracogate:set_scrolls", kwargs={"id": self.vmorph.id})
         data = {field: value}
         response = self.client.post(url, data=data)
         self.assertEqual(response.status_code, 200)
-        values = ("cannot use", "Speedwings", "Spd", "is maxed")
+        values = ("Max:", "12", "Too many scrolls")
         for value in values:
             self.assertContains(response, value)
         vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
         morph = vmorph.init()
-        self.assertEqual(morph.current_stats.Spd, 20_00)
         self.assertListEqual(vmorph.history, [])
 
-    @unittest.skip
     def test_set_scrolls__view_post(self):
         """
         """
-        field = "item_name"
-        value = "Angelic Robe"
+        field = "scrolls"
+        value = [
+            "Odo",
+            "Sety",
+        ]
         expected = [["set_scrolls", {field: value}]]
         url = reverse("dracogate:set_scrolls", kwargs={"id": self.vmorph.id})
         data = {field: value}
@@ -1891,7 +1921,8 @@ class SetScrollsTests(TestCase):
         self.assertLess(response.status_code, 400)
         vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
         morph = vmorph.init()
-        self.assertEqual(morph.current_stats.HP, 45_30)
+        self.assertEqual(morph.growth_rates.Skl, 65)
+        self.assertEqual(morph.growth_rates.Spd, 70)
         self.assertListEqual(vmorph.history, expected)
         # test for existence of actions in morph_detail
         url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
@@ -1899,8 +1930,9 @@ class SetScrollsTests(TestCase):
         response = self.client.get(url)
         values = (
             "set_scrolls",
-            "item_name",
-            "Angelic Robe",
+            "scrolls",
+            "Odo",
+            "Sety",
         )
         for value in values:
             self.assertContains(response, value)
