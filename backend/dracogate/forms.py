@@ -9,6 +9,7 @@ from aenir import (
     PromotionError,
     StatBoosterError,
     GrowthsItemError,
+    ScrollError,
 )
 
 class InitFormBuilder:
@@ -243,6 +244,42 @@ class ActionFormBuilder:
                 ),
             )
         return UseAfasDropsForm
+
+    @staticmethod
+    def set_scrolls(param_bounds, morph):
+        """
+        """
+        choices = [(choice, choice) for choice in param_bounds["scrolls"]]
+
+        class ScrollsField(forms.MultipleChoiceField):
+            """
+            """
+
+            def validate(self, value):
+                """
+                """
+                super().validate(value)
+                try:
+                    morph.copy().set_scrolls(scrolls=value)
+                except ScrollError as e:
+                    if e.reason == e.Reason.NO_INVENTORY_SPACE:
+                        actual_list_len = len(value)
+                        raise ValidationError(
+                            _("Too many scrolls selected (%(actual_list_len)d). Max: %(max_list_len)d."),
+                            params={"actual_list_len": actual_list_len, "max_list_len": morph.inventory_size},
+                            code="NO_INVENTORY_SPACE",
+                        )
+                return True
+
+        class SetScrollsForm(forms.Form):
+            """
+            """
+            scrolls = ScrollsField(
+                choices=choices,
+                required=True,
+                label="Scrolls",
+            )
+        return SetScrollsForm
 
 
 '''

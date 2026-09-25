@@ -1777,41 +1777,54 @@ class SetScrollsTests(TestCase):
             [],
         )
 
-    @unittest.skip
     def test_set_scrolls__formbuilder1(self):
         """
         """
-        field = "item_name"
-        item_name = "Energy Ring"
+        field = "scrolls"
+        value = [""]
         expected2 = [(choice, choice) for choice in (
-            "",
-            "Angelic Robe",
-            "Energy Ring",
-            "Secret Book",
-            "Speedwings",
-            "Goddess Icon",
-            "Dragonshield",
-            "Talisman",
-            "Boots",
-            "Body Ring",
+            "Odo",
+            'Baldo',
+            'Hezul',
+            'Dain',
+            'Noba',
+            'Neir',
+            'Ulir',
+            'Tordo',
+            'Fala',
+            'Sety',
+            'Blaggi',
+            'Heim',
         )]
-        (_, param_bounds) = self.vmorph.set_scrolls("")
+        (_, param_bounds) = self.vmorph.set_scrolls(value)
         form_class = ActionFormBuilder.set_scrolls(param_bounds, self.vmorph.morph)
         self.assertIn(field, form_class.declared_fields)
         self.assertEqual(form_class.declared_fields[field].choices, expected2)
 
-    @unittest.skip
     def test_set_scrolls__formbuilder2(self):
         """
-        Check validation.
+        Check that form is invalid if too many scrolls are selected.
         """
-        field = "item_name"
-        item_name = "Speedwings"
+        field = "scrolls"
+        value = [
+            "Odo",
+            'Baldo',
+            'Hezul',
+            'Dain',
+            'Noba',
+            'Neir',
+            'Ulir',
+            'Tordo',
+            'Fala',
+            'Sety',
+            'Blaggi',
+            'Heim',
+        ]
         # try to get param_bounds
-        (_, param_bounds) = self.vmorph.set_scrolls("")
+        (_, param_bounds) = self.vmorph.set_scrolls([""])
         # get form class
         form_class = ActionFormBuilder.set_scrolls(param_bounds, self.vmorph.morph)
-        form = form_class({"item_name": "Speedwings"})
+        form = form_class({field: value})
         self.assertIs(form.is_valid(), False)
 
     @unittest.skip
