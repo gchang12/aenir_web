@@ -322,6 +322,7 @@ class ActionForecastView(DetailView):
             "shapeshift": self.shapeshift,
             "use_metiss_tome": self.use_metiss_tome,
             "set_bands": self.set_bands,
+            "set_demiband": self.set_demiband,
         }[action]()
         delta_dict = {
             "bases": (self.object.morph.current_stats > morph.current_stats).as_dict,
@@ -387,6 +388,12 @@ class ActionForecastView(DetailView):
         if knight_ward == "True":
             bands.append("Knight Ward")
         self.object.set_bands(bands)
+
+    def set_demiband(self):
+        """
+        """
+        to_shapeshift = self.request.GET["to_shapeshift"]
+        self.object.set_demiband(to_shapeshift == "True")
 
 class MorphActionView(FormView, DetailView):
     """
@@ -741,6 +748,43 @@ class SetBandsView(MorphActionView):
         if knight_ward is True:
             bands.append("Knight Ward")
         self.object.set_bands(bands)
+        self.object.save()
+        return redirect(reverse("dracogate:morph_detail", kwargs={"id": self.object.id}))
+
+
+class SetDemiBandView(MorphActionView):
+    """
+    """
+    action = {
+        "title": "Equip Demi Band",
+        "name": "set_demiband",
+        "stat_type": "growths",
+    }
+
+    def get_context_data(self, **kwds):
+        """
+        """
+        context = super().get_context_data(**kwds)
+        is_success: bool = self.object.morph.is_laguz is True
+        context['is_success'] = is_success
+        return context
+
+    def get_form_class(self, **kwds):
+        """
+        """
+        try:
+            (_, param_bounds) = self.object.set_demiband(False)
+        except AttributeError:
+            self.object = self.get_object()
+            (_, param_bounds) = self.object.set_demiband(False)
+        form_class = ActionFormBuilder.set_demiband(param_bounds, self.object.morph)
+        return form_class
+
+    def form_valid(self, form):
+        """
+        """
+        to_shapeshift = form.cleaned_data['to_shapeshift']
+        self.object.set_demiband(to_shapeshift)
         self.object.save()
         return redirect(reverse("dracogate:morph_detail", kwargs={"id": self.object.id}))
 

@@ -148,7 +148,7 @@ class VirtualMorph(models.Model):
         """
         try:
             self.stats = self.morph.as_dict()
-        except AttributeError:
+        except AttributeError as e:
             self.morph = get_morph(self.game_no, self.unit, **self.init_options)
             self.stats = self.morph.as_dict()
         return super().save(**kwds)
@@ -269,11 +269,11 @@ class VirtualMorph(models.Model):
                 param_bounds = {"cls_to_transform_to": self.morph._miscellany["cls_to_transform_to"]}
                 is_success = False
             else:
-                (method, method_name) = {
-                    True: (self.morph.revert, "revert"),
-                    False: (self.morph.transform, "transform"),
+                method_name = {
+                    True: "revert",
+                    False: "transform",
                 }[self.morph._miscellany["is_transformed"]]
-                method()
+                getattr(self.morph, method_name)()
                 self.history.append(
                     (method_name, {}),
                 )
@@ -281,10 +281,34 @@ class VirtualMorph(models.Model):
                 is_success = True
         return (is_success, param_bounds)
 
-    # TODO: Test!
-    def set_demiband(self, to_set: bool):
+    def set_demiband(self, to_shapeshift: bool):
         """
         """
+        is_success: bool
+        if self.morph.is_laguz is False:
+            is_success = False
+            param_bounds = None
+        else:
+            if to_shapeshift is False:
+                param_bounds = {"cls_to_transform_to": self.morph._miscellany["cls_to_transform_to"]}
+                is_success = False
+            else:
+                method_name = {
+                    True: "unequip_demi_band",
+                    False: "equip_demi_band",
+                }[self.morph._miscellany["is_transformed"]]
+                try:
+                    getattr(self.morph, method_name)()
+                    self.history.append(
+                        (method_name, {}),
+                    )
+                    param_bounds = {}
+                    is_success = True
+                except DemiBandError as e:
+                    if e.reason == DemiBandError.Reason.NO_INVENTORY_SPACE:
+                        param_bounds = None
+                        is_success = False
+        return (is_success, param_bounds)
 
     def set_bands(self, bands: list[str]):
         """
