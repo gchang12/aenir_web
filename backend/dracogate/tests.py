@@ -2618,7 +2618,7 @@ class SetBandsTests2(TestCase):
         data = {field: value, field2: value2}
         response = self.client.post(url, data=data)
         self.assertEqual(response.status_code, 200)
-        values = ("Max: 8", "(11)", "Too many bands")
+        values = ("Max: 8", "(12)", "Too many bands")
         for value in values:
             self.assertContains(response, value)
         vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
@@ -2706,17 +2706,17 @@ class SetBandsTests(TestCase):
         field = "bands"
         value = [""]
         expected2 = {field: (
-            'Sword Band',
-            'Soldier Band',
-            'Fighter Band',
-            'Archer Band',
-            'Knight Band',
-            'Paladin Band',
-            'Pegasus Band',
-            'Wyvern Band',
-            'Mage Band',
-            'Priest Band',
-            'Thief Band',
+            #'Sword Band',
+            #'Soldier Band',
+            #'Fighter Band',
+            #'Archer Band',
+            #'Knight Band',
+            #'Paladin Band',
+            #'Pegasus Band',
+            #'Wyvern Band',
+            #'Mage Band',
+            #'Priest Band',
+            #'Thief Band',
         )}
         expected3 = False
         (is_success, param_bounds) = self.vmorph.set_bands(value)
@@ -2755,7 +2755,7 @@ class SetBandsTests(TestCase):
             [],
         )
 
-    def test_set_bands__virtualmorph3(self):
+    def test_set_bands__virtualmorph4(self):
         """
         Knight Ward is retained after failure.
         """
@@ -2834,6 +2834,35 @@ class SetBandsTests(TestCase):
         morph = VirtualMorph.objects.get().init()
         self.assertIn("Knight Ward", morph._miscellany["equipped_bands"])
 
+    def test_set_bands__formbuilder3(self):
+        """
+        Assert that initial value is equal to set of equipped bands.
+        """
+        self.maxDiff = None
+        value = [
+            'Sword Band',
+            'Soldier Band',
+            'Fighter Band',
+            "Knight Ward",
+        ]
+        self.vmorph.set_bands(value)
+        morph = self.vmorph.morph
+        self.assertIn("Knight Ward", morph._miscellany["equipped_bands"])
+        self.vmorph.save()
+        self.assertIn("Knight Ward", morph._miscellany["equipped_bands"])
+        vmorph = VirtualMorph.objects.get()
+        morph = vmorph.init()
+        #print(self.vmorph.morph._miscellany)
+        self.assertIn("Knight Ward", morph._miscellany["equipped_bands"])
+        (_, param_bounds) = vmorph.set_bands([""])
+        self.assertIn("Knight Ward", morph._miscellany["equipped_bands"])
+        form_class = ActionFormBuilder.set_bands(param_bounds, vmorph.morph)
+        self.assertIn("Knight Ward", morph._miscellany["equipped_bands"])
+        self.assertIs(form_class.declared_fields["knight_ward"].initial, True)
+        #print(param_bounds['bands'])
+        value.pop() # take off knight ward
+        self.assertListEqual(form_class.declared_fields["bands"].initial, [(choice, choice) for choice in value])
+
     def test_set_bands__forecast__fail(self):
         """
         """
@@ -2900,7 +2929,7 @@ class SetBandsTests(TestCase):
         data = {field: value, field2: value2}
         response = self.client.post(url, data=data)
         self.assertEqual(response.status_code, 200)
-        values = ("Max: 8", "(11)", "Too many bands")
+        values = ("Max: 8", "(12)", "Too many bands")
         for value in values:
             self.assertContains(response, value)
         vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
