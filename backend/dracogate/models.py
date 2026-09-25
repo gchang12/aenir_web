@@ -255,7 +255,6 @@ class VirtualMorph(models.Model):
             is_success = False
         return (is_success, param_bounds)
 
-    # TODO: Test
     def shapeshift(self, to_shapeshift: bool):
         """
         """
@@ -268,13 +267,17 @@ class VirtualMorph(models.Model):
                 param_bounds = {"cls_to_transform_to": self.morph._miscellany["cls_to_transform_to"]}
                 is_success = False
             else:
-                {
-                    True: self.morph.revert,
-                    False: self.morph.transform,
-                }[self.morph._miscellany["is_transformed"]]()
+                (method, method_name) = {
+                    True: (self.morph.revert, "revert"),
+                    False: (self.morph.transform, "transform"),
+                }[self.morph._miscellany["is_transformed"]]
+                method()
+                self.history.append(
+                    (method_name, {}),
+                )
                 param_bounds = None
                 is_success = True
-        raise (is_success, param_bounds)
+        return (is_success, param_bounds)
 
 '''
     def path_to(cls, file: str) -> str:

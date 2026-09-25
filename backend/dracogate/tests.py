@@ -1696,9 +1696,6 @@ class SetScrollsTests(TestCase):
             unit=unit,
             init_options=init_options,
         )
-        self.vmorph.init()
-        self.vmorph.morph.level_up(20 - self.vmorph.morph.current_lv)
-        self.vmorph.save()
 
     def test_set_scrolls__virtualmorph1(self):
         """
@@ -1937,3 +1934,278 @@ class SetScrollsTests(TestCase):
         for value in values:
             self.assertContains(response, value)
 
+class ShapeshiftTests(TestCase):
+    """
+    """
+
+    # https://serenesforest.net/blazing-sword/characters/average-stats/nino/
+    def setUp(self):
+        """
+        """
+        game_no = 9
+        unit = "Lethe"
+        init_options = {}
+        self.user = User.objects.create()
+        self.vmorph = VirtualMorph.objects.create(
+            owner=self.user,
+            game_no=game_no,
+            unit=unit,
+            init_options=init_options,
+        )
+        self.vmorph.init()
+
+    def test_shapeshift__virtualmorph1(self):
+        """
+        No errors.
+        """
+        (is_success, param_bounds) = self.vmorph.shapeshift(True)
+        expected2 = True
+        expected3 = [
+            ("transform", {})
+        ]
+        self.assertIsNone(param_bounds)
+        self.assertIs(is_success, expected2)
+        self.assertListEqual(
+            self.vmorph.history,
+            expected3,
+        )
+
+    def test_shapeshift__virtualmorph2(self):
+        """
+        Shapeshift twice.
+        """
+        expected2 = [("transform", {}), ("revert", {})]
+        expected3 = True
+        (is_success, param_bounds) = self.vmorph.shapeshift(True)
+        self.assertIsNone(param_bounds)
+        self.assertIs(is_success, expected3)
+        (is_success, param_bounds) = self.vmorph.shapeshift(True)
+        self.assertIsNone(param_bounds)
+        self.assertIs(is_success, expected3)
+        self.assertListEqual(
+            self.vmorph.history,
+            expected2,
+        )
+
+    def test_shapeshift__virtualmorph3(self):
+        """
+        Refuse to shapeshift.
+        """
+        expected2 = []
+        expected3 = False
+        (is_success, param_bounds) = self.vmorph.shapeshift(False)
+        self.assertDictEqual(param_bounds, {"cls_to_transform_to": "Cat (F)"})
+        self.assertIs(is_success, expected3)
+        self.assertListEqual(
+            self.vmorph.history,
+            expected2,
+        )
+
+    @unittest.skip
+    def test_shapeshift__formbuilder1(self):
+        """
+        """
+        field = "to_consume"
+        (_, param_bounds) = self.vmorph.shapeshift(False)
+        form_class = ActionFormBuilder.shapeshift(param_bounds, self.vmorph.morph)
+        self.assertIn(field, form_class.declared_fields)
+
+    @unittest.skip
+    def test_shapeshift__formbuilder2(self):
+        """
+        Check validation.
+        """
+        field = "to_consume"
+        # try to get param_bounds
+        (_, param_bounds) = self.vmorph.shapeshift(False)
+        # get form class
+        self.vmorph.morph.shapeshift()
+        form_class = ActionFormBuilder.shapeshift(param_bounds, self.vmorph.morph)
+        form = form_class({"to_consume": True})
+        self.assertIs(form.is_valid(), False)
+
+    @unittest.skip
+    def test_shapeshift__formbuilder2(self):
+        """
+        Check validation.
+        """
+        field = "to_consume"
+        # try to get param_bounds
+        (_, param_bounds) = self.vmorph.shapeshift(False)
+        # get form class
+        form_class = ActionFormBuilder.shapeshift(param_bounds, self.vmorph.morph)
+        form = form_class({"to_consume": False})
+        self.assertIs(form.is_valid(), False)
+
+    @unittest.skip
+    def test_shapeshift__forecast(self):
+        """
+        """
+        field = "to_consume"
+        value = "True"
+        url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
+        query_params = {"action": "shapeshift", field: value, "stat_type": "growths"}
+        response = self.client.get(url, query_params=query_params)
+        # HP values
+        values = ("20", "15")
+        for value in values:
+            self.assertContains(response, value)
+
+    @unittest.skip
+    def test_shapeshift__forecast__fail(self):
+        """
+        """
+        field = "to_consume"
+        value = "False"
+        url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
+        query_params = {"action": "shapeshift", "stat_type": "growths"}
+        self.vmorph.morph.shapeshift()
+        self.vmorph.save()
+        response = self.client.get(url, query_params=query_params)
+        # HP values
+        values = ("20", "50")
+        for value in values:
+            self.assertContains(response, value)
+        values = ("15", "45")
+        for value in values:
+            with self.assertRaises(AssertionError):
+                self.assertContains(response, value)
+
+    @unittest.skip
+    def test_shapeshift__view_post__fail(self):
+        """
+        Already used Afa's Drops.
+        """
+        field = "to_consume"
+        value = "True"
+        expected = [["shapeshift", {}]]
+        url = reverse("dracogate:shapeshift", kwargs={"id": self.vmorph.id})
+        data = {field: value}
+        self.vmorph.morph.shapeshift()
+        self.vmorph.save()
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 200)
+        values = ("Please select", "True",)
+        for value in values:
+            self.assertContains(response, value)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        morph = vmorph.init()
+        self.assertEqual(morph.growth_rates.Def, 20)
+        self.assertListEqual(vmorph.history, [])
+
+    @unittest.skip
+    def test_shapeshift__view_post__fail2(self):
+        """
+        Did not use Afa's Drops.
+        """
+        field = "to_consume"
+        value = "False"
+        morph = self.vmorph.morph
+        expected = [["shapeshift", {}]]
+        url = reverse("dracogate:shapeshift", kwargs={"id": self.vmorph.id})
+        data = {}
+        self.assertEqual(morph.growth_rates.Def, 15)
+        response = self.client.post(url, data=data)
+        self.assertLess(response.status_code, 400)
+        values = ("Please select", "True",)
+        for value in values:
+            self.assertContains(response, value)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        morph = vmorph.init()
+        self.assertEqual(morph.growth_rates.Def, 15)
+        self.assertListEqual(vmorph.history, [])
+
+    @unittest.skip
+    def test_shapeshift__view_post(self):
+        """
+        """
+        morph = self.vmorph.morph
+        field = "to_consume"
+        value = "True"
+        expected = [["shapeshift", {}]]
+        url = reverse("dracogate:shapeshift", kwargs={"id": self.vmorph.id})
+        data = {field: value}
+        self.assertEqual(morph.growth_rates.Def, 15)
+        response = self.client.post(url, data=data)
+        self.assertLess(response.status_code, 400)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        morph = vmorph.init()
+        self.assertEqual(morph.growth_rates.Def, 20)
+        self.assertListEqual(vmorph.history, expected)
+        # test for existence of actions in morph_detail
+        url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
+        self.assertRedirects(response, url)
+        response = self.client.get(url)
+        values = (
+            "shapeshift",
+            "{}",
+        )
+        for value in values:
+            self.assertContains(response, value)
+
+
+class ShapeshiftTests2(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        game_no = 9
+        unit = "Ike"
+        init_options = {}
+        self.user = User.objects.create()
+        self.vmorph = VirtualMorph.objects.create(
+            owner=self.user,
+            game_no=game_no,
+            unit=unit,
+            init_options=init_options,
+        )
+        self.vmorph.init()
+
+    def test_shapeshift__virtualmorph1(self):
+        """
+        """
+        (is_success, param_bounds) = self.vmorph.shapeshift(True)
+        self.assertIs(is_success, False)
+        self.assertIsNone(param_bounds)
+
+    def test_shapeshift__virtualmorph2(self):
+        """
+        """
+        (is_success, param_bounds) = self.vmorph.shapeshift(False)
+        self.assertIs(is_success, False)
+        self.assertIsNone(param_bounds)
+
+    @unittest.skip
+    def test_shapeshift__formbuilder1(self):
+        """
+        """
+        field = "to_consume"
+        param_bounds = {}
+        with self.assertRaises(KeyError): 
+            ActionFormBuilder.shapeshift(param_bounds, self.vmorph.morph)
+
+    @unittest.skip
+    def test_shapeshift__forecast(self):
+        """
+        """
+        field = "to_consume"
+        value = "True"
+        url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
+        query_params = {"action": "shapeshift", field: value, "stat_type": "growths"}
+        with self.assertRaises(AttributeError):
+            self.client.get(url, query_params=query_params)
+
+    @unittest.skip
+    def test_shapeshift__view_post(self):
+        """
+        """
+        morph = self.vmorph.morph
+        field = "to_consume"
+        value = "True"
+        expected = [["shapeshift", {}]]
+        url = reverse("dracogate:shapeshift", kwargs={"id": self.vmorph.id})
+        data = {field: value}
+        with self.assertRaises(KeyError):
+            self.client.post(url, data=data)
