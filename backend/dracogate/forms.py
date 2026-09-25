@@ -254,7 +254,9 @@ class ActionFormBuilder:
     def set_scrolls(param_bounds, morph):
         """
         """
-        choices = [(choice, choice) for choice in param_bounds["scrolls"]]
+        #choices = [(choice, choice) for choice in param_bounds["scrolls"]]
+        choices = [(choice, choice) for choice in morph.scroll_dict]
+        initial = [(choice, choice) for choice in param_bounds["scrolls"]]
 
         class ScrollsField(forms.MultipleChoiceField):
             """
@@ -280,6 +282,7 @@ class ActionFormBuilder:
             """
             """
             scrolls = ScrollsField(
+                initial=initial,
                 choices=choices,
                 required=True,
                 label="Scrolls",
@@ -383,22 +386,25 @@ class ActionFormBuilder:
         """
         """
         _morph = morph.copy()
+        initial = [(choice, choice) for choice in param_bounds["bands"]]
+        choices = [(choice, choice) for choice in _morph.band_dict]
 
         class SetBandsForm(forms.Form):
             """
             """
             bands = forms.MultipleChoiceField(
-                choices=[(choice, choice) for choice in param_bounds["bands"]],
+                initial=initial,
+                choices=choices,
                 required=True,
                 label="Bands",
             )
             knight_ward = forms.NullBooleanField(
-                initial=False,
+                initial="Knight Ward" in _morph._miscellany["equipped_bands"],
                 required=True,
                 disabled=_morph.is_knight is False,
-                label="Equip Knight Ward",
+                label="Knight Ward",
                 widget=forms.Select(
-                    choices=[(False, "No"), (True, "Yes")],
+                    choices=[(False, "Unequip"), (True, "Equip")],
                 ),
             )
 

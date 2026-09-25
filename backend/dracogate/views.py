@@ -1,11 +1,11 @@
 """
 """
 
-# TODO: Make sure user can access only his own VirtualMorph objects.
-# TODO: Make sure user can see only his own VirtualMorph objects.
-# TODO: Forbid user from invoking methods that are invalid in a given Morph class.
+# TODO: Test 'initial' value of SetBandsForm and SetScrollsForm
 # TODO: Rename morph
 # TODO: Compare morphs
+# TODO: Make sure user can see and access only his own VirtualMorph objects.
+# TODO: Forbid user from invoking methods that are invalid in a given Morph class.
 
 from django.views.generic.edit import (
     FormView,
