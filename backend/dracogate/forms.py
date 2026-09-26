@@ -505,6 +505,56 @@ class ActionFormBuilder:
 
         return EquipDemiBandForm
 
+class ComparisonFormBuilder:
+    """
+    """
+
+    # TODO: Test!
+    @staticmethod
+    def comparison_between_units(vmorph, queryset):
+        """
+        """
+        choices = [("", "")]
+        if vmorph.game_no in (6, 7, 8): # if it's a GBA game.
+            vmorph_set = [(obj.id, obj.name) for obj in queryset.filter(game_no__in=(6, 7, 8))]
+        else:
+            vmorph_set = [(obj.id, obj.name) for obj in queryset.filter(game_no__eq=vmorph.game_no)]
+        choices.extend(vmorph_set)
+
+        class UnitComparisonForm(forms.Form):
+            """
+            """
+            stat_type = forms.ChoiceField(
+                initial="",
+                choices=[("", ""), ("bases", "Bases"), ("growths", "Growths")],
+                required=True,
+                label="Stat Type",
+            )
+            vmorph_names = forms.ChoiceField(
+                initial="",
+                choices=choices,
+                required=True,
+                label="Morph",
+            )
+        return UnitComparisonForm
+
+    # TODO: Test!
+    @staticmethod
+    def comparison_to_data_input(morph):
+        """
+        """
+
+        class InputComparisonForm(forms.Form):
+            """
+            """
+
+        for stat in morph.Stats.STAT_LIST():
+            InputComparisonForm.declared_fields[stat] = forms.IntegerField(
+                step_size=1,
+                min_value=0,
+                max_value=getattr(morph.max_stats, stat),
+            )
+        return InputComparisonForm
 
 '''
     def __init__(self, name: str, *, father: str | None = None):
