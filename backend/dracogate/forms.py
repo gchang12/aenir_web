@@ -513,7 +513,7 @@ class ComparisonFormBuilder:
     def unit_comparison(vmorph, queryset):
         """
         """
-        choices = [("", "")]
+        choices = [(-1, "")]
         if vmorph.game_no in (6, 7, 8): # if it's a GBA game.
             vmorph_set = [(obj.id, obj.name) for obj in queryset.filter(game_no__in=(6, 7, 8))]
         else:
@@ -530,7 +530,7 @@ class ComparisonFormBuilder:
                 label="Stat Type",
             )
             vmorphs = forms.ChoiceField(
-                initial="",
+                initial=-1,
                 choices=choices,
                 required=True,
                 label="Morph",
@@ -541,6 +541,7 @@ class ComparisonFormBuilder:
     def input_comparison(morph):
         """
         """
+        zero_growth_stats = morph.Stats.ZERO_GROWTH_STAT_LIST()
 
         class InputComparisonForm(forms.Form):
             """
@@ -550,7 +551,10 @@ class ComparisonFormBuilder:
             InputComparisonForm.declared_fields[stat] = forms.IntegerField(
                 step_size=1,
                 min_value=0,
-                max_value=getattr(morph.max_stats, stat),
+                # TODO: Decide whether to constrain the max_value of the input-comparison fields to the max values of this morph's max_stats
+                #max_value=getattr(morph.max_stats, stat),
+                initial=getattr(morph.current_stats, stat) / 100,
+                disabled=stat in zero_growth_stats,
             )
         return InputComparisonForm
 

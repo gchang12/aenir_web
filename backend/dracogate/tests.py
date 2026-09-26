@@ -3332,7 +3332,7 @@ class UnitComparisonTests(TestCase):
         self.assertIn("stat_type", form_class.declared_fields)
         self.assertEqual(form_class.declared_fields["stat_type"].choices, [("", ""), ("bases", "Bases"), ("growths", "Growths")])
         self.assertIn("vmorphs", form_class.declared_fields)
-        self.assertEqual(form_class.declared_fields["vmorphs"].choices, [("", ""), (self.vmorph.id, self.vmorph.name), (vmorph.id, vmorph.name)])
+        self.assertEqual(form_class.declared_fields["vmorphs"].choices, [(-1, ""), (self.vmorph.id, self.vmorph.name), (vmorph.id, vmorph.name)])
 
     def test_unit_comparison__vmorph_names_are_included(self):
         """
@@ -3350,7 +3350,7 @@ class UnitComparisonTests(TestCase):
             vmorphs.append(vmorph)
         queryset = VirtualMorph.objects.all()
         form_class = ComparisonFormBuilder.unit_comparison(self.vmorph, queryset)
-        choices = [("", "")]
+        choices = [(-1, "")]
         choices.append((self.vmorph.id, self.vmorph.name))
         choices.extend([(obj.id, obj.name) for obj in vmorphs])
         self.assertEqual(form_class.declared_fields["vmorphs"].choices, choices)
@@ -3358,22 +3358,24 @@ class UnitComparisonTests(TestCase):
     def test_input_comparison(self):
         """
         """
-        stats = {
-            "HP": 60,
-            "Pow": 20,
-            "Skl": 20,
-            "Spd": 20,
-            "Def": 20,
-            "Res": 20,
-            "Con": 25,
-            "Mov": 15,
-        }
+        stats = (
+            "HP",
+            "Pow",
+            "Skl",
+            "Spd",
+            "Def",
+            "Res",
+            "Con",
+            "Mov",
+        )
         morph = self.vmorph.morph
         form_class = ComparisonFormBuilder.input_comparison(morph)
         for stat in stats:
             with self.subTest(stat=stat):
                 self.assertIn(stat, form_class.declared_fields)
-                self.assertEqual(form_class.declared_fields[stat].max_value, getattr(morph.max_stats, stat))
+                self.assertIsNone(form_class.declared_fields[stat].max_value)
+                self.assertEqual(form_class.declared_fields[stat].initial, getattr(morph.current_stats, stat) / 100)
+                self.assertIs(form_class.declared_fields[stat].disabled, stat in ("Mov", "Con"))
 
 class UnitComparisonTests2(TestCase):
     """
@@ -3409,7 +3411,7 @@ class UnitComparisonTests2(TestCase):
             vmorphs.append(vmorph)
         queryset = VirtualMorph.objects.all()
         form_class = ComparisonFormBuilder.unit_comparison(self.vmorph, queryset)
-        choices = [("", "")]
+        choices = [(-1, "")]
         choices.append((self.vmorph.id, self.vmorph.name))
         choices.extend([(obj.id, obj.name) for obj in vmorphs])
         self.assertEqual(form_class.declared_fields["vmorphs"].choices, choices)
@@ -3417,23 +3419,26 @@ class UnitComparisonTests2(TestCase):
     def test_input_comparison(self):
         """
         """
-        stats = {
-            "HP": 40,
-            "Str": 20,
-            "Mag": 15,
-            "Skl": 20,
-            "Spd": 20,
-            "Lck": 40,
-            "Def": 20,
-            "Res": 20,
-            "Mov": None,
-            "Con": None,
-            "Wt": 0,
-        }
+        stats = (
+            "HP",
+            "Str",
+            "Mag",
+            "Skl",
+            "Spd",
+            "Lck",
+            "Def",
+            "Res",
+            "Mov",
+            "Con",
+            "Wt",
+        )
         morph = self.vmorph.morph
         form_class = ComparisonFormBuilder.input_comparison(morph)
         for stat in stats:
             with self.subTest(stat=stat):
                 self.assertIn(stat, form_class.declared_fields)
-                self.assertEqual(form_class.declared_fields[stat].max_value, getattr(morph.max_stats, stat))
+                #self.assertEqual(form_class.declared_fields[stat].max_value, getattr(morph.max_stats, stat))
+                self.assertIsNone(form_class.declared_fields[stat].max_value)
+                self.assertEqual(form_class.declared_fields[stat].initial, getattr(morph.current_stats, stat) / 100)
+                self.assertIs(form_class.declared_fields[stat].disabled, stat in ("Mov", "Con", "Wt"))
 

@@ -33,6 +33,7 @@ from dracogate.models import (
 from dracogate.forms import (
     InitFormBuilder,
     ActionFormBuilder,
+    ComparisonFormBuilder,
 )
 
 def get_temp_morph(game_no, unit, init_options):
