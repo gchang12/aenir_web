@@ -295,10 +295,10 @@ class ActionFormBuilder:
         """
         cls_to_transform_to = morph._miscellany["cls_to_transform_to"]
         current_cls = morph.current_cls
-        if morph._miscellany["is_transformed"] is True:
-            choices = [(False, cls_to_transform_to), (True, current_cls)]
-        else:
+        if morph._miscellany["is_transformed"] is False:
             choices = [(False, current_cls), (True, cls_to_transform_to)]
+        else:
+            choices = [(True, cls_to_transform_to), (False, current_cls)]
 
         class ToShapeshiftField(forms.NullBooleanField):
             """
@@ -448,10 +448,10 @@ class ActionFormBuilder:
         """
         cls_to_transform_to = morph._miscellany["cls_to_transform_to"]
         current_cls = morph.current_cls
-        if morph._miscellany["is_transformed"] is True:
-            choices = [(False, cls_to_transform_to), (True, current_cls)]
-        else:
+        if morph._miscellany["is_transformed"] is False:
             choices = [(False, current_cls), (True, cls_to_transform_to)]
+        else:
+            choices = [(True, cls_to_transform_to), (False, current_cls)]
         _morph = morph.copy()
 
         class ToShapeshiftField(forms.NullBooleanField):
