@@ -17,6 +17,7 @@ from aenir import (
 from dracogate.forms import (
     InitFormBuilder,
     ActionFormBuilder,
+    ComparisonFormBuilder,
 )
 from dracogate.models import VirtualMorph
 
@@ -3295,4 +3296,144 @@ class SetDemiBandTests2(TestCase):
         for value in values:
             self.assertContains(response, value)
         self.assertListEqual(morph.history, [])
+
+class UnitComparisonTests(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        game_no = 7
+        unit = "Hector"
+        init_options = {}
+        self.vmorph = VirtualMorph.objects.create(
+            owner=None,
+            game_no=game_no,
+            unit=unit,
+            init_options=init_options,
+        )
+        self.vmorph.init()
+
+    def test_unit_comparison__fields_are_included(self):
+        """
+        """
+        game_no = 7
+        unit = "Oswin"
+        init_options = {}
+        vmorph = VirtualMorph.objects.create(
+            owner=None,
+            game_no=game_no,
+            unit=unit,
+            init_options=init_options,
+        )
+        queryset = VirtualMorph.objects.all()
+        form_class = ComparisonFormBuilder.unit_comparison(self.vmorph, queryset)
+        self.assertIn("stat_type", form_class.declared_fields)
+        self.assertEqual(form_class.declared_fields["stat_type"].choices, [("", ""), ("bases", "Bases"), ("growths", "Growths")])
+        self.assertIn("vmorphs", form_class.declared_fields)
+        self.assertEqual(form_class.declared_fields["vmorphs"].choices, [("", ""), (self.vmorph.id, self.vmorph.name), (vmorph.id, vmorph.name)])
+
+    def test_unit_comparison__vmorph_names_are_included(self):
+        """
+        """
+        vmorphs = []
+        for game_no, unit in ((6, "Roy"), (7, "Eliwood"), (8, "Ephraim"), (9, "Ike")):
+            vmorph = VirtualMorph.objects.create(
+                owner=None,
+                game_no=game_no,
+                unit=unit,
+                init_options={},
+            )
+            if game_no == 9:
+                continue
+            vmorphs.append(vmorph)
+        queryset = VirtualMorph.objects.all()
+        form_class = ComparisonFormBuilder.unit_comparison(self.vmorph, queryset)
+        choices = [("", "")]
+        choices.append((self.vmorph.id, self.vmorph.name))
+        choices.extend([(obj.id, obj.name) for obj in vmorphs])
+        self.assertEqual(form_class.declared_fields["vmorphs"].choices, choices)
+
+    def test_input_comparison(self):
+        """
+        """
+        stats = {
+            "HP": 60,
+            "Pow": 20,
+            "Skl": 20,
+            "Spd": 20,
+            "Def": 20,
+            "Res": 20,
+            "Con": 25,
+            "Mov": 15,
+        }
+        morph = self.vmorph.morph
+        form_class = ComparisonFormBuilder.input_comparison(morph)
+        for stat in stats:
+            with self.subTest(stat=stat):
+                self.assertIn(stat, form_class.declared_fields)
+                self.assertEqual(form_class.declared_fields[stat].max_value, getattr(morph.max_stats, stat))
+
+class UnitComparisonTests2(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        game_no = 9
+        unit = "Ike"
+        init_options = {}
+        self.vmorph = VirtualMorph.objects.create(
+            owner=None,
+            game_no=game_no,
+            unit=unit,
+            init_options=init_options,
+        )
+        self.vmorph.init()
+
+    def test_vmorph_names_are_included(self):
+        """
+        """
+        vmorphs = []
+        for game_no, unit in ((6, "Roy"), (7, "Eliwood"), (8, "Ephraim"), (9, "Oscar")):
+            vmorph = VirtualMorph.objects.create(
+                owner=None,
+                game_no=game_no,
+                unit=unit,
+                init_options={},
+            )
+            if game_no != 9:
+                continue
+            vmorphs.append(vmorph)
+        queryset = VirtualMorph.objects.all()
+        form_class = ComparisonFormBuilder.unit_comparison(self.vmorph, queryset)
+        choices = [("", "")]
+        choices.append((self.vmorph.id, self.vmorph.name))
+        choices.extend([(obj.id, obj.name) for obj in vmorphs])
+        self.assertEqual(form_class.declared_fields["vmorphs"].choices, choices)
+
+    def test_input_comparison(self):
+        """
+        """
+        stats = {
+            "HP": 40,
+            "Str": 20,
+            "Mag": 15,
+            "Skl": 20,
+            "Spd": 20,
+            "Lck": 40,
+            "Def": 20,
+            "Res": 20,
+            "Mov": None,
+            "Con": None,
+            "Wt": 0,
+        }
+        morph = self.vmorph.morph
+        form_class = ComparisonFormBuilder.input_comparison(morph)
+        for stat in stats:
+            with self.subTest(stat=stat):
+                self.assertIn(stat, form_class.declared_fields)
+                self.assertEqual(form_class.declared_fields[stat].max_value, getattr(morph.max_stats, stat))
 

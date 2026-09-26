@@ -509,16 +509,15 @@ class ComparisonFormBuilder:
     """
     """
 
-    # TODO: Test!
     @staticmethod
-    def comparison_between_units(vmorph, queryset):
+    def unit_comparison(vmorph, queryset):
         """
         """
         choices = [("", "")]
         if vmorph.game_no in (6, 7, 8): # if it's a GBA game.
             vmorph_set = [(obj.id, obj.name) for obj in queryset.filter(game_no__in=(6, 7, 8))]
         else:
-            vmorph_set = [(obj.id, obj.name) for obj in queryset.filter(game_no__eq=vmorph.game_no)]
+            vmorph_set = [(obj.id, obj.name) for obj in queryset.filter(game_no=vmorph.game_no)]
         choices.extend(vmorph_set)
 
         class UnitComparisonForm(forms.Form):
@@ -530,7 +529,7 @@ class ComparisonFormBuilder:
                 required=True,
                 label="Stat Type",
             )
-            vmorph_names = forms.ChoiceField(
+            vmorphs = forms.ChoiceField(
                 initial="",
                 choices=choices,
                 required=True,
@@ -538,9 +537,8 @@ class ComparisonFormBuilder:
             )
         return UnitComparisonForm
 
-    # TODO: Test!
     @staticmethod
-    def comparison_to_data_input(morph):
+    def input_comparison(morph):
         """
         """
 
