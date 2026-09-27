@@ -876,52 +876,64 @@ class SetDemiBandView(MorphActionView):
         self.object.save()
         return redirect(reverse("dracogate:morph_detail", kwargs={"id": self.object.id}))
 
+
 class RenameMorphView(UpdateView):
     """
     """
     template_name = "dracogate/rename_morph.html"
     model = VirtualMorph
     fields = ["name"]
-    # Redirect to morph_detail when finished
-    #success_url = reverse_lazy("dracogate:morph_detail", kwargs={"id": self.object.id})
+
 
 class CompareMorphsView(ListView):
     """
     """
     template_name = "dracogate/compare_morphs.html"
     model = VirtualMorph
-    # toggle stat_type: growths vs bases
 
     def get_queryset(self):
         """
         """
-        # TODO: Filter by user
-        return super().get_queryset()
+        owner = (None if not self.request.user.is_authenticated else self.request.user)
+        return super().get_queryset().filter(owner=owner)
+
 
 class CompareMorphView(DetailView, FormView):
     """
     """
     template_name = "dracogate/compare_morph.html"
     model = VirtualMorph
-    # toggle stat_type: growths vs bases
 
     def get_object(self):
         """
         """
         obj = super().get_object()
-        self.object = obj
+        #self.object = obj
         return obj
 
-class CompareMorphForecastView(DetailView, FormView):
+    def get_form_class(self):
+        """
+        """
+        owner = (None if not self.request.user.is_authenticated else self.request.user)
+        queryset = VirtualMorph.objects.filter(owner=owner)
+        vmorph = self.object
+        form_class = ComparisonFormBuilder.unit_comparison(vmorph, queryset)
+        return form_class
+
+
+class CompareMorphForecastView(FormView):
     """
     """
     template_name = "dracogate/compare_morph_forecast.html"
     model = VirtualMorph
-    # toggle stat_type: growths vs bases
 
-    def get_queryset(self):
+    def get_context_data(self, **kwds):
         """
         """
-        return super().get_queryset()
-
+        stat_type = {
+            "bases": "Bases",
+            "growths": "Growths",
+        }[self.request.GET['stat_type']]
+        context = super().get_context_data(**kwds)
+        return context
 

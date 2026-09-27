@@ -78,7 +78,7 @@ class StatsBundler:
     def action_forecast_growths(morph, delta_dict):
         """
         """
-        for indexno, stat in enumerate(morph.Stats.STAT_LIST()):
+        for stat in morph.Stats.STAT_LIST():
             growth = getattr(morph.growth_rates, stat)
             max_ = getattr(morph.max_stats, stat)
             if delta_dict is not None:
@@ -92,6 +92,23 @@ class StatsBundler:
                 "absmax": 100,
                 "delta": delta,
             }
+
+    @staticmethod
+    def unit_comparison_forecast_bases(morph1, morph2):
+        """
+        """
+        # assume morph1 and morph2 are compatible
+        delta = (morph1.current_stats > morph2.current_stats)
+        for stat in morph1.Stats.STAT_LIST():
+            stat1 = getattr(morph1.current_stats, stat)
+            stat2 = getattr(morph2.current_stats, stat)
+            diff = getattr(delta, stat)
+            yield {
+                "stat1": stat1 / 100,
+                "stat2": stat2 / 100,
+                "diff": diff / 100,
+            }
+
 
 class VirtualMorph(models.Model):
     """

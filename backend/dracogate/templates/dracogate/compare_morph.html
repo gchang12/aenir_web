@@ -2,4 +2,18 @@
 {% load static %}
 
 {% block main %}
+<article id="compare_morph">
+  <h1>Compare Morph</h1>
+  <h2>{{ virtualmorph.name }}</h2>
+  <form method="post"
+    hx-target="#compare_morph_forecast"
+    hx-trigger="changed"
+    hx-get="{% url 'dracogate:compare_morph_forecast' virtualmorph.id %}">
+    {{ form }}
+  </form>
+  <div id="compare_morph_forecast"
+    hx-get="{% url 'dracogate:compare_morph_forecast' %}"
+    hx-trigger="load">
+  </div>
+</article>
 {% endblock %}

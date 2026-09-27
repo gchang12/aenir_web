@@ -548,13 +548,15 @@ class ComparisonFormBuilder:
             """
 
         for stat in morph.Stats.STAT_LIST():
+            initial = (-1 if stat in zero_growth_stats else int(getattr(morph.current_stats, stat) / 100))
+            disabled = stat in zero_growth_stats
             InputComparisonForm.declared_fields[stat] = forms.IntegerField(
                 step_size=1,
                 min_value=0,
                 # TODO: Decide whether to constrain the max_value of the input-comparison fields to the max values of this morph's max_stats
                 #max_value=getattr(morph.max_stats, stat),
-                initial=getattr(morph.current_stats, stat) / 100,
-                disabled=stat in zero_growth_stats,
+                initial=initial,
+                disabled=disabled,
             )
         return InputComparisonForm
 
