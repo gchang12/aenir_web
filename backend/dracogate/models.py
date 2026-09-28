@@ -170,13 +170,13 @@ class VirtualMorph(models.Model):
             self.stats = self.morph.as_dict()
         return super().save(**kwds)
 
-    def level_up(self, num_levels: int):
+    def level_up(self, num_levels: int) -> (bool, dict | None):
         """
         """
         is_success: bool
         try:
             self.morph.level_up(num_levels)
-            param_bounds = {}
+            param_bounds = None
             self.history.append(
                 ("level_up", {"num_levels": num_levels})
             )
@@ -190,7 +190,7 @@ class VirtualMorph(models.Model):
             is_success = False
         return (is_success, param_bounds)
 
-    def promote(self, promo_cls: str):
+    def promote(self, promo_cls: str) -> (bool, dict | None):
         """
         """
         is_success: bool
@@ -199,7 +199,7 @@ class VirtualMorph(models.Model):
             self.history.append(
                 ("promote", {'promo_cls': self.morph.current_cls})
             )
-            param_bounds = {}
+            param_bounds = None
             is_success = True
             #print(self.history)
         except PromotionError as e:
@@ -213,7 +213,7 @@ class VirtualMorph(models.Model):
         #print(is_success)
         return (is_success, param_bounds)
 
-    def use_stat_booster(self, item_name: str):
+    def use_stat_booster(self, item_name: str) -> (bool, dict | None):
         """
         """
         is_success: bool
@@ -223,7 +223,7 @@ class VirtualMorph(models.Model):
             self.history.append(
                 ("use_stat_booster", {"item_name": item_name}),
             )
-            param_bounds = {}
+            param_bounds = None
             is_success = True
         except StatBoosterError as e:
             param_bounds = {
@@ -235,7 +235,7 @@ class VirtualMorph(models.Model):
             raise e
         return (is_success, param_bounds)
 
-    def use_afas_drops(self, to_consume: bool):
+    def use_afas_drops(self, to_consume: bool) -> (bool, dict | None):
         """
         """
         is_success: bool
@@ -246,16 +246,16 @@ class VirtualMorph(models.Model):
                     ("use_afas_drops", {}),
                 )
                 is_success = True
-                param_bounds = {}
+                param_bounds = None
             except GrowthsItemError as e:
                 is_success = False
                 param_bounds = None
         else:
             is_success = False
-            param_bounds = {}
+            param_bounds = None
         return (is_success, param_bounds)
 
-    def set_scrolls(self, scrolls: list[str]):
+    def set_scrolls(self, scrolls: list[str]) -> (bool, dict | None):
         """
         """
         is_success: bool
@@ -264,7 +264,7 @@ class VirtualMorph(models.Model):
             self.history.append(
                 ("set_scrolls", {"scrolls": scrolls}),
             )
-            param_bounds = {}
+            param_bounds = None
             is_success = True
         except ScrollError as e:
             valid_scrolls = (tuple(self.morph.scroll_dict) if not e.valid_scrolls else tuple(key for key, value in e.valid_scrolls.items() if value is False)) # TODO: Fix this once you update aenir.
@@ -275,7 +275,7 @@ class VirtualMorph(models.Model):
             is_success = False
         return (is_success, param_bounds)
 
-    def shapeshift(self, to_shapeshift: bool):
+    def shapeshift(self, to_shapeshift: bool) -> (bool, dict | None):
         """
         """
         is_success: bool
@@ -299,7 +299,7 @@ class VirtualMorph(models.Model):
                 is_success = True
         return (is_success, param_bounds)
 
-    def set_demiband(self, to_shapeshift: bool):
+    def set_demiband(self, to_shapeshift: bool) -> (bool, dict | None):
         """
         """
         is_success: bool
@@ -320,7 +320,7 @@ class VirtualMorph(models.Model):
                     self.history.append(
                         (method_name, {}),
                     )
-                    param_bounds = {}
+                    param_bounds = None
                     is_success = True
                 except DemiBandError as e:
                     if e.reason == DemiBandError.Reason.NO_INVENTORY_SPACE:
@@ -328,7 +328,7 @@ class VirtualMorph(models.Model):
                         is_success = False
         return (is_success, param_bounds)
 
-    def set_bands(self, bands: list[str]):
+    def set_bands(self, bands: list[str]) -> (bool, dict | None):
         """
         """
         is_success: bool
@@ -352,7 +352,7 @@ class VirtualMorph(models.Model):
             self.history.append(
                 ("set_bands", {"bands": bands}),
             )
-            param_bounds = {}
+            param_bounds = None
             is_success = True
         except (KnightWardError, BandError) as e:
             valid_bands = (tuple(self.morph.band_dict) if not e.valid_bands else tuple(key for key, value in e.valid_bands.items() if value is True))
@@ -368,7 +368,7 @@ class VirtualMorph(models.Model):
             is_success = False
         return (is_success, param_bounds)
 
-    def use_metiss_tome(self, to_consume: bool):
+    def use_metiss_tome(self, to_consume: bool) -> (bool, dict | None):
         """
         """
         is_success: bool
@@ -379,13 +379,13 @@ class VirtualMorph(models.Model):
                     ("use_metiss_tome", {}),
                 )
                 is_success = True
-                param_bounds = {}
+                param_bounds = None
             except GrowthsItemError as e:
                 is_success = False
                 param_bounds = None
         else:
             is_success = False
-            param_bounds = {}
+            param_bounds = None
         return (is_success, param_bounds)
 
     def get_absolute_url(self):

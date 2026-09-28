@@ -472,13 +472,12 @@ class LevelUpTests(TestCase):
     def test_level_up__virtualmorph2(self):
         """
         """
-        expected1 = {}
         expected2 = [
             ("level_up", {'num_levels': 19})
         ]
         expected3 = True
         (is_success, param_bounds) = self.vmorph.level_up(19)
-        self.assertDictEqual(param_bounds, expected1)
+        self.assertIsNone(param_bounds)
         self.assertListEqual(
             self.vmorph.history,
             expected2,
@@ -604,13 +603,12 @@ class PromoteTests(TestCase):
         """
         """
         promo_cls = "Master Lord"
-        expected1 = {}
         expected2 = [
             ("promote", {'promo_cls': promo_cls})
         ]
         expected3 = True
         (is_success, param_bounds) = self.vmorph.promote(promo_cls)
-        self.assertDictEqual(param_bounds, expected1)
+        self.assertIsNone(param_bounds)
         self.assertListEqual(
             self.vmorph.history,
             expected2,
@@ -717,14 +715,13 @@ class PromoteTests2(TestCase):
         """
         """
         promo_cls = "Pirate"
-        expected1 = {}
         expected2 = [
             ("promote", {'promo_cls': promo_cls})
         ]
         expected3 = True
         self.vmorph.morph.level_up(9)
         (is_success, param_bounds) = self.vmorph.promote(promo_cls)
-        self.assertDictEqual(param_bounds, expected1)
+        self.assertIsNone(param_bounds)
         self.assertListEqual(
             self.vmorph.history,
             expected2,
@@ -890,13 +887,12 @@ class PromoteTests3(TestCase):
         """
         """
         promo_cls = "Dancer"
-        expected1 = {}
         expected2 = [
             ("promote", {'promo_cls': promo_cls})
         ]
         expected3 = True
         (is_success, param_bounds) = self.vmorph.promote(promo_cls)
-        self.assertDictEqual(param_bounds, expected1)
+        self.assertIsNone(param_bounds)
         self.assertListEqual(
             self.vmorph.history,
             expected2,
@@ -1032,12 +1028,11 @@ class PromoteTests4(TestCase):
         promo_cls = "Swordmaster (M)"
         self.vmorph.morph.level_up(9)
         (is_success, param_bounds) = self.vmorph.promote(promo_cls)
-        expected1 = {}
         expected2 = True
         expected3 = [
             ("promote", {'promo_cls': promo_cls})
         ]
-        self.assertDictEqual(param_bounds, expected1)
+        self.assertIsNone(param_bounds)
         self.assertIs(is_success, expected2)
         self.assertListEqual(
             self.vmorph.history,
@@ -1223,12 +1218,11 @@ class UseStatBoosterTests(TestCase):
         """
         item_name = "Energy Ring"
         (is_success, param_bounds) = self.vmorph.use_stat_booster(item_name)
-        expected1 = {}
         expected2 = True
         expected3 = [
             ("use_stat_booster", {'item_name': item_name})
         ]
-        self.assertDictEqual(param_bounds, expected1)
+        self.assertIsNone(param_bounds)
         self.assertIs(is_success, expected2)
         self.assertListEqual(
             self.vmorph.history,
@@ -1446,12 +1440,11 @@ class UseAfasDropsTests(TestCase):
         No errors.
         """
         (is_success, param_bounds) = self.vmorph.use_afas_drops(True)
-        expected1 = {}
         expected2 = True
         expected3 = [
             ("use_afas_drops", {})
         ]
-        self.assertDictEqual(param_bounds, expected1)
+        self.assertIsNone(param_bounds)
         self.assertIs(is_success, expected2)
         self.assertListEqual(
             self.vmorph.history,
@@ -1481,7 +1474,7 @@ class UseAfasDropsTests(TestCase):
         expected3 = False
         self.vmorph.morph.use_afas_drops()
         (is_success, param_bounds) = self.vmorph.use_afas_drops(False)
-        self.assertDictEqual(param_bounds, {})
+        self.assertIsNone(param_bounds)
         self.assertIs(is_success, expected3)
         self.assertListEqual(
             self.vmorph.history,
@@ -1725,12 +1718,11 @@ class SetScrollsTests(TestCase):
         field = "scrolls"
         value = ["Odo"]
         (is_success, param_bounds) = self.vmorph.set_scrolls(value)
-        expected1 = {}
         expected2 = True
         expected3 = [
             ("set_scrolls", {field: value})
         ]
-        self.assertDictEqual(param_bounds, expected1)
+        self.assertIsNone(param_bounds)
         self.assertIs(is_success, expected2)
         self.assertListEqual(
             self.vmorph.history,
@@ -2242,12 +2234,11 @@ class UseMetissTomeTests(TestCase):
         No errors.
         """
         (is_success, param_bounds) = self.vmorph.use_metiss_tome(True)
-        expected1 = {}
         expected2 = True
         expected3 = [
             ("use_metiss_tome", {})
         ]
-        self.assertDictEqual(param_bounds, expected1)
+        self.assertIsNone(param_bounds)
         self.assertIs(is_success, expected2)
         self.assertListEqual(
             self.vmorph.history,
@@ -2277,7 +2268,7 @@ class UseMetissTomeTests(TestCase):
         expected3 = False
         self.vmorph.morph.use_metiss_tome()
         (is_success, param_bounds) = self.vmorph.use_metiss_tome(False)
-        self.assertDictEqual(param_bounds, {})
+        self.assertIsNone(param_bounds)
         self.assertIs(is_success, expected3)
         self.assertListEqual(
             self.vmorph.history,
@@ -2503,12 +2494,11 @@ class SetBandsTests2(TestCase):
         self.vmorph.morph.equip_demi_band()
         self.assertIn("Demi Band", self.vmorph.morph._miscellany["equipped_bands"])
         (is_success, param_bounds) = self.vmorph.set_bands(value)
-        expected1 = {}
         expected2 = True
         expected3 = [
             ("set_bands", {field: value})
         ]
-        self.assertDictEqual(param_bounds, expected1)
+        self.assertIsNone(param_bounds)
         self.assertIs(is_success, expected2)
         self.assertListEqual(
             self.vmorph.history,
@@ -2523,7 +2513,6 @@ class SetBandsTests2(TestCase):
         field = "bands"
         value = ["Knight Ward"]
         (is_success, param_bounds) = self.vmorph.set_bands(value)
-        expected1 = {}
         expected2 = False
         expected3 = [
         ]
@@ -2734,12 +2723,11 @@ class SetBandsTests(TestCase):
         field = "bands"
         value = ["Knight Ward"]
         (is_success, param_bounds) = self.vmorph.set_bands(value)
-        expected1 = {}
         expected2 = True
         expected3 = [
             ("set_bands", {field: value})
         ]
-        self.assertDictEqual(param_bounds, expected1)
+        self.assertIsNone(param_bounds)
         self.assertIs(is_success, expected2)
         self.assertListEqual(
             self.vmorph.history,
@@ -3049,7 +3037,7 @@ class SetDemiBandTests(TestCase):
         expected3 = [
             ("equip_demi_band", {})
         ]
-        self.assertDictEqual(param_bounds, {})
+        self.assertIsNone(param_bounds)
         self.assertIs(is_success, expected2)
         self.assertListEqual(
             self.vmorph.history,
@@ -3063,10 +3051,10 @@ class SetDemiBandTests(TestCase):
         expected2 = [("equip_demi_band", {}), ("unequip_demi_band", {})]
         expected3 = True
         (is_success, param_bounds) = self.vmorph.set_demiband(True)
-        self.assertDictEqual(param_bounds, {})
+        self.assertIsNone(param_bounds)
         self.assertIs(is_success, expected3)
         (is_success, param_bounds) = self.vmorph.set_demiband(True)
-        self.assertDictEqual(param_bounds, {})
+        self.assertIsNone(param_bounds)
         self.assertIs(is_success, expected3)
         self.assertListEqual(
             self.vmorph.history,
