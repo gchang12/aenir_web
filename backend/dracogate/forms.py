@@ -523,12 +523,12 @@ class ComparisonFormBuilder:
         class UnitComparisonForm(forms.Form):
             """
             """
-            stat_type = forms.ChoiceField(
-                initial="",
-                choices=[("", ""), ("bases", "Bases"), ("growths", "Growths")],
-                required=True,
-                label="Stat Type",
-            )
+            #stat_type = forms.ChoiceField(
+                #initial="",
+                #choices=[("", ""), ("bases", "Bases"), ("growths", "Growths")],
+                #required=True,
+                #label="Stat Type",
+            #)
             vmorphs = forms.ChoiceField(
                 initial=-1,
                 choices=choices,

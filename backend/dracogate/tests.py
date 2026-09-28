@@ -3329,8 +3329,8 @@ class UnitComparisonTests(TestCase):
         )
         queryset = VirtualMorph.objects.all()
         form_class = ComparisonFormBuilder.unit_comparison(self.vmorph, queryset)
-        self.assertIn("stat_type", form_class.declared_fields)
-        self.assertEqual(form_class.declared_fields["stat_type"].choices, [("", ""), ("bases", "Bases"), ("growths", "Growths")])
+        self.assertNotIn("stat_type", form_class.declared_fields)
+        #self.assertEqual(form_class.declared_fields["stat_type"].choices, [("", ""), ("bases", "Bases"), ("growths", "Growths")])
         self.assertIn("vmorphs", form_class.declared_fields)
         self.assertEqual(form_class.declared_fields["vmorphs"].choices, [(-1, ""), (self.vmorph.id, self.vmorph.name), (vmorph.id, vmorph.name)])
 
