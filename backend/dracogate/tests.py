@@ -3363,8 +3363,7 @@ class UnitComparisonTests(TestCase):
             with self.subTest(stat=stat):
                 self.assertIn(stat, form_class.declared_fields)
                 self.assertIsNone(form_class.declared_fields[stat].max_value)
-                #self.assertEqual(form_class.declared_fields[stat].initial, getattr(morph.current_stats, stat) / 100)
-                self.assertEqual(form_class.declared_fields[stat].initial, int((-1 if stat in zero_growth_stats else getattr(morph.current_stats, stat) / 100)))
+                self.assertEqual(form_class.declared_fields[stat].initial, -1)
                 self.assertIs(form_class.declared_fields[stat].disabled, stat in ("Mov", "Con"))
 
 class UnitComparisonTests2(TestCase):
@@ -3428,8 +3427,7 @@ class UnitComparisonTests2(TestCase):
         for stat in stats:
             with self.subTest(stat=stat):
                 self.assertIn(stat, form_class.declared_fields)
-                #self.assertEqual(form_class.declared_fields[stat].max_value, getattr(morph.max_stats, stat))
                 self.assertIsNone(form_class.declared_fields[stat].max_value)
-                self.assertEqual(form_class.declared_fields[stat].initial, int((-1 if stat in zero_growth_stats else getattr(morph.current_stats, stat) / 100)))
+                self.assertEqual(form_class.declared_fields[stat].initial, -1)
                 self.assertIs(form_class.declared_fields[stat].disabled, stat in ("Mov", "Con", "Wt"))
 

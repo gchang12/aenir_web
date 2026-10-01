@@ -543,12 +543,13 @@ class ComparisonFormBuilder:
         """
         zero_growth_stats = morph.Stats.ZERO_GROWTH_STAT_LIST()
 
+        initial = -1
         class InputComparisonForm(forms.Form):
             """
             """
 
         for stat in morph.Stats.STAT_LIST():
-            initial = (-1 if stat in zero_growth_stats else int(getattr(morph.current_stats, stat) / 100))
+            #initial = (-1 if stat in zero_growth_stats else int(getattr(morph.current_stats, stat) / 100))
             disabled = stat in zero_growth_stats
             InputComparisonForm.declared_fields[stat] = forms.IntegerField(
                 step_size=1,
