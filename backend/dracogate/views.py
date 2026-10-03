@@ -427,6 +427,7 @@ class ActionForecastView(DetailView):
             "bases": StatsBundler.action_forecast_bases(self.object.morph, delta_dict),
             "growths": StatsBundler.action_forecast_growths(self.object.morph, delta_dict),
         }[stat_type]
+        context['stat_type'] = stat_type
         return context
 
     def level_up(self):
@@ -933,10 +934,6 @@ class CompareMorphForecastView(FormView):
     def get_context_data(self, **kwds):
         """
         """
-        stat_type = {
-            "bases": "Bases",
-            "growths": "Growths",
-        }[self.request.GET['stat_type']]
         context = super().get_context_data(**kwds)
         return context
 
