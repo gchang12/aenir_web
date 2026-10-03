@@ -284,7 +284,7 @@ class ActionFormBuilder:
             scrolls = ScrollsField(
                 initial=initial,
                 choices=choices,
-                required=True,
+                required=False,
                 label="Scrolls",
             )
         return SetScrollsForm
@@ -398,12 +398,12 @@ class ActionFormBuilder:
             bands = forms.MultipleChoiceField(
                 initial=initial,
                 choices=choices,
-                required=True,
+                required=False,
                 label="Bands",
             )
             knight_ward = forms.NullBooleanField(
                 initial="Knight Ward" in _morph._miscellany["equipped_bands"],
-                required=True,
+                required=False,
                 disabled=_morph.is_knight is False,
                 label="Knight Ward",
                 widget=forms.Select(
