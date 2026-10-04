@@ -26,5 +26,5 @@ urlpatterns = [
     path("components/<int:id>/action_forecast/", views.ActionForecastView.as_view(), name="action_forecast"),
     path("compare/", views.CompareMorphsView.as_view(), name="compare_morphs"),
     path("compare/<int:pk>/", views.CompareMorphView.as_view(), name="compare_morph"),
-    path("components/compare/<int:id>/", views.CompareMorphForecastView.as_view(), name="compare_morph_forecast"),
+    path("components/compare/<int:pk>/", views.CompareMorphForecastView.as_view(), name="compare_morph_forecast"),
 ]

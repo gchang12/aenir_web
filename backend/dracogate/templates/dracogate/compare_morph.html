@@ -4,15 +4,31 @@
 {% block main %}
 <article id="compare_morph">
   <h1>Compare Morph</h1>
-  <h2>{{ virtualmorph.name }}</h2>
-  <form method="post"
-    hx-target="#compare_morph_forecast"
-    hx-trigger="changed"
-    hx-get="{% url 'dracogate:compare_morph_forecast' virtualmorph.id %}">
-    {{ form }}
-  </form>
+  <section>
+    <h2>{{ virtualmorph.name }}</h2>
+    <img src="{% get_static_prefix %}dracogate/images/fe{{virtualmorph.game_no}}/characters/{{virtualmorph.unit}}.png" />
+    <form method="post"
+      hx-target="#compare_morph_forecast"
+      hx-trigger="changed"
+      hx-get="{% url 'dracogate:compare_morph_forecast' virtualmorph.id %}">
+      {{ form }}
+    </form>
+    <section>
+      <h3>History</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>Parameters</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </section>
+  </section>
   <div id="compare_morph_forecast"
-    hx-get="{% url 'dracogate:compare_morph_forecast' %}"
+    hx-get="{% url 'dracogate:compare_morph_forecast' virtualmorph.id %}"
     hx-trigger="load">
   </div>
 </article>

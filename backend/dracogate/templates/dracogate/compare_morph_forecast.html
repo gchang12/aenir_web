@@ -1,4 +1,55 @@
-<h2></h2>
+<div class="subtrahend">
+  {% if form %}
+  <form>
+    {% csrf_token %}
+    {{ form }}
+  </form>
+  {% else %}
+  <table>
+    <thead>
+      <tr>
+        <th>Class</th>
+        <td></td>
+      </tr>
+      <tr>
+        <th>Level</th>
+        <td></td>
+      </tr>
+    </thead>
+    <tbody>
+      {% for stat in subtrahend_stats %}
+      <tr>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+</div>
+
+<div class="difference">
+  <table>
+    <thead>
+      <tr>
+        <th>Class</th>
+        <td></td>
+      </tr>
+      <tr>
+        <th>Level</th>
+        <td></td>
+      </tr>
+    </thead>
+    <tbody>
+      {% for stat in difference_stats %}
+      <tr>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<h2>Name</h2>
+Profile
+etc.
 
 <table>
   <thead>

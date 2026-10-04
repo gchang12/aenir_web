@@ -925,11 +925,25 @@ class CompareMorphView(DetailView, FormView):
         return form_class
 
 
-class CompareMorphForecastView(FormView):
+class CompareMorphForecastView(DetailView, FormView):
     """
     """
     template_name = "dracogate/compare_morph_forecast.html"
     model = VirtualMorph
+
+    def get_object(self):
+        """
+        """
+        obj = super().get_object()
+        obj.init()
+        self.object = obj
+        return obj
+
+    def get_form_class(self):
+        """
+        """
+        form_class = ComparisonFormBuilder.input_comparison(self.object.morph)
+        return form_class
 
     def get_context_data(self, **kwds):
         """
