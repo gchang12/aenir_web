@@ -914,7 +914,6 @@ class CompareMorphView(DetailView, FormView):
         """
         obj = super().get_object()
         obj.init()
-        #self.object = obj
         return obj
 
     def get_form_class(self):
@@ -951,7 +950,6 @@ class CompareMorphForecastView(DetailView, FormView):
         """
         obj = super().get_object()
         obj.init()
-        self.object = obj
         return obj
 
     def get_form_class(self):
@@ -964,5 +962,23 @@ class CompareMorphForecastView(DetailView, FormView):
         """
         """
         context = super().get_context_data(**kwds)
+        #print(self.request.GET.keys())
+        # TODO: Branch
+        morph_id = self.request.GET.get("id")
+        print(self.request.GET.keys())
+        if morph_id is None:
+            kishuna = self.object.morph.copy()
+            stat_dict = self.object.morph.Stats.get_stat_dict(0)
+            stat_dict.update(self.request.GET)
+            kishuna.current_stats = self.object.morph.Stats(**stat_dict)
+        else:
+            kishuna = VirtualMorph.objects.get(id=id)
+            context['subtrahend_stats'] = StatsBundler.action_forecast_bases(kishuna.init(), None)
+            context['unit_class'] = kishuna.morph.current_cls
+            context['unit_lv'] = kishuna.morph.current_lv
+        #print(stat_dict)
+        kishuna.current_stats = (self.object.morph.current_stats > kishuna.current_stats)
+        #print(kishuna.current_stats.as_dict())
+        context['difference_stats'] = StatsBundler.action_forecast_bases(kishuna, None)
         return context
 

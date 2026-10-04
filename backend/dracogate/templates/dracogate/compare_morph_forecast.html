@@ -1,6 +1,9 @@
 <div class="subtrahend">
   {% if form %}
-  <form>
+  <form
+    hx-get="{% url 'dracogate:compare_morph_forecast' virtualmorph.id %}"
+    hx-trigger="changed"
+    >
     {% csrf_token %}
     {{ form }}
   </form>
@@ -19,6 +22,8 @@
     <tbody>
       {% for stat in subtrahend_stats %}
       <tr>
+        <th>{{stat.name}}</th>
+        <td>{{stat.value}}</td>
       </tr>
       {% endfor %}
     </tbody>
@@ -31,16 +36,21 @@
     <thead>
       <tr>
         <th>Class</th>
-        <td></td>
+        <td>{{ unit_class }}</td>
       </tr>
       <tr>
         <th>Level</th>
-        <td></td>
+        <td>{{ unit_lv }}</td>
       </tr>
     </thead>
     <tbody>
       {% for stat in difference_stats %}
       <tr>
+        <th>{{ stat.name }}</th>
+        <td>{% if stat.value == None %}N/A{% else %}{{ stat.value }}{% endif %}</td>
+        <td>
+          <meter value="{{ stat.value }}" min="0" max="{{ stat.absmax }}" high="{{ stat.max }}" optimum="{{ stat.max }}">
+        </td>
       </tr>
       {% endfor %}
     </tbody>

@@ -68,7 +68,7 @@ class StatsBundler:
                 delta = None
             yield {
                 "name": stat,
-                "value": base / 100,
+                "value": (base / 100 if base is not None else None),
                 "max": max_ / 100,
                 "absmax": absmax / 100,
                 "delta": delta,
