@@ -505,6 +505,8 @@ class ActionFormBuilder:
 
         return EquipDemiBandForm
 
+# TODO: Erase
+
 class ComparisonFormBuilder:
     """
     """

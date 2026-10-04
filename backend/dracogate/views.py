@@ -888,6 +888,7 @@ class RenameMorphView(UpdateView):
     model = VirtualMorph
     fields = ["name"]
 
+# TODO: Erase
 
 class CompareMorphsView(ListView):
     """
@@ -912,6 +913,7 @@ class CompareMorphView(DetailView, FormView):
         """
         """
         obj = super().get_object()
+        obj.init()
         #self.object = obj
         return obj
 
@@ -923,6 +925,19 @@ class CompareMorphView(DetailView, FormView):
         vmorph = self.object
         form_class = ComparisonFormBuilder.unit_comparison(vmorph, queryset)
         return form_class
+
+    def get_context_data(self, **kwds):
+        """
+        """
+        context = super().get_context_data(**kwds)
+        init_params = {"game_no": self.object.game_no, "name": self.object.unit}
+        init_params.update(self.object.init_options)
+        context['init_params'] = init_params
+        context['history'] = self.object.history
+        context['unit_class'] = self.object.morph.current_cls
+        context['unit_lv'] = self.object.morph.current_lv
+        context['stats'] = StatsBundler.action_forecast_bases(self.object.morph, None)
+        return context
 
 
 class CompareMorphForecastView(DetailView, FormView):

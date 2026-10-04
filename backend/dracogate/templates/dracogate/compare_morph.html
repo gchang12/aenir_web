@@ -11,6 +11,7 @@
       hx-target="#compare_morph_forecast"
       hx-trigger="changed"
       hx-get="{% url 'dracogate:compare_morph_forecast' virtualmorph.id %}">
+      {% csrf_token %}
       {{ form }}
     </form>
     <section>
@@ -23,6 +24,42 @@
           </tr>
         </thead>
         <tbody>
+          <tr>
+            <td><code>__init__</code></td>
+            <td><code>{{ init_params }}</code></td>
+          </tr>
+          {% for method, params in history %}
+          <tr>
+            <td><code>{{method}}</code></td>
+            <td><code>{{params}}</code></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+    <section>
+      <h3>Stats</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Class</th>
+            <td>{{ unit_class }}</td>
+          </tr>
+          <tr>
+            <th>Level</th>
+            <td>{{ unit_lv }}</td>
+          </tr>
+        </thead>
+        <tbody>
+          {% for stat in stats %}
+          <tr>
+            <th>{{ stat.name }}</th>
+            <td>{{ stat.value }}</td>
+            <td>
+              <meter value="{{ stat.value }}" min="0" max="{{ stat.absmax }}" high="{{ stat.max }}" optimum="{{ stat.max }}">
+            </td>
+          </tr>
+          {% endfor %}
         </tbody>
       </table>
     </section>

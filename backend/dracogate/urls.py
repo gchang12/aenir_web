@@ -24,6 +24,7 @@ urlpatterns = [
     path("<int:id>/set_demiband/", views.SetDemiBandView.as_view(), name="set_demiband"),
     path("<int:pk>/rename_morph/", views.RenameMorphView.as_view(), name="rename_morph"),
     path("components/<int:id>/action_forecast/", views.ActionForecastView.as_view(), name="action_forecast"),
+    # TODO: erase
     path("compare/", views.CompareMorphsView.as_view(), name="compare_morphs"),
     path("compare/<int:pk>/", views.CompareMorphView.as_view(), name="compare_morph"),
     path("components/compare/<int:pk>/", views.CompareMorphForecastView.as_view(), name="compare_morph_forecast"),
