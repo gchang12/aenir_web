@@ -996,6 +996,7 @@ class CompareMorphToInputView(FormView, DetailView):
         """
         obj = super().get_object()
         obj.init()
+        #self.object = obj
         return obj
 
     def get_context_data(self, **kwds):
@@ -1010,7 +1011,38 @@ class CompareMorphToInputView(FormView, DetailView):
     def get_form_class(self, **kwds):
         """
         """
-        owner = (None if self.request.user.is_authenticated is False else self.request.user)
-        queryset = self.model.objects.filter(owner=owner)
-        form_class = ComparisonFormBuilder.unit_comparison(self.object, queryset)
+        #self.get_object()
+        form_class = ComparisonFormBuilder.input_comparison(self.object)
         return form_class
+
+class CompareMorphToInputForecastView(DetailView):
+    """
+    """
+    model = VirtualMorph
+    template_name = "dracogate/compare_morph_to_input_forecast.html"
+
+    # TODO: Figure out why the form data isn't being submitted.
+    def get_object(self):
+        """
+        """
+        obj = super().get_object()
+        obj.init()
+        #print("GET", self.request.GET)
+        if self.request.GET:
+            stat_dict = {stat: int(self.request.GET[stat]) for stat in filter(lambda stat: stat not in obj.morph.Stats.ZERO_GROWTH_STAT_LIST(), obj.morph.Stats.STAT_LIST())}
+            for stat in obj.morph.Stats.ZERO_GROWTH_STAT_LIST():
+                stat_dict[stat] = 0
+            obj.morph.current_stats = (obj.morph.current_stats > obj.morph.Stats(**stat_dict))
+        self.object = obj
+        return obj
+
+    def get_context_data(self, **kwds):
+        """
+        """
+        context = super().get_context_data(**kwds)
+        morph = self.object.morph
+        delta_dict = morph.current_stats.as_dict()
+        context["cum_diff"] = sum([value for value in delta_dict.values() if value is not None]) / 100
+        context['diff_stats'] = StatsBundler.action_forecast_bases(morph, delta_dict)
+        return context
+

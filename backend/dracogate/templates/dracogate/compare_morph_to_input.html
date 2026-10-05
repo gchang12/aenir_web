@@ -29,16 +29,22 @@
   </tbody>
 </table>
 
-<h1>Change these!</h1>
-<form
-  hx-target="#compare_morph_forecast"
-  hx-get="{% url 'dracogate:compare_morph_forecast' virtualmorph.id %}"
-  hx-trigger="change">
+<form id="stat_input">
   {% csrf_token %}
   {{ form }}
+  <button
+    type="button" hx-trigger="click"
+                    {# type="submit" hx-trigger="submit" #}
+    hx-target="#compare_morph_to_input_forecast"
+    hx-get="{% url 'dracogate:compare_morph_to_input_forecast' virtualmorph.id %}"
+    hx-include="#stat_input"
+    >
+    Preview
+  </button>
 </form>
-<div id="compare_morph_forecast"
-  hx-get="{% url 'dracogate:compare_morph_forecast' virtualmorph.id %}"
+
+<div id="compare_morph_to_input_forecast"
+  hx-get="{% url 'dracogate:compare_morph_to_input_forecast' virtualmorph.id %}"
   hx-trigger="load">
 </div>
 {% endblock %}

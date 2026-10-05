@@ -532,16 +532,25 @@ class ComparisonFormBuilder:
                 initial=-1,
                 label="Morph",
             )
-        '''
-        # NOTE: This does not work.
+        return UnitComparisonForm
+
+    @staticmethod
+    def input_comparison(vmorph):
+        """
+        """
+
+        class InputComparisonForm(forms.Form):
+            """
+            """
+
         zero_growth_stats = vmorph.morph.Stats.ZERO_GROWTH_STAT_LIST()
         for stat in vmorph.morph.Stats.STAT_LIST():
-            UnitComparisonForm.declared_fields[stat] = forms.IntegerField(
-                initial=-1,
+            InputComparisonForm.declared_fields[stat] = forms.IntegerField(
+                initial=0,
                 min_value=0,
                 step_size=1,
                 disabled=stat in zero_growth_stats,
                 label=stat,
             )
-        '''
-        return UnitComparisonForm
+        return InputComparisonForm
+
