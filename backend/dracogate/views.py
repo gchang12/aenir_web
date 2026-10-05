@@ -970,6 +970,7 @@ class CompareMorphForecastView(DetailView):
         #print(kishuna.current_stats.as_dict())
         delta_dict = kishuna.current_stats.as_dict()
         context['diff_stats'] = StatsBundler.action_forecast_bases(kishuna, delta_dict)
+        context["cum_diff"] = sum([value for value in delta_dict.values() if value is not None]) / 100
         return context
 
 class CompareMorphsToInputView(ListView):
