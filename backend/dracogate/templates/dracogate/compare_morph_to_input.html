@@ -31,7 +31,11 @@
 
 <form id="stat_input">
   {% csrf_token %}
-  {{ form }}
+  <table>
+    <tbody>
+      {{ form.as_table }}
+    </tbody>
+  </table>
   <button
     type="button" hx-trigger="click"
                     {# type="submit" hx-trigger="submit" #}
