@@ -37,7 +37,7 @@ from dracogate.models import (
 from dracogate.forms import (
     InitFormBuilder,
     ActionFormBuilder,
-    ComparisonFormBuilder,
+    #ComparisonFormBuilder,
 )
 
 def get_temp_morph(game_no, unit, init_options):
@@ -888,103 +888,4 @@ class RenameMorphView(UpdateView):
     template_name = "dracogate/rename_morph.html"
     model = VirtualMorph
     fields = ["name"]
-
-# TODO: Erase
-
-class CompareMorphsView(ListView):
-    """
-    """
-    template_name = "dracogate/compare_morphs.html"
-    model = VirtualMorph
-
-    def get_queryset(self):
-        """
-        """
-        owner = (None if not self.request.user.is_authenticated else self.request.user)
-        return super().get_queryset().filter(owner=owner)
-
-
-class CompareMorphView(DetailView, FormView):
-    """
-    """
-    template_name = "dracogate/compare_morph.html"
-    model = VirtualMorph
-
-    def get_object(self):
-        """
-        """
-        obj = super().get_object()
-        obj.init()
-        return obj
-
-    def get_form_class(self):
-        """
-        """
-        owner = (None if not self.request.user.is_authenticated else self.request.user)
-        queryset = VirtualMorph.objects.filter(owner=owner)
-        vmorph = self.object
-        form_class = ComparisonFormBuilder.unit_comparison(vmorph, queryset)
-        return form_class
-
-    def get_context_data(self, **kwds):
-        """
-        """
-        context = super().get_context_data(**kwds)
-        init_params = {"game_no": self.object.game_no, "name": self.object.unit}
-        init_params.update(self.object.init_options)
-        context['init_params'] = init_params
-        context['history'] = self.object.history
-        context['unit_class'] = self.object.morph.current_cls
-        context['unit_lv'] = self.object.morph.current_lv
-        context['stats'] = StatsBundler.action_forecast_bases(self.object.morph, None)
-        return context
-
-
-class CompareMorphForecastView(DetailView, FormView):
-    """
-    """
-    template_name = "dracogate/compare_morph_forecast.html"
-    model = VirtualMorph
-
-    def get_object(self):
-        """
-        """
-        obj = super().get_object()
-        obj.init()
-        return obj
-
-    def get_form_class(self):
-        """
-        """
-        morph_id = self.request.GET.get("id")
-        if morph_id is None:
-            form_class = ComparisonFormBuilder.input_comparison(self.object.morph)
-        else:
-            form_class = ComparisonFormBuilder.null_comparison()
-        return form_class
-
-    def get_context_data(self, **kwds):
-        """
-        """
-        context = super().get_context_data(**kwds)
-        #print(self.request.GET.keys())
-        # TODO: Branch
-        morph_id = self.request.GET.get("id")
-        print("GET", self.request.GET.keys())
-        if morph_id is None:
-            kishuna = self.object.morph.copy()
-            stat_dict = self.object.morph.Stats.get_stat_dict(-1)
-            stat_dict.update(self.request.GET)
-            kishuna.current_stats = self.object.morph.Stats(**stat_dict)
-        else:
-            kishuna = VirtualMorph.objects.get(id=id)
-            morph = kishuna.init()
-            context['subtrahend_stats'] = StatsBundler.action_forecast_bases(morph, None)
-            context['unit_class'] = morph.current_cls
-            context['unit_lv'] = morph.current_lv
-        #print(stat_dict)
-        kishuna.current_stats = (self.object.morph.current_stats > kishuna.current_stats)
-        #print(kishuna.current_stats.as_dict())
-        context['difference_stats'] = StatsBundler.action_forecast_bases(kishuna, None)
-        return context
 
