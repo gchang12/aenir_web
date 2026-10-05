@@ -3285,3 +3285,24 @@ class SetDemiBandTests2(TestCase):
             self.assertContains(response, value)
         self.assertListEqual(morph.history, [])
 
+class MorphDetailTests(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        self.vmorph = VirtualMorph.objects.create(
+            game_no=4,
+            unit="Sigurd",
+            owner=None,
+        )
+
+    def test_delete(self):
+        """
+        """
+        id = self.vmorph.id
+        self.assertIs(VirtualMorph.objects.exists(), True)
+        url = reverse("dracogate:morph_detail", kwargs={"id": id})
+        response = self.client.post(url)
+        self.assertIs(VirtualMorph.objects.exists(), False)

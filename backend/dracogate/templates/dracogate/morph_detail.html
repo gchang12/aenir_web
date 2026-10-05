@@ -97,5 +97,13 @@
       {% endfor %}
     </menu>
   </article>
+  <article>
+    <h2>Delete</h2>
+    <form method="post">
+      {% csrf_token %}
+      {{ form }}
+      <button>Confirm</button>
+    </form>
+  </article>
 </div>
 {% endblock %}

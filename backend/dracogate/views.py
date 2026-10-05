@@ -1,7 +1,6 @@
 """
 """
 
-# TODO: DeleteView for morph_detail
 # TODO: Compare morphs
 # TODO: Create form class for [stat_type, vmorphs]; not to be submitted
 # TODO: Make sure user can see and access only his own VirtualMorph objects.
@@ -13,6 +12,7 @@
 from django.views.generic.edit import (
     FormView,
     UpdateView,
+    DeleteView,
 )
 from django.views.generic.base import (
     TemplateView,
@@ -288,7 +288,7 @@ class MorphListView(ListView):
         queryset = self.model.objects.filter(owner=owner).order_by("-creation_date")
         return queryset
 
-class MorphDetailView(DetailView):
+class MorphDetailView(DetailView, DeleteView):
     """
     """
     template_name = "dracogate/morph_detail.html"
@@ -348,6 +348,7 @@ class MorphDetailView(DetailView):
             "set_demiband",
         ),
     }
+    success_url = reverse_lazy("dracogate:morph_list")
 
     def get_context_data(self, object):
         """
