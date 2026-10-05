@@ -890,3 +890,30 @@ class RenameMorphView(UpdateView):
     model = VirtualMorph
     fields = ["name"]
 
+class CompareMorphsView(ListView):
+    """
+    """
+    model = VirtualMorph
+    template_name = "dracogate/compare_morphs.html"
+
+    def get_queryset(self, **kwds):
+        """
+        """
+        owner = (None if self.request.user.is_authenticated is False else self.request.user)
+        return super().get_queryset().filter(owner=owner)
+
+class CompareMorphView(FormView, DetailView):
+    """
+    """
+    model = VirtualMorph
+
+    def get_object(self):
+        """
+        """
+        obj = super().get_object()
+        obj.init()
+        return obj
+
+    def get_form_class(self, **kwds):
+        """
+        """
