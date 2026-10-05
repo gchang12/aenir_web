@@ -27,7 +27,7 @@
     {% endfor %}
   </tbody>
   <tfoot>
-    <tr>
+    <tr class="stat{% if cum_diff > 0 %} increased{% elif cum_diff < 0 %} decreased{% endif %}">
       <th>Total</th>
       <td>
         {% if cum_diff > 0 %}+{% endif %}{{cum_diff}}
