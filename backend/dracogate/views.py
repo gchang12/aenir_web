@@ -952,6 +952,8 @@ class CompareMorphForecastView(DetailView):
                 obj = super().get_object()
         obj.init()
         self.object = obj
+        self.object2 = super().get_object()
+        self.object2.init()
         return obj
 
     def get_context_data(self, **kwds):
@@ -962,4 +964,10 @@ class CompareMorphForecastView(DetailView):
         context['numeric_stats'] = StatsBundler.action_forecast_bases(morph, None)
         context['unit_class'] = morph.current_cls
         context['unit_lv'] = morph.current_lv
+        kishuna = morph.copy()
+        kishuna.current_stats = (self.object2.morph.current_stats > kishuna.current_stats)
+        #print(kishuna.current_stats.as_dict())
+        delta_dict = kishuna.current_stats.as_dict()
+        context['diff_stats'] = StatsBundler.action_forecast_bases(kishuna, delta_dict)
         return context
+

@@ -23,10 +23,7 @@
     <tr>
       <th>{{stat.name}}</th>
       <td>{{stat.value}}</td>
-      <td>
-        <meter value="{{stat.value}}" max="{{stat.absmax}}" high="{{stat.max}}" min="0" optimum="{{stat.max}}">
-        </meter>
-      </td>
+      {# <td> <meter value="{{stat.value}}" max="{{stat.absmax}}" high="{{stat.max}}" min="0" optimum="{{stat.max}}"> </meter> </td> #}
     </tr>
     {% endfor %}
   </tbody>
