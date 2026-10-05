@@ -931,3 +931,35 @@ class CompareMorphView(FormView, DetailView):
         queryset = self.model.objects.filter(owner=owner)
         form_class = ComparisonFormBuilder.unit_comparison(self.object, queryset)
         return form_class
+
+class CompareMorphForecastView(DetailView):
+    """
+    """
+    model = VirtualMorph
+    template_name = "dracogate/compare_morph_forecast.html"
+
+    def get_object(self):
+        """
+        """
+        vmorph_id = self.request.GET.get("vmorph_id")
+        if vmorph_id is None:
+            obj = super().get_object()
+        else:
+            owner = (None if self.request.user.is_authenticated is False else self.request.user)
+            try:
+                obj = VirtualMorph.objects.get(id=vmorph_id, owner=owner)
+            except VirtualMorph.DoesNotExist as e:
+                obj = super().get_object()
+        obj.init()
+        self.object = obj
+        return obj
+
+    def get_context_data(self, **kwds):
+        """
+        """
+        context = super().get_context_data(**kwds)
+        morph = self.object.morph
+        context['numeric_stats'] = StatsBundler.action_forecast_bases(morph, None)
+        context['unit_class'] = morph.current_cls
+        context['unit_lv'] = morph.current_lv
+        return context

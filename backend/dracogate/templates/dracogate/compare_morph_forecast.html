@@ -1,8 +1,4 @@
-{% extends "_base.html" %}
 {% load static %}
-
-{% block main %}
-<h1>Compare Morphs</h1>
 <figure>
   <figcaption><h2>{{virtualmorph.name}}</h2></figcaption>
   <img src="{% get_static_prefix %}dracogate/images/fe{{object.game_no}}/characters/{{object.unit}}.png" />
@@ -31,15 +27,3 @@
     {% endfor %}
   </tbody>
 </table>
-<form
-  hx-target="#compare_morph_forecast"
-  hx-get="{% url 'dracogate:compare_morph_forecast' virtualmorph.id %}"
-  hx-trigger="change">
-  {% csrf_token %}
-  {{ form }}
-</form>
-<div id="compare_morph_forecast"
-  hx-get="{% url 'dracogate:compare_morph_forecast' virtualmorph.id %}"
-  hx-trigger="load">
-</div>
-{% endblock %}
