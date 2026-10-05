@@ -7,7 +7,7 @@
     {% for virtualmorph in virtualmorph_list %}
     <li>
       <a href="{% url 'dracogate:compare_morph_to_input' virtualmorph.id %}">
-        {{ virtualmorph.name }}
+        FE{{virtualmorph.game_no}} {{virtualmorph.unit}} ({{ virtualmorph.name }})
       </a>
     </li>
     {% endfor %}

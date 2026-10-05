@@ -9,7 +9,7 @@
     <a href="{% url 'dracogate:morph_detail' virtualmorph.id %}">
       <figure>
         <img width="50" src="{% get_static_prefix %}dracogate/images/fe{{virtualmorph.game_no}}/characters/{{virtualmorph.unit}}.png" />
-        <figcaption>{{ virtualmorph.name }}</figcaption>
+        <figcaption>FE{{virtualmorph.game_no}} {{virtualmorph.unit}} ({{ virtualmorph.name }})</figcaption>
       </figure>
     </a>
   </li>

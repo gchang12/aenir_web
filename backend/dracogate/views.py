@@ -6,8 +6,8 @@
 # TODO: Make sure user can see and access only his own VirtualMorph objects.
 # TODO: Forbid user from invoking methods that are invalid in a given Morph class.
 # TODO: Handle game-exclusive methods via decorators
-# TODO: Put in logging
 # TODO: Handle mixins and composables
+# TODO: Put in logging
 
 from django.views.generic.edit import (
     FormView,
