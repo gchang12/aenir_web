@@ -563,6 +563,15 @@ class ComparisonFormBuilder:
             )
         return InputComparisonForm
 
+    @staticmethod
+    def null_comparison():
+        """
+        """
+        class NullComparisonForm(forms.Form):
+            """
+            """
+        return NullComparisonForm
+
 '''
     def __init__(self, name: str, *, father: str | None = None):
     def __init__(self, name: str):

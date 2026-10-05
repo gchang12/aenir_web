@@ -1,6 +1,7 @@
 """
 """
 
+# TODO: DeleteView for morph_detail
 # TODO: Compare morphs
 # TODO: Create form class for [stat_type, vmorphs]; not to be submitted
 # TODO: Make sure user can see and access only his own VirtualMorph objects.
@@ -955,7 +956,11 @@ class CompareMorphForecastView(DetailView, FormView):
     def get_form_class(self):
         """
         """
-        form_class = ComparisonFormBuilder.input_comparison(self.object.morph)
+        morph_id = self.request.GET.get("id")
+        if morph_id is None:
+            form_class = ComparisonFormBuilder.input_comparison(self.object.morph)
+        else:
+            form_class = ComparisonFormBuilder.null_comparison()
         return form_class
 
     def get_context_data(self, **kwds):
@@ -965,17 +970,18 @@ class CompareMorphForecastView(DetailView, FormView):
         #print(self.request.GET.keys())
         # TODO: Branch
         morph_id = self.request.GET.get("id")
-        print(self.request.GET.keys())
+        print("GET", self.request.GET.keys())
         if morph_id is None:
             kishuna = self.object.morph.copy()
-            stat_dict = self.object.morph.Stats.get_stat_dict(0)
+            stat_dict = self.object.morph.Stats.get_stat_dict(-1)
             stat_dict.update(self.request.GET)
             kishuna.current_stats = self.object.morph.Stats(**stat_dict)
         else:
             kishuna = VirtualMorph.objects.get(id=id)
-            context['subtrahend_stats'] = StatsBundler.action_forecast_bases(kishuna.init(), None)
-            context['unit_class'] = kishuna.morph.current_cls
-            context['unit_lv'] = kishuna.morph.current_lv
+            morph = kishuna.init()
+            context['subtrahend_stats'] = StatsBundler.action_forecast_bases(morph, None)
+            context['unit_class'] = morph.current_cls
+            context['unit_lv'] = morph.current_lv
         #print(stat_dict)
         kishuna.current_stats = (self.object.morph.current_stats > kishuna.current_stats)
         #print(kishuna.current_stats.as_dict())

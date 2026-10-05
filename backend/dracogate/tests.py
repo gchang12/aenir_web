@@ -3433,3 +3433,12 @@ class UnitComparisonTests2(TestCase):
                 self.assertEqual(form_class.declared_fields[stat].initial, -1)
                 self.assertIs(form_class.declared_fields[stat].disabled, stat in ("Mov", "Con", "Wt"))
 
+class NullComparisonTests(TestCase):
+    """
+    """
+
+    def test_null_comparison(self):
+        """
+        """
+        form_class = ComparisonFormBuilder.null_comparison()
+        self.assertFalse(form_class.declared_fields)
