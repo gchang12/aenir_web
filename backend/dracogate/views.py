@@ -972,3 +972,44 @@ class CompareMorphForecastView(DetailView):
         context['diff_stats'] = StatsBundler.action_forecast_bases(kishuna, delta_dict)
         return context
 
+class CompareMorphsToInputView(ListView):
+    """
+    """
+    model = VirtualMorph
+    template_name = "dracogate/compare_morphs_to_input.html"
+
+    def get_queryset(self, **kwds):
+        """
+        """
+        owner = (None if self.request.user.is_authenticated is False else self.request.user)
+        return super().get_queryset().filter(owner=owner)
+
+class CompareMorphToInputView(FormView, DetailView):
+    """
+    """
+    model = VirtualMorph
+    template_name = "dracogate/compare_morph_to_input.html"
+
+    def get_object(self):
+        """
+        """
+        obj = super().get_object()
+        obj.init()
+        return obj
+
+    def get_context_data(self, **kwds):
+        """
+        """
+        context = super().get_context_data(**kwds)
+        context['numeric_stats'] = StatsBundler.action_forecast_bases(self.object.morph, None)
+        context['unit_class'] = self.object.morph.current_cls
+        context['unit_lv'] = self.object.morph.current_lv
+        return context
+
+    def get_form_class(self, **kwds):
+        """
+        """
+        owner = (None if self.request.user.is_authenticated is False else self.request.user)
+        queryset = self.model.objects.filter(owner=owner)
+        form_class = ComparisonFormBuilder.unit_comparison(self.object, queryset)
+        return form_class

@@ -1,0 +1,17 @@
+{% extends "_base.html" %}
+
+{% block main %}
+<article>
+  <h1>Compare</h1>
+  <ul>
+    {% for virtualmorph in virtualmorph_list %}
+    <li>
+      <a href="{% url 'dracogate:compare_morph_to_input' virtualmorph.id %}">
+        {{ virtualmorph.name }}
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</article>
+{% endblock %}
+

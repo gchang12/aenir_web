@@ -27,4 +27,6 @@ urlpatterns = [
     path("compare/", views.CompareMorphsView.as_view(), name="compare_morphs"),
     path("compare/<int:pk>/", views.CompareMorphView.as_view(), name="compare_morph"),
     path("components/compare/<int:pk>/", views.CompareMorphForecastView.as_view(), name="compare_morph_forecast"),
+    path("compare_to_input/", views.CompareMorphsToInputView.as_view(), name="compare_morphs_to_input"),
+    path("compare_to_input/<int:pk>/", views.CompareMorphToInputView.as_view(), name="compare_morph_to_input"),
 ]
