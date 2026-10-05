@@ -997,7 +997,6 @@ class CompareMorphToInputView(FormView, DetailView):
         """
         obj = super().get_object()
         obj.init()
-        #self.object = obj
         return obj
 
     def get_context_data(self, **kwds):
@@ -1012,7 +1011,6 @@ class CompareMorphToInputView(FormView, DetailView):
     def get_form_class(self, **kwds):
         """
         """
-        #self.get_object()
         form_class = ComparisonFormBuilder.input_comparison(self.object)
         return form_class
 
@@ -1022,20 +1020,17 @@ class CompareMorphToInputForecastView(DetailView):
     model = VirtualMorph
     template_name = "dracogate/compare_morph_to_input_forecast.html"
 
-    # TODO: Figure out why the form data isn't being submitted.
     def get_object(self):
         """
         """
         obj = super().get_object()
         obj.init()
-        #print("GET", self.request.GET)
         if self.request.GET:
             stat_dict = {stat: float(self.request.GET[stat]) * 100 for stat in filter(lambda stat: stat not in obj.morph.Stats.ZERO_GROWTH_STAT_LIST(), obj.morph.Stats.STAT_LIST())}
             for stat in obj.morph.Stats.ZERO_GROWTH_STAT_LIST():
                 stat_dict[stat] = 0
             obj.morph.current_stats = (obj.morph.current_stats > obj.morph.Stats(**stat_dict))
         else:
-            #obj.morph.current_stats = (obj.morph.current_stats > obj.morph.current_stats)
             obj.morph.current_stats = obj.morph.Stats(**obj.morph.Stats.get_stat_dict(None))
         self.object = obj
         return obj

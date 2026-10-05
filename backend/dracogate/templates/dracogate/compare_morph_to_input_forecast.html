@@ -1,7 +1,4 @@
 <table>
-  <caption>Cumulative difference:
-    {% if cum_diff > 0 %}+{% endif %}{{cum_diff}}
-  </caption>
   <thead>
     <tr>
       <th>Class</th>
@@ -29,5 +26,13 @@
     </tr>
     {% endfor %}
   </tbody>
+  <tfoot>
+    <tr>
+      <th>Total</th>
+      <td>
+        {% if cum_diff > 0 %}+{% endif %}{{cum_diff}}
+      </td>
+    </tr>
+  </tfoot>
 </table>
 
