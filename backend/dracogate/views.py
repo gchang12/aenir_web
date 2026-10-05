@@ -1,6 +1,7 @@
 """
 """
 
+# TODO: Compare morph and input data.
 # TODO: Compare morphs
 # TODO: Create form class for [stat_type, vmorphs]; not to be submitted
 # TODO: Make sure user can see and access only his own VirtualMorph objects.

@@ -39,7 +39,7 @@
     {% for stat in diff_stats %}
     <tr class="stat{% if stat.delta > 0 %} increased{% elif stat.delta < 0 %} decreased{% endif %}">
       <th>{{stat.name}}</th>
-      <td>{{stat.value}}</td>
+      <td>{% if stat.value == None %}N/A{% else %}{{stat.value}}{% endif %}</td>
       {# <td> <meter value="{{stat.value}}" max="{{stat.absmax}}" high="{{stat.max}}" min="0" optimum="{{stat.max}}"> </meter> </td> #}
     </tr>
     {% endfor %}
