@@ -1,12 +1,13 @@
 """
 """
 
-# TODO: Test comparison
+# TODO: Test comparison module
 
 # TODO: Make sure user can see and access only his own VirtualMorph objects.
 # TODO: Forbid user from invoking methods that are invalid in a given Morph class.
 # TODO: Handle game-exclusive methods via decorators
 # TODO: Put in logging
+# TODO: Handle mixins and composables
 
 from django.views.generic.edit import (
     FormView,
@@ -153,6 +154,8 @@ class FilterByUserMixin:
         """
         owner = (None if self.request.user.is_authenticated is False else self.request.user)
         return super().get_queryset().filter(owner=owner)
+
+# TODO: Ignore the rest of this. The above definitions should be handled.
 
 class GameSelectView(TemplateView):
     """
@@ -1032,7 +1035,8 @@ class CompareMorphToInputForecastView(DetailView):
                 stat_dict[stat] = 0
             obj.morph.current_stats = (obj.morph.current_stats > obj.morph.Stats(**stat_dict))
         else:
-            obj.morph.current_stats = (obj.morph.current_stats > obj.morph.current_stats)
+            #obj.morph.current_stats = (obj.morph.current_stats > obj.morph.current_stats)
+            obj.morph.current_stats = obj.morph.Stats(**obj.morph.Stats.get_stat_dict(None))
         self.object = obj
         return obj
 

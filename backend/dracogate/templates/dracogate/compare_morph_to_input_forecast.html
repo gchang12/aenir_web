@@ -1,5 +1,7 @@
 <table>
-  <caption>Cumulative difference: {{cum_diff}}</caption>
+  <caption>Cumulative difference:
+    {% if cum_diff > 0 %}+{% endif %}{{cum_diff}}
+  </caption>
   <thead>
     <tr>
       <th>Class</th>
@@ -14,7 +16,15 @@
     {% for stat in diff_stats %}
     <tr class="stat{% if stat.delta > 0 %} increased{% elif stat.delta < 0 %} decreased{% endif %}">
       <th>{{stat.name}}</th>
-      <td>{% if stat.value == None %}N/A{% else %}{{stat.value}}{% endif %}</td>
+      <td>
+        {% if stat.value == None %}
+        N/A
+        {% elif stat.value > 0 %}
+        +{{stat.value}}
+        {% else %}
+        {{stat.value}}
+        {% endif %}
+      </td>
       {# <td> <meter value="{{stat.value}}" max="{{stat.absmax}}" high="{{stat.max}}" min="0" optimum="{{stat.max}}"> </meter> </td> #}
     </tr>
     {% endfor %}
