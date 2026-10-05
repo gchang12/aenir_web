@@ -504,3 +504,32 @@ class ActionFormBuilder:
             )
 
         return EquipDemiBandForm
+
+class ComparisonFormBuilder:
+    """
+    """
+
+    @staticmethod
+    def unit_comparison(vmorph, queryset):
+        """
+        """
+        choices = [(-1, "")]
+        gba_games = (6, 7, 8)
+        if vmorph.game_no in gba_games:
+            more_choices = queryset.filter(game_no__in=gba_games)
+        else:
+            more_choices = queryset.filter(game_no__exact=vmorph.game_no)
+        choices.extend([(choice.id, choice.name) for choice in more_choices])
+        self = (vmorph.id, vmorph.name)
+        choices.pop(choices.index(self))
+
+        class UnitComparisonForm(forms.Form):
+            """
+            """
+            vmorph_id = forms.ChoiceField(
+                choices=choices,
+                required=True,
+                initial=-1,
+                label="Morph",
+            )
+        return UnitComparisonForm

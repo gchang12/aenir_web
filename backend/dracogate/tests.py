@@ -17,7 +17,7 @@ from aenir import (
 from dracogate.forms import (
     InitFormBuilder,
     ActionFormBuilder,
-    #ComparisonFormBuilder,
+    ComparisonFormBuilder,
 )
 from dracogate.models import VirtualMorph
 
@@ -3306,3 +3306,69 @@ class MorphDetailTests(TestCase):
         url = reverse("dracogate:morph_detail", kwargs={"id": id})
         response = self.client.post(url)
         self.assertIs(VirtualMorph.objects.exists(), False)
+
+class MorphComparisonTests(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        self.vmorph = VirtualMorph.objects.create(
+            game_no=4,
+            unit="Sigurd",
+            owner=None,
+        )
+
+    def test_unit_comparison(self):
+        """
+        """
+        vmorph1 = VirtualMorph.objects.create(
+            game_no=4,
+            unit="Lex",
+            owner=None,
+        )
+        vmorph2 = VirtualMorph.objects.create(
+            game_no=5,
+            unit="Leaf",
+            owner=None,
+        )
+        form_class = ComparisonFormBuilder.unit_comparison(self.vmorph, queryset=VirtualMorph.objects.all())
+        self.assertIn("vmorph_id", form_class.declared_fields)
+        self.assertNotIn((self.vmorph.id, self.vmorph.name), form_class.declared_fields["vmorph_id"].choices)
+        self.assertEqual(form_class.declared_fields['vmorph_id'].initial, -1)
+        self.assertIn((vmorph1.id, vmorph1.name), form_class.declared_fields["vmorph_id"].choices)
+        self.assertNotIn((vmorph2.id, vmorph2.name), form_class.declared_fields["vmorph_id"].choices)
+
+class MorphComparisonTestsGBA(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        self.vmorph = VirtualMorph.objects.create(
+            game_no=6,
+            unit="Roy",
+            owner=None,
+        )
+
+    def test_unit_comparison(self):
+        """
+        """
+        vmorph1 = VirtualMorph.objects.create(
+            game_no=7,
+            unit="Eliwood",
+            owner=None,
+        )
+        vmorph2 = VirtualMorph.objects.create(
+            game_no=4,
+            unit="Lex",
+            owner=None,
+        )
+        form_class = ComparisonFormBuilder.unit_comparison(self.vmorph, queryset=VirtualMorph.objects.all())
+        self.assertIn("vmorph_id", form_class.declared_fields)
+        self.assertNotIn((self.vmorph.id, self.vmorph.name), form_class.declared_fields["vmorph_id"].choices)
+        self.assertEqual(form_class.declared_fields['vmorph_id'].initial, -1)
+        self.assertIn((vmorph1.id, vmorph1.name), form_class.declared_fields["vmorph_id"].choices)
+        self.assertNotIn((vmorph2.id, vmorph2.name), form_class.declared_fields["vmorph_id"].choices)
