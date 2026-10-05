@@ -1,6 +1,7 @@
 """
 """
 
+# TODO: Test comparison
 # TODO: Compare morph and input data.
 # TODO: Compare morphs
 # TODO: Create form class for [stat_type, vmorphs]; not to be submitted
@@ -1029,7 +1030,7 @@ class CompareMorphToInputForecastView(DetailView):
         obj.init()
         #print("GET", self.request.GET)
         if self.request.GET:
-            stat_dict = {stat: int(self.request.GET[stat]) for stat in filter(lambda stat: stat not in obj.morph.Stats.ZERO_GROWTH_STAT_LIST(), obj.morph.Stats.STAT_LIST())}
+            stat_dict = {stat: int(float(self.request.GET[stat])) for stat in filter(lambda stat: stat not in obj.morph.Stats.ZERO_GROWTH_STAT_LIST(), obj.morph.Stats.STAT_LIST())}
             for stat in obj.morph.Stats.ZERO_GROWTH_STAT_LIST():
                 stat_dict[stat] = 0
             obj.morph.current_stats = (obj.morph.current_stats > obj.morph.Stats(**stat_dict))
