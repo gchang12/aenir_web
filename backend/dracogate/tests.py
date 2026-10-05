@@ -3339,8 +3339,8 @@ class MorphComparisonTests(TestCase):
         self.assertIn("vmorph_id", form_class.declared_fields)
         self.assertNotIn((self.vmorph.id, self.vmorph.name), form_class.declared_fields["vmorph_id"].choices)
         self.assertEqual(form_class.declared_fields['vmorph_id'].initial, -1)
-        self.assertIn((vmorph1.id, vmorph1.name), form_class.declared_fields["vmorph_id"].choices)
-        self.assertNotIn((vmorph2.id, vmorph2.name), form_class.declared_fields["vmorph_id"].choices)
+        self.assertIn(vmorph1.id, [choice for choice, _ in form_class.declared_fields["vmorph_id"].choices])
+        self.assertNotIn(vmorph2.id, [choice for choice, _ in form_class.declared_fields["vmorph_id"].choices])
 
 class MorphComparisonTestsGBA(TestCase):
     """
@@ -3372,5 +3372,5 @@ class MorphComparisonTestsGBA(TestCase):
         self.assertIn("vmorph_id", form_class.declared_fields)
         self.assertNotIn((self.vmorph.id, self.vmorph.name), form_class.declared_fields["vmorph_id"].choices)
         self.assertEqual(form_class.declared_fields['vmorph_id'].initial, -1)
-        self.assertIn((vmorph1.id, vmorph1.name), form_class.declared_fields["vmorph_id"].choices)
-        self.assertNotIn((vmorph2.id, vmorph2.name), form_class.declared_fields["vmorph_id"].choices)
+        self.assertIn(vmorph1.id, [choice for choice, _ in form_class.declared_fields["vmorph_id"].choices])
+        self.assertNotIn(vmorph2.id, [choice for choice, _ in form_class.declared_fields["vmorph_id"].choices])

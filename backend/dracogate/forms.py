@@ -519,8 +519,8 @@ class ComparisonFormBuilder:
             more_choices = queryset.filter(game_no__in=gba_games)
         else:
             more_choices = queryset.filter(game_no__exact=vmorph.game_no)
-        choices.extend([(choice.id, choice.name) for choice in more_choices])
-        self = (vmorph.id, vmorph.name)
+        choices.extend([(choice.id, "FE%d %s (%s)" % (choice.game_no, choice.unit, choice.name)) for choice in more_choices])
+        self = (vmorph.id, "FE%d %s (%s)" % (vmorph.game_no, vmorph.unit, vmorph.name))
         choices.pop(choices.index(self))
 
         class UnitComparisonForm(forms.Form):
