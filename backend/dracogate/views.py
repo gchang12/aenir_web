@@ -37,7 +37,7 @@ from dracogate.models import (
 from dracogate.forms import (
     InitFormBuilder,
     ActionFormBuilder,
-    #ComparisonFormBuilder,
+    ComparisonFormBuilder,
 )
 
 def get_temp_morph(game_no, unit, init_options):
@@ -906,6 +906,7 @@ class CompareMorphView(FormView, DetailView):
     """
     """
     model = VirtualMorph
+    template_name = "dracogate/compare_morph.html"
 
     def get_object(self):
         """
@@ -914,6 +915,19 @@ class CompareMorphView(FormView, DetailView):
         obj.init()
         return obj
 
+    def get_context_data(self, **kwds):
+        """
+        """
+        context = super().get_context_data(**kwds)
+        context['numeric_stats'] = StatsBundler.action_forecast_bases(self.object.morph, None)
+        context['unit_class'] = self.object.morph.current_cls
+        context['unit_lv'] = self.object.morph.current_lv
+        return context
+
     def get_form_class(self, **kwds):
         """
         """
+        owner = (None if self.request.user.is_authenticated is False else self.request.user)
+        queryset = self.model.objects.filter(owner=owner)
+        form_class = ComparisonFormBuilder.unit_comparison(self.object, queryset)
+        return form_class
