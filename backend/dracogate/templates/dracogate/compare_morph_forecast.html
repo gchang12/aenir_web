@@ -1,6 +1,9 @@
 {% load static %}
 <figure>
-  <figcaption><h2>{{virtualmorph.name}}</h2></figcaption>
+  <figcaption>
+    <h2>FE{{virtualmorph.game_no}} {{virtualmorph.unit}}</h2>
+    <h3>{{virtualmorph.name}}</h3>
+  </figcaption>
   <img src="{% get_static_prefix %}dracogate/images/fe{{object.game_no}}/characters/{{object.unit}}.png" />
 </figure>
 <table>
