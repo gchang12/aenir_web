@@ -33,6 +33,14 @@
   {% csrf_token %}
   <table>
     <tbody>
+      <tr>
+        <th>Class</th>
+        <td><input disabled type="text" name="_class" /></td>
+      </tr>
+      <tr>
+        <th>Lv</th>
+        <td><input disabled type="text" name="_lv" /></td>
+      </tr>
       {{ form.as_table }}
     </tbody>
   </table>
