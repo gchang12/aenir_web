@@ -1,10 +1,9 @@
 """
 """
 
-# TODO: Put in mixins and composables as needed
-# TODO: Make sure user can see and access only his own VirtualMorph objects.
-# TODO: Forbid user from invoking methods that are invalid in a given Morph class.
 # TODO: Handle game-exclusive methods
+# TODO: Forbid user from invoking methods that are invalid in a given Morph class.
+# TODO: Make sure user can see and access only his own VirtualMorph objects.
 
 # TODO: Put in logging
 
