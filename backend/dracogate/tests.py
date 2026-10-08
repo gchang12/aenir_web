@@ -3302,15 +3302,26 @@ class MorphDetailTests(TestCase):
             unit="Sigurd",
             owner=None,
         )
+        self.user = User.objects.create()
 
     def test_delete(self):
+        """
+        """
+        self.client.force_login(self.user)
+        id = self.vmorph.id
+        self.assertIs(VirtualMorph.objects.exists(), True)
+        url = reverse("dracogate:morph_detail", kwargs={"id": id})
+        response = self.client.post(url)
+        self.assertIs(VirtualMorph.objects.exists(), False)
+
+    def test_delete__fail(self):
         """
         """
         id = self.vmorph.id
         self.assertIs(VirtualMorph.objects.exists(), True)
         url = reverse("dracogate:morph_detail", kwargs={"id": id})
         response = self.client.post(url)
-        self.assertIs(VirtualMorph.objects.exists(), False)
+        self.assertIs(VirtualMorph.objects.exists(), True)
 
 class MorphComparisonTests(TestCase):
     """

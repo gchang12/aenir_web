@@ -1,6 +1,7 @@
 """
 """
 
+from django.views import defaults
 from django.views.generic.edit import (
     FormView,
     UpdateView,
@@ -283,6 +284,18 @@ class MorphDetailView(DetailView, DeleteView, ForbidAnonPostMixin):
         context["unit_class"] = morph.current_cls
         context["unit_lv"] = morph.current_lv
         return context
+
+    def post(self, request, **kwds):
+        """
+        Raises 403 for anonymous POST requests.
+        """
+        user = (None if self.request.user.is_authenticated is False else self.request.user)
+        #print("ForbidAnonPostMixin", user)
+        try:
+            assert user is not None
+        except AssertionError as err:
+            return defaults.permission_denied(request, err)
+        return super().post(request, **kwds)
 
     def get_object(self):
         """
