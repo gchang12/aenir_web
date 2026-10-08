@@ -263,6 +263,41 @@ class InitFormBuilderTests(TestCase):
         self.assertIs(form.is_valid(), True)
         self.assertDictEqual(form.cleaned_data, data)
 
+class UnitConfirmTests2(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        self.generate_url = lambda game_no, name: reverse("dracogate:unit_confirm", kwargs={"game_no": game_no, "unit": name})
+        self.user = User.objects.create()
+
+    def test_owner_is_null(self):
+        """
+        """
+        data = {}
+        kwargs = {
+            "game_no": 4,
+            "name": "Sigurd",
+        }
+        url = self.generate_url(**kwargs)
+        response = self.client.post(url, data=data)
+        self.assertEqual(VirtualMorph.objects.count(), 1)
+        vmorph = VirtualMorph.objects.get()
+        self.assertIsNone(vmorph.owner)
+        # test for existence of init_options in morph_detail
+        url = reverse("dracogate:morph_detail", kwargs={"id": vmorph.id})
+        response = self.client.get(url)
+        values = (
+            "Game",
+            "FE%d" % kwargs['game_no'],
+            "Unit",
+            kwargs["name"],
+        )
+        for value in values:
+            self.assertContains(response, value)
+
 class UnitConfirmTests(TestCase):
     """
     """
