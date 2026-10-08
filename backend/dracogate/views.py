@@ -184,7 +184,7 @@ class UnitConfirmForecast(TemplateView):
         #print(context)
         return context
 
-class MorphListView(ListView, GetUserObjectsOnlyMixin):
+class MorphListView(ListView):
     """
     """
     template_name = "dracogate/morph_list.html"
@@ -197,7 +197,15 @@ class MorphListView(ListView, GetUserObjectsOnlyMixin):
         #print(context)
         return context
 
-class MorphDetailView(DetailView, DeleteView):
+    def get_queryset(self, **kwds):
+        """
+        Returns only user's morphs, ordered by newest to oldest.
+        """
+        user = (None if self.request.user.is_authenticated is False else self.request.user)
+        queryset = self.model.objects.filter(owner=user).order_by("-creation_date")
+        return queryset
+
+class MorphDetailView(DetailView, DeleteView, ForbidAnonPostMixin):
     """
     """
     template_name = "dracogate/morph_detail.html"
@@ -793,11 +801,19 @@ class RenameMorphView(UpdateView):
     model = VirtualMorph
     fields = ["name"]
 
-class CompareMorphsView(ListView, GetUserObjectsOnlyMixin):
+class CompareMorphsView(ListView):
     """
     """
     model = VirtualMorph
     template_name = "dracogate/compare_morphs.html"
+
+    def get_queryset(self, **kwds):
+        """
+        Returns only user's morphs, ordered by newest to oldest.
+        """
+        user = (None if self.request.user.is_authenticated is False else self.request.user)
+        queryset = self.model.objects.filter(owner=user).order_by("-creation_date")
+        return queryset
 
 class CompareMorphView(FormView, DetailView):
     """
@@ -869,11 +885,19 @@ class CompareMorphForecastView(DetailView):
         context["cum_diff"] = sum([value for value in delta_dict.values() if value is not None]) / 100
         return context
 
-class CompareMorphsToInputView(ListView, GetUserObjectsOnlyMixin):
+class CompareMorphsToInputView(ListView):
     """
     """
     model = VirtualMorph
     template_name = "dracogate/compare_morphs_to_input.html"
+
+    def get_queryset(self, **kwds):
+        """
+        Returns only user's morphs, ordered by newest to oldest.
+        """
+        user = (None if self.request.user.is_authenticated is False else self.request.user)
+        queryset = self.model.objects.filter(owner=user).order_by("-creation_date")
+        return queryset
 
 class CompareMorphToInputView(FormView, DetailView):
     """

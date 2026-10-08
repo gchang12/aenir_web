@@ -2,6 +2,9 @@
 """
 
 # TODO: User should not be able to delete morphs he does not own.
+# TODO: User should not be able to delete morphs as an anonymous user.
+# TODO: Authenticated users should be able to see their own morphs.
+# TODO: Non-authenticated users should be able to see anon-morphs.
 
 import unittest
 
@@ -3460,3 +3463,119 @@ class MorphComparisonTestsGBA(TestCase):
             with self.subTest(stat=stat):
                 self.assertIsInstance(form_class.declared_fields[stat], django.forms.IntegerField)
 
+class MorphListViewTests(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        username = "MorphListViewTests"
+        url_name = "dracogate:morph_list"
+        self.user = User.objects.create(username=username)
+        init_params = {
+            "game_no": 4,
+            "unit": "Sigurd",
+        }
+        VirtualMorph.objects.create(**init_params, owner=self.user)
+        for _ in range(3):
+            VirtualMorph.objects.create(**init_params, owner=None)
+        self.url = reverse(url_name)
+
+    def test_authenticated_user_sees_own_morphs_only(self):
+        """
+        """
+        self.client.force_login(self.user)
+        response = self.client.get(self.url)
+        self.assertQuerySetEqual(
+            VirtualMorph.objects.filter(owner=self.user).order_by("-creation_date"),
+            response.context["virtualmorph_list"],
+        )
+
+    def test_anon_user_sees_only_anon_morphs(self):
+        """
+        """
+        #self.client.force_login(self.user)
+        response = self.client.get(self.url)
+        self.assertQuerySetEqual(
+            VirtualMorph.objects.filter(owner=None).order_by("-creation_date"),
+            response.context["virtualmorph_list"],
+        )
+
+class CompareMorphsViewTests(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        username = "CompareMorphsViewTests"
+        url_name = "dracogate:compare_morphs"
+        self.user = User.objects.create(username=username)
+        init_params = {
+            "game_no": 4,
+            "unit": "Sigurd",
+        }
+        VirtualMorph.objects.create(**init_params, owner=self.user)
+        for _ in range(3):
+            VirtualMorph.objects.create(**init_params, owner=None)
+        self.url = reverse(url_name)
+
+    def test_authenticated_user_sees_own_morphs_only(self):
+        """
+        """
+        self.client.force_login(self.user)
+        response = self.client.get(self.url)
+        self.assertQuerySetEqual(
+            VirtualMorph.objects.filter(owner=self.user).order_by("-creation_date"),
+            response.context["virtualmorph_list"],
+        )
+
+    def test_anon_user_sees_only_anon_morphs(self):
+        """
+        """
+        #self.client.force_login(self.user)
+        response = self.client.get(self.url)
+        self.assertQuerySetEqual(
+            VirtualMorph.objects.filter(owner=None).order_by("-creation_date"),
+            response.context["virtualmorph_list"],
+        )
+
+class CompareMorphsToInputViewTests(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        username = "CompareMorphsToInputViewTests"
+        url_name = "dracogate:compare_morphs_to_input"
+        self.user = User.objects.create(username=username)
+        init_params = {
+            "game_no": 4,
+            "unit": "Sigurd",
+        }
+        VirtualMorph.objects.create(**init_params, owner=self.user)
+        for _ in range(3):
+            VirtualMorph.objects.create(**init_params, owner=None)
+        self.url = reverse(url_name)
+
+    def test_authenticated_user_sees_own_morphs_only(self):
+        """
+        """
+        self.client.force_login(self.user)
+        response = self.client.get(self.url)
+        self.assertQuerySetEqual(
+            VirtualMorph.objects.filter(owner=self.user).order_by("-creation_date"),
+            response.context["virtualmorph_list"],
+        )
+
+    def test_anon_user_sees_only_anon_morphs(self):
+        """
+        """
+        #self.client.force_login(self.user)
+        response = self.client.get(self.url)
+        self.assertQuerySetEqual(
+            VirtualMorph.objects.filter(owner=None).order_by("-creation_date"),
+            response.context["virtualmorph_list"],
+        )
