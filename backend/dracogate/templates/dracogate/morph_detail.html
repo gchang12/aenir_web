@@ -97,6 +97,7 @@
       {% endfor %}
     </menu>
   </article>
+  {% if user.is_authenticated %}
   <article>
     <h2>Delete</h2>
     <form method="post">
@@ -105,5 +106,6 @@
       <button>Confirm</button>
     </form>
   </article>
+  {% endif %}
 </div>
 {% endblock %}
