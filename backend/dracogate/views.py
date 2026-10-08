@@ -282,6 +282,20 @@ class MorphDetailView(DetailView, DeleteView):
         context["unit_lv"] = morph.current_lv
         return context
 
+    def get(self, request, **kwds):
+        """
+        """
+        user = (None if self.request.user.is_authenticated is False else self.request.user)
+        self.get_object()
+        if (self.object.owner is not None):
+            if (user is None):
+                return redirect("login")
+            try:
+                assert self.object.owner == user
+            except AssertionError as err:
+                return defaults.permission_denied(request, err)
+        return super().get(request, **kwds)
+
     def post(self, request, **kwds):
         """
         Raises 403 for anonymous POST requests.
@@ -299,6 +313,7 @@ class MorphDetailView(DetailView, DeleteView):
         """
         id = self.request.path.split('/')[-2]
         obj = self.model.objects.get(id=id)
+        self.object = obj
         return obj
 
 class ActionForecastView(DetailView):

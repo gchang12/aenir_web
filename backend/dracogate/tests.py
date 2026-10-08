@@ -494,6 +494,7 @@ class LevelUpTests(TestCase):
             init_options=init_options,
         )
         self.vmorph.init()
+        self.client.force_login(self.user)
 
     def test_level_up__virtualmorph1(self):
         """
@@ -624,6 +625,7 @@ class PromoteTests(TestCase):
             init_options=init_options,
         )
         self.vmorph.init()
+        self.client.force_login(self.user)
 
     def test_promote__virtualmorph1(self):
         """
@@ -735,6 +737,7 @@ class PromoteTests2(TestCase):
             init_options=init_options,
         )
         self.vmorph.init()
+        self.client.force_login(self.user)
 
     def test_promote__virtualmorph1(self):
         """
@@ -908,6 +911,7 @@ class PromoteTests3(TestCase):
         )
         self.vmorph.init()
         self.vmorph.morph.level_up(9)
+        self.client.force_login(self.user)
 
     def test_promote__virtualmorph1(self):
         """
@@ -1055,6 +1059,7 @@ class PromoteTests4(TestCase):
             init_options=init_options,
         )
         self.vmorph.init()
+        self.client.force_login(self.user)
 
     def test_promote__virtualmorph1(self):
         """
@@ -1246,6 +1251,7 @@ class UseStatBoosterTests(TestCase):
         self.vmorph.init()
         self.vmorph.morph.level_up(20 - self.vmorph.morph.current_lv)
         self.vmorph.save()
+        self.client.force_login(self.user)
 
     def test_use_stat_booster__virtualmorph1(self):
         """
@@ -1408,6 +1414,7 @@ class UseStatBoosterTests2(TestCase):
             init_options=init_options,
         )
         self.vmorph.init()
+        self.client.force_login(self.user)
 
     def test_use_stat_booster__virtualmorph(self):
         """
@@ -1469,6 +1476,7 @@ class UseAfasDropsTests(TestCase):
             init_options=init_options,
         )
         self.vmorph.init()
+        self.client.force_login(self.user)
 
     def test_use_afas_drops__virtualmorph1(self):
         """
@@ -1670,6 +1678,7 @@ class UseAfasDropsTests2(TestCase):
             init_options=init_options,
         )
         self.vmorph.init()
+        self.client.force_login(self.user)
 
     def test_use_afas_drops__virtualmorph1(self):
         """
@@ -1725,6 +1734,7 @@ class SetScrollsTests(TestCase):
             unit=unit,
             init_options=init_options,
         )
+        self.client.force_login(self.user)
 
     def test_set_scrolls__formbuilder3(self):
         """
@@ -2001,6 +2011,7 @@ class ShapeshiftTests(TestCase):
             init_options=init_options,
         )
         self.vmorph.init()
+        self.client.force_login(self.user)
 
     def test_shapeshift__virtualmorph1(self):
         """
@@ -2177,6 +2188,7 @@ class ShapeshiftTests2(TestCase):
             init_options=init_options,
         )
         self.vmorph.init()
+        self.client.force_login(self.user)
 
     def test_shapeshift__virtualmorph1(self):
         """
@@ -2263,6 +2275,7 @@ class UseMetissTomeTests(TestCase):
             init_options=init_options,
         )
         self.vmorph.init()
+        self.client.force_login(self.user)
 
     def test_use_metiss_tome__virtualmorph1(self):
         """
@@ -2519,6 +2532,7 @@ class SetBandsTests2(TestCase):
             unit=unit,
             init_options=init_options,
         )
+        self.client.force_login(self.user)
 
     def test_set_bands__virtualmorph1(self):
         """
@@ -2750,6 +2764,7 @@ class SetBandsTests(TestCase):
             unit=unit,
             init_options=init_options,
         )
+        self.client.force_login(self.user)
 
     def test_set_bands__virtualmorph1(self):
         """
@@ -3062,6 +3077,7 @@ class SetDemiBandTests(TestCase):
             init_options=init_options,
         )
         self.vmorph.init()
+        self.client.force_login(self.user)
 
     def test_set_demiband__virtualmorph1(self):
         """
@@ -3319,6 +3335,44 @@ class SetDemiBandTests2(TestCase):
         for value in values:
             self.assertContains(response, value)
         self.assertListEqual(morph.history, [])
+
+class MorphDetailTests2(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        self.user = User.objects.create(username="MorphDetailTests2")
+        self.vmorph = VirtualMorph.objects.create(
+            game_no=4,
+            unit="Sigurd",
+            owner=self.user,
+        )
+
+    def test_anon_user_accesses_owned_morph(self):
+        """
+        """
+        url = reverse("dracogate:morph_detail", kwargs={'id': self.vmorph.id})
+        response = self.client.get(url)
+        self.assertRedirects(response, reverse("login"))
+
+    def test_user_tries_to_access_anothers_morph(self):
+        """
+        """
+        user2 = User.objects.create(
+            username="MorphDetailTests2_another",
+            email="MorphDetailTests2_another@email.com",
+        )
+        vmorph2 = VirtualMorph.objects.create(
+            game_no=4,
+            unit="Sigurd",
+            owner=user2,
+        )
+        url = reverse("dracogate:morph_detail", kwargs={'id': vmorph2.id})
+        self.client.force_login(self.user)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
 
 class MorphDetailTests(TestCase):
     """
