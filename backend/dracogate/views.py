@@ -1,10 +1,6 @@
 """
 """
 
-# TODO: Handle game-exclusive methods
-# TODO: Forbid user from invoking methods that are invalid in a given Morph class.
-# TODO: Make sure user can see and access only his own VirtualMorph objects.
-
 # TODO: Put in logging
 
 from django.views.generic.edit import (
@@ -74,86 +70,6 @@ def get_temp_morph(game_no, unit, init_options):
         temp_morph = get_morph(game_no, unit, **init_options)
     return (init_params, temp_morph)
 
-class RedirectToMorphListMixin:
-    """
-    Tells user to select from list.
-    """
-
-    @staticmethod
-    def redirect_to_morph_list(dispatch):
-        """
-        """
-        def new_dispatch(self, request, **kwds):
-            """
-            """
-            if request.user.is_authenticated is True and self.object.owner is not None:
-                return redirect("dracogate:morph_list")
-            return dispatch(self, request, **kwds)
-        return new_dispatch
-
-# TODO: Mixin for 'redirect-to-login' maybe?
-
-class RedirectToLoginMixin:
-    """
-    """
-
-    @staticmethod
-    def redirect_to_login(dispatch):
-        """
-        """
-        def new_dispatch(self, request, **kwds):
-            """
-            """
-            if request.user.is_authenticated is True and self.object.owner is not None:
-                return redirect("login")
-            return dispatch(self, request, **kwds)
-        return new_dispatch
-
-class RedirectToMorphCreationMixin:
-    """
-    Tells user to get his own thing provided he's got his own account.
-    """
-
-    # TODO: This should be a decorator.
-    def dispatch(self, request, **kwds):
-        """
-        """
-        if request.user.is_authenticated is True and self.object.owner != request.user:
-            kwargs = {
-                "game_no": self.object.game_no,
-                "unit": self.object.unit,
-            }
-            return redirect("dracogate:unit_confirm", kwargs=kwargs)
-
-    @staticmethod
-    def redirect_to_morph_creation(dispatch):
-        """
-        """
-        def new_dispatch(self, request, **kwds):
-            """
-            """
-            if request.user.is_authenticated is True and self.object.owner != request.user:
-                kwargs = {
-                    "game_no": self.object.game_no,
-                    "unit": self.object.unit,
-                }
-                return redirect("dracogate:unit_confirm", kwargs=kwargs)
-            return dispatch(self, request, **kwds)
-        return new_dispatch
-
-    #func = decorator(func)
-
-class FilterByUserMixin:
-    """
-    """
-
-    def get_queryset(self, **kwds):
-        """
-        """
-        owner = (None if self.request.user.is_authenticated is False else self.request.user)
-        return super().get_queryset().filter(owner=owner)
-
-# TODO: Ignore the rest of this. The above definitions should be handled.
 
 class GameSelectView(TemplateView):
     """
@@ -611,8 +527,6 @@ class PromoteView(MorphActionView):
         self.object.save()
         return redirect(reverse("dracogate:morph_detail", kwargs={"id": self.object.id}))
 
-# TODO: For all: Redirect user to create morph if he does not own morph.
-# TODO: Redirect if morph is from FE4
 class UseStatBoosterView(MorphActionView):
     """
     """
@@ -649,8 +563,6 @@ class UseStatBoosterView(MorphActionView):
         self.object.save()
         return redirect(reverse("dracogate:morph_detail", kwargs={"id": self.object.id}))
 
-# TODO: For all: Redirect user to create morph if he does not own morph.
-# TODO: Redirect if morph is from FE4
 class UseAfasDropsView(MorphActionView):
     """
     """
@@ -766,8 +678,6 @@ class ShapeshiftView(MorphActionView):
 
 
 
-# TODO: For all: Redirect user to create morph if he does not own morph.
-# TODO: Redirect if morph is from FE4
 class UseMetissTomeView(MorphActionView):
     """
     """
