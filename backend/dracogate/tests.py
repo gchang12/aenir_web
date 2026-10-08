@@ -1,8 +1,6 @@
 """
 """
 
-# TODO: Test dracogate:compare_morph_to_input, dracogate:compare_morph_to_input_forecast, dracogate:compare_morphs, dracogate:compare_morphs_forecast
-
 import unittest
 
 from django.test import TestCase
@@ -3322,7 +3320,7 @@ class MorphComparisonTests(TestCase):
             owner=None,
         )
 
-    def test_unit_comparison(self):
+    def test_unit_comparison_form(self):
         """
         """
         vmorph1 = VirtualMorph.objects.create(
@@ -3337,10 +3335,75 @@ class MorphComparisonTests(TestCase):
         )
         form_class = ComparisonFormBuilder.unit_comparison(self.vmorph, queryset=VirtualMorph.objects.all())
         self.assertIn("vmorph_id", form_class.declared_fields)
-        self.assertNotIn((self.vmorph.id, self.vmorph.name), form_class.declared_fields["vmorph_id"].choices)
+        self.assertNotIn(self.vmorph.id, [choice for choice, _ in form_class.declared_fields["vmorph_id"].choices])
         self.assertEqual(form_class.declared_fields['vmorph_id'].initial, -1)
         self.assertIn(vmorph1.id, [choice for choice, _ in form_class.declared_fields["vmorph_id"].choices])
         self.assertNotIn(vmorph2.id, [choice for choice, _ in form_class.declared_fields["vmorph_id"].choices])
+
+    def test_input_comparison_form(self):
+        """
+        """
+        form_class = ComparisonFormBuilder.input_comparison(self.vmorph)
+        stats = (
+            "HP",
+            "Str",
+            "Mag",
+            "Skl",
+            "Spd",
+            "Def",
+            "Res",
+            "Lck",
+        )
+        self.assertCountEqual(stats, form_class.declared_fields)
+        for stat in stats:
+            with self.subTest(stat=stat):
+                self.assertIsInstance(form_class.declared_fields[stat], django.forms.IntegerField)
+
+    def test_compare_morph_to_input(self):
+        """
+        """
+        url = reverse("dracogate:compare_morph_to_input", kwargs={"pk": self.vmorph.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_compare_morph_to_input_forecast(self):
+        """
+        """
+        url = reverse("dracogate:compare_morph_to_input_forecast", kwargs={"pk": self.vmorph.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_compare_morph_to_input_forecast__bad_input(self):
+        """
+        """
+        url = reverse("dracogate:compare_morph_to_input_forecast", kwargs={"pk": self.vmorph.id})
+        query_params = {
+            "HP": 0,
+            "Str": "ff",
+            "Mag": 0,
+            "Skl": 0,
+            "Spd": 0,
+            "Def": 0,
+            "Res": 0,
+            "Lck": 0,
+        }
+        with self.assertRaises(ValueError):
+            self.client.get(url, query_params=query_params)
+        #self.assertEqual(response.status_code, 200)
+
+    def test_compare_morph(self):
+        """
+        """
+        url = reverse("dracogate:compare_morph", kwargs={"pk": self.vmorph.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_compare_morph_forecast(self):
+        """
+        """
+        url = reverse("dracogate:compare_morph_forecast", kwargs={"pk": self.vmorph.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
 
 class MorphComparisonTestsGBA(TestCase):
     """
@@ -3355,7 +3418,7 @@ class MorphComparisonTestsGBA(TestCase):
             owner=None,
         )
 
-    def test_unit_comparison(self):
+    def test_unit_comparison_form(self):
         """
         """
         vmorph1 = VirtualMorph.objects.create(
@@ -3370,7 +3433,28 @@ class MorphComparisonTestsGBA(TestCase):
         )
         form_class = ComparisonFormBuilder.unit_comparison(self.vmorph, queryset=VirtualMorph.objects.all())
         self.assertIn("vmorph_id", form_class.declared_fields)
-        self.assertNotIn((self.vmorph.id, self.vmorph.name), form_class.declared_fields["vmorph_id"].choices)
+        self.assertNotIn(self.vmorph.id, [choice for choice, _ in form_class.declared_fields["vmorph_id"].choices])
         self.assertEqual(form_class.declared_fields['vmorph_id'].initial, -1)
         self.assertIn(vmorph1.id, [choice for choice, _ in form_class.declared_fields["vmorph_id"].choices])
         self.assertNotIn(vmorph2.id, [choice for choice, _ in form_class.declared_fields["vmorph_id"].choices])
+
+    def test_input_comparison_form(self):
+        """
+        """
+        form_class = ComparisonFormBuilder.input_comparison(self.vmorph)
+        stats = (
+            "HP",
+            "Pow",
+            "Skl",
+            "Spd",
+            "Def",
+            "Res",
+            "Lck",
+            "Con",
+            "Mov",
+        )
+        self.assertCountEqual(stats, form_class.declared_fields)
+        for stat in stats:
+            with self.subTest(stat=stat):
+                self.assertIsInstance(form_class.declared_fields[stat], django.forms.IntegerField)
+
