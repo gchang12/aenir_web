@@ -5,24 +5,6 @@
 # TODO: Forbid user from invoking methods that are invalid in a given Morph class.
 # TODO: Make sure user can see and access only his own VirtualMorph objects.
 
-class ForbidForbiddenMethodMixin:
-    """
-    """
-
-    def dispatch(self, request, **kwds):
-        """
-        """
-        owner = (None if self.request.user.is_authenticated is False else self.request.user)
-        # forbid users who don't own objects from interacting with vmorph.
-        if self.object.owner is not None and self.object.owner != owner:
-            # redirect to create new morph page?
-            # redirect to login page?
-            raise Http403
-        # forbid bad methods.
-        if self.object.game_no not in self.valid_games:
-            raise Http400
-        return super().dispatch(request, **kwds)
-
 class ForbidBadUserMixin:
     """
     """
@@ -35,6 +17,40 @@ class ForbidBadUserMixin:
         if self.object.owner is not None and self.object.owner != owner:
             # redirect to login page?
             raise Http403
+        # forbid users who don't own objects from interacting with vmorph.
+        # anon-user selects owned morph
+        if (self.object.owner is not None) and (owner is None):
+            # redirect to create new morph page?
+            # redirect to login page?
+            raise Http403
+        # forbid bad methods.
+        # user selects morph he does not own.
+        if (self.object.owner is not None) and (self.object.owner != owner):
+            # redirect to morph list
+            # prompt user to create morph
+        return super().dispatch(request, **kwds)
+
+class ForbidForbiddenMethodMixin:
+    """
+    """
+
+    def dispatch(self, request, **kwds):
+        """
+        """
+        owner = (None if self.request.user.is_authenticated is False else self.request.user)
+        # forbid users who don't own objects from interacting with vmorph.
+        # anon-user selects owned morph
+        if (self.object.owner is not None) and (owner is None):
+            # redirect to create new morph page?
+            # redirect to login page?
+            raise Http403
+        # forbid bad methods.
+        # user selects morph he does not own.
+        if (self.object.owner is not None) and (self.object.owner != owner):
+            # redirect to morph list
+            # prompt user to create morph
+        if self.object.game_no not in self.valid_games:
+            raise Http400
         return super().dispatch(request, **kwds)
 
 # TODO: In case user selects a morph he does not own
@@ -56,7 +72,7 @@ class RedirectToMorphListMixin:
         return new_dispatch
 
 
-# TODO: In case user is not logged in and selects a morph that is owned.
+# TODO: In case user is not logged in and selects a morph that is not owned.
 class RedirectToLoginMixin:
     """
     """

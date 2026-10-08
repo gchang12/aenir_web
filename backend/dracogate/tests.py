@@ -1,6 +1,8 @@
 """
 """
 
+# TODO: User should not be able to delete morphs he does not own.
+
 import unittest
 
 from django.test import TestCase
