@@ -2548,6 +2548,7 @@ class UseMetissTomeTests2(TestCase):
             init_options=init_options,
         )
         self.vmorph.init()
+        self.client.force_login(self.user)
 
     def test_use_metiss_tome__virtualmorph1(self):
         """
@@ -3378,6 +3379,7 @@ class SetDemiBandTests2(TestCase):
             init_options=init_options,
         )
         self.vmorph.init()
+        self.client.force_login(self.user)
 
     def test_set_demiband__virtualmorph1(self):
         """
@@ -3462,6 +3464,7 @@ class SetDemiBandTests3(TestCase):
             init_options=init_options,
         )
         self.vmorph.init()
+        self.client.force_login(self.user)
 
     def test_set_demiband__view_post(self):
         """
