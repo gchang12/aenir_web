@@ -37,7 +37,7 @@ class ForbidBadUserMixin:
             raise Http403
         return super().dispatch(request, **kwds)
 
-
+# TODO: In case user selects a morph he does not own
 class RedirectToMorphListMixin:
     """
     Tells user to select from list.
@@ -55,8 +55,8 @@ class RedirectToMorphListMixin:
             return dispatch(self, request, **kwds)
         return new_dispatch
 
-# TODO: Mixin for 'redirect-to-login' maybe?
 
+# TODO: In case user is not logged in and selects a morph that is owned.
 class RedirectToLoginMixin:
     """
     """
@@ -73,6 +73,7 @@ class RedirectToLoginMixin:
             return dispatch(self, request, **kwds)
         return new_dispatch
 
+# TODO: In case user is logged in and accesses a morph not owned by him (SHOULD NOT HAPPEN!)
 class RedirectToMorphCreationMixin:
     """
     Tells user to get his own thing provided he's got his own account.
@@ -107,6 +108,7 @@ class RedirectToMorphCreationMixin:
 
     #func = decorator(func)
 
+# TODO: Get list of morphs that belong to user.
 class FilterByUserMixin:
     """
     """
@@ -123,3 +125,4 @@ class FilterByUserMixin:
 # TODO: Redirect if morph is from FE4
 # TODO: For all: Redirect user to create morph if he does not own morph.
 # TODO: Redirect if morph is from FE4
+
