@@ -173,3 +173,18 @@ class GetUserObjectsOnlyMixin:
 # TODO: For all: Redirect user to create morph if he does not own morph.
 # TODO: Redirect if morph is from FE4
 
+
+    def dispatch(self, request, **kwds):
+        """
+        """
+        user = (None if self.request.user.is_authenticated is False else self.request.user)
+        self.get_object()
+        if (self.object.owner is not None):
+            if (user is None):
+                return redirect("login")
+            try:
+                assert self.object.owner == user
+            except AssertionError as err:
+                return defaults.permission_denied(request, err)
+        return super().dispatch(request, **kwds)
+

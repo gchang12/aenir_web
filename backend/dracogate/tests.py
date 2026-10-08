@@ -21,6 +21,7 @@ from dracogate.forms import (
     ComparisonFormBuilder,
 )
 from dracogate.models import VirtualMorph
+from dracogate._logging import logger
 
 User = get_user_model()
 
@@ -1680,6 +1681,7 @@ class UseAfasDropsTests2(TestCase):
         )
         self.vmorph.init()
         self.client.force_login(self.user)
+        logger.debug("%s", self.id())
 
     def test_use_afas_drops__virtualmorph1(self):
         """
@@ -1695,7 +1697,7 @@ class UseAfasDropsTests2(TestCase):
         with self.assertRaises(KeyError): 
             ActionFormBuilder.use_afas_drops(param_bounds, self.vmorph.morph)
 
-    @unittest.skip
+    @unittest.skip("get_context_data terminates right before 404 is about to be raised for some reason.")
     def test_use_afas_drops__forecast(self):
         """
         """
@@ -1703,6 +1705,7 @@ class UseAfasDropsTests2(TestCase):
         value = "True"
         url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
         query_params = {"action": "use_afas_drops", field: value, "stat_type": "growths"}
+        logger.debug("Sending GET to %s with %s.", url, query_params)
         with self.assertRaises(Http404):
             self.client.get(url, query_params=query_params)
 
@@ -2560,7 +2563,7 @@ class UseMetissTomeTests2(TestCase):
         with self.assertRaises(KeyError): 
             ActionFormBuilder.use_metiss_tome(param_bounds, self.vmorph.morph)
 
-    @unittest.skip
+    @unittest.skip("get_context_data terminates right before 404 is about to be raised for some reason.")
     def test_use_metiss_tome__forecast(self):
         """
         """
@@ -2568,7 +2571,7 @@ class UseMetissTomeTests2(TestCase):
         value = "True"
         url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
         query_params = {"action": "use_metiss_tome", field: value, "stat_type": "growths"}
-        with self.assertRaises(AttributeError):
+        with self.assertRaises(Http404):
             self.client.get(url, query_params=query_params)
 
     def test_use_metiss_tome__view_post(self):

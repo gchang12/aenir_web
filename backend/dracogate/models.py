@@ -21,6 +21,8 @@ from aenir import (
     KnightWardError,
 )
 
+from dracogate._logging import logger
+
 User = get_user_model()
 
 def vmorph_name_generator():
@@ -217,7 +219,9 @@ class VirtualMorph(models.Model):
     def _validate_morph_method(self, valid_games, method_name):
         """
         """
+        logger.debug("self.game_no == %d, valid_games == %r", self.game_no, valid_games)
         if self.game_no not in valid_games:
+            logger.debug("Raising Http404")
             raise Http404("Morph%d cannot invoke %s method" % (self.game_no, method_name))
 
     def use_stat_booster(self, item_name: str) -> (bool, dict | None):
@@ -246,6 +250,7 @@ class VirtualMorph(models.Model):
     def use_afas_drops(self, to_consume: bool) -> (bool, dict | None):
         """
         """
+        logger.debug("_validate_morph_method((7,), 'use_afas_drops') with self.game_no == %d", self.game_no)
         self._validate_morph_method(valid_games=(7,), method_name="use_afas_drops")
         is_success: bool
         if to_consume is True:

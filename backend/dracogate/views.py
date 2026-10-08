@@ -1,6 +1,9 @@
 """
 """
 
+# TODO: Make sure users cannot change or view morphs they do not own.
+# TODO: Forbid users from accessing method-forecast views.
+
 from django.views import defaults
 from django.views.generic.edit import (
     FormView,
@@ -32,6 +35,7 @@ from dracogate.forms import (
     ActionFormBuilder,
     ComparisonFormBuilder,
 )
+from dracogate._logging import logger
 
 def get_temp_morph(game_no, unit, init_options):
     """
@@ -345,6 +349,7 @@ class ActionForecastView(DetailView):
             "bases": StatsBundler.action_forecast_bases,
             "growths": StatsBundler.action_forecast_growths,
         }[stat_type](morph, None)
+        logger.debug("Simulating action: %r", action)
         {
             None: lambda: None,
             "level_up": self.level_up,
@@ -356,7 +361,8 @@ class ActionForecastView(DetailView):
             "use_metiss_tome": self.use_metiss_tome,
             "set_bands": self.set_bands,
             "set_demiband": self.set_demiband,
-        }[action]()
+        }[action]() # NOTE: No errors are raised here. Code does not get past here.
+        #raise Http404 # is undefined
         delta_dict = {
             "bases": (self.object.morph.current_stats > morph.current_stats).as_dict,
             "growths": (self.object.morph.growth_rates > morph.growth_rates).as_dict,
@@ -395,6 +401,8 @@ class ActionForecastView(DetailView):
     def use_afas_drops(self):
         """
         """
+        #print('use_afas_drops')
+        logger.debug("Morph%d.use_afas_drops()", self.object.game_no)
         to_consume = self.request.GET.get("to_consume")
         self.object.use_afas_drops(to_consume == "True")
 
