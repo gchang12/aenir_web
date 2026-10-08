@@ -124,13 +124,14 @@ class RedirectToMorphCreationMixin:
 
     #func = decorator(func)
 
-# TODO: Get list of morphs that belong to user.
 class GetUserObjectsOnlyMixin:
     """
+    Retrieves only morphs that belong to user.
     """
 
     def get_queryset(self, **kwds):
         """
+        Returns only user's morphs, ordered by newest to oldest.
         """
         owner = (None if self.request.user.is_authenticated is False else self.request.user)
         queryset = self.model.objects.filter(owner=owner).order_by("-creation_date")
