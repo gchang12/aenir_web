@@ -32,9 +32,6 @@ from dracogate.forms import (
     ActionFormBuilder,
     ComparisonFormBuilder,
 )
-from dracogate.composables import (
-    GetUserObjectsOnlyMixin,
-)
 
 def get_temp_morph(game_no, unit, init_options):
     """
@@ -206,7 +203,7 @@ class MorphListView(ListView):
         queryset = self.model.objects.filter(owner=user).order_by("-creation_date")
         return queryset
 
-class MorphDetailView(DetailView, DeleteView, ForbidAnonPostMixin):
+class MorphDetailView(DetailView, DeleteView):
     """
     """
     template_name = "dracogate/morph_detail.html"

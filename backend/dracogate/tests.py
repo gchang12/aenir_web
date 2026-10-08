@@ -1,11 +1,6 @@
 """
 """
 
-# TODO: User should not be able to delete morphs he does not own.
-# TODO: User should not be able to delete morphs as an anonymous user.
-# TODO: Authenticated users should be able to see their own morphs.
-# TODO: Non-authenticated users should be able to see anon-morphs.
-
 import unittest
 
 from django.test import TestCase
