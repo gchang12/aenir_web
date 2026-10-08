@@ -33,6 +33,9 @@ from dracogate.forms import (
     ActionFormBuilder,
     ComparisonFormBuilder,
 )
+from dracogate.composables import (
+    GetUserObjectsOnlyMixin,
+)
 
 def get_temp_morph(game_no, unit, init_options):
     """
@@ -183,7 +186,7 @@ class UnitConfirmForecast(TemplateView):
         #print(context)
         return context
 
-class MorphListView(ListView):
+class MorphListView(ListView, GetUserObjectsOnlyMixin):
     """
     """
     template_name = "dracogate/morph_list.html"
@@ -195,14 +198,6 @@ class MorphListView(ListView):
         context = super().get_context_data(**kwargs)
         #print(context)
         return context
-
-    def get_queryset(self):
-        """
-        """
-        #print(dir(self))
-        owner = (None if not self.request.user.is_authenticated else self.request.user)
-        queryset = self.model.objects.filter(owner=owner).order_by("-creation_date")
-        return queryset
 
 class MorphDetailView(DetailView, DeleteView):
     """
@@ -800,17 +795,11 @@ class RenameMorphView(UpdateView):
     model = VirtualMorph
     fields = ["name"]
 
-class CompareMorphsView(ListView):
+class CompareMorphsView(ListView, GetUserObjectsOnlyMixin):
     """
     """
     model = VirtualMorph
     template_name = "dracogate/compare_morphs.html"
-
-    def get_queryset(self, **kwds):
-        """
-        """
-        owner = (None if self.request.user.is_authenticated is False else self.request.user)
-        return super().get_queryset().filter(owner=owner)
 
 class CompareMorphView(FormView, DetailView):
     """
@@ -882,17 +871,11 @@ class CompareMorphForecastView(DetailView):
         context["cum_diff"] = sum([value for value in delta_dict.values() if value is not None]) / 100
         return context
 
-class CompareMorphsToInputView(ListView):
+class CompareMorphsToInputView(ListView, GetUserObjectsOnlyMixin):
     """
     """
     model = VirtualMorph
     template_name = "dracogate/compare_morphs_to_input.html"
-
-    def get_queryset(self, **kwds):
-        """
-        """
-        owner = (None if self.request.user.is_authenticated is False else self.request.user)
-        return super().get_queryset().filter(owner=owner)
 
 class CompareMorphToInputView(FormView, DetailView):
     """

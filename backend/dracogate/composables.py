@@ -125,7 +125,7 @@ class RedirectToMorphCreationMixin:
     #func = decorator(func)
 
 # TODO: Get list of morphs that belong to user.
-class FilterByUserMixin:
+class GetUserObjectsOnlyMixin:
     """
     """
 
@@ -133,7 +133,8 @@ class FilterByUserMixin:
         """
         """
         owner = (None if self.request.user.is_authenticated is False else self.request.user)
-        return super().get_queryset().filter(owner=owner)
+        queryset = self.model.objects.filter(owner=owner).order_by("-creation_date")
+        return queryset
 
 # TODO: For all: Redirect user to create morph if he does not own morph.
 # TODO: Redirect if morph is from FE4
