@@ -1,9 +1,30 @@
 """
 """
 
+from django.views import defaults
+
+# https://docs.djangoproject.com/en/6.1/ref/views/
+
 # TODO: Handle game-exclusive methods
 # TODO: Forbid user from invoking methods that are invalid in a given Morph class.
 # TODO: Make sure user can see and access only his own VirtualMorph objects.
+
+class ForbidAnonPostMixin:
+    """
+    Forbids anonymous POST requests.
+    """
+
+    def post(self, request, **kwds):
+        """
+        Raises 403 for anonymous POST requests.
+        """
+        user = (None if self.request.user.is_authenticated is False else self.request.user)
+        #print("ForbidAnonPostMixin", user)
+        try:
+            assert user is not None
+        except AssertionError as err:
+            return defaults.permission_denied(request, err)
+        return super().post(request, **kwds)
 
 class ForbidBadUserMixin:
     """
@@ -14,44 +35,54 @@ class ForbidBadUserMixin:
         """
         owner = (None if self.request.user.is_authenticated is False else self.request.user)
         # forbid users who don't own objects from interacting with vmorph.
-        if self.object.owner is not None and self.object.owner != owner:
-            # redirect to login page?
-            raise Http403
-        # forbid users who don't own objects from interacting with vmorph.
         # anon-user selects owned morph
-        if (self.object.owner is not None) and (owner is None):
+        if (self.object.owner is not None):
+            if (user is None):
             # redirect to create new morph page?
             # redirect to login page?
-            raise Http403
+            # user logs in -> user tries to find owned morph -> no owned morph -> quit
+            # user logs in -> user finds owned morph
+                return redirect("login")
+            try:
+                assert (self.object.owner != user)
+            except AssertionError as err:
+                # redirect to morph list
+                # prompt user to create morph
+                # redirect to login page?
+                return defaults.permission_denied(request, err)
+            #raise Http403 forbidden
+        # forbid users who don't own objects from interacting with vmorph.
         # forbid bad methods.
         # user selects morph he does not own.
-        if (self.object.owner is not None) and (self.object.owner != owner):
+        #if (self.object.owner is not None) and (self.object.owner != owner):
             # redirect to morph list
             # prompt user to create morph
+            # redirect to login page?
+            #pass
         return super().dispatch(request, **kwds)
 
-class ForbidForbiddenMethodMixin:
+class ForbidBadMethodMixin(ForbidBadUserMixin):
     """
     """
 
     def dispatch(self, request, **kwds):
         """
         """
-        owner = (None if self.request.user.is_authenticated is False else self.request.user)
-        # forbid users who don't own objects from interacting with vmorph.
-        # anon-user selects owned morph
-        if (self.object.owner is not None) and (owner is None):
-            # redirect to create new morph page?
-            # redirect to login page?
-            raise Http403
-        # forbid bad methods.
-        # user selects morph he does not own.
-        if (self.object.owner is not None) and (self.object.owner != owner):
-            # redirect to morph list
-            # prompt user to create morph
-        if self.object.game_no not in self.valid_games:
-            raise Http400
-        return super().dispatch(request, **kwds)
+        response = super().dispatch(request, **kwds)
+        user = (None if self.request.user.is_authenticated is False else self.request.user)
+        self.get_object()
+        if (self.object.owner is not None):
+            if (user is None):
+                return redirect("login")
+            try:
+                assert self.object.owner == user
+            except AssertionError as err:
+                return defaults.permission_denied(request, err)
+        try:
+            assert self.object.game_no in self.valid_games
+        except AssertionError as err:
+            return defaults.bad_request(request, err)
+        return response
 
 # TODO: In case user selects a morph he does not own
 class RedirectToMorphListMixin:
@@ -133,8 +164,8 @@ class GetUserObjectsOnlyMixin:
         """
         Returns only user's morphs, ordered by newest to oldest.
         """
-        owner = (None if self.request.user.is_authenticated is False else self.request.user)
-        queryset = self.model.objects.filter(owner=owner).order_by("-creation_date")
+        user = (None if self.request.user.is_authenticated is False else self.request.user)
+        queryset = self.model.objects.filter(owner=user).order_by("-creation_date")
         return queryset
 
 # TODO: For all: Redirect user to create morph if he does not own morph.
