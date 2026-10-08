@@ -1,8 +1,6 @@
 """
 """
 
-# TODO: Put in logging
-
 from django.views.generic.edit import (
     FormView,
     UpdateView,

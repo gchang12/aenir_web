@@ -134,3 +134,36 @@ MAILERS = {
 AUTH_USER_MODEL = "_top.User"
 LOGIN_REDIRECT_URL = reverse_lazy("homepage")
 LOGOUT_REDIRECT_URL = reverse_lazy("homepage")
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "simple": {
+            "format": "%(levelname)s:%(name)s:%(module)s.%(funcName)s: %(message)s",
+            "style": "%",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+        },
+        "file": {
+            "class": "logging.FileHandler",
+            "formatter": "simple",
+            "filename": ".aenir_web.log",
+            "mode": "w",
+        },
+    },
+    "loggers": {
+        "aenir_web": {
+            "handlers": ["file"],
+            "level": "DEBUG",
+        },
+        "aenir": {
+            "handlers": ["file"],
+            "level": "NOTSET",
+        }
+    }
+}
