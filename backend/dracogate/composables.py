@@ -5,8 +5,6 @@ from django.views import defaults
 
 # https://docs.djangoproject.com/en/6.1/ref/views/
 
-# TODO: Handle game-exclusive methods
-# TODO: Forbid user from invoking methods that are invalid in a given Morph class.
 # TODO: Make sure user can see and access only his own VirtualMorph objects.
 
 class ForbidAnonPostMixin:

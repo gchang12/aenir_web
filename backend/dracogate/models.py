@@ -3,6 +3,7 @@
 
 #from datetime import datetime
 
+from django.http import Http404
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -213,9 +214,16 @@ class VirtualMorph(models.Model):
         #print(is_success)
         return (is_success, param_bounds)
 
+    def _validate_morph_method(self, valid_games, method_name):
+        """
+        """
+        if self.game_no not in valid_games:
+            raise Http404("Morph%d cannot invoke %s method" % (self.game_no, method_name))
+
     def use_stat_booster(self, item_name: str) -> (bool, dict | None):
         """
         """
+        self._validate_morph_method(valid_games=range(5, 10), method_name="use_stat_booster")
         is_success: bool
         try:
             #print(self.morph._miscellany)
@@ -238,6 +246,7 @@ class VirtualMorph(models.Model):
     def use_afas_drops(self, to_consume: bool) -> (bool, dict | None):
         """
         """
+        self._validate_morph_method(valid_games=(7,), method_name="use_afas_drops")
         is_success: bool
         if to_consume is True:
             try:
@@ -258,6 +267,7 @@ class VirtualMorph(models.Model):
     def set_scrolls(self, scrolls: list[str]) -> (bool, dict | None):
         """
         """
+        self._validate_morph_method(valid_games=(5,), method_name="set_scrolls")
         is_success: bool
         try:
             self.morph.set_scrolls(scrolls)
@@ -278,6 +288,7 @@ class VirtualMorph(models.Model):
     def shapeshift(self, to_shapeshift: bool) -> (bool, dict | None):
         """
         """
+        self._validate_morph_method(valid_games=(9,), method_name="shapeshift")
         is_success: bool
         if self.morph.is_laguz is False:
             is_success = False
@@ -302,6 +313,7 @@ class VirtualMorph(models.Model):
     def set_demiband(self, to_shapeshift: bool) -> (bool, dict | None):
         """
         """
+        self._validate_morph_method(valid_games=(9,), method_name="set_demiband")
         is_success: bool
         if self.morph.is_laguz is False:
             is_success = False
@@ -331,7 +343,7 @@ class VirtualMorph(models.Model):
     def set_bands(self, bands: list[str]) -> (bool, dict | None):
         """
         """
-        is_success: bool
+        self._validate_morph_method(valid_games=(9,), method_name="set_bands")
         #demi_band_was_on = False
         was_on = {
             "Demi Band": False,
@@ -347,6 +359,7 @@ class VirtualMorph(models.Model):
             self.morph.unequip_knight_ward()
             if "Knight Ward" not in bands:
                 bands.append("Knight Ward")
+        is_success: bool
         try:
             self.morph.set_bands(bands)
             self.history.append(
@@ -371,6 +384,7 @@ class VirtualMorph(models.Model):
     def use_metiss_tome(self, to_consume: bool) -> (bool, dict | None):
         """
         """
+        self._validate_morph_method(valid_games=(8,), method_name="use_metiss_tome")
         is_success: bool
         if to_consume is True:
             try:

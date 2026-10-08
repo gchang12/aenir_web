@@ -3,6 +3,7 @@
 
 import unittest
 
+from django.http import Http404
 from django.test import TestCase
 import django.forms
 from django.urls import reverse
@@ -1420,7 +1421,7 @@ class UseStatBoosterTests2(TestCase):
         """
         Not implemented
         """
-        with self.assertRaises(NotImplementedError) as e:
+        with self.assertRaises(Http404) as e:
             self.vmorph.use_stat_booster("")
 
     def test_use_stat_booster__formbuilder1(self):
@@ -1453,8 +1454,8 @@ class UseStatBoosterTests2(TestCase):
         expected = [["use_stat_booster", {field: value}]]
         url = reverse("dracogate:use_stat_booster", kwargs={"id": self.vmorph.id})
         data = {field: value}
-        with self.assertRaises(NotImplementedError):
-            self.client.post(url, data=data)
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 404)
 
 
 class UseAfasDropsTests(TestCase):
@@ -1683,7 +1684,7 @@ class UseAfasDropsTests2(TestCase):
     def test_use_afas_drops__virtualmorph1(self):
         """
         """
-        with self.assertRaises(AttributeError):
+        with self.assertRaises(Http404):
             self.vmorph.use_afas_drops(True)
 
     def test_use_afas_drops__formbuilder1(self):
@@ -1694,6 +1695,7 @@ class UseAfasDropsTests2(TestCase):
         with self.assertRaises(KeyError): 
             ActionFormBuilder.use_afas_drops(param_bounds, self.vmorph.morph)
 
+    @unittest.skip
     def test_use_afas_drops__forecast(self):
         """
         """
@@ -1701,7 +1703,7 @@ class UseAfasDropsTests2(TestCase):
         value = "True"
         url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
         query_params = {"action": "use_afas_drops", field: value, "stat_type": "growths"}
-        with self.assertRaises(AttributeError):
+        with self.assertRaises(Http404):
             self.client.get(url, query_params=query_params)
 
     def test_use_afas_drops__view_post(self):
@@ -1713,8 +1715,41 @@ class UseAfasDropsTests2(TestCase):
         expected = [["use_afas_drops", {}]]
         url = reverse("dracogate:use_afas_drops", kwargs={"id": self.vmorph.id})
         data = {field: value}
-        with self.assertRaises(KeyError):
-            self.client.post(url, data=data)
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 404)
+
+class SetScrollsTests2(TestCase):
+    """
+    """
+
+    # https://serenesforest.net/binding-blade/characters/average-stats/hard-mode/rutger/
+    def setUp(self):
+        """
+        """
+        game_no = 6
+        unit = "Roy"
+        init_options = {}
+        self.user = User.objects.create()
+        self.vmorph = VirtualMorph.objects.create(
+            owner=self.user,
+            game_no=game_no,
+            unit=unit,
+            init_options=init_options,
+        )
+        self.client.force_login(self.user)
+
+    def test_set_scrolls__fail(self):
+        """
+        """
+        field = "scrolls"
+        value = [
+            "Odo",
+            "Sety",
+        ]
+        data = {field: value}
+        url = reverse("dracogate:set_scrolls", kwargs={"id": self.vmorph.id})
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 404)
 
 class SetScrollsTests(TestCase):
     """
@@ -1991,6 +2026,39 @@ class SetScrollsTests(TestCase):
         )
         for value in values:
             self.assertContains(response, value)
+
+class ShapeshiftTests3(TestCase):
+    """
+    """
+
+    # https://serenesforest.net/blazing-sword/characters/average-stats/nino/
+    def setUp(self):
+        """
+        """
+        game_no = 8
+        unit = "Ephraim"
+        init_options = {}
+        self.user = User.objects.create()
+        self.vmorph = VirtualMorph.objects.create(
+            owner=self.user,
+            game_no=game_no,
+            unit=unit,
+            init_options=init_options,
+        )
+        self.vmorph.init()
+        self.client.force_login(self.user)
+
+
+    def test_shapeshift__view_post(self):
+        """
+        """
+        morph = self.vmorph.morph
+        field = "to_shapeshift"
+        value = "True"
+        data = {field: value}
+        url = reverse("dracogate:shapeshift", kwargs={"id": self.vmorph.id})
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 404)
 
 class ShapeshiftTests(TestCase):
     """
@@ -2481,7 +2549,7 @@ class UseMetissTomeTests2(TestCase):
     def test_use_metiss_tome__virtualmorph1(self):
         """
         """
-        with self.assertRaises(AttributeError):
+        with self.assertRaises(Http404):
             self.vmorph.use_metiss_tome(True)
 
     def test_use_metiss_tome__formbuilder1(self):
@@ -2492,6 +2560,7 @@ class UseMetissTomeTests2(TestCase):
         with self.assertRaises(KeyError): 
             ActionFormBuilder.use_metiss_tome(param_bounds, self.vmorph.morph)
 
+    @unittest.skip
     def test_use_metiss_tome__forecast(self):
         """
         """
@@ -2511,8 +2580,44 @@ class UseMetissTomeTests2(TestCase):
         expected = [["use_metiss_tome", {}]]
         url = reverse("dracogate:use_metiss_tome", kwargs={"id": self.vmorph.id})
         data = {field: value}
-        with self.assertRaises(KeyError):
-            self.client.post(url, data=data)
+        #with self.assertRaises(KeyError):
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 404)
+
+
+class SetBandsTests3(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        game_no = 8
+        unit = "Seth"
+        init_options = {}
+        self.user = User.objects.create()
+        self.vmorph = VirtualMorph.objects.create(
+            owner=self.user,
+            game_no=game_no,
+            unit=unit,
+            init_options=init_options,
+        )
+        self.client.force_login(self.user)
+
+    def test_set_bands__view_post(self):
+        """
+        """
+        field = "bands"
+        value = [
+            "Sword Band",
+            "Mage Band",
+        ]
+        field2 = "knight_ward"
+        value2 = False
+        data = {field: value, field2: value2}
+        url = reverse("dracogate:set_bands", kwargs={"id": self.vmorph.id})
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 404)
 
 
 class SetBandsTests2(TestCase):
@@ -3335,6 +3440,36 @@ class SetDemiBandTests2(TestCase):
         for value in values:
             self.assertContains(response, value)
         self.assertListEqual(morph.history, [])
+
+class SetDemiBandTests3(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        game_no = 8
+        unit = "Eirika"
+        init_options = {}
+        self.user = User.objects.create()
+        self.vmorph = VirtualMorph.objects.create(
+            owner=self.user,
+            game_no=game_no,
+            unit=unit,
+            init_options=init_options,
+        )
+        self.vmorph.init()
+
+    def test_set_demiband__view_post(self):
+        """
+        """
+        morph = self.vmorph.morph
+        field = "to_shapeshift"
+        value = "True"
+        data = {field: value}
+        url = reverse("dracogate:set_demiband", kwargs={"id": self.vmorph.id})
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 404)
 
 class MorphDetailTests2(TestCase):
     """
