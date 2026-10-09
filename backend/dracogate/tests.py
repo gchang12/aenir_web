@@ -3546,6 +3546,7 @@ class MorphDetailTests(TestCase):
         self.assertIs(VirtualMorph.objects.exists(), True)
         url = reverse("dracogate:morph_detail", kwargs={"id": id})
         response = self.client.post(url)
+        self.assertEqual(response.status_code, 403)
         self.assertIs(VirtualMorph.objects.exists(), True)
 
 class MorphComparisonTests(TestCase):
@@ -3815,3 +3816,61 @@ class CompareMorphsToInputViewTests(TestCase):
             VirtualMorph.objects.filter(owner=None).order_by("-creation_date"),
             response.context["virtualmorph_list"],
         )
+
+class LevelUpPermissionTests(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        username = "MorphMethodPermissionTests"
+        email = "MorphMethodPermissionTests@email.com"
+        init_params = {"game_no": 4, "unit": "Sigurd"}
+        url_name = "level_up"
+        self.data = {"num_levels": 1}
+        # 
+        self.user = User.objects.create(
+            username=username,
+            email=email,
+        )
+        self.user2 = User.objects.create(
+            username=username + "2",
+            email=email + "2",
+        )
+        self.vmorph = VirtualMorph.objects.create(**init_params, owner=self.user)
+        self.url = reverse("dracogate:" + url_name, kwargs={"id": self.vmorph.id})
+
+    def test_anonymous_cannot_modify_owned_morph(self):
+        """
+        """
+        response = self.client.post(self.url, data=self.data)
+        self.assertRedirects(response, reverse("login"))
+        vmorph = VirtualMorph.objects.get()
+        self.assertFalse(vmorph.history)
+
+    def test_anonymous_cannot_view_owned_morph(self):
+        """
+        """
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_user_cannot_modify_another_users_morph(self):
+        """
+        """
+        response = self.client.post(self.url, data=self.data)
+        self.assertEqual(response.status_code, 403)
+
+    def test_user_cannot_view_another_users_morph(self):
+        """
+        """
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 403)
+
+# Anonymous user cannot modify owned morph.
+# Anonymous user cannot view owned morph.
+# User cannot modify another's morph.
+# User cannot view another's morph.
+
+# No user can submit form on action-forecast view
+# No user can submit form on compare-forecast view
