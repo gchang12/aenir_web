@@ -3843,7 +3843,6 @@ class LevelUpPermissionTests(TestCase):
         )
         self.vmorph = VirtualMorph.objects.create(**self.init_params, owner=self.user)
         self.url = reverse("dracogate:" + self.url_name, kwargs={"id": self.vmorph.id})
-        self.is_abstract = True
 
     def test_anonymous_cannot_modify_owned_morph(self):
         """
@@ -3902,29 +3901,6 @@ class LevelUpPermissionTests(TestCase):
         query_params.update(self.query_params)
         url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
         response = self.client.post(url, data=query_params)
-        self.assertEqual(response.status_code, 405)
-
-    def test_user_cannot_view_comparison_forecast(self):
-        """
-        """
-        url = reverse("dracogate:compare_morph_to_input_forecast", kwargs={"pk": self.vmorph.id})
-        self.client.force_login(self.user2)
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 403)
-
-    def test_anonuser_cannot_view_comparison_forecast(self):
-        """
-        """
-        url = reverse("dracogate:compare_morph_to_input_forecast", kwargs={"pk": self.vmorph.id})
-        response = self.client.get(url)
-        self.assertRedirects(response, reverse("login"))
-
-    def test_user_cannot_POST_comparison_forecast(self):
-        """
-        """
-        url = reverse("dracogate:compare_morph_to_input_forecast", kwargs={"pk": self.vmorph.id})
-        self.client.force_login(self.user)
-        response = self.client.post(url)
         self.assertEqual(response.status_code, 405)
 
 class PromotePermissionTests(TestCase):
@@ -4074,3 +4050,48 @@ class SetDemibandPermissionTests(TestCase):
 
 # No user can submit form on action-forecast view
 # No user can submit form on compare-forecast view
+
+class ComparisonToInputTests(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        self.username = "level_up"
+        self.email = "level_up@email.com"
+        self.init_params = {"game_no": 4, "unit": "Sigurd"}
+        self.query_params = {"target_lv": 2}
+        #
+        self.user = User.objects.create(
+            username=self.username,
+            email=self.email,
+        )
+        self.user2 = User.objects.create(
+            username=self.username + "2",
+            email=self.email + "2",
+        )
+        self.vmorph = VirtualMorph.objects.create(**self.init_params, owner=self.user)
+
+    def test_user_cannot_view_comparison_forecast(self):
+        """
+        """
+        url = reverse("dracogate:compare_morph_to_input_forecast", kwargs={"pk": self.vmorph.id})
+        self.client.force_login(self.user2)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_anonuser_cannot_view_comparison_forecast(self):
+        """
+        """
+        url = reverse("dracogate:compare_morph_to_input_forecast", kwargs={"pk": self.vmorph.id})
+        response = self.client.get(url)
+        self.assertRedirects(response, reverse("login"))
+
+    def test_user_cannot_POST_comparison_forecast(self):
+        """
+        """
+        url = reverse("dracogate:compare_morph_to_input_forecast", kwargs={"pk": self.vmorph.id})
+        self.client.force_login(self.user)
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 405)
