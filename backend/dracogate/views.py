@@ -2,7 +2,7 @@
 """
 
 # TODO: Make sure users cannot change or view morphs they do not own.
-# TODO: Forbid users from accessing method-forecast views.
+# TODO: Forbid users from GET'ting method-forecast views.
 
 from django.views import defaults
 from django.views.generic.edit import (
@@ -332,6 +332,7 @@ class ActionForecastView(DetailView):
         id = self.request.path.split('/')[-3]
         obj = self.model.objects.get(id=id)
         obj.init()
+        self.object = obj
         return obj
 
     def get_context_data(self, **kwds):
@@ -449,6 +450,20 @@ class MorphActionView(FormView, DetailView):
         "name": None,
         "stat_type": None,
     }
+
+    def dispatch(self, request, **kwds):
+        """
+        """
+        user = (None if self.request.user.is_authenticated is False else self.request.user)
+        obj = self.get_object()
+        if obj.owner is not None:
+            if user is None:
+                return redirect("login")
+            try:
+                assert obj.owner == user
+            except AssertionError as err:
+                return defaults.permission_denied(request, err)
+        return super().dispatch(request, **kwds)
 
     def get_object(self):
         """

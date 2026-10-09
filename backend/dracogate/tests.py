@@ -2,6 +2,7 @@
 """
 
 import unittest
+import abc
 
 from django.http import Http404
 from django.test import TestCase
@@ -3817,33 +3818,15 @@ class CompareMorphsToInputViewTests(TestCase):
             response.context["virtualmorph_list"],
         )
 
-class LevelUpPermissionTests(TestCase):
+class MorphActionPermissionTests(TestCase, abc.ABC):
     """
     """
-
-    def setUp(self):
-        """
-        """
-        username = "MorphMethodPermissionTests"
-        email = "MorphMethodPermissionTests@email.com"
-        init_params = {"game_no": 4, "unit": "Sigurd"}
-        url_name = "level_up"
-        self.data = {"num_levels": 1}
-        # 
-        self.user = User.objects.create(
-            username=username,
-            email=email,
-        )
-        self.user2 = User.objects.create(
-            username=username + "2",
-            email=email + "2",
-        )
-        self.vmorph = VirtualMorph.objects.create(**init_params, owner=self.user)
-        self.url = reverse("dracogate:" + url_name, kwargs={"id": self.vmorph.id})
 
     def test_anonymous_cannot_modify_owned_morph(self):
         """
         """
+        if self.is_abstract is True:
+            return
         response = self.client.post(self.url, data=self.data)
         self.assertRedirects(response, reverse("login"))
         vmorph = VirtualMorph.objects.get()
@@ -3852,20 +3835,259 @@ class LevelUpPermissionTests(TestCase):
     def test_anonymous_cannot_view_owned_morph(self):
         """
         """
+        if self.is_abstract is True:
+            return
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 403)
+        self.assertRedirects(response, reverse("login"))
 
     def test_user_cannot_modify_another_users_morph(self):
         """
         """
+        if self.is_abstract is True:
+            return
+        self.client.force_login(self.user2)
         response = self.client.post(self.url, data=self.data)
         self.assertEqual(response.status_code, 403)
 
     def test_user_cannot_view_another_users_morph(self):
         """
         """
+        if self.is_abstract is True:
+            return
+        self.client.force_login(self.user2)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 403)
+
+    @unittest.skip
+    def test_user_cannot_view_action_forecast(self):
+        """
+        """
+        if self.is_abstract is True:
+            return
+        self.client.force_login(self.user2)
+        query_params = {"action": self.url_name, "stat_type": self.stat_type}
+        query_params.update(self.query_params)
+        url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
+        response = self.client.get(url, query_params=query_params)
+        self.assertRedirects(response, reverse("login"))
+
+    @unittest.skip
+    def test_user_cannot_POST_action_forecast(self):
+        """
+        """
+        if self.is_abstract is True:
+            return
+        self.client.force_login(self.user)
+        query_params = {"action": self.url_name, "stat_type": self.stat_type}
+        query_params.update(self.query_params)
+        url = reverse("dracogate:action_forecast", kwargs={"id": self.vmorph.id})
+        response = self.client.post(url, data=query_params)
+        self.assertEqual(response.status_code, 405)
+
+    @unittest.skip
+    def test_user_cannot_view_comparison_forecast(self):
+        """
+        """
+        if self.is_abstract is True:
+            return
+        self.client.force_login(self.user2)
+        query_params = {"action": self.url_name, "stat_type": self.stat_type}
+        query_params.update(self.query_params)
+        url = reverse("dracogate:compare_morph_to_input_forecast", kwargs={"pk": self.vmorph.id})
+        response = self.client.get(url, query_params=query_params)
+        self.assertRedirects(response, reverse("login"))
+
+    @unittest.skip
+    def test_user_cannot_POST_comparison_forecast(self):
+        """
+        """
+        if self.is_abstract is True:
+            return
+        self.client.force_login(self.user)
+        query_params = {"action": self.url_name, "stat_type": self.stat_type}
+        query_params.update(self.query_params)
+        url = reverse("dracogate:compare_morph_to_input_forecast", kwargs={"pk": self.vmorph.id})
+        response = self.client.post(url, data=query_params)
+        self.assertEqual(response.status_code, 405)
+
+    def setUp(self):
+        """
+        """
+        # dummy values
+        self.username = "DUMMY"
+        self.email = "DUMMY@email.com"
+        self.init_params = {"unit": "Sigurd", "game_no": 4}
+        self.url_name = "level_up"
+        #
+        self.user = User.objects.create(
+            username=self.username,
+            email=self.email,
+        )
+        self.user2 = User.objects.create(
+            username=self.username + "2",
+            email=self.email + "2",
+        )
+        self.vmorph = VirtualMorph.objects.create(**self.init_params, owner=self.user)
+        self.url = reverse("dracogate:" + self.url_name, kwargs={"id": self.vmorph.id})
+        self.is_abstract = True
+
+class LevelUpPermissionTests(MorphActionPermissionTests):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        self.username = "level_up"
+        self.email = "level_up@email.com"
+        self.init_params = {"game_no": 4, "unit": "Sigurd"}
+        self.url_name = "level_up"
+        self.data = {"num_levels": 1}
+        self.stat_type = "bases"
+        self.query_params = {"target_lv": 2}
+        super().setUp()
+        self.is_abstract = False
+
+class PromotePermissionTests(MorphActionPermissionTests):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        self.username = "promote"
+        self.email = "promote@email.com"
+        self.init_params = {"game_no": 6, "unit": "Roy"}
+        self.url_name = "promote"
+        self.data = {"promo_cls": "Master Lord"}
+        self.stat_type = "bases"
+        self.query_params = self.data
+        super().setUp()
+        self.is_abstract = False
+
+class UseStatBoosterPermissionTests(MorphActionPermissionTests):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        self.username = "use_stat_booster"
+        self.email = "use_stat_booster@email.com"
+        self.init_params = {"game_no": 6, "unit": "Roy"}
+        self.url_name = "use_stat_booster"
+        self.data = {"item_name": "Angelic Robe"}
+        self.stat_type = "bases"
+        self.query_params = self.data
+        super().setUp()
+        self.is_abstract = False
+
+class UseAfasDropsPermissionTests(MorphActionPermissionTests):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        self.username = "use_afas_drops"
+        self.email = "use_afas_drops@email.com"
+        self.init_params = {"game_no": 7, "unit": "Eliwood"}
+        self.url_name = "use_afas_drops"
+        self.data = {"to_consume": "True"}
+        self.stat_type = "growths"
+        self.query_params = self.data
+        super().setUp()
+        self.is_abstract = False
+
+
+class UseMetissTomePermissionTests(MorphActionPermissionTests):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        self.username = "use_metiss_tome"
+        self.email = "use_metiss_tome@email.com"
+        self.init_params = {"game_no": 8, "unit": "Ewan"}
+        self.url_name = "use_metiss_tome"
+        self.data = {"to_consume": "True"}
+        self.stat_type = "growths"
+        self.query_params = self.data
+        super().setUp()
+        self.is_abstract = False
+
+class SetScrollsPermissionTests(MorphActionPermissionTests):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        self.username = "set_scrolls"
+        self.email = "set_scrolls@email.com"
+        self.init_params = {"game_no": 5, "unit": "Leaf"}
+        self.url_name = "set_scrolls"
+        self.data = {"scrolls": ["Odo", "Heim"]}
+        self.stat_type = "growths"
+        self.query_params = self.data
+        super().setUp()
+        self.is_abstract = False
+
+
+class SetBandsPermissionTests(MorphActionPermissionTests):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        self.username = "set_bands"
+        self.email = "set_bands@email.com"
+        self.init_params = {"game_no": 9, "unit": "Ike"}
+        self.url_name = "set_bands"
+        self.data = {"bands": ["Sword Band", "Mage Band"]}
+        self.stat_type = "growths"
+        self.query_params = self.data
+        super().setUp()
+        self.is_abstract = False
+
+
+class ShapeshiftPermissionTests(MorphActionPermissionTests):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        self.username = "shapeshift"
+        self.email = "shapeshift@email.com"
+        self.init_params = {"game_no": 9, "unit": "Lethe"}
+        self.url_name = "shapeshift"
+        self.data = {"to_shapeshift": "True"}
+        self.stat_type = "bases"
+        self.query_params = self.data
+        super().setUp()
+        self.is_abstract = False
+
+class SetDemibandPermissionTests(MorphActionPermissionTests):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        self.username = "set_demiband"
+        self.email = "set_demiband@email.com"
+        self.init_params = {"game_no": 9, "unit": "Lethe"}
+        self.url_name = "shapeshift"
+        self.data = {"to_shapeshift": "True"}
+        self.stat_type = "bases"
+        self.query_params = self.data
+        super().setUp()
+        self.is_abstract = False
+
+
 
 # Anonymous user cannot modify owned morph.
 # Anonymous user cannot view owned morph.
