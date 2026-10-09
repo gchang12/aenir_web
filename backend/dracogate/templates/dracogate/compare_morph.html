@@ -35,7 +35,7 @@
   hx-target="#compare_morph_forecast"
   hx-get="{% url 'dracogate:compare_morph_forecast' virtualmorph.id %}"
   hx-trigger="change">
-  {% csrf_token %}
+  {# {% csrf_token %} #}
   {{ form }}
 </form>
 <div id="compare_morph_forecast"

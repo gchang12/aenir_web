@@ -178,12 +178,12 @@ class GetUserObjectsOnlyMixin:
         """
         """
         user = (None if self.request.user.is_authenticated is False else self.request.user)
-        self.get_object()
-        if (self.object.owner is not None):
-            if (user is None):
+        obj = self.get_object()
+        if obj.owner is not None:
+            if user is None:
                 return redirect("login")
             try:
-                assert self.object.owner == user
+                assert obj.owner == user
             except AssertionError as err:
                 return defaults.permission_denied(request, err)
         return super().dispatch(request, **kwds)

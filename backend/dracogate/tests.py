@@ -3904,37 +3904,28 @@ class LevelUpPermissionTests(TestCase):
         response = self.client.post(url, data=query_params)
         self.assertEqual(response.status_code, 405)
 
-    @unittest.skip
     def test_user_cannot_view_comparison_forecast(self):
         """
         """
-        query_params = {"action": self.url_name, "stat_type": self.stat_type}
-        query_params.update(self.query_params)
         url = reverse("dracogate:compare_morph_to_input_forecast", kwargs={"pk": self.vmorph.id})
         self.client.force_login(self.user2)
-        response = self.client.get(url, query_params=query_params)
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
 
-    @unittest.skip
     def test_anonuser_cannot_view_comparison_forecast(self):
         """
         """
-        query_params = {"action": self.url_name, "stat_type": self.stat_type}
-        query_params.update(self.query_params)
         url = reverse("dracogate:compare_morph_to_input_forecast", kwargs={"pk": self.vmorph.id})
-        response = self.client.get(url, query_params=query_params)
+        response = self.client.get(url)
         self.assertRedirects(response, reverse("login"))
 
-    @unittest.skip
     def test_user_cannot_POST_comparison_forecast(self):
         """
         """
-        self.client.force_login(self.user)
-        query_params = {"action": self.url_name, "stat_type": self.stat_type}
-        query_params.update(self.query_params)
         url = reverse("dracogate:compare_morph_to_input_forecast", kwargs={"pk": self.vmorph.id})
-        response = self.client.post(url, data=query_params)
-        self.assertEqual(response.status_code, 403)
+        self.client.force_login(self.user)
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 405)
 
 '''
 class PromotePermissionTests(MorphActionPermissionTests):

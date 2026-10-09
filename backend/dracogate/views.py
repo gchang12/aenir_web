@@ -1020,3 +1020,17 @@ class CompareMorphToInputForecastView(DetailView):
         context['diff_stats'] = StatsBundler.action_forecast_bases(morph, delta_dict)
         return context
 
+    def get(self, request, **kwds):
+        """
+        """
+        user = (None if self.request.user.is_authenticated is False else self.request.user)
+        obj = self.get_object()
+        if obj.owner is not None:
+            if user is None:
+                return redirect("login")
+            try:
+                assert obj.owner == user
+            except AssertionError as err:
+                return defaults.permission_denied(request, err)
+        return super().get(request, **kwds)
+
