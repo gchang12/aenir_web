@@ -278,7 +278,7 @@ class VirtualMorph(models.Model):
             param_bounds = None
             is_success = True
         except ScrollError as e:
-            valid_scrolls = (tuple(self.morph.scroll_dict) if not e.valid_scrolls else tuple(key for key, value in e.valid_scrolls.items() if value is False))
+            valid_scrolls = (tuple(self.morph.scroll_dict) if not e.valid_scrolls else tuple(key for key, value in e.valid_scrolls.items() if value is True))
             param_bounds = {
                 ScrollError.Reason.NOT_FOUND: {"scrolls": valid_scrolls},
                 ScrollError.Reason.NO_INVENTORY_SPACE: {"inventory_size": self.morph.inventory_size},
