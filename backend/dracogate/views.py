@@ -440,6 +440,20 @@ class ActionForecastView(DetailView):
         to_shapeshift = self.request.GET["to_shapeshift"]
         self.object.set_demiband(to_shapeshift == "True")
 
+    def dispatch(self, request, **kwds):
+        """
+        """
+        user = (None if self.request.user.is_authenticated is False else self.request.user)
+        obj = self.get_object()
+        if obj.owner is not None:
+            if user is None:
+                return redirect("login")
+            try:
+                assert obj.owner == user
+            except AssertionError as err:
+                return defaults.permission_denied(request, err)
+        return super().dispatch(request, **kwds)
+
 class MorphActionView(FormView, DetailView):
     """
     """
