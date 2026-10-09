@@ -3927,8 +3927,7 @@ class LevelUpPermissionTests(TestCase):
         response = self.client.post(url)
         self.assertEqual(response.status_code, 405)
 
-'''
-class PromotePermissionTests(MorphActionPermissionTests):
+class PromotePermissionTests(TestCase):
     """
     """
 
@@ -3945,7 +3944,7 @@ class PromotePermissionTests(MorphActionPermissionTests):
         super().setUp()
         self.is_abstract = False
 
-class UseStatBoosterPermissionTests(MorphActionPermissionTests):
+class UseStatBoosterPermissionTests(TestCase):
     """
     """
 
@@ -3962,7 +3961,7 @@ class UseStatBoosterPermissionTests(MorphActionPermissionTests):
         super().setUp()
         self.is_abstract = False
 
-class UseAfasDropsPermissionTests(MorphActionPermissionTests):
+class UseAfasDropsPermissionTests(TestCase):
     """
     """
 
@@ -3980,7 +3979,7 @@ class UseAfasDropsPermissionTests(MorphActionPermissionTests):
         self.is_abstract = False
 
 
-class UseMetissTomePermissionTests(MorphActionPermissionTests):
+class UseMetissTomePermissionTests(TestCase):
     """
     """
 
@@ -3997,7 +3996,7 @@ class UseMetissTomePermissionTests(MorphActionPermissionTests):
         super().setUp()
         self.is_abstract = False
 
-class SetScrollsPermissionTests(MorphActionPermissionTests):
+class SetScrollsPermissionTests(TestCase):
     """
     """
 
@@ -4015,7 +4014,7 @@ class SetScrollsPermissionTests(MorphActionPermissionTests):
         self.is_abstract = False
 
 
-class SetBandsPermissionTests(MorphActionPermissionTests):
+class SetBandsPermissionTests(TestCase):
     """
     """
 
@@ -4033,7 +4032,7 @@ class SetBandsPermissionTests(MorphActionPermissionTests):
         self.is_abstract = False
 
 
-class ShapeshiftPermissionTests(MorphActionPermissionTests):
+class ShapeshiftPermissionTests(TestCase):
     """
     """
 
@@ -4050,7 +4049,7 @@ class ShapeshiftPermissionTests(MorphActionPermissionTests):
         super().setUp()
         self.is_abstract = False
 
-class SetDemibandPermissionTests(MorphActionPermissionTests):
+class SetDemibandPermissionTests(TestCase):
     """
     """
 
@@ -4066,7 +4065,6 @@ class SetDemibandPermissionTests(MorphActionPermissionTests):
         self.query_params = self.data
         super().setUp()
         self.is_abstract = False
-'''
 
 
 # Anonymous user cannot modify owned morph.
