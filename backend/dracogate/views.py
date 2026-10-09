@@ -110,7 +110,6 @@ class UnitConfirmView(FormView):
     def get_context_data(self):
         """
         """
-        #print("get_context_data", self.kwargs)
         context = super().get_context_data(**self.kwargs)
         context.update(self.kwargs)
         return context
@@ -120,10 +119,7 @@ class UnitConfirmView(FormView):
         """
         #self.init_params = {}
         #form = super().get_form_class()
-        #print(self.init_params)
         form_class = InitFormBuilder.build_form_class(self.init_params)
-        #print(form_class.declared_fields)
-        #print("get_form_class", form_class.declared_fields)
         return form_class
 
     def get(self, request, game_no, unit):
@@ -146,16 +142,11 @@ class UnitConfirmView(FormView):
             "game_no": game_no,
             "unit": unit,
         }
-        #print("post", self.init_params)
         return super().post(request, game_no, unit)
 
     def form_valid(self, form):
         """
         """
-        #print("form_valid", form.is_valid())
-        #print("form_valid", form.declared_fields)
-        #print("form_valid", form.cleaned_data)
-        #print("form_valid", self.route_params)
         VirtualMorph.objects.create(
             owner=(self.request.user if self.request.user.is_authenticated else None),
             game_no=self.route_params.pop("game_no"),
@@ -175,12 +166,10 @@ class UnitConfirmForecast(TemplateView):
         # get stats
         query_params = self.request.GET.dict()
         context = super().get_context_data()
-        #print(query_params)
         (init_params, morph) = get_temp_morph(game_no, unit, query_params)
         context['stats'] = StatsBundler.init_forecast(morph)
         context['unit_level'] = morph.current_lv
         context['unit_class'] = morph.current_cls
-        #print(context)
         return context
 
 class MorphListView(ListView):
@@ -193,7 +182,6 @@ class MorphListView(ListView):
         """
         """
         context = super().get_context_data(**kwargs)
-        #print(context)
         return context
 
     def get_queryset(self, **kwds):
@@ -302,7 +290,6 @@ class MorphDetailView(DetailView, DeleteView):
         Raises 403 for anonymous POST requests.
         """
         user = (None if self.request.user.is_authenticated is False else self.request.user)
-        #print("ForbidAnonPostMixin", user)
         try:
             assert user is not None
         except AssertionError as err:
@@ -399,7 +386,6 @@ class ActionForecastView(DetailView):
     def use_afas_drops(self):
         """
         """
-        #print('use_afas_drops')
         logger.debug("Morph%d.use_afas_drops()", self.object.game_no)
         to_consume = self.request.GET.get("to_consume")
         self.object.use_afas_drops(to_consume == "True")
@@ -512,7 +498,6 @@ class LevelUpView(MorphActionView):
     def get_form_class(self, **kwds):
         """
         """
-        #print(dir(self), self.object, kwds, id)
         try:
             (_, param_bounds) = self.object.level_up(0)
         except AttributeError:
@@ -527,7 +512,6 @@ class LevelUpView(MorphActionView):
         """
         """
         num_levels = form.cleaned_data['target_lv'] - self.object.morph.current_lv
-        #print(self.object.morph.current_stats.as_dict())
         self.object.level_up(num_levels)
         self.object.save()
         return redirect(reverse("dracogate:morph_detail", kwargs={"id": self.object.id}))
@@ -545,12 +529,10 @@ class PromoteView(MorphActionView):
     def get_context_data(self, **kwds):
         """
         """
-        #print('get_context_data')
         context = super().get_context_data(**kwds)
         morph = self.object.morph.copy()
         is_success: bool
         try:
-            #print(morph.current_cls)
             morph.promote("")
             is_success = True
         except PromotionError as e:
@@ -559,16 +541,12 @@ class PromoteView(MorphActionView):
                 e.Reason.LEVEL_TOO_LOW: True,
                 e.Reason.INVALID_PROMOTION: True,
             }[e.reason]
-            #print(e.reason)
-        #print(is_success)
         context['is_success'] = is_success
         return context
 
     def get_form_class(self, **kwds):
         """
         """
-        #print(dir(self), self.object, kwds, id)
-        #print('get_form_class')
         try:
             (_, param_bounds) = self.object.promote("")
         except AttributeError:
@@ -581,8 +559,6 @@ class PromoteView(MorphActionView):
         """
         """
         promo_cls = form.cleaned_data['promo_cls']
-        #print(self.object.morph.current_stats.as_dict())
-        #print(promo_cls)
         self.object.promote(promo_cls)
         self.object.save()
         return redirect(reverse("dracogate:morph_detail", kwargs={"id": self.object.id}))
@@ -637,7 +613,6 @@ class UseAfasDropsView(MorphActionView):
         """
         context = super().get_context_data(**kwds)
         is_success: bool = self.object.morph._miscellany["Afa's Drops"] is None
-        #print(self.object.morph._miscellany)
         context['is_success'] = is_success
         return context
 
@@ -695,7 +670,6 @@ class SetScrollsView(MorphActionView):
         """
         """
         scrolls = form.cleaned_data['scrolls']
-        #print(scrolls)
         self.object.set_scrolls(scrolls)
         self.object.save()
         return redirect(reverse("dracogate:morph_detail", kwargs={"id": self.object.id}))
@@ -752,7 +726,6 @@ class UseMetissTomeView(MorphActionView):
         """
         context = super().get_context_data(**kwds)
         is_success: bool = self.object.morph._miscellany["Metis's Tome"] is None
-        #print(self.object.morph._miscellany)
         context['is_success'] = is_success
         return context
 
@@ -938,7 +911,6 @@ class CompareMorphForecastView(DetailView):
         context['unit_lv'] = morph.current_lv
         kishuna = morph.copy()
         kishuna.current_stats = (self.object2.morph.current_stats > kishuna.current_stats)
-        #print(kishuna.current_stats.as_dict())
         delta_dict = kishuna.current_stats.as_dict()
         context['diff_stats'] = StatsBundler.action_forecast_bases(kishuna, delta_dict)
         context["cum_diff"] = sum([value for value in delta_dict.values() if value is not None]) / 100

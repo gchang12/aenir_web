@@ -111,7 +111,6 @@ class ActionFormBuilder:
     def level_up(param_bounds):
         """
         """
-        #print(param_bounds)
         class LevelUpForm(forms.Form):
             """
             """
@@ -142,7 +141,6 @@ class ActionFormBuilder:
                 """
                 super().validate(value)
                 try:
-                    #print("PromotionClassField")
                     morph.copy().promote(promo_cls=value)
                 except PromotionError as e:
                     if e.reason == e.Reason.LEVEL_TOO_LOW:
@@ -482,7 +480,6 @@ class ActionFormBuilder:
                     getattr(_morph, action)()
                 except DemiBandError as e:
                     if e.reason == DemiBandError.Reason.NO_INVENTORY_SPACE:
-                        #print(action)
                         raise ValidationError(
                             _("%(name)s has a full inventory and cannot equip the Demi Band right now."),
                             params={"name": morph.name},

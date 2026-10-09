@@ -3047,14 +3047,12 @@ class SetBandsTests(TestCase):
         self.assertIn("Knight Ward", morph._miscellany["equipped_bands"])
         vmorph = VirtualMorph.objects.get()
         morph = vmorph.init()
-        #print(self.vmorph.morph._miscellany)
         self.assertIn("Knight Ward", morph._miscellany["equipped_bands"])
         (_, param_bounds) = vmorph.set_bands([""])
         self.assertIn("Knight Ward", morph._miscellany["equipped_bands"])
         form_class = ActionFormBuilder.set_bands(param_bounds, vmorph.morph)
         self.assertIn("Knight Ward", morph._miscellany["equipped_bands"])
         self.assertIs(form_class.declared_fields["knight_ward"].initial, True)
-        #print(param_bounds['bands'])
         value.pop() # take off knight ward
         self.assertListEqual(form_class.declared_fields["bands"].initial, [(choice, choice) for choice in value])
 

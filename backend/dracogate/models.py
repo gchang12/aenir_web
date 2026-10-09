@@ -204,7 +204,6 @@ class VirtualMorph(models.Model):
             )
             param_bounds = None
             is_success = True
-            #print(self.history)
         except PromotionError as e:
             param_bounds = {
                 e.Reason.NO_PROMOTIONS: None,
@@ -212,8 +211,6 @@ class VirtualMorph(models.Model):
                 e.Reason.INVALID_PROMOTION: {"promotions": e.promotion_list},
             }[e.reason]
             is_success = False
-            #print(e.reason)
-        #print(is_success)
         return (is_success, param_bounds)
 
     def _validate_morph_method(self, valid_games, method_name):
@@ -230,7 +227,6 @@ class VirtualMorph(models.Model):
         self._validate_morph_method(valid_games=range(5, 10), method_name="use_stat_booster")
         is_success: bool
         try:
-            #print(self.morph._miscellany)
             self.morph.use_stat_booster(item_name)
             self.history.append(
                 ("use_stat_booster", {"item_name": item_name}),
