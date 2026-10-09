@@ -1,9 +1,6 @@
 """
 """
 
-# TODO: Make sure users cannot change or view morphs they do not own.
-# TODO: Forbid users from GET'ting method-forecast views.
-
 from django.views import defaults
 from django.views.generic.edit import (
     FormView,
