@@ -4707,7 +4707,7 @@ class RenameMorphTests(TestCase):
         data = {"name": "test_rename_anothers_morph_as_anonymous"}
         response = self.client.post(url, data=data)
         self.assertEqual(response.status_code, 403)
-        vmorph = VirtualMorph.objects.get(id=self.vmorph3.id)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph0.id)
         self.assertNotEqual(vmorph.name, data['name'])
 
     def test_rename_anothers_morph_as_different_user(self):
@@ -4728,7 +4728,9 @@ class RenameMorphTests(TestCase):
         """
         url = reverse("dracogate:rename_morph", kwargs={"pk": self.vmorph.id})
         data = {"name": "test_give_two_morphs_same_name"}
+        self.client.force_login(self.user)
         response = self.client.post(url, data=data)
+        self.assertLess(response.status_code, 400)
         vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
         self.assertEqual(vmorph.name, data['name'])
         url = reverse("dracogate:rename_morph", kwargs={"pk": self.vmorph2.id})

@@ -833,6 +833,20 @@ class RenameMorphView(UpdateView):
     model = VirtualMorph
     fields = ["name"]
 
+    def dispatch(self, request, pk):
+        """
+        """
+        user = (None if not request.user.is_authenticated else request.user)
+        try:
+            assert user is not None
+        except AssertionError as err:
+            return defaults.permission_denied(request, err)
+        try:
+            VirtualMorph.objects.get(id=pk, owner=user)
+        except VirtualMorph.DoesNotExist as err:
+            return defaults.permission_denied(request, err)
+        return super().dispatch(request, pk)
+
 class CompareMorphsView(ListView):
     """
     """
