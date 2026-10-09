@@ -41,7 +41,11 @@ INSTALLED_APPS = [
     "_top.apps.TopConfig",
     "dracogate.apps.DracogateConfig",
     "django_browser_reload",
+    "tailwind",
+    "theme",
 ]
+
+TAILWIND_APP_NAME = "theme"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
