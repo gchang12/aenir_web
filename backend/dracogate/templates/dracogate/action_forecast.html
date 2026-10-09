@@ -39,10 +39,10 @@
     </thead>
     <tbody>
       {% for stat in after.numeric_stats %}
-      <tr>
+      <tr class="stat{% if stat.delta > 0 %} increased{% elif stat.delta < 0 %} decreased{% endif %}">
         <th>{{ stat.name }}</th>
         <td>{{ stat.value }}{% if stat_type == "growths" %}%{% endif %}</td>
-        <td class="stat{% if stat.delta > 0 %} increased{% elif stat.delta < 0 %} decreased{% endif %}">
+        <td>
           <meter min="0" high="{{ stat.max }}" optimum="{{ stat.max }}" max="{{ stat.absmax }}" value="{{ stat.value }}">
         </td>
       </tr>
