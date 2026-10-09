@@ -1921,6 +1921,34 @@ class SetScrollsTests(TestCase):
         form = form_class({field: value})
         self.assertIs(form.is_valid(), False)
 
+    def test_set_scrolls__formbuilder3(self):
+        """
+        Check initial values of form if morph already equipped some scrolls.
+        """
+        field = "scrolls"
+        value = [
+            "Odo",
+            'Baldo',
+            'Hezul',
+            'Dain',
+            'Noba',
+            'Neir',
+            'Ulir',
+            'Tordo',
+            'Fala',
+            'Sety',
+            'Blaggi',
+            'Heim',
+        ]
+        # try to get param_bounds
+        self.vmorph.set_scrolls(["Odo", "Baldo"])
+        (_, param_bounds) = self.vmorph.set_scrolls([""])
+        # get form class
+        form_class = ActionFormBuilder.set_scrolls(param_bounds, self.vmorph.morph)
+        self.assertEqual(form_class.declared_fields['scrolls'].initial, [(choice, choice) for choice in ("Odo", "Baldo")])
+        #form = form_class({field: value})
+        #self.assertIs(form.is_valid(), False)
+
     def test_set_scrolls__forecast__fail(self):
         """
         """
