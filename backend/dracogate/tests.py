@@ -9,6 +9,7 @@ from django.test import TestCase
 import django.forms
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.db.utils import IntegrityError
 
 from aenir import (
     get_morph,
@@ -4603,6 +4604,7 @@ class SetDemibandPermissionTests(TestCase):
         response = self.client.get(url, query_params=query_params)
         self.assertRedirects(response, reverse("login"))
 
+# No user can submit form on action-forecast view
     def test_user_cannot_POST_action_forecast(self):
         """
         """
@@ -4617,8 +4619,6 @@ class SetDemibandPermissionTests(TestCase):
 # Anonymous user cannot view owned morph.
 # User cannot modify another's morph.
 # User cannot view another's morph.
-
-# No user can submit form on action-forecast view
 # No user can submit form on compare-forecast view
 
 class ComparisonToInputTests(TestCase):
@@ -4665,3 +4665,75 @@ class ComparisonToInputTests(TestCase):
         self.client.force_login(self.user)
         response = self.client.post(url)
         self.assertEqual(response.status_code, 405)
+
+class RenameMorphTests(TestCase):
+    """
+    """
+
+    def setUp(self):
+        """
+        """
+        init_params = {"game_no": 4, "unit": "Sigurd"}
+        self.user = User.objects.create(
+            username="RenameMorphTests",
+            email="RenameMorphTests@email.com",
+        )
+        self.user2 = User.objects.create(
+            username="RenameMorphTests2",
+            email="RenameMorphTests2@email.com",
+        )
+        self.vmorph = VirtualMorph.objects.create(
+            owner=self.user,
+            name="vmorph",
+            **init_params,
+        )
+        self.vmorph2 = VirtualMorph.objects.create(
+            owner=self.user,
+            name="vmorph2",
+            **init_params,
+        )
+        self.vmorph0 = VirtualMorph.objects.create(
+            owner=None,
+            name="vmorph0",
+            **init_params,
+        )
+
+    def test_rename_anothers_morph_as_anonymous(self):
+        """
+        """
+        url = reverse("dracogate:rename_morph", kwargs={"pk": self.vmorph0.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+        data = {"name": "test_rename_anothers_morph_as_anonymous"}
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 403)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph3.id)
+        self.assertNotEqual(vmorph.name, data['name'])
+
+    def test_rename_anothers_morph_as_different_user(self):
+        """
+        """
+        self.client.force_login(self.user2)
+        url = reverse("dracogate:rename_morph", kwargs={"pk": self.vmorph.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+        data = {"name": "test_rename_anothers_morph_as_different_user"}
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 403)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        self.assertNotEqual(vmorph.name, data['name'])
+
+    def test_give_two_morphs_same_name(self):
+        """
+        """
+        url = reverse("dracogate:rename_morph", kwargs={"pk": self.vmorph.id})
+        data = {"name": "test_give_two_morphs_same_name"}
+        response = self.client.post(url, data=data)
+        vmorph = VirtualMorph.objects.get(id=self.vmorph.id)
+        self.assertEqual(vmorph.name, data['name'])
+        url = reverse("dracogate:rename_morph", kwargs={"pk": self.vmorph2.id})
+        with self.assertRaises(IntegrityError):
+            response = self.client.post(url, data=data)
+        #vmorph2 = VirtualMorph.objects.get(id=self.vmorph2.id)
+        #self.assertNotEqual(vmorph.name, vmorph2.name)
+
