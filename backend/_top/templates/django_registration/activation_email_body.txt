@@ -4,4 +4,4 @@ We have received a request to sign up an account with this e-mail address and th
 
 {{activation_key}}
 
-Now paste it into https://{{site}}{% url 'django_registration_activate'%} to activate your account.
+Now paste it into http://{{site}}{% url 'django_registration_activate'%} to activate your account.
