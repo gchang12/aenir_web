@@ -1,8 +1,14 @@
-<form method="post">
-  {% csrf_token %}
-  {{ form }}
-  <button>Submit</button>
-  {% if activation_error %}
-    {{ activation_error }}
-  {% endif %}
-</form>
+{% extends "_base.html" %}
+
+{% block main %}
+<div id="activation_form">
+  <form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <button>Submit</button>
+    {% if activation_error %}
+      {{ activation_error }}
+    {% endif %}
+  </form>
+</div>
+{% endblock %}
