@@ -1,0 +1,1 @@
+Hello, {{user.username}}. You have {{ expiration_days }} to activate your Aenir account.
