@@ -5,6 +5,7 @@
   <article>
     <h1>Account Activation Form</h1>
     <p>Paste the code you received via e-mail in the space below.</p>
+    <p><a href="{% url 'django_registration_register' %}">Haven't got one?</a></p>
     <form method="post">
       {% csrf_token %}
       {{ form }}
