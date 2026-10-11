@@ -15,31 +15,31 @@
     <script src="{% static 'htmx.min.js' %}"></script>
   </head>
   <body>
-    <header>
-      <a href="{% url 'homepage' %}">
-        <img width="300" src="{% static 'icon.png' %}" />
-      </a>
-      <nav>
-        <div id="login">
+    <header class="bg-black text-white p-8">
+      <nav class="grid grid-cols-3">
+        <div id="Login" class="flex items-center justify-center">
           {% if user.is_authenticated %}
-          <div class="welcome-message">
+          <div id="WelcomeMessage" class="m-4">
             Welcome, {{ user.username }}!
           </div>
-          <form method="post" action="{% url 'logout' %}">
+          <form method="post" action="{% url 'logout' %}" class="m-4">
             {% csrf_token %}
             <button>Logout</button>
           </form>
-          <a href="{% url 'password_change' %}">Change Password</a>
+          <a class="m-4" href="{% url 'password_change' %}">Change Password</a>
           {% else %}
-            <a href="{% url 'login' %}">Login</a>
-            <a href="{% url 'django_registration_register' %}">Sign Up</a>
+            <a class="m-4" href="{% url 'login' %}">Login</a>
+            <a class="m-4" href="{% url 'django_registration_register' %}">Sign Up</a>
           {% endif %}
         </div>
-        <ul class="flex">
-          <li><a href="{% url 'dracogate:game_select' %}">Create Morph</a></li>
-          <li><a href="{% url 'dracogate:morph_list' %}">Evolve Morph</a></li>
-          <li><a href="{% url 'dracogate:compare_morphs' %}">Compare Morphs</a></li>
-          <li><a href="{% url 'dracogate:compare_morphs_to_input' %}">Compare to Input</a></li>
+        <a href="{% url 'homepage' %} h-full">
+          <img src="{% static 'icon.png' %}" />
+        </a>
+        <ul class="flex items-center">
+          <li class="m-4"><a href="{% url 'dracogate:game_select' %}">Create Morph</a></li>
+          <li class="m-4"><a href="{% url 'dracogate:morph_list' %}">Evolve Morph</a></li>
+          <li class="m-4"><a href="{% url 'dracogate:compare_morphs' %}">Compare Morphs</a></li>
+          <li class="m-4"><a href="{% url 'dracogate:compare_morphs_to_input' %}">Compare to Input</a></li>
           {# Coming soon! ...I hope. <li><a href="#">Arena</a></li> #}
         </ul>
       </nav>
@@ -57,10 +57,10 @@
       </div>
       {% endblock %}
     </main>
-    <footer>
-      <div class="credit"><a href="https://github.com/gchang12/aenir_web" target="_blank">GitHub</a></div>
-      <div class="credit">Thanks to <a href="https://serenesforest.net/">Serenes Forest</a> for compiling the data</div>
-      <div class="credit">Images belong to Intelligent Systems.</div>
+    <footer class="bg-black text-white">
+      <div class="Credit"><a href="https://github.com/gchang12/aenir_web" target="_blank">GitHub</a></div>
+      <div class="Credit">Thanks to <a href="https://serenesforest.net/">Serenes Forest</a> for compiling the data</div>
+      <div class="Credit">Images belong to Intelligent Systems.</div>
     </footer>
   </body>
 </html>
