@@ -1,5 +1,5 @@
 {% load static %}
-{% load static tailwind_tags %}
+{# {% load static tailwind_tags %} #}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -11,43 +11,41 @@
     </title>
     <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" />
     <link rel="stylesheet" href="{% static 'style.css' %}" />
-    {% tailwind_css %}
+    {# {% tailwind_css %} #}
     <script src="{% static 'htmx.min.js' %}"></script>
   </head>
   <body>
     <header>
       <a href="{% url 'homepage' %}">
-        <img src="{% static 'icon.png' %}" />
+        <img width="300" src="{% static 'icon.png' %}" />
       </a>
       <nav>
-        <figure>
-          <figcaption>Morphs</figcaption>
-          <ul>
-            <li><a href="{% url 'dracogate:game_select' %}">Create Morph</a></li>
-            <li><a href="{% url 'dracogate:morph_list' %}">Evolve Morph</a></li>
-            <li><a href="{% url 'dracogate:compare_morphs' %}">Compare Morphs</a></li>
-            <li><a href="{% url 'dracogate:compare_morphs_to_input' %}">Compare to Input</a></li>
-            {# Coming soon! ...I hope. <li><a href="#">Arena</a></li> #}
-          </ul>
-        </figure>
-      </nav>
-      <div id="login">
-        {% if user.is_authenticated %}
-        <div class="welcome-message">
-          Welcome, {{ user.username }}!
+        <div id="login">
+          {% if user.is_authenticated %}
+          <div class="welcome-message">
+            Welcome, {{ user.username }}!
+          </div>
+          <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button>Logout</button>
+          </form>
+          {% else %}
+            <a href="{% url 'login' %}">Login</a>
+          {% endif %}
         </div>
-        <form method="post" action="{% url 'logout' %}">
-          {% csrf_token %}
-          <button>Logout</button>
-        </form>
-        {% else %}
-          <a href="{% url 'login' %}">Login</a>
-        {% endif %}
-      </div>
+        <ul class="flex">
+          <li><a href="{% url 'dracogate:game_select' %}">Create Morph</a></li>
+          <li><a href="{% url 'dracogate:morph_list' %}">Evolve Morph</a></li>
+          <li><a href="{% url 'dracogate:compare_morphs' %}">Compare Morphs</a></li>
+          <li><a href="{% url 'dracogate:compare_morphs_to_input' %}">Compare to Input</a></li>
+          {# Coming soon! ...I hope. <li><a href="#">Arena</a></li> #}
+        </ul>
+      </nav>
     </header>
     <main>
       {% block main %}
       <div id="homepage">
+        {# TODO: Fill in the blanks, dammit. #}
       </div>
       {% endblock %}
     </main>
