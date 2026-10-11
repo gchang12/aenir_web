@@ -2,13 +2,16 @@
 
 {% block main %}
 <div id="activation_form">
-  <form method="post">
-    {% csrf_token %}
-    {{ form }}
-    <button>Submit</button>
-    {% if activation_error %}
-      {{ activation_error }}
-    {% endif %}
-  </form>
+  <article>
+    <h1>Account Activation Form</h1>
+    <form method="post">
+      {% csrf_token %}
+      {{ form }}
+      <button>Submit</button>
+      {% if activation_error %}
+        {{ activation_error }}
+      {% endif %}
+    </form>
+  </article>
 </div>
 {% endblock %}
