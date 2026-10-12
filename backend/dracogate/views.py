@@ -468,6 +468,7 @@ class MorphActionView(FormView, DetailView):
         id = self.request.path.split('/')[-3]
         obj = self.model.objects.get(id=id)
         obj.init()
+        self.object = obj
         return obj
 
     def get_context_data(self, **kwds):
@@ -655,6 +656,15 @@ class SetScrollsView(MorphActionView):
         context['is_success'] = is_success
         return context
 
+    '''
+    def get_form(self, **kwds):
+        """
+        """
+        initial = {"scrolls": list(self.object.morph._miscellany["equipped_scrolls"])}
+        form_class = self.get_form_class()
+        return form_class(initial=initial)
+    '''
+
     def get_form_class(self, **kwds):
         """
         """
@@ -776,6 +786,18 @@ class SetBandsView(MorphActionView):
             (_, param_bounds) = self.object.set_bands([""])
         form_class = ActionFormBuilder.set_bands(param_bounds, self.object.morph)
         return form_class
+
+    '''
+    def get_form(self, **kwds):
+        """
+        """
+        initial = {
+            "bands": list(self.object.morph._miscellany["equipped_bands"]),
+            "knight_ward": "Knight Ward" in self.object.morph._miscellany["equipped_bands"],
+        }
+        form_class = self.get_form_class()
+        return form_class(initial=initial, data=self.request.POST)
+    '''
 
     def form_valid(self, form):
         """

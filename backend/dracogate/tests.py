@@ -2694,6 +2694,7 @@ class SetBandsTests2(TestCase):
         )
         self.assertIn("Demi Band", self.vmorph.morph._miscellany["equipped_bands"])
 
+
     def test_set_bands__virtualmorph2(self):
         """
         Non-knight trying to equip Knight Ward.
@@ -2731,6 +2732,13 @@ class SetBandsTests2(TestCase):
         vmorph = VirtualMorph.objects.get()
         vmorph.init()
         self.assertIn("Demi Band", vmorph.morph._miscellany["equipped_bands"])
+
+    def test_set_bands__virtualmorph4(self):
+        """
+        """
+        self.vmorph.set_demiband(True)
+        self.vmorph.set_bands([])
+        self.assertIn("Demi Band", self.vmorph.morph._miscellany['equipped_bands'])
 
     def test_set_bands__formbuilder1(self):
         """
@@ -2998,6 +3006,13 @@ class SetBandsTests(TestCase):
         vmorph = VirtualMorph.objects.get()
         vmorph.init()
         self.assertIn("Knight Ward", vmorph.morph._miscellany['equipped_bands'])
+
+    def test_set_bands__virtualmorph5(self):
+        """
+        """
+        self.vmorph.set_bands(["Knight Ward"])
+        self.vmorph.set_bands([])
+        self.assertNotIn("Knight Ward", self.vmorph.morph._miscellany['equipped_bands'])
 
     def test_set_bands__formbuilder1(self):
         """

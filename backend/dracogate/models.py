@@ -350,6 +350,7 @@ class VirtualMorph(models.Model):
             "Demi Band": False,
             "Knight Ward": False,
         }
+        # TODO: Revise this whole area
         if "Demi Band" in self.morph._miscellany["equipped_bands"]:
             was_on["Demi Band"] = True
             self.morph.unequip_demi_band()
@@ -358,8 +359,9 @@ class VirtualMorph(models.Model):
         if "Knight Ward" in self.morph._miscellany["equipped_bands"]:
             was_on["Knight Ward"] = True
             self.morph.unequip_knight_ward()
-            if "Knight Ward" not in bands:
-                bands.append("Knight Ward")
+            # erase
+            #if "Knight Ward" not in bands:
+                #bands.append("Knight Ward")
         is_success: bool
         try:
             self.morph.set_bands(bands)
