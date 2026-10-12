@@ -1,6 +1,7 @@
 """
 """
 
+from django.http import Http404
 from django.views import defaults
 from django.views.generic.edit import (
     FormView,
@@ -656,14 +657,18 @@ class SetScrollsView(MorphActionView):
         context['is_success'] = is_success
         return context
 
-    '''
-    def get_form(self, **kwds):
+    def get_form(self):
         """
         """
-        initial = {"scrolls": list(self.object.morph._miscellany["equipped_scrolls"])}
+        try:
+            initial = {"scrolls": list(self.object.morph._miscellany["equipped_scrolls"])}
+        except KeyError:
+            raise Http404("Only FE5 units can equip scrolls.")
         form_class = self.get_form_class()
-        return form_class(initial=initial)
-    '''
+        if self.request.POST:
+            return form_class(data=self.request.POST)
+        else:
+            return form_class(initial=initial)
 
     def get_form_class(self, **kwds):
         """
@@ -787,17 +792,21 @@ class SetBandsView(MorphActionView):
         form_class = ActionFormBuilder.set_bands(param_bounds, self.object.morph)
         return form_class
 
-    '''
     def get_form(self, **kwds):
         """
         """
-        initial = {
-            "bands": list(self.object.morph._miscellany["equipped_bands"]),
-            "knight_ward": "Knight Ward" in self.object.morph._miscellany["equipped_bands"],
-        }
+        try:
+            initial = {
+                "bands": list(self.object.morph._miscellany["equipped_bands"]),
+                "knight_ward": "Knight Ward" in self.object.morph._miscellany["equipped_bands"],
+            }
+        except KeyError:
+            raise Http404("Only FE9 units can equip bands.")
         form_class = self.get_form_class()
-        return form_class(initial=initial, data=self.request.POST)
-    '''
+        if self.request.POST:
+            return form_class(data=self.request.POST)
+        else:
+            return form_class(initial=initial)
 
     def form_valid(self, form):
         """
