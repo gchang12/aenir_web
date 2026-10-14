@@ -348,7 +348,7 @@ class ActionForecastView(DetailView):
             "set_bands": self.set_bands,
             "set_demiband": self.set_demiband,
         }[action]() # NOTE: No errors are raised here. Code does not get past here.
-        #raise Http404 # is undefined
+        #raise Http404
         delta_dict = {
             "bases": (self.object.morph.current_stats > morph.current_stats).as_dict,
             "growths": (self.object.morph.growth_rates > morph.growth_rates).as_dict,
@@ -661,14 +661,13 @@ class SetScrollsView(MorphActionView):
         """
         """
         try:
-            initial = {"scrolls": list(self.object.morph._miscellany["equipped_scrolls"])}
+            initial = {
+                "scrolls": list(self.object.morph._miscellany["equipped_scrolls"]),
+            }
         except KeyError:
             raise Http404("Only FE5 units can equip scrolls.")
         form_class = self.get_form_class()
-        if self.request.POST:
-            return form_class(data=self.request.POST)
-        else:
-            return form_class(initial=initial)
+        return form_class(data=self.request.POST or initial)
 
     def get_form_class(self, **kwds):
         """
@@ -803,10 +802,7 @@ class SetBandsView(MorphActionView):
         except KeyError:
             raise Http404("Only FE9 units can equip bands.")
         form_class = self.get_form_class()
-        if self.request.POST:
-            return form_class(data=self.request.POST)
-        else:
-            return form_class(initial=initial)
+        return form_class(data=self.request.POST or initial)
 
     def form_valid(self, form):
         """
