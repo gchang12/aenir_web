@@ -207,7 +207,7 @@ class ActionFormBuilder:
         """
         #choices = [('', ''), ('on', 'on')]
         #choices.insert(0, ("", ""))
-        choices = (False, True)
+        choices = [(False, "Don't Use"), (True, "Use")]
 
         class ToConsumeField(forms.NullBooleanField):
             """
@@ -243,7 +243,7 @@ class ActionFormBuilder:
                 disabled=morph._miscellany["Afa's Drops"] is not None,
                 label="Use Afa's Drops",
                 widget=forms.Select(
-                    choices=[(choice, choice) for choice in choices],
+                    choices=choices,
                 ),
             )
         return UseAfasDropsForm
@@ -341,7 +341,7 @@ class ActionFormBuilder:
         """
         #choices = [('', ''), ('on', 'on')]
         #choices.insert(0, ("", ""))
-        choices = (False, True)
+        choices = [(False, "Don't Use"), (True, "Use")]
 
         class ToConsumeField(forms.NullBooleanField):
             """
@@ -377,7 +377,7 @@ class ActionFormBuilder:
                 disabled=morph._miscellany["Metis's Tome"] is not None,
                 label="Use Metis's Tome",
                 widget=forms.Select(
-                    choices=[(choice, choice) for choice in choices],
+                    choices=choices,
                 ),
             )
         return UseAfasDropsForm
