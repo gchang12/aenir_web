@@ -1011,10 +1011,10 @@ class CompareMorphToInputForecastView(DetailView):
         obj = super().get_object()
         obj.init()
         if self.request.GET:
-            stat_dict = {stat: float(self.request.GET[stat]) * 100 for stat in filter(lambda stat: stat not in obj.morph.Stats.ZERO_GROWTH_STAT_LIST(), obj.morph.Stats.STAT_LIST())}
+            stat_dict = {stat: int(round(float(self.request.GET[stat]) * 100, 2)) for stat in filter(lambda stat: stat not in obj.morph.Stats.ZERO_GROWTH_STAT_LIST(), obj.morph.Stats.STAT_LIST())}
             for stat in obj.morph.Stats.ZERO_GROWTH_STAT_LIST():
                 stat_dict[stat] = 0
-            obj.morph.current_stats = (obj.morph.current_stats > obj.morph.Stats(**stat_dict))
+            obj.morph.current_stats = (obj.morph.current_stats > obj.morph.Stats(**stat_dict, multiplier=1))
         else:
             obj.morph.current_stats = obj.morph.Stats(**obj.morph.Stats.get_stat_dict(None))
         self.object = obj

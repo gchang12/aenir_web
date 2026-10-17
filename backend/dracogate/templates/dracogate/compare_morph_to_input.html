@@ -2,65 +2,91 @@
 {% load static %}
 
 {% block main %}
-<h1>Compare Morph to Input</h1>
-<figure>
-  <figcaption>
-    <h2>FE{{virtualmorph.game_no}} {{virtualmorph.unit}}</h2>
-    <h3>{{virtualmorph.name}}</h3>
-  </figcaption>
-  <img src="{% get_static_prefix %}dracogate/images/fe{{object.game_no}}/characters/{{object.unit}}.png" />
-</figure>
-<table>
-  <thead>
-    <tr>
-      <th>Class</th>
-      <td>{{unit_class}}</td>
-    </tr>
-    <tr>
-      <th>Lv</th>
-      <td>{{unit_lv}}</td>
-    </tr>
-  </thead>
-  <tbody>
-    {% for stat in numeric_stats %}
-    <tr>
-      <th>{{stat.name}}</th>
-      <td>{{stat.value}}</td>
-      {# <td> <meter value="{{stat.value}}" max="{{stat.absmax}}" high="{{stat.max}}" min="0" optimum="{{stat.max}}"> </meter> </td> #}
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<article id="compare_morph_to_input">
+  <h1>Compare Morph to Input</h1>
+  <div id="morph_input_comparison" class="flex items-center">
+    <div id="morph1" class="m-4">
+      <figure>
+        <figcaption>
+          <h2>FE{{virtualmorph.game_no}} {{virtualmorph.unit}}</h2>
+          <h3>{{virtualmorph.name}}</h3>
+        </figcaption>
+        <img src="{% get_static_prefix %}dracogate/images/fe{{object.game_no}}/characters/{{object.unit}}.png" />
+      </figure>
+      <table>
+        <thead>
+          <tr>
+            <th>Class</th>
+            <td>{{unit_class}}</td>
+          </tr>
+          <tr>
+            <th>Lv</th>
+            <td>{{unit_lv}}</td>
+          </tr>
+        </thead>
+        <tbody>
+          {% for stat in numeric_stats %}
+          <tr>
+            <th>{{stat.name}}</th>
+            <td>{{stat.value}}</td>
+            {# <td> <meter value="{{stat.value}}" max="{{stat.absmax}}" high="{{stat.max}}" min="0" optimum="{{stat.max}}"> </meter> </td> #}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
 
-<form id="stat_input">
-  {# {% csrf_token %} #}
-  <table>
-    <tbody>
-      <tr>
-        <th><label for="_class">Class:</label></th>
-        <td><input disabled id="_class" type="text" name="_class" /></td>
-      </tr>
-      <tr>
-        <th><label for="_lv">Lv:</label></th>
-        <td><input disabled id="_lv" type="number" name="_lv" /></td>
-      </tr>
-      {{ form.as_table }}
-    </tbody>
-  </table>
-  <button
-    type="button" hx-trigger="click"
-                    {# type="submit" hx-trigger="submit" #}
-    hx-target="#compare_morph_to_input_forecast"
-    hx-get="{% url 'dracogate:compare_morph_to_input_forecast' virtualmorph.id %}"
-    hx-include="#stat_input"
-    >
-    Preview
-  </button>
-</form>
+    <div class="operator">
+      &minus;
+    </div>
 
-<div id="compare_morph_to_input_forecast"
-  hx-get="{% url 'dracogate:compare_morph_to_input_forecast' virtualmorph.id %}"
-  hx-trigger="load">
-</div>
+    <div id="morph2" class="m-4">
+      <figure>
+        <figcaption>
+          <h2>FE{{virtualmorph.game_no}} {{virtualmorph.unit}}</h2>
+          <h3>{{virtualmorph.name}}</h3>
+        </figcaption>
+        <img src="{% get_static_prefix %}dracogate/images/fe{{object.game_no}}/characters/{{object.unit}}.png" />
+      </figure>
+      <form id="stat_input" class="MorphActionForm">
+        {# {% csrf_token %} #}
+        <table>
+          <tbody>
+            <tr>
+              <th><label for="_class">Class:</label></th>
+              <td><input disabled id="_class" type="text" name="_class" /></td>
+            </tr>
+            <tr>
+              <th><label for="_lv">Lv:</label></th>
+              <td><input disabled id="_lv" type="number" name="_lv" /></td>
+            </tr>
+            {{ form.as_table }}
+          </tbody>
+        </table>
+        <button
+          type="button" hx-trigger="click"
+                          {# type="submit" hx-trigger="submit" #}
+          hx-target="#compare_morph_to_input_forecast"
+          hx-get="{% url 'dracogate:compare_morph_to_input_forecast' virtualmorph.id %}"
+          hx-include="#stat_input"
+          class="ConfirmButton"
+          >
+          Preview
+        </button>
+      </form>
+    </div>
+
+    <div class="operator">
+      =
+    </div>
+
+    <div id="compare_morph_to_input_forecast"
+      hx-get="{% url 'dracogate:compare_morph_to_input_forecast' virtualmorph.id %}"
+      hx-trigger="load"
+      class="m-4">
+    </div>
+
+  </div>
+</article>
 {% endblock %}
 
