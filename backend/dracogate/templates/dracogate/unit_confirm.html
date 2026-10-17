@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block main %}
-<article id="unit_confirm" class="flex flex-col items-center">
+<article id="unit_confirm">
   <h1>Create Morph</h1>
   <h2>Unit Confirm</h2>
   <div id="init_params" class="grid grid-cols-2 gap-4 items-center">
@@ -19,7 +19,7 @@
       hx-get="{% url 'dracogate:unit_confirm_forecast' game_no unit %}">
       {% csrf_token %}
       {{ form }}
-      <button class="border font-bold p-2 hover:cursor-pointer hover:bg-yellow-100 hover:underline">Create</button>
+      <button class="ConfirmButton">Create</button>
     </form>
   </div>
   <div id="unit_confirm_forecast"

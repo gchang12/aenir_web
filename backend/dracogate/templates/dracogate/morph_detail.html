@@ -2,116 +2,122 @@
 {% load static %}
 
 {% block main %}
-<h1>
-  {% if user.is_authenticated %}
-  <a href="{% url 'dracogate:rename_morph' object.id %}">{{ object.name }}</a>
-  {% else %}
-  {{ object.name }}
-  {% endif %}
-</h1>
-<div id="unit_profile">
-  <article>
-    <h2>Profile</h2>
-    <figure class="unit_identity">
-      <img src="{% get_static_prefix %}dracogate/images/fe{{object.game_no}}/characters/{{object.unit}}.png" />
-      <figcaption>
+<article id="morph_detail">
+  <h1>
+    {% if user.is_authenticated %}
+    <a href="{% url 'dracogate:rename_morph' object.id %}">{{ object.name }}</a>
+    {% else %}
+    {{ object.name }}
+    {% endif %}
+  </h1>
+  <div id="unit" class="grid md:grid-cols-2">
+    <div id="unit_profile">
+      <article>
+        <h2>Profile</h2>
+        <figure class="unit_identity">
+          <img src="{% get_static_prefix %}dracogate/images/fe{{object.game_no}}/characters/{{object.unit}}.png" />
+          <figcaption>
+            <table>
+              <tbody>
+                <tr>
+                  <th>Game</th>
+                  <td>FE{{object.game_no}}</td>
+                </tr>
+                <tr>
+                  <th>Unit</th>
+                  <td>{{object.unit}}</td>
+                </tr>
+                {% for key, value in init_options.items %}
+                <tr>
+                  {% if key == "Hard Mode" %}
+                  <th>Difficulty</th>
+                  <td>{% if value == True %}Hard{% else %}Normal{% endif %}</td>
+                  {% elif key == "Lyn Mode" %}
+                  <th>Campaign</th>
+                  <td>{% if value == True %}Tutorial{% else %}Main{% endif %}</td>
+                  {% else %}
+                  <th>{{ key }}</th>
+                  <td>{{ value }}</td>
+                  {% endif %}
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </figcaption>
+        </figure>
+      </article>
+      <article>
+        <h2>Stats</h2>
         <table>
+          <thead>
+            <tr>
+              <th>Class</th>
+              <td>{{ unit_class }}</td>
+            </tr>
+            <tr>
+              <th>Level</th>
+              <td>{{ unit_lv }}</td>
+            </tr>
+          </thead>
           <tbody>
+            {% for stat in stats %}
             <tr>
-              <th>Game</th>
-              <td>FE{{object.game_no}}</td>
-            </tr>
-            <tr>
-              <th>Unit</th>
-              <td>{{object.unit}}</td>
-            </tr>
-            {% for key, value in init_options.items %}
-            <tr>
-              {% if key == "Hard Mode" %}
-              <th>Difficulty</th>
-              <td>{% if value == True %}Hard{% else %}Normal{% endif %}</td>
-              {% elif key == "Lyn Mode" %}
-              <th>Campaign</th>
-              <td>{% if value == True %}Tutorial{% else %}Main{% endif %}</td>
-              {% else %}
-              <th>{{ key }}</th>
-              <td>{{ value }}</td>
-              {% endif %}
+              <th>{{ stat.name }}</th>
+              <td>{{ stat.base }}</td>
+              <td>
+                <meter value="{{ stat.base }}" min="0" max="{{ stat.absmax }}" high="{{ stat.max }}" optimum="{{ stat.max }}">
+              </td>
             </tr>
             {% endfor %}
           </tbody>
         </table>
-      </figcaption>
-    </figure>
-  </article>
-  <article>
-    <h2>Stats</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Class</th>
-          <td>{{ unit_class }}</td>
-        </tr>
-        <tr>
-          <th>Level</th>
-          <td>{{ unit_lv }}</td>
-        </tr>
-      </thead>
-      <tbody>
-        {% for stat in stats %}
-        <tr>
-          <th>{{ stat.name }}</th>
-          <td>{{ stat.base }}</td>
-          <td>
-            <meter value="{{ stat.base }}" min="0" max="{{ stat.absmax }}" high="{{ stat.max }}" optimum="{{ stat.max }}">
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </article>
-  {% if history %}
-  <article>
-    <h2>History</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Action</th>
-          <th>Parameters</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for event, value in history %}
-        <tr>
-          <th><code>{{ event }}</code></th>
-          <td><code>{{ value }}</code></td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </article>
-  {% endif %}
-  <article>
-    <h2>Actions</h2>
-    <menu>
-      {% for action, action_title in actions %}
-      <li>
-        <a href="{% url action object.id %}">
-          {{ action_title }}
-        </a>
-      </li>
-      {% endfor %}
-    </menu>
-  </article>
-  {% if user.is_authenticated %}
-  <article>
-    <h2>Delete</h2>
-    <form method="post">
-      {% csrf_token %}
-      {{ form }}
-      <button>Confirm</button>
-    </form>
-  </article>
-  {% endif %}
-</div>
+      </article>
+      {% if history %}
+      <article>
+        <h2>History</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Parameters</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for event, value in history %}
+            <tr>
+              <th><code>{{ event }}</code></th>
+              <td><code>{{ value }}</code></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </article>
+      {% endif %}
+    </div>
+    <div id="morph_menu">
+      <article>
+        <h2>Actions</h2>
+        <menu>
+          {% for action, action_title in actions %}
+          <li>
+            <a href="{% url action object.id %}" class="hover:underline">
+              {{ action_title }}
+            </a>
+          </li>
+          {% endfor %}
+        </menu>
+      </article>
+      {% if user.is_authenticated %}
+      <article>
+        <h2>Delete</h2>
+        <form method="post">
+          {% csrf_token %}
+          {{ form }}
+          <button>Confirm</button>
+        </form>
+      </article>
+      {% endif %}
+    </div>
+  </div>
+</article>
 {% endblock %}

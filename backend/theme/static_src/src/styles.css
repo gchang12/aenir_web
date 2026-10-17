@@ -52,3 +52,20 @@ h3 {
 h4 {
   font-size: 1.25rem;
 }
+
+main > article {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ConfirmButton {
+  border: 1px solid black;
+  font-weight: bold;
+  padding: 1rem;
+  &:hover {
+    background-color: yellow;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
