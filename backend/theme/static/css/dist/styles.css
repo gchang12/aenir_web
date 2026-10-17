@@ -11,7 +11,6 @@
     --color-gray-50: oklch(98.5% 0.002 247.839);
     --color-black: #000;
     --color-white: #fff;
-    --spacing: 0.25rem;
     --text-5xl: 3rem;
     --text-5xl--line-height: 1;
     --tracking-normal: 0em;
@@ -192,12 +191,6 @@
       max-width: 96rem;
     }
   }
-  .m-4 {
-    margin: calc(var(--spacing) * 4);
-  }
-  .m-8 {
-    margin: calc(var(--spacing) * 8);
-  }
   .mx-auto {
     margin-inline: auto;
   }
@@ -206,12 +199,6 @@
   }
   .flex {
     display: flex;
-  }
-  .grid {
-    display: grid;
-  }
-  .h-full {
-    height: 100%;
   }
   .h-screen {
     height: 100vh;
@@ -222,17 +209,11 @@
   .resize {
     resize: both;
   }
-  .grid-cols-3 {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
   .flex-col {
     flex-direction: column;
   }
   .items-center {
     align-items: center;
-  }
-  .justify-around {
-    justify-content: space-around;
   }
   .justify-center {
     justify-content: center;
@@ -242,12 +223,6 @@
   }
   .bg-gray-50 {
     background-color: var(--color-gray-50);
-  }
-  .p-8 {
-    padding: calc(var(--spacing) * 8);
-  }
-  .text-center {
-    text-align: center;
   }
   .font-serif {
     font-family: var(--font-serif);
@@ -275,77 +250,39 @@
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
   }
-  .text-shadow-lg {
-    text-shadow: 0px 1px 2px var(--tw-text-shadow-color, rgb(0 0 0 / 0.1)), 0px 3px 2px var(--tw-text-shadow-color, rgb(0 0 0 / 0.1)), 0px 4px 8px var(--tw-text-shadow-color, rgb(0 0 0 / 0.1));
-  }
-  .text-shadow-md {
-    text-shadow: 0px 1px 1px var(--tw-text-shadow-color, rgb(0 0 0 / 0.1)), 0px 1px 2px var(--tw-text-shadow-color, rgb(0 0 0 / 0.1)), 0px 2px 4px var(--tw-text-shadow-color, rgb(0 0 0 / 0.1));
-  }
-  .text-shadow-sm {
-    text-shadow: 0px 1px 0px var(--tw-text-shadow-color, rgb(0 0 0 / 0.075)), 0px 1px 1px var(--tw-text-shadow-color, rgb(0 0 0 / 0.075)), 0px 2px 2px var(--tw-text-shadow-color, rgb(0 0 0 / 0.075));
-  }
-  .text-shadow-xs {
-    text-shadow: 0px 1px 1px var(--tw-text-shadow-color, rgb(0 0 0 / 0.2));
-  }
-  .hover\:text-shadow-white {
-    &:hover {
-      @media (hover: hover) {
-        --tw-text-shadow-color: #fff;
-        @supports (color: color-mix(in lab, red, red)) {
-          --tw-text-shadow-color: color-mix(in oklab, var(--color-white) var(--tw-text-shadow-alpha), transparent);
-        }
-      }
-    }
-  }
-  .sm\:grid {
-    @media (width >= 40rem) {
-      display: grid;
-    }
-  }
-  .sm\:grid-cols-3 {
-    @media (width >= 40rem) {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-  }
   .sm\:flex-row {
     @media (width >= 40rem) {
       flex-direction: row;
     }
   }
-  .md\:flex {
-    @media (width >= 48rem) {
-      display: flex;
-    }
-  }
-  .md\:grid {
-    @media (width >= 48rem) {
+  .xl\:grid {
+    @media (width >= 80rem) {
       display: grid;
     }
   }
-  .md\:grid-cols-3 {
-    @media (width >= 48rem) {
+  .xl\:grid-cols-3 {
+    @media (width >= 80rem) {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
-  .md\:flex-col {
-    @media (width >= 48rem) {
-      flex-direction: column;
-    }
+}
+:root {
+  --ninian-blue: #c8e2d5;
+}
+header a {
+  display: inline-block;
+  text-align: center;
+  &:hover {
+    text-shadow: var(--ninian-blue) 0 0 3rem;
   }
-  .md\:flex-row {
-    @media (width >= 48rem) {
-      flex-direction: row;
-    }
-  }
-  .lg\:grid {
-    @media (width >= 64rem) {
-      display: grid;
-    }
-  }
-  .lg\:grid-cols-3 {
-    @media (width >= 64rem) {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
+}
+header > nav > * > * {
+  margin: 1rem;
+}
+footer a {
+  color: lightgreen;
+  &:hover {
+    text-decoration: underline;
   }
 }
 @property --tw-rotate-x {
@@ -376,15 +313,6 @@
   syntax: "*";
   inherits: false;
 }
-@property --tw-text-shadow-color {
-  syntax: "*";
-  inherits: false;
-}
-@property --tw-text-shadow-alpha {
-  syntax: "<percentage>";
-  inherits: false;
-  initial-value: 100%;
-}
 @layer properties {
   @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
     *, ::before, ::after, ::backdrop {
@@ -395,8 +323,6 @@
       --tw-skew-y: initial;
       --tw-leading: initial;
       --tw-tracking: initial;
-      --tw-text-shadow-color: initial;
-      --tw-text-shadow-alpha: 100%;
     }
   }
 }

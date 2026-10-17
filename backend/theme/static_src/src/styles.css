@@ -8,3 +8,26 @@
   * the scope of this path.
   */
 @source "../../../**/*.{html,py,js}";
+
+:root {
+  --ninian-blue: #c8e2d5;
+}
+
+header a {
+  display: inline-block;
+  text-align: center;
+  &:hover {
+    text-shadow: var(--ninian-blue) 0 0 3rem;
+  }
+}
+
+header > nav > * > * {
+  margin: 1rem;
+}
+
+footer a {
+  color: lightgreen;
+  &:hover {
+    text-decoration: underline;
+  }
+}

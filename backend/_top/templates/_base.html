@@ -10,36 +10,34 @@
       {% endblock %}
     </title>
     <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" />
-    <link rel="stylesheet" href="{% static 'style.css' %}" />
     {% tailwind_css %}
     <script src="{% static 'htmx.min.js' %}"></script>
   </head>
   <body>
-    <header class="bg-black text-white p-8">
-      <nav class="lg:grid lg:grid-cols-3 flex flex-col">
-        <div id="Login" class="flex items-center justify-center">
+    <header class="bg-black text-white">
+      <nav class="xl:grid xl:grid-cols-3 items-center flex flex-col">
+        <div id="Login" class="flex justify-center">
           {% if user.is_authenticated %}
-          <div id="WelcomeMessage" class="m-4">
-            Welcome, {{ user.username }}!
+          <div id="WelcomeMessage"> Welcome, {{ user.username }}!
+            <a href="{% url 'password_change' %}">Change Password</a>
           </div>
-          <form method="post" action="{% url 'logout' %}" class="m-4">
+          <form method="post" action="{% url 'logout' %}">
             {% csrf_token %}
             <button>Logout</button>
           </form>
-          <a class="m-4" href="{% url 'password_change' %}">Change Password</a>
           {% else %}
-            <a class="m-4 text-shadow-xs hover:text-shadow-white" href="{% url 'login' %}">Login</a>
-            <a class="m-4 text-shadow-xs hover:text-shadow-white" href="{% url 'django_registration_register' %}">Sign Up</a>
+          <a href="{% url 'login' %}">Login</a>
+          <a href="{% url 'django_registration_register' %}">Sign Up</a>
           {% endif %}
         </div>
-        <a href="{% url 'homepage' %}" class="h-full flex justify-center p-8">
+        <a href="{% url 'homepage' %}">
           <img src="{% static 'icon.png' %}" />
         </a>
-        <ul class="flex items-center justify-around sm:flex-row flex-col">
-          <li class="m-4 text-center text-shadow-xs hover:text-shadow-white"><a href="{% url 'dracogate:game_select' %}">Create Morph</a></li>
-          <li class="m-4 text-center text-shadow-xs hover:text-shadow-white"><a href="{% url 'dracogate:morph_list' %}">Evolve Morph</a></li>
-          <li class="m-4 text-center text-shadow-xs hover:text-shadow-white"><a href="{% url 'dracogate:compare_morphs' %}">Compare Morphs</a></li>
-          <li class="m-4 text-center text-shadow-xs hover:text-shadow-white"><a href="{% url 'dracogate:compare_morphs_to_input' %}">Compare to Input</a></li>
+        <ul class="flex sm:flex-row flex-col">
+          <li><a href="{% url 'dracogate:game_select' %}">Create Morph</a></li>
+          <li><a href="{% url 'dracogate:morph_list' %}">Evolve Morph</a></li>
+          <li><a href="{% url 'dracogate:compare_morphs' %}">Compare Morphs</a></li>
+          <li><a href="{% url 'dracogate:compare_morphs_to_input' %}">Compare to Input</a></li>
           {# Coming soon! ...I hope. <li><a href="#">Arena</a></li> #}
         </ul>
       </nav>
@@ -58,9 +56,9 @@
       {% endblock %}
     </main>
     <footer class="bg-black text-white">
-      <div class="Credit"><a href="https://github.com/gchang12/aenir_web" target="_blank">GitHub</a></div>
       <div class="Credit">Thanks to <a href="https://serenesforest.net/">Serenes Forest</a> for compiling the data</div>
       <div class="Credit">Images belong to Intelligent Systems.</div>
+      <div class="Credit"><a href="https://github.com/gchang12/aenir_web" target="_blank">GitHub</a></div>
     </footer>
   </body>
 </html>
