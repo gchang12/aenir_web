@@ -5,12 +5,12 @@
 <article id="unit_select" class="flex flex-col items-center">
   <h1>Create Morph</h1>
   <h2>Unit Select</h2>
-  <ul class="grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-1">
+  <ul class="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 m-4">
     {% for unit in units %}
     <li class="border p-4">
       <a href="{% url 'dracogate:unit_confirm' game_no unit %}" class="hover:underline">
         <figure class="flex">
-          <img src="{% get_static_prefix %}dracogate/images/fe{{game_no}}/characters/{{unit}}.png" />
+          <img width="50" src="{% get_static_prefix %}dracogate/images/fe{{game_no}}/characters/{{unit}}.png" />
           <figcaption class="flex">
             <h3 class="p-2">{{ unit }}</h3>
           </figcaption>

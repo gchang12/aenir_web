@@ -5,9 +5,9 @@
 <article id="morph_init" class="flex flex-col items-center">
   <h1>Create Morph</h1>
   <h2>Game Select</h2>
-  <ol class="grid grid-cols-3 gap-9 m-4">
+  <ol class="grid xl:grid-cols-3 lg:grid-cols-2 gap-9 m-4 grid-cols-1">
     {% for game in games %}
-    <li class="border border-transparent hover:border-black p-4">
+    <li class="border hover:underline hover:border-black p-4">
       <a href="{% url 'dracogate:unit_select' game.game_no %}">
         <figure>
           <img src="{% get_static_prefix %}dracogate/images/fe{{game.game_no}}/cover-art.png" />
