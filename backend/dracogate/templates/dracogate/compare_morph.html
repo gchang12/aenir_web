@@ -2,44 +2,55 @@
 {% load static %}
 
 {% block main %}
-<h1>Compare Morphs</h1>
-<figure>
-  <figcaption>
-    <h2>FE{{virtualmorph.game_no}} {{virtualmorph.unit}}</h2>
-    <h3>{{virtualmorph.name}}</h3>
-  </figcaption>
-  <img src="{% get_static_prefix %}dracogate/images/fe{{object.game_no}}/characters/{{object.unit}}.png" />
-</figure>
-<table>
-  <thead>
-    <tr>
-      <th>Class</th>
-      <td>{{unit_class}}</td>
-    </tr>
-    <tr>
-      <th>Lv</th>
-      <td>{{unit_lv}}</td>
-    </tr>
-  </thead>
-  <tbody>
-    {% for stat in numeric_stats %}
-    <tr>
-      <th>{{stat.name}}</th>
-      <td>{{stat.value}}</td>
-      {# <td> <meter value="{{stat.value}}" max="{{stat.absmax}}" high="{{stat.max}}" min="0" optimum="{{stat.max}}"> </meter> </td> #}
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-<form
-  hx-target="#compare_morph_forecast"
-  hx-get="{% url 'dracogate:compare_morph_forecast' virtualmorph.id %}"
-  hx-trigger="change">
-  {# {% csrf_token %} #}
-  {{ form }}
-</form>
-<div id="compare_morph_forecast"
-  hx-get="{% url 'dracogate:compare_morph_forecast' virtualmorph.id %}"
-  hx-trigger="load">
-</div>
+<article id="compare_morph">
+  <h1>Compare Morphs</h1>
+  <form
+    hx-target="#compare_morph_forecast"
+    hx-get="{% url 'dracogate:compare_morph_forecast' virtualmorph.id %}"
+    hx-trigger="change"
+    class="MorphActionForm">
+    {# {% csrf_token %} #}
+    {{ form }}
+  </form>
+  <div id="morph_math" class="flex items-center m-9">
+    <div id="morph1" class="m-4">
+      <figure>
+        <figcaption>
+          <h2>FE{{virtualmorph.game_no}} {{virtualmorph.unit}}</h2>
+          <h3>{{virtualmorph.name}}</h3>
+        </figcaption>
+        <img src="{% get_static_prefix %}dracogate/images/fe{{object.game_no}}/characters/{{object.unit}}.png" />
+      </figure>
+      <table>
+        <thead>
+          <tr>
+            <th>Class</th>
+            <td>{{unit_class}}</td>
+          </tr>
+          <tr>
+            <th>Lv</th>
+            <td>{{unit_lv}}</td>
+          </tr>
+        </thead>
+        <tbody>
+          {% for stat in numeric_stats %}
+          <tr>
+            <th>{{stat.name}}</th>
+            <td>{{stat.value}}</td>
+            {# <td> <meter value="{{stat.value}}" max="{{stat.absmax}}" high="{{stat.max}}" min="0" optimum="{{stat.max}}"> </meter> </td> #}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="operator">
+    &minus;
+    </div>
+    <div id="compare_morph_forecast"
+      hx-get="{% url 'dracogate:compare_morph_forecast' virtualmorph.id %}"
+      hx-trigger="load"
+      class="flex items-center m-4">
+    </div>
+  </div>
+</article>
 {% endblock %}

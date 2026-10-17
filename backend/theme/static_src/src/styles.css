@@ -93,3 +93,7 @@ main > article {
     border: 1px solid black;
   }
 }
+
+.operator {
+  background-color: white;
+}
