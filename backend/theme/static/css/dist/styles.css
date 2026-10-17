@@ -285,6 +285,9 @@ footer a {
     text-decoration: underline;
   }
 }
+main {
+  background-color: var(--ninian-blue);
+}
 @property --tw-rotate-x {
   syntax: "*";
   inherits: false;
