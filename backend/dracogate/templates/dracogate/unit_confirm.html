@@ -7,7 +7,7 @@
   <h2>Unit Confirm</h2>
   <div id="init_params" class="grid grid-cols-2 gap-4 items-center">
     <figure>
-      <img src="{% get_static_prefix %}dracogate/images/fe{{game_no}}/characters/{{unit}}.png" />
+      <img src="{% get_static_prefix %}dracogate/images/fe{{game_no}}/characters/{{unit}}.{% if game_no == 8 %}gif{% else %}png{% endif %}" />
       <figcaption>
         <h3 title="FE{{game_no}}!{{unit}}">{{ unit }}</h3>
       </figcaption>

@@ -10,7 +10,7 @@
     <li class="border p-4">
       <a href="{% url 'dracogate:unit_confirm' game_no unit %}" class="hover:underline">
         <figure class="flex">
-          <img width="50" src="{% get_static_prefix %}dracogate/images/fe{{game_no}}/characters/{{unit}}.png" />
+          <img width="50" src="{% get_static_prefix %}dracogate/images/fe{{game_no}}/characters/{{unit}}.{% if game_no == 8 %}gif{% else %}png{% endif %}" />
           <figcaption class="flex">
             <h3 class="p-2">{{ unit }}</h3>
           </figcaption>
