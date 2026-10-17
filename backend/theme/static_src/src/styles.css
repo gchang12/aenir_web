@@ -69,3 +69,8 @@ main > article {
     cursor: pointer;
   }
 }
+
+.StatName {
+  text-align: left;
+}
+

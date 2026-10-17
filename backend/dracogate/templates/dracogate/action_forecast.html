@@ -1,6 +1,6 @@
 <figure>
   <figcaption><h4>Before</h4></figcaption>
-  <table>
+  <table class="m-4">
     <thead>
       <tr>
         <th>Class</th>
@@ -14,7 +14,7 @@
     <tbody>
       {% for stat in before.numeric_stats %}
       <tr>
-        <th>{{ stat.name }}</th>
+        <th class="StatName">{{ stat.name }}</th>
         <td>{{ stat.value }}{% if stat_type == "growths" %}%{% endif %}</td>
         <td>
           <meter min="0" high="{{ stat.max }}" optimum="{{ stat.max }}" max="{{ stat.absmax }}" value="{{ stat.value }}">
@@ -26,7 +26,7 @@
 </figure>
 <figure>
   <figcaption><h4>After</h4></figcaption>
-  <table>
+  <table class="m-4">
     <thead>
       <tr>
         <th>Class</th>
@@ -40,7 +40,7 @@
     <tbody>
       {% for stat in after.numeric_stats %}
       <tr class="stat{% if stat.delta > 0 %} increased{% elif stat.delta < 0 %} decreased{% endif %}">
-        <th>{{ stat.name }}</th>
+        <th class="StatName">{{ stat.name }}</th>
         <td>{{ stat.value }}{% if stat_type == "growths" %}%{% endif %}</td>
         <td>
           <meter min="0" high="{{ stat.max }}" optimum="{{ stat.max }}" max="{{ stat.absmax }}" value="{{ stat.value }}">

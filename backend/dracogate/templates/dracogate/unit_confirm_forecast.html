@@ -1,29 +1,29 @@
 <table>
   <thead>
     <tr>
-      <th>Level</th>
+      <th class="StatName">Level</th>
       <td colspan="2">{{ unit_level }}</td>
     </tr>
     <tr>
-      <th>Class</th>
+      <th class="StatName">Class</th>
       <td colspan="2">{{ unit_class }}</td>
     </tr>
     <tr>
-      <th>Stat</th>
-      <th>Base</th>
-      <th>Growths</th>
+      <th class="StatName"></th>
+      <th class="StatName">Base</th>
+      <th class="StatName">Growths</th>
     </tr>
   </thead>
   <tbody>
     {% for stat in stats %}
     <tr>
-      <th>{{ stat.name }}</th>
-      <td>
+      <th class="StatName">{{ stat.name }}</th>
+      <td class="StatValue">
         <meter min="0" max="{{stat.absmax}}" high="{{stat.max}}" optimum="{{stat.max}}" value="{{stat.base}}">
         </meter>
         <span class="StatValue Base">{{ stat.base }}</span>
       </td>
-      <td>
+      <td class="StatValue">
         {% if stat.growth != None %}
         <meter min="0" max="100" optimum="100" value="{{stat.growth}}">
         </meter>
