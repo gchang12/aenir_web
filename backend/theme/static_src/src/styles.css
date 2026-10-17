@@ -74,3 +74,22 @@ main > article {
   text-align: left;
 }
 
+.stat {
+  &.increased {
+    color: green;
+  }
+  &.decreased {
+    color: red;
+  }
+}
+
+.MorphActionForm {
+  & input {
+    background-color: white;
+    border: 1px solid black;
+  }
+  & select {
+    background-color: white;
+    border: 1px solid black;
+  }
+}

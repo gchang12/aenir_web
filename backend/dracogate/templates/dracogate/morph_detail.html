@@ -15,7 +15,7 @@
       <article>
         <h2>Profile</h2>
         <figure class="unit_identity">
-          <img src="{% get_static_prefix %}dracogate/images/fe{{object.game_no}}/characters/{{object.unit}}.png" />
+          <img src="{% get_static_prefix %}dracogate/images/fe{{object.game_no}}/characters/{{object.unit}}.{% if object.game_no == 8 %}gif{% else %}png{% endif %}" />
           <figcaption>
             <table>
               <tbody>
