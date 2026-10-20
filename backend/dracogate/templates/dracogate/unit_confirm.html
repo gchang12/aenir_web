@@ -14,11 +14,17 @@
     </figure>
     <form
       method="post"
-      hx-target="#unit_confirm_forecast"
-      hx-trigger="change"
-      hx-get="{% url 'dracogate:unit_confirm_forecast' game_no unit %}">
+      id="unit_confirm_form">
       {% csrf_token %}
       {{ form }}
+      {% if form.declared_fields %}
+      <button type="button" class="ConfirmButton"
+        hx-target="#unit_confirm_forecast"
+        hx-trigger="click"
+        hx-get="{% url 'dracogate:unit_confirm_forecast' game_no unit %}"
+        hx-include="#unit_confirm_form"
+        >Preview</button>
+      {% endif %}
       <button class="ConfirmButton">Create</button>
     </form>
   </div>

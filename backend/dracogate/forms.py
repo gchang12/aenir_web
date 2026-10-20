@@ -111,12 +111,13 @@ class ActionFormBuilder:
     def level_up(param_bounds):
         """
         """
+        min_value = param_bounds['min_lv'] or param_bounds['max_lv']
         class LevelUpForm(forms.Form):
             """
             """
             target_lv = forms.IntegerField(
-                #initial=initial,
-                min_value=param_bounds['min_lv'] or param_bounds['max_lv'],
+                initial=min_value - 1,
+                min_value=min_value,
                 max_value=param_bounds['max_lv'],
                 step_size=1,
                 disabled=param_bounds['min_lv'] is None,
