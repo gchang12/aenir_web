@@ -5,7 +5,7 @@
       <h2>FE{{virtualmorph.game_no}} {{virtualmorph.unit}}</h2>
       <h3>{{virtualmorph.name}}</h3>
     </figcaption>
-    <img src="{% get_static_prefix %}dracogate/images/fe{{object.game_no}}/characters/{{object.unit}}.png" />
+    <img src="{% get_static_prefix %}dracogate/images/fe{{object.game_no}}/characters/{{object.unit}}.{% if object.game_no == 8 %}gif{% else %}png{% endif %}" />
   </figure>
   <table>
     <thead>
@@ -35,10 +35,10 @@
 <div id="morph_diff" class="m-4">
   <figure>
     <figcaption>
-      <h2>FE{{virtualmorph.game_no}} {{virtualmorph.unit}}</h2>
-      <h3>{{virtualmorph.name}}</h3>
+      <h2>Stat</h2>
+      <h3>Difference</h3>
     </figcaption>
-    <img src="{% get_static_prefix %}dracogate/images/fe{{object.game_no}}/characters/{{object.unit}}.png" />
+    <img width="75" src="{% get_static_prefix %}dracogate/images/_blank-portrait.png" />
   </figure>
   <table>
     <thead>
@@ -60,13 +60,12 @@
       </tr>
       {% endfor %}
     </tbody>
-    <tfoot>
-      <tr class="stat{% if cum_diff > 0 %} increased{% elif cum_diff < 0 %} decreased{% endif %}">
-        <th>Total</th>
-        <td>
-          {% if cum_diff > 0 %}+{% endif %}{{cum_diff}}
-        </td>
-      </tr>
-    </tfoot>
   </table>
+</div>
+<div id="diff_sum">
+  <p>Total difference:
+    <span class="stat{% if cum_diff > 0 %} increased{% elif cum_diff < 0 %} decreased{% endif %}">
+      {% if cum_diff > 0 %}+{% endif %}{{cum_diff}}
+    </span>
+  </p>
 </div>

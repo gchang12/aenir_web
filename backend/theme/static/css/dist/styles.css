@@ -458,6 +458,9 @@ main > article {
 .operator {
   background-color: white;
 }
+#morph2 #stat_input button {
+  height: 80px;
+}
 @property --tw-rotate-x {
   syntax: "*";
   inherits: false;

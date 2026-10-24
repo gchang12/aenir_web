@@ -41,14 +41,23 @@
     </div>
 
     <div id="morph2" class="m-4">
-      <figure>
-        <figcaption>
-          <h2>FE{{virtualmorph.game_no}} {{virtualmorph.unit}}</h2>
-          <h3>{{virtualmorph.name}}</h3>
-        </figcaption>
-        <img src="{% get_static_prefix %}dracogate/images/fe{{object.game_no}}/characters/{{object.unit}}.png" />
-      </figure>
       <form id="stat_input" class="MorphActionForm">
+        <figure>
+          <figcaption>
+            <h2>Own</h2>
+            <h3>Stats</h3>
+          </figcaption>
+        </figure>
+        <button
+          type="button" hx-trigger="click"
+                          {# type="submit" hx-trigger="submit" #}
+          hx-target="#compare_morph_to_input_forecast"
+          hx-get="{% url 'dracogate:compare_morph_to_input_forecast' virtualmorph.id %}"
+          hx-include="#stat_input"
+          class="ConfirmButton"
+          >
+          Preview
+        </button>
         {# {% csrf_token %} #}
         <table>
           <tbody>
@@ -63,16 +72,6 @@
             {{ form.as_table }}
           </tbody>
         </table>
-        <button
-          type="button" hx-trigger="click"
-                          {# type="submit" hx-trigger="submit" #}
-          hx-target="#compare_morph_to_input_forecast"
-          hx-get="{% url 'dracogate:compare_morph_to_input_forecast' virtualmorph.id %}"
-          hx-include="#stat_input"
-          class="ConfirmButton"
-          >
-          Preview
-        </button>
       </form>
     </div>
 
