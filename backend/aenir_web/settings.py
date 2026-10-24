@@ -173,3 +173,5 @@ LOGGING = {
 }
 
 ACCOUNT_ACTIVATION_DAYS = 3
+
+# TODO: https://www.geeksforgeeks.org/python/setup-sending-email-in-django-project/

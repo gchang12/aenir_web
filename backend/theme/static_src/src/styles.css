@@ -173,3 +173,7 @@ main > article {
 main {
   min-height: 60vh;
 }
+
+h1 {
+  text-align: center;
+}

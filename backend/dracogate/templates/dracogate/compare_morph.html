@@ -12,7 +12,7 @@
     {# {% csrf_token %} #}
     {{ form }}
   </form>
-  <div id="morph_math" class="flex items-center m-9">
+  <div id="morph_math" class="flex items-center m-9 lg:flex-row flex-col">
     <div id="morph1" class="m-4">
       <figure>
         <figcaption>
@@ -49,7 +49,7 @@
     <div id="compare_morph_forecast"
       hx-get="{% url 'dracogate:compare_morph_forecast' virtualmorph.id %}"
       hx-trigger="load"
-      class="flex items-center m-4">
+      class="flex items-center m-4 lg:flex-row flex-col">
     </div>
   </div>
 </article>
