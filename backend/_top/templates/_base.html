@@ -18,13 +18,16 @@
       <nav class="xl:grid xl:grid-cols-3 items-center flex flex-col">
         <div id="Login" class="flex justify-center">
           {% if user.is_authenticated %}
-          <div id="WelcomeMessage"> Welcome, {{ user.username }}!
-            <a href="{% url 'password_change' %}">Change Password</a>
+          <div class="flex flex-col">
+            <div class="m-4" id="WelcomeMessage">Welcome, {{ user.username }}!</div>
+            <div class="flex">
+              <a class="m-4" href="{% url 'password_change' %}">Change Password</a>
+              <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button class="m-4 hover:cursor-pointer">Logout</button>
+              </form>
+            </div>
           </div>
-          <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button>Logout</button>
-          </form>
           {% else %}
           <a href="{% url 'login' %}">Login</a>
           <a href="{% url 'django_registration_register' %}">Sign Up</a>
@@ -46,14 +49,18 @@
       {% block main %}
       <article id="homepage">
         <h1>Aenir</h1>
-        <h2>About</h2>
-        <h2>How to Use</h2>
-        <ol>
-          <li>Create a morph.</li>
-          <li>Evolve the morph.</li>
-          <li>Compare the morph to either input or another morph.</li>
-          <li>Sign in if you want to keep your morph.</li>
-        </ol>
+        <article>
+          <h2>About</h2>
+        </article>
+        <article>
+          <h2>How to Use</h2>
+          <ol>
+            <li>Create a morph.</li>
+            <li>Evolve the morph.</li>
+            <li>Compare the morph to either input or another morph.</li>
+            <li>Sign in if you want to keep your morph.</li>
+          </ol>
+        </article>
       </article>
       {% endblock %}
     </main>

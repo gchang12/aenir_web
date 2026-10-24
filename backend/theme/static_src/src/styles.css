@@ -135,10 +135,41 @@ main > article {
   }
 }
 
+#activation_form {
+  & input {
+    background-color: white;
+    border: 1px solid black;
+  }
+  & form {
+    display: flex;
+    flex-direction: column;
+    &> * {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+  & button {
+    width: 100%;
+    border: 1px solid black;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  & a {
+    text-decoration: underline;
+    &:hover {
+      color: blue;
+    }
+  }
+}
+
 .operator {
   background-color: white;
 }
 
 #morph2 #stat_input button {
   height: 80px;
+}
+
+main {
+  min-height: 60vh;
 }
