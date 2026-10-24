@@ -94,6 +94,47 @@ main > article {
   }
 }
 
+#login {
+  & input {
+    background-color: white;
+    border: 1px solid black;
+    width: 100%;
+  }
+  & button {
+    width: 100%;
+    border: 1px solid black;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  & a {
+    text-decoration: underline;
+    &:hover {
+      color: blue;
+    }
+  }
+}
+
+#registration_form {
+  & input {
+    background-color: white;
+    border: 1px solid black;
+  }
+  & form {
+    display: flex;
+    flex-direction: column;
+    &> * {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+  & button {
+    width: 100%;
+    border: 1px solid black;
+    font-weight: bold;
+    cursor: pointer;
+  }
+}
+
 .operator {
   background-color: white;
 }
