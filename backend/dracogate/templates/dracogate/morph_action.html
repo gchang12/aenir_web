@@ -1,6 +1,10 @@
 {% extends "_base.html" %}
 {% load static %}
 
+{% block title %}
+Evolve Morph: FE{{object.game_no}} {{object.unit}} - {{action.title}}
+{% endblock %}
+
 {% block main %}
 <article id="morph_action">
   <h1>{{ object.name }}</h1>

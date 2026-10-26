@@ -1,6 +1,10 @@
 {% extends "_base.html" %}
 {% load static %}
 
+{% block title %}
+Rename Morph: FE{{object.game_no}} {{object.unit}} ({{object.name}})
+{% endblock %}
+
 {% block main %}
 <div id="rename_morph">
   <h1>Rename Morph</h1>
