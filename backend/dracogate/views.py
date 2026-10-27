@@ -189,9 +189,13 @@ class MorphListView(ListView):
         """
         Returns only user's morphs, ordered by newest to oldest.
         """
-        user = (None if self.request.user.is_authenticated is False else self.request.user)
-        queryset = self.model.objects.filter(owner=user).order_by("-creation_date")
-        return queryset
+        #user = (None if self.request.user.is_authenticated is False else self.request.user)
+        #queryset = self.model.objects.filter(owner=user).order_by("-creation_date")
+        if self.request.user.is_authenticated:
+            queryset = self.request.user.virtualmorph_set
+        else:
+            queryset = self.model.objects.filter(owner=None)
+        return queryset.order_by("-creation_date")
 
 class MorphDetailView(DetailView, DeleteView):
     """
@@ -884,9 +888,14 @@ class CompareMorphsView(ListView):
         """
         Returns only user's morphs, ordered by newest to oldest.
         """
-        user = (None if self.request.user.is_authenticated is False else self.request.user)
-        queryset = self.model.objects.filter(owner=user).order_by("-creation_date")
-        return queryset
+        #user = (None if self.request.user.is_authenticated is False else self.request.user)
+        #queryset = self.model.objects.filter(owner=user).order_by("-creation_date")
+        if self.request.user.is_authenticated:
+            queryset = self.request.user.virtualmorph_set
+        else:
+            queryset = self.model.objects.filter(owner=None)
+        return queryset.order_by("-creation_date")
+    #return queryset
 
 class CompareMorphView(FormView, DetailView):
     """
@@ -913,8 +922,13 @@ class CompareMorphView(FormView, DetailView):
     def get_form_class(self, **kwds):
         """
         """
-        owner = (None if self.request.user.is_authenticated is False else self.request.user)
-        queryset = self.model.objects.filter(owner=owner)
+        #owner = (None if self.request.user.is_authenticated is False else self.request.user)
+        #queryset = self.model.objects.filter(owner=owner)
+        if self.request.user.is_authenticated:
+            queryset = self.request.user.virtualmorph_set
+        else:
+            queryset = self.model.objects.filter(owner=None)
+        queryset = queryset.order_by("-creation_date")
         form_class = ComparisonFormBuilder.unit_comparison(self.object, queryset)
         return form_class
 
@@ -967,9 +981,14 @@ class CompareMorphsToInputView(ListView):
         """
         Returns only user's morphs, ordered by newest to oldest.
         """
-        user = (None if self.request.user.is_authenticated is False else self.request.user)
-        queryset = self.model.objects.filter(owner=user).order_by("-creation_date")
-        return queryset
+        #user = (None if self.request.user.is_authenticated is False else self.request.user)
+        #queryset = self.model.objects.filter(owner=user).order_by("-creation_date")
+        if self.request.user.is_authenticated:
+            queryset = self.request.user.virtualmorph_set
+        else:
+            queryset = self.model.objects.filter(owner=None)
+        return queryset.order_by("-creation_date")
+    #return queryset
 
 class CompareMorphToInputView(FormView, DetailView):
     """
