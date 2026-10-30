@@ -3,6 +3,7 @@
 
 import unittest
 import abc
+from datetime import timedelta
 
 from django.http import Http404
 from django.test import TestCase
@@ -10,6 +11,7 @@ import django.forms
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.db.utils import IntegrityError
+from django.utils import timezone
 
 from aenir import (
     get_morph,
@@ -4754,3 +4756,30 @@ class RenameMorphTests(TestCase):
         #vmorph2 = VirtualMorph.objects.get(id=self.vmorph2.id)
         #self.assertNotEqual(vmorph.name, vmorph2.name)
 
+class IsOlderThanOneDay(TestCase):
+    """
+    """
+
+    def test_is_older_than_day__true(self):
+        """
+        """
+        vmorph = VirtualMorph.objects.create(
+            game_no=4,
+            unit="Sigurd",
+            creation_date=timezone.now() - timedelta(days=1, seconds=1),
+        )
+        actual = vmorph.is_older_than_day()
+        expected = True
+        self.assertIs(actual, expected)
+
+    def test_is_older_than_day__false(self):
+        """
+        """
+        vmorph = VirtualMorph.objects.create(
+            game_no=4,
+            unit="Sigurd",
+            creation_date=timezone.now() - timedelta(days=0, hours=23, minutes=59, seconds=59),
+        )
+        actual = vmorph.is_older_than_day()
+        expected = True
+        self.assertIs(actual, expected)

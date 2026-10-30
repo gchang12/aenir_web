@@ -1,13 +1,14 @@
 """
 """
 
-#from datetime import datetime
+from datetime import timedelta
 
 from django.http import Http404
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.urls import reverse_lazy, reverse
+from django.utils import timezone
 
 from aenir import (
     get_morph,
@@ -152,6 +153,12 @@ class VirtualMorph(models.Model):
         """
         """
         unique_together = ["owner", "name"]
+
+    def is_older_than_day(self):
+        """
+        """
+        now = timezone.now()
+        return self.creation_date >= now - timedelta(days=1)
 
     def init(self):
         """
