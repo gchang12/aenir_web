@@ -1,7 +1,11 @@
-Dear {{user.username}},
+To {{user.username}},
 
-We have received a request to sign up an account with this e-mail address and the username, '{{user.username}}'. If this is a mistake, please notify us at once at {{ site }}. Otherwise, please copy the following activation key.
+We have received a request to sign up an account with this e-mail address and the username, '{{user.username}}'.
+
+If this is a mistake, please ignore this.
+
+Otherwise, please copy the following activation key.
 
 {{activation_key}}
 
-Now paste it into http://{{site}}{% url 'django_registration_activate'%} to activate your account.
+Paste it into http://{{site}}{% url 'django_registration_activate'%} to activate your account. This key will expire within 1 day.

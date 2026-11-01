@@ -128,10 +128,16 @@ STATIC_URL = 'static/'
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
-
+#https://docs.djangoproject.com/en/6.1/topics/email/#multiple-mailers
 MAILERS = {
     'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
+        'BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
+        "OPTIONS": {
+            "host": "smtp.gmail.com",
+            "use_tls": True,
+            "username": config("EMAIL_HOST_USER"),
+            "password": config("EMAIL_HOST_PASSWORD"),
+        },
     },
 }
 
@@ -172,6 +178,5 @@ LOGGING = {
     }
 }
 
-ACCOUNT_ACTIVATION_DAYS = 3
+ACCOUNT_ACTIVATION_DAYS = 1
 
-# TODO: https://www.geeksforgeeks.org/python/setup-sending-email-in-django-project/
