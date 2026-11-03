@@ -177,3 +177,9 @@ main {
 h1 {
   text-align: center;
 }
+
+main > article > article > article {
+  &> ol, ul {
+    list-style-type: revert;
+  }
+}

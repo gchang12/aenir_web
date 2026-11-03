@@ -8,7 +8,6 @@
     --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
     monospace;
-    --color-blue-100: oklch(93.2% 0.032 255.585);
     --color-blue-900: oklch(37.9% 0.146 265.522);
     --color-gray-50: oklch(98.5% 0.002 247.839);
     --color-black: #000;
@@ -509,6 +508,11 @@ main {
 }
 h1 {
   text-align: center;
+}
+main > article > article > article {
+  &> ol, ul {
+    list-style-type: revert;
+  }
 }
 @property --tw-rotate-x {
   syntax: "*";
