@@ -204,7 +204,7 @@ LOGGING = {
 
 ACCOUNT_ACTIVATION_DAYS = 1
 
-DATABASE_URL = None
+#DATABASE_URL = None
 try:
     DATABASE_URL = config("DATABASE_URL")
 #if "DATABASE_URL" in os.environ:
