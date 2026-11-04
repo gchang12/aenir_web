@@ -196,7 +196,7 @@ LOGGING = {
             "level": "DEBUG",
         },
         "aenir": {
-            "handlers": ["file"],
+            #"handlers": ["file"],
             "level": "NOTSET",
         }
     }
