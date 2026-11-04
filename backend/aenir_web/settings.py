@@ -27,7 +27,7 @@ from decouple import config; SECRET_KEY = config("SECRET_KEY")
 import decouple
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 #DEBUG = True
 
 ALLOWED_HOSTS = ["https://aenirweb-production.up.railway.app/", "127.0.0.1"]
