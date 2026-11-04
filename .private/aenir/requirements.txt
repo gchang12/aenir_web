@@ -1,0 +1,2 @@
+## The following requirements were added by pip freeze:
+-e git+https://github.com/gchang12/aenir.git@1ebe08f5d7468402da59ce9e2789ced5c8b4e36e#egg=aenir

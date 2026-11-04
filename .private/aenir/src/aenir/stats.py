@@ -1,0 +1,394 @@
+"""
+Declares classes that store numerical stat data for a given unit.
+"""
+
+import abc
+from typing import (
+    Iterable,
+    Iterator,
+    Any,
+    Mapping,
+    List,
+    Tuple,
+    Self,
+)
+
+from aenir._logging import logger
+
+
+class AbstractStats(abc.ABC):
+    """
+    Defines methods for comparison, setting, and incrementation of numerical stats.
+    """
+    has_been_augmented: bool | None = None
+
+    @staticmethod
+    def STAT_LIST():
+        """
+        """
+        raise NotImplementedError
+
+    @staticmethod
+    def ZERO_GROWTH_STAT_LIST():
+        """
+        """
+        raise NotImplementedError
+
+    @classmethod
+    def get_stat_dict(cls, fill_value: Any) -> Mapping[str, Any]:
+        """
+        Returns `kwargs` for initialization; each key is mapped to `fill_value`.
+        """
+        stat_dict = dict((stat, fill_value) for stat in cls.STAT_LIST())
+        return stat_dict
+
+    @classmethod
+    def get_growable_stats(cls) -> Iterable[str]:
+        """
+        Returns iterable of stats with growth rates.
+        """
+        return filter(lambda stat_: stat_ not in cls.ZERO_GROWTH_STAT_LIST(), cls.STAT_LIST())
+
+    def as_dict(self) -> dict[str, Any]:
+        """
+        Returns key-val pairs of stats as dict object.
+        """
+        stat_dict = {stat: getattr(self, stat) for stat in self.STAT_LIST()}
+        return stat_dict
+
+    def as_list(self) -> List[Tuple[str, Any]]:
+        """
+        Returns key-val pairs of stats as list of 2-tuples.
+        """
+        stat_list = [(stat, getattr(self, stat)) for stat in self.STAT_LIST()]
+        return stat_list
+
+    def copy(self) -> Self:
+        """
+        Returns new instance of Stats identical to this one.
+        """
+        stat_dict = {}
+        for stat in self.STAT_LIST():
+            stat_dict[stat] = getattr(self, stat)
+        return self.__class__(multiplier=1, **stat_dict)
+
+    def __init__(self: Self, *, multiplier: int = 100, **stat_dict) -> None:
+        """
+        Alerts user of which stats want declaration if `stat_dict` is incomplete.
+        Warns user about unused kwargs.
+        """
+        # check if statlist in statdict
+        statlist = self.STAT_LIST()
+        if not isinstance(statlist, tuple):
+            raise NotImplementedError("`STAT_LIST()` must return a tuple; instead it returns a %r" % type(statlist))
+        expected_stats = set(statlist)
+        actual_stats = set(stat_dict)
+        if not expected_stats.issubset(actual_stats):
+            # get list of missing keywords and report to user
+            def by_statlist_ordering(stat: str) -> int:
+                """
+                Returns position of `stat` in `cls.STAT_LIST()`.
+                """
+                return statlist.index(stat)
+            missing_stats = sorted(
+                expected_stats - actual_stats,
+                key=by_statlist_ordering,
+            )
+            raise AttributeError("Please supply values for the following stats: %s" % missing_stats)
+        # initialize
+        for stat in statlist:
+            stat_value = stat_dict[stat]
+            if isinstance(stat_value, int):
+                stat_value *= multiplier
+            setattr(self, stat, stat_value)
+        # warn user of unused kwargs
+        unused_stats = set(stat_dict) - set(statlist)
+        if unused_stats:
+            logger.warning("These keyword arguments have gone unused: %s", unused_stats)
+
+    def __mul__(self, other: int) -> Self:
+        """
+        Reads current stats, multiplies each stat by a scalar, then returns the result in a new Stats object.
+        """
+        stat_dict = {}
+        for stat in self.STAT_LIST():
+            self_stat = getattr(self, stat)
+            stat_dict[stat] = self_stat * other
+        return self.__class__(multiplier=1, **stat_dict)
+
+    def imin(self: Self, other: Self) -> None:
+        """
+        Sets each stat in `self` to minimum of itself and corresponding stat in `other`.
+        """
+        if not type(self) == type(other):
+            raise TypeError("Stats must be of the same type: %r != %r", (type(self), type(other)))
+        for stat in self.STAT_LIST():
+            self_stat = getattr(self, stat)
+            other_stat = getattr(other, stat)
+            setattr(self, stat, min(self_stat, other_stat))
+
+    def imax(self, other: Self) -> None:
+        """
+        Sets each stat in `self` to maximum of itself and corresponding stat in `other`.
+        """
+        if not type(self) == type(other):
+            raise TypeError("Stats must be of the same type: %r != %r", (type(self), type(other)))
+        for stat in self.STAT_LIST():
+            self_stat = getattr(self, stat)
+            other_stat = getattr(other, stat)
+            setattr(self, stat, max(self_stat, other_stat))
+
+    def __iadd__(self, other: Self) -> Self:
+        """
+        Increments values of `self` by corresponding values in `other`.
+        """
+        if not type(self) == type(other):
+            raise TypeError("Stats must be of the same type: %r != %r", (type(self), type(other)))
+        for stat in self.STAT_LIST():
+            self_stat = getattr(self, stat)
+            other_stat = getattr(other, stat)
+            new_stat = self_stat + other_stat
+            setattr(self, stat, new_stat)
+        return self
+
+    def __add__(self, other: Self) -> Self:
+        """
+        Adds two Stats objects like they're Euclidean vectors and returns the result in a new Stats object.
+        Error is thrown if the Stats objects are not of the same type.
+        """
+        if not type(self) == type(other):
+            raise TypeError("Stats must be of the same type: %r != %r", (type(self), type(other)))
+        stat_dict = {}
+        for stat in self.STAT_LIST():
+            self_stat = getattr(self, stat)
+            other_stat = getattr(other, stat)
+            stat_dict[stat] = self_stat + other_stat
+        return self.__class__(multiplier=1, **stat_dict)
+
+    def __gt__(self, other: Self) -> Self:
+        """
+        Obtains difference of growable stats of two Stats objects and returns the result in a new Stats object.
+        Error is thrown if the Stats objects are not of the same type.
+        """
+        if not type(self) == type(other):
+            raise TypeError("Stats must be of the same type: %r != %r", (type(self), type(other)))
+        stat_dict = {}
+        for stat in self.get_growable_stats():
+            self_stat = getattr(self, stat)
+            other_stat = getattr(other, stat)
+            stat_dict[stat] = self_stat - other_stat
+        for stat in self.ZERO_GROWTH_STAT_LIST():
+            stat_dict[stat] = None
+        return self.__class__(multiplier=1, **stat_dict)
+
+    def __eq__(self: Self, other: Self) -> Self:
+        """
+        Returns a Stats object stating which attributes are equal and which are unequal.
+        """
+        if not type(self) == type(other):
+            raise TypeError("Stats must be of the same type: %r != %r" % (type(self), type(other)))
+        stat_dict = {}
+        for stat in self.STAT_LIST():
+            self_stat = getattr(self, stat)
+            other_stat = getattr(other, stat)
+            stat_dict[stat] = self_stat == other_stat
+        return self.__class__(multiplier=1, **stat_dict)
+
+    def __iter__(self) -> Iterator[int]:
+        """
+        Returns iterable of growable stats.
+        """
+        for stat in self.get_growable_stats():
+            yield getattr(self, stat)
+
+class GenealogyStats(AbstractStats):
+    """
+    Declares stats used for FE4: Genealogy of the Holy War.
+    """
+    
+    @staticmethod
+    def STAT_LIST():
+        """
+        """
+        return (
+            "HP",
+            "Str",
+            "Mag",
+            "Skl",
+            "Spd",
+            "Lck",
+            "Def",
+            "Res",
+        )
+
+    @staticmethod
+    def ZERO_GROWTH_STAT_LIST():
+        """
+        """
+        return ()
+
+    @staticmethod
+    def ABSOLUTE_MAXES():
+        """
+        """
+        return (
+            80_00, #"HP",
+            30_00, #"Str",
+            30_00, #"Mag",
+            30_00, #"Skl",
+            30_00, #"Spd",
+            30_00, #"Lck",
+            30_00, #"Def",
+            30_00, #"Res",
+        )
+
+class ThraciaStats(AbstractStats):
+    """
+    Declares stats used for FE5: Thracia 776.
+    """
+
+    @staticmethod
+    def STAT_LIST():
+        """
+        """
+        return (
+            "HP",
+            "Str",
+            "Mag",
+            "Skl",
+            "Spd",
+            "Lck",
+            "Def",
+            "Con",
+            "Mov",
+            "Lead",
+            "MS",
+            "PC",
+        )
+
+    @staticmethod
+    def ZERO_GROWTH_STAT_LIST():
+        """
+        """
+        return (
+            "Lead",
+            "MS",
+            "PC",
+        )
+
+    @staticmethod
+    def ABSOLUTE_MAXES():
+        """
+        """
+        return (
+            80_00, #"HP",
+            20_00, #"Str",
+            20_00, #"Mag",
+            20_00, #"Skl",
+            20_00, #"Spd",
+            20_00, #"Lck",
+            20_00, #"Def",
+            20_00, #"Con",
+            20_00, #"Mov",
+            10_00, #"Lead",
+            5_00, #"MS",
+            5_00, #"PC",
+        )
+
+class GBAStats(AbstractStats):
+    """
+    Declares stats used for FE6, FE7, and FE8.
+    """
+
+    @staticmethod
+    def STAT_LIST():
+        """
+        """
+        return (
+            "HP",
+            "Pow",
+            "Skl",
+            "Spd",
+            "Lck",
+            "Def",
+            "Res",
+            "Con",
+            "Mov",
+        )
+
+    @staticmethod
+    def ZERO_GROWTH_STAT_LIST():
+        """
+        """
+        return (
+            "Con",
+            "Mov",
+        )
+
+    @staticmethod
+    def ABSOLUTE_MAXES():
+        """
+        """
+        return (
+            80_00, #"HP",
+            30_00, #"Pow",
+            30_00, #"Skl",
+            30_00, #"Spd",
+            30_00, #"Lck",
+            30_00, #"Def",
+            30_00, #"Res",
+            25_00, #"Con",
+            15_00, #"Mov",
+        )
+
+class RadiantStats(AbstractStats):
+    """
+    Declares stats used for FE9.
+    """
+
+    @staticmethod
+    def STAT_LIST():
+        """
+        """
+        return (
+            "HP",
+            "Str",
+            "Mag",
+            "Skl",
+            "Spd",
+            "Lck",
+            "Def",
+            "Res",
+            "Mov",
+            "Con",
+            "Wt",
+        )
+
+    @staticmethod
+    def ZERO_GROWTH_STAT_LIST():
+        """
+        """
+        return (
+            "Mov",
+            "Con",
+            "Wt",
+        )
+
+    @staticmethod
+    def ABSOLUTE_MAXES():
+        """
+        """
+        return (
+            80_00, #"HP",
+            40_00, #"Str",
+            40_00, #"Mag",
+            40_00, #"Skl",
+            40_00, #"Spd",
+            40_00, #"Lck",
+            40_00, #"Def",
+            40_00, #"Res",
+            99_00, #"Mov",
+            99_00, #"Con",
+            99_00, #"Wt",
+        )
+

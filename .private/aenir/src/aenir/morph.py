@@ -1,0 +1,2839 @@
+"""
+Defines classes essential to comparing Fire Emblem unit stats.
+"""
+
+import importlib.resources
+import abc
+import sqlite3
+#import json
+from typing import (
+    Self,
+    Tuple,
+    Any,
+    List,
+    Iterable,
+    Iterator,
+    Mapping,
+)
+import copy
+from textwrap import indent
+
+from aenir.games import FireEmblemGame
+from aenir.stats import (
+    GenealogyStats,
+    GBAStats,
+    ThraciaStats,
+    AbstractStats,
+    RadiantStats,
+)
+from aenir._exceptions import (
+    UnitNotFoundError,
+    LevelUpError,
+    PromotionError,
+    StatBoosterError,
+    ScrollError,
+    BandError,
+    GrowthsItemError,
+    KnightWardError,
+    InitError,
+    TransformationError,
+    DemiBandError,
+)
+from aenir._logging import logger
+
+class BaseMorph(abc.ABC):
+    """
+    Defines attributes pertinent to backend side of stat comparison.
+    """
+
+    @classmethod
+    @abc.abstractmethod
+    def GAME(cls) -> FireEmblemGame:
+        """
+        Returns an object that uniquely identifies a Fire Emblem game.
+        """
+        # should return instance of FireEmblemGame
+        raise NotImplementedError("Not implemented by design; implement in any subclass")
+
+    @classmethod
+    def STATS(cls) -> type[AbstractStats]:
+        """
+        Returns a Stats class appropriate to `GAME`.
+        """
+        return {
+            4: GenealogyStats,
+            5: ThraciaStats,
+            6: GBAStats,
+            7: GBAStats,
+            8: GBAStats,
+            9: RadiantStats,
+        }[cls.GAME().value]
+
+    @classmethod
+    def path_to(cls, file: str) -> str:
+        """
+        Returns a path to the folder containing static files for `GAME`.
+        """
+        root = importlib.resources.files("aenir")
+        path = "/".join((str(root), "static", cls.GAME().url_name, file))
+        return path
+
+    @staticmethod
+    def query_db(
+            path_to_db: str,
+            table: str,
+            fields: Iterable[str],
+            filters: Mapping[str, str | None] | None,
+        ) -> Any:
+        """
+        Queries `table` from db referenced by `path_to_db` for `fields` for which `filters` hold.
+        """
+        query = f"SELECT {', '.join(fields)} FROM '{table}'"
+        if filters:
+            conditions = " AND ".join(
+                [
+                    #(f"{field}={value}") for field, value in filters.items()
+                    ("%s=%r" % (field, value)) for field, value in filters.items()
+                ]
+            )
+            query += " WHERE " + conditions
+        query += ";"
+        with sqlite3.connect(path_to_db) as cnxn:
+            cnxn.row_factory = sqlite3.Row
+        return cnxn.execute(query)
+
+    def __init__(self) -> None:
+        """
+        Initializes appropriate Stats class for this instance.
+        """
+        self.Stats = self.STATS()
+
+    def lookup(
+            self,
+            home_data: Tuple[str, str],
+            target_data: Tuple[str, str],
+            tableindex: int,
+        ) -> Mapping[str, Any] | None:
+        """
+        Looks up alias of `home_data` that's recognized by `target_data` and returns
+        it as a set of filters alongside the table to query and the fields to fetch.
+        """
+        # unpack arguments
+        home_table, value_to_lookup = home_data
+        target_table, field_to_scan = target_data
+        table_name = f"{home_table}-JOIN-{target_table}"
+        path_to_db = self.path_to("cleaned_stats.db")
+        with sqlite3.connect(path_to_db) as cnxn:
+            #cnxn.row_factory = sqlite3.Row
+            resultset = cnxn.execute("SELECT Alias FROM '%s' WHERE Name=\"%s\"" % (table_name, value_to_lookup))
+            aliased_value = resultset.fetchone()
+            if aliased_value is not None:
+                (aliased_value,) = aliased_value
+        if aliased_value is None:
+            query_kwargs = None
+        else:
+            table = "%s%d" % (target_table, tableindex)
+            filters = {field_to_scan: aliased_value}
+            path_to_db = self.path_to("cleaned_stats.db")
+            fields = self.Stats.STAT_LIST()
+            query_kwargs = {
+                "path_to_db": path_to_db,
+                "table": table,
+                "fields": fields,
+                "filters": filters,
+            }
+        return query_kwargs
+
+class Morph(BaseMorph):
+    """
+    Represents a Fire Emblem unit from the game associated with `game_no`.
+    """
+    game_no: int = 0
+    #character_list_filter = lambda name: True
+    stat_boosters = None
+
+    @staticmethod
+    def CHARACTERS():
+        """
+        """
+        return ()
+
+    @classmethod
+    def GAME(cls) -> FireEmblemGame:
+        """
+        Returns aenir.games.FireEmblemGame instance corresponding to `game_no`.
+        """
+        return FireEmblemGame(cls.game_no)
+
+    def __init__(self, name: str, *, which_bases: int, which_growths: int):
+        """
+        Initializes game, name, base stats, growth rates, max stats, and other variables for containing
+        data pertinent to stat comparison calculations.
+        """
+        super().__init__()
+        game = self.GAME()
+        character_list = self.CHARACTERS()
+        if name not in character_list:
+            raise UnitNotFoundError(
+                f"{name} not found. List of characters from Fire Emblem: {game.formal_name}: {character_list}",
+                unit_list=character_list,
+            )
+        # class and level
+        path_to_db = self.path_to("cleaned_stats.db")
+        table = "characters__base_stats%d" % which_bases
+        fields = self.Stats.STAT_LIST() + ("Class", "Lv")
+        filters = {"Name": name}
+        basestats_query = self.query_db(
+            path_to_db,
+            table,
+            fields,
+            filters,
+        ).fetchone()
+        stat_dict = dict(basestats_query)
+        current_cls = stat_dict.pop("Class")
+        current_lv = stat_dict.pop("Lv")
+        # bases
+        current_stats = self.Stats(multiplier=100, **stat_dict)
+        # growths
+        resultset = self.query_db(
+            **self.lookup(
+                ("characters__base_stats", name),
+                ("characters__growth_rates", "Name"),
+                which_growths,
+            )
+        ).fetchall()
+        growth_rates = self.Stats(multiplier=1, **resultset.pop(which_growths))
+        # maximum
+        current_clstype = "characters__base_stats"
+        stat_dict2 = self.query_db(
+            **self.lookup(
+                (current_clstype, name),
+                ("classes__maximum_stats", "Class"),
+                tableindex=0,
+            )
+        ).fetchone()
+        max_stats = self.Stats(**stat_dict2)
+        # (miscellany)
+        _miscellany: dict[str, Any] = {"Stat Boosters": []}
+        # initialize all attributes here.
+        self._game = game
+        self._name: str = name
+        self._init_options: dict = {}
+        self.current_cls = current_cls
+        self.current_lv = current_lv
+        self.current_stats = current_stats
+        self.growth_rates = growth_rates
+        self.current_clstype = current_clstype
+        self.max_stats = max_stats
+        self._miscellany = _miscellany
+        self.history: List[Tuple[str, str]] = []
+        self.max_level: int | None = None
+        self.min_promo_level: int | None = None
+        self.promo_cls: str | None = None
+        #self.stat_boosters = None
+
+    def as_dict(self):
+        """
+        """
+        _miscellany = {key: value for key, value in self._miscellany.items()}
+        for key, value in _miscellany.items():
+            if key in ("equipped_bands", "equipped_scrolls"):
+                scrolls = _miscellany[key].copy()
+                for name, bonus in scrolls.items():
+                    scrolls[name] = bonus.as_dict()
+                _miscellany[key] = scrolls
+        return {
+            # init
+            "game": self.game,
+            "name": self.name,
+            "init_options": self.init_options,
+            # lifetime
+            "current_cls": self.current_cls,
+            "current_lv": self.current_lv,
+            "current_stats": self.current_stats.as_dict(),
+            "growth_rates": self.growth_rates.as_dict(),
+            "current_clstype": self.current_clstype,
+            "max_stats": self.max_stats.as_dict(),
+            "history": self.history,
+            "max_level": self.max_level,
+            "min_promo_level": self.min_promo_level,
+            "promo_cls": self.promo_cls,
+            # morph-specific options
+            "_miscellany": _miscellany,
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        """
+        """
+        _miscellany = data['_miscellany']
+        Stats = cls.STATS()
+        for key, value in _miscellany.items():
+            if key in ("equipped_bands", "equipped_scrolls"):
+                scrolls = _miscellany[key]
+                for name, bonus in scrolls.items():
+                    scrolls[name] = Stats(**bonus, multiplier=1)
+        data.pop('game')
+        name = data.pop('name')
+        init_options = data.pop('init_options')
+        morph = cls(name, **init_options)
+        for key, value in data.items():
+            if key in ('current_stats', 'max_stats', 'growth_rates'):
+                setattr(morph, key, Stats(**value, multiplier=1))
+            else:
+                setattr(morph, key, value)
+        return morph
+
+    @property
+    def game(self) -> FireEmblemGame:
+        """
+        The FireEmblemGame enum that denotes the game to which the unit belongs.
+        """
+        return self._game
+
+    @property
+    def name(self) -> str | None:
+        """
+        The name of the unit.
+        """
+        return self._name
+
+    @property
+    def init_options(self) -> dict:
+        """
+        The init-options of the unit.
+        """
+        return self._init_options
+
+    def get_growths_augment(self):
+        """
+        Returns the difference between the current growth rates and the original.
+        """
+        return self.growth_rates + self._og_growth_rates * -1
+
+    def _set_max_level(self) -> None:
+        """
+        Sets the maximum level for a unit; for most FE units, this is 20.
+        """
+        # exceptions:
+        # FE4: 30 for promoted, 20 for unpromoted
+        # FE8: unpromoted trainees are capped at 10
+        self.max_level = 20
+
+    def _set_min_promo_level(self) -> None:
+        """
+        Sets the minimum level for a unit; for most, this is 10.
+        """
+        # exceptions:
+        # FE4: 20
+        # FE5: for Lara if promo_cls == 'Dancer': 1
+        # FE5: Leif, Linoan: 1
+        # FE6: Roy: 1
+        # FE7: Hector, Eliwood: 1
+        # FE8: Ephraim, Eirika
+        # FE9: Ike, Volke
+        self.min_promo_level = 10
+
+    def level_up(self, num_levels: int) -> None:
+        """
+        Increases stats and level; throws an error if unit's max level is exceeded.
+        """
+        # get max level
+        if self.max_level is None:
+            self._set_max_level()
+        if num_levels <= 0:
+            raise LevelUpError(
+                f"Level-up increment must be positive. Increment was: {num_levels}",
+                reason=LevelUpError.Reason.NOT_POSITIVE,
+                level_range=(self.current_lv + 1, self.max_level),
+            )
+        # stop if user is going to overlevel
+        if num_levels + self.current_lv > self.max_level:
+            raise LevelUpError(
+                f"Cannot level up from level {self.current_lv} to {self.current_lv + num_levels}. Max level: self.max_level.",
+                reason=LevelUpError.Reason.EXCEEDS_MAX,
+                level_range=(None, self.max_level),
+            )
+        # ! increase stats
+        self.current_stats += self.growth_rates * num_levels
+        # ! increase level
+        self.current_lv += num_levels
+        # cap stats
+        self.current_stats.imin(self.max_stats)
+
+    def _get_promo_query_kwargs(self) -> Mapping[str, Any] | None:
+        """
+        Gets data to use to query for promotion, including list of classes to promote to.
+        """
+        value_to_lookup = {
+            "characters__base_stats": self.name,
+            "classes__promotion_gains": self.current_cls,
+        }[self.current_clstype]
+        query_kwargs = self.lookup(
+            (self.current_clstype, value_to_lookup),
+            ("classes__promotion_gains", "Class"),
+            tableindex=0,
+        )
+        return query_kwargs
+
+    def get_promotion_list(self) -> List[str]:
+        """
+        Gets a list of classes a unit can promote to.
+        """
+        query_kwargs = self._get_promo_query_kwargs()
+        if query_kwargs is None:
+            return []
+        query_kwargs['fields'] += ("Promotion",)
+        resultset = self.query_db(**query_kwargs).fetchall()
+        return [result["Promotion"] for result in resultset]
+
+    def promote(self, promo_cls) -> None:
+        """
+        Changes unit class and boosts stats among other parameters, given the right conditions are met.
+        """
+        query_kwargs = self._get_promo_query_kwargs()
+        # quit if resultset is empty
+        if query_kwargs is None:
+            raise PromotionError(
+                f"{self.name} has no available promotions.",
+                reason=PromotionError.Reason.NO_PROMOTIONS,
+            )
+        query_kwargs['fields'] += ("Promotion",)
+        # check if unit's level is high enough to enable promotion
+        #if self.min_promo_level is None:
+        self._set_min_promo_level()
+        if self.current_lv < self.min_promo_level:
+            # Wishful: Tell user what morph should promote to
+            #print(query_kwargs)
+            resultset = self.query_db(**query_kwargs).fetchall()
+            raise PromotionError(
+                f"{self.name} must be at least level {self.min_promo_level} to promote. Current level: {self.current_lv}.",
+                reason=PromotionError.Reason.LEVEL_TOO_LOW,
+                min_promo_level=self.min_promo_level,
+                promotion_list=[result["Promotion"] for result in resultset],
+            )
+        # get promotion data
+        resultset = self.query_db(**query_kwargs).fetchall()
+        # if resultset has length > 1, filter to relevant
+        if promo_cls is not None:
+            _promo_cls = promo_cls
+        else:
+            _promo_cls = self.promo_cls
+        new_resultset = list(
+            filter(
+                lambda result: result['Promotion'] == _promo_cls,
+                resultset,
+            )
+        )
+        if not new_resultset:
+            if (self.promo_cls is not None) and (self.game_no == 4 or (self.game_no == 5 and self.name != "Lara")):
+                valid_promotions = (self.promo_cls,)
+            else:
+                valid_promotions = tuple(result["Promotion"] for result in resultset)
+            raise PromotionError(
+                f"'{_promo_cls}' is an invalid promotion. Valid promotions: {valid_promotions}",
+                reason=PromotionError.Reason.INVALID_PROMOTION,
+                promotion_list=valid_promotions,
+            )
+        else:
+            resultset = new_resultset
+        # ** PROMOTION START! **
+        # record history
+        self.history.append((self.current_lv, self.current_cls))
+        # initialize stat_dict, then set attributes
+        stat_dict = dict(resultset.pop())
+        # set 'current_clstype' for future queries
+        self.current_clstype = "classes__promotion_gains"
+        # ! change class
+        self.current_cls = stat_dict.pop('Promotion')
+        # ! increment stats
+        promo_bonuses = self.Stats(**stat_dict)
+        self.current_stats += promo_bonuses
+        # ! set max stats, then cap current stats
+        query_kwargs2 = self.lookup(
+            (self.current_clstype, self.current_cls),
+            ("classes__maximum_stats", "Class"),
+            tableindex=0,
+        )
+        stat_dict2 = self.query_db(**query_kwargs2).fetchall()
+        self.max_stats = self.Stats(**stat_dict2.pop())
+        self.current_stats.imin(self.max_stats)
+        # ! reset level
+        self.current_lv = 1
+        # set promotion class to None
+        self.promo_cls = None
+        #self.min_promo_level = None
+        #self.max_level = None
+
+    def use_stat_booster(self, item_name: str) -> None:
+        """
+        Boosts stats in accordance with item specified; appends record to `_miscellany`.
+        """
+        item_bonus_dict = self.stat_boosters
+        increment = self.Stats(**self.Stats.get_stat_dict(0))
+        if item_name not in item_bonus_dict:
+            raise StatBoosterError(
+                f"'{item_name}' is not a valid stat booster. Valid stat boosters: {list(item_bonus_dict.keys())}",
+                reason=StatBoosterError.Reason.NOT_FOUND,
+                valid_stat_boosters=tuple(item_bonus_dict),
+            )
+        stat, bonus = item_bonus_dict[item_name]
+        current_max = getattr(self.max_stats, stat)
+        if getattr(self.current_stats, stat) == current_max:
+            raise StatBoosterError(
+                f"{stat} is already maxed-out at {current_max}.",
+                reason=StatBoosterError.Reason.STAT_IS_MAXED,
+                max_stat=(stat, current_max),
+            )
+        setattr(increment, stat, bonus * 100)
+        self.current_stats += increment
+        self.current_stats.imin(self.max_stats)
+        self._miscellany["Stat Boosters"].append((self.current_lv, self.current_cls, item_name))
+
+    def copy(self) -> Self:
+        """
+        Returns copy of self; for preview purposes.
+        """
+        return copy.deepcopy(self)
+
+    def get_promotion_item(self) -> str | None:
+        """
+        Returns name of item used to promote, if applicable.
+        """
+        val_field = "Item"
+        path_to_db = self.path_to("cleaned_stats.db")
+        table = "characters__base_stats-JOIN-promotion_items"
+        fields = [val_field]
+        #unitcls_as_key = self.promo_cls or self.current_cls
+        filters = {
+            "Name": {
+                "characters__base_stats": self.name,
+                "classes__promotion_gains": self.current_cls,
+            }[self.current_clstype]
+        }
+        record = self.query_db(
+            path_to_db,
+            table,
+            fields,
+            filters,
+        ).fetchone()
+        if record is None:
+            promotion_item = None
+        else:
+            promotion_item = record[val_field]
+        return promotion_item
+
+    @property
+    def inventory_size(self) -> int:
+        """
+        Declares inventory size; essential to implementing equipping of growths items in FE5 and FE9.
+        """
+        return 0
+
+class Morph4(Morph):
+    """
+    Genealogy of the Holy War
+    """
+    game_no = 4
+
+    @staticmethod
+    def FATHERS():
+        """
+        """
+        return (
+            'Arden',
+            'Azel',
+            'Alec',
+            'Claude',
+            'Jamka',
+            'Dew',
+            'Noish',
+            'Fin',
+            'Beowolf',
+            'Holyn',
+            'Midayle',
+            'Levin',
+            'Lex',
+        )
+
+    @staticmethod
+    def CHILDREN():
+        """
+        """
+        return (
+            'Rana',
+            'Lakche',
+            'Skasaher',
+            'Delmud',
+            'Lester',
+            'Fee',
+            'Arthur',
+            'Patty',
+            'Nanna',
+            'Leen',
+            'Tinny',
+            'Faval',
+            'Sety',
+            'Corpul',
+        )
+
+    @staticmethod
+    def CHARACTERS():
+        """
+        """
+        return (
+            'Sigurd',
+            'Noish',
+            'Alec',
+            'Arden',
+            'Cuan',
+            'Ethlin',
+            'Fin',
+            'Lex',
+            'Azel',
+            'Midayle',
+            'Adean',
+            'Dew',
+            'Ira',
+            'Diadora',
+            'Jamka',
+            'Holyn',
+            'Lachesis',
+            'Levin',
+            'Sylvia',
+            'Fury',
+            'Beowolf',
+            'Briggid',
+            'Claude',
+            'Tiltyu',
+            'Mana',
+            'Radney',
+            'Roddlevan',
+            'Oifey',
+            'Tristan',
+            'Dimna',
+            'Yuria',
+            'Femina',
+            'Amid',
+            'Johan',
+            'Johalva',
+            'Shanan',
+            'Daisy',
+            'Janne',
+            'Aless',
+            'Laylea',
+            'Linda',
+            'Asaello',
+            'Hawk',
+            'Hannibal',
+            'Sharlow',
+            'Celice',
+            'Leaf',
+            'Altenna',
+            'Rana',
+            'Lakche',
+            'Skasaher',
+            'Delmud',
+            'Lester',
+            'Fee',
+            'Arthur',
+            'Patty',
+            'Nanna',
+            'Leen',
+            'Tinny',
+            'Faval',
+            'Sety',
+            'Corpul',
+        )
+
+    @property
+    def inventory_size(self) -> int:
+        """
+        Declares maximum number of rings that can be held.
+        """
+        return 7
+
+    def __init__(self, name: str, *, father: str | None = None):
+        """
+        Implements creation of kids with variable stats, in addition to normal units.
+        """
+        # test if name refers to a child with father-dependent stats
+        kid_list = self.CHILDREN()
+        _init_options = {}
+        if name not in kid_list:
+            # if no: use default init method
+            super().__init__(name, which_bases=0, which_growths=0)
+            if father is not None:
+                logger.warning("Father ('%s') specified for unit who has fixed stats ('%s'). Ignoring.", father, name)
+            _init_options['father'] = None
+            _miscellany = self._miscellany
+            game = self.game
+            current_cls = self.current_cls
+            current_lv = self.current_lv
+            current_stats = self.current_stats
+            growth_rates = self.growth_rates
+            current_clstype = self.current_clstype
+            max_stats = self.max_stats
+            promo_cls = self.promo_cls
+        else:
+            father_list = self.FATHERS()
+            if father not in father_list:
+                raise InitError(
+                    f"'{father}' is not a valid father. List of valid fathers: {father_list}",
+                    missing_value=InitError.MissingValue.FATHER,
+                    init_params={"father": father_list},
+                )
+            # begin initialization here
+            Stats = self.STATS()
+            game = self.GAME()
+            _init_options['father'] = father
+            # begin query
+            path_to_db = self.path_to("cleaned_stats.db")
+            table = "characters__base_stats1"
+            fields = Stats.STAT_LIST() + ("Class", "Lv")
+            filters = {"Name": name, "Father": father}
+            self.Stats = Stats
+            stat_dict = dict(
+                self.query_db(
+                    path_to_db,
+                    table,
+                    fields,
+                    filters,
+                ).fetchone()
+            )
+            # class and level
+            current_cls = stat_dict.pop("Class")
+            current_lv = stat_dict.pop("Lv")
+            # bases
+            current_stats = Stats(**stat_dict)
+            # growths
+            stat_dict2 = dict(
+                self.query_db(
+                    path_to_db,
+                    table="characters__growth_rates1",
+                    fields=Stats.STAT_LIST(),
+                    filters={"Name": name, "Father": father},
+                ).fetchone()
+            )
+            growth_rates = Stats(multiplier=1, **stat_dict2)
+            # maximum
+            current_clstype = "characters__base_stats"
+            stat_dict3 = self.query_db(
+                **self.lookup(
+                    (current_clstype, name),
+                    ("classes__maximum_stats", "Class"),
+                    tableindex=0,
+                )
+            ).fetchone()
+            max_stats = Stats(**stat_dict3)
+            # (miscellany)
+            #self._miscellany = {'History': [], "Father": father}
+            _miscellany = {'History': []}
+        try:
+            promo_cls = {
+                "Ira": "Swordmaster",
+                "Holyn": "Forrest",
+                "Radney": "Swordmaster",
+                "Roddlevan": "Forrest",
+                "Azel": "Mage Knight",
+                "Arthur": "Mage Knight",
+                "Tinny": "Mage Fighter (F)",
+                "Lakche": "Swordmaster",
+                "Skasaher": "Forrest",
+            }[name]
+        except KeyError:
+            promo_cls = None
+        _miscellany["Stat Boosters"] = None
+        table_name = "characters__base_stats-JOIN-classes__promotion_gains"
+        path_to_db = self.path_to("cleaned_stats.db")
+        with sqlite3.connect(path_to_db) as cnxn:
+            #cnxn.row_factory = sqlite3.Row
+            resultset = cnxn.execute("SELECT Alias FROM '%s' WHERE Name='%s';" % (table_name, name))
+            can_promote = resultset.fetchone()[0] is not None
+        if can_promote:
+            max_level = 20
+        else:
+            max_level = 30
+        # set instance attributes
+        self.min_promo_level = 20
+        self.max_level = max_level
+        self._game = game
+        self._name = name
+        self._init_options = _init_options
+        self._miscellany = _miscellany
+        self.current_cls = current_cls
+        self.current_lv = current_lv
+        self.current_stats = current_stats
+        self.growth_rates = growth_rates
+        self.current_clstype = current_clstype
+        self.max_stats = max_stats
+        self.promo_cls = promo_cls
+        self.history = []
+        #self._miscellany.pop("Stat Boosters")
+
+    def use_stat_booster(self, item_name: str) -> None:
+        """
+        Raises NotImplementedError because FE4 lacks stat boosters.
+        """
+        raise NotImplementedError("FE4 has no stat boosters.")
+
+    @property
+    def game(self) -> FireEmblemGame:
+        """
+        The FireEmblemGame enum that denotes the game to which the unit belongs.
+        """
+        return self._game
+
+    @property
+    def name(self) -> str | None:
+        """
+        The name of the unit.
+        """
+        return self._name
+
+    @property
+    def father(self) -> str | None:
+        """
+        The name of the unit's father, if any.
+        """
+        return self._father
+
+    def _set_min_promo_level(self) -> None:
+        """
+        By design, this should never be called.
+        # lifetime of non-promo:
+        # - max_level = 20
+        # - promote: max_level = 30
+        # lifetime of promoted:
+        # - max_level = 30
+        # - promote: error
+        """
+        pass
+
+    def _set_max_level(self) -> None:
+        """
+        By design, this should never be called.
+        # lifetime of non-promo:
+        # - max_level = 20
+        # - promote: max_level = 30
+        # lifetime of promoted:
+        # - max_level = 30
+        # - promote: error
+        """
+        pass
+
+    def get_promotion_item(self) -> str | None:
+        """
+        Returns name of item used to promote, if applicable.
+        """
+        if self.max_level == 30:
+            promotion_item = None
+        else:
+            promotion_item = "*Promote at Base*"
+        return promotion_item
+
+    def promote(self, promo_cls) -> None:
+        """
+        Promotes unit and resets max level and current level to original.
+        """
+        current_lv = self.current_lv
+        super().promote(promo_cls=promo_cls)
+        self.current_lv = current_lv
+        self.max_level = 30
+        self.min_promo_level = 20
+
+class Morph5(Morph):
+    """
+    Thracia 776
+    """
+    game_no = 5
+    stat_boosters = {
+        "Life Ring": ("HP", 7),
+        "Power Ring": ("Str", 3),
+        "Magic Ring": ("Mag", 2),
+        "Skill Ring": ("Skl", 3),
+        "Speed Ring": ("Spd", 3),
+        "Luck Ring": ("Lck", 3),
+        "Shield Ring": ("Def", 2),
+        "Body Ring": ("Con", 3),
+        "Leg Ring": ("Mov", 2),
+    }
+
+    @staticmethod
+    def CHARACTERS():
+        """
+        """
+        return (
+            'Leaf',
+            'Fin',
+            'Evayle',
+            'Halvan',
+            'Othin',
+            'Dagda',
+            'Tania',
+            'Marty',
+            'Ronan',
+            'Rifis',
+            'Safy',
+            'Brighton',
+            'Machua',
+            'Lara',
+            'Felgus',
+            'Karin',
+            'Dalsin',
+            'Asvel',
+            'Nanna',
+            'Hicks',
+            'Shiva',
+            'Carrion',
+            'Selphina',
+            'Kein',
+            'Alva',
+            'Robert',
+            'Fred',
+            'Olwen',
+            'Mareeta',
+            'Salem',
+            'Pahn',
+            'Tina',
+            'Trewd',
+            'Glade',
+            'Dean',
+            'Eda',
+            'Homeros',
+            'Linoan',
+            'Ralph',
+            'Eyrios',
+            'Sleuf',
+            'Sara',
+            'Miranda',
+            'Shanam',
+            'Misha',
+            'Xavier',
+            'Amalda',
+            'Conomore',
+            'Delmud',
+            'Cyas',
+            'Sety',
+            'Galzus',
+        )
+
+    @staticmethod
+    def CRUSADERS():
+        """
+        """
+        return (
+            'Baldo',
+            'Blaggi',
+            'Dain',
+            'Fala',
+            'Heim',
+            'Hezul',
+            'Neir',
+            'Noba',
+            'Odo',
+            'Sety',
+            'Tordo',
+            'Ulir',
+        )
+
+    @property
+    def inventory_size(self) -> int:
+        """
+        Declares the number of Crusader Scrolls one can equip.
+        """
+        return 7
+
+    def get_promotion_item(self) -> str | None:
+        """
+        Returns name of item used to promote, if applicable.
+        """
+        if (self.name, self.current_clstype) == ("Leaf", "characters__base_stats"):
+            promotion_item = "*Chapter 18 - End*"
+        elif self.name == "Lara":
+            if "Dancer" in (cls for lv, cls in self.history):
+                # Lara has been a dancer
+                promotion_item = None
+            elif (self.promo_cls == "Dancer" or self.current_cls == "Thief Fighter"):
+                # Lara is about to promote into a dancer.
+                promotion_item = "*Chapter 12x - Talk to Perne*"
+            else:
+                # Lara is a Dancer or a Thief
+                promotion_item = "Knight Proof"
+        elif (self.name, self.current_clstype) == ("Linoan", "characters__base_stats"):
+            promotion_item = "*Chapter 21 - Church*"
+        else:
+            promotion_item = ("Knight Proof" if super().get_promotion_item() else None)
+        return promotion_item
+
+    def __init__(self, name: str):
+        """
+        Initializes `promo_cls` attribute to facilitate promotion of certain units.
+        Declares attributes for scroll equipment.
+
+        (in addition to usual initialization)
+        """
+        super().__init__(name, which_bases=0, which_growths=0)
+        try:
+            promo_cls = {
+                "Rifis": "Thief Fighter",
+                "Asvel": "Sage",
+                "Miranda": "Mage Knight",
+                "Tania": "Sniper (F)",
+                "Ronan": "Sniper (M)",
+                "Machua": "Mercenary",
+                "Shiva": "Swordmaster",
+                "Mareeta": "Swordmaster",
+                "Trewd": "Swordmaster",
+            }[name]
+        except KeyError:
+            promo_cls = None
+        # set instance attributes
+        self.promo_cls = promo_cls
+        self._og_growth_rates = self.growth_rates.copy()
+        self.scroll_dict = self.SCROLL_DICT()
+        self._miscellany["equipped_scrolls"]: dict[str, self.Stats] = {}
+
+    def _set_min_promo_level(self) -> None:
+        """
+        Sets min-promo level in accordance with name and next promo class;
+        essential for Leif, Linoan, and Lara.
+        """
+        if self.name in ("Leaf", "Linoan"):
+            min_promo_level = 1
+        else:
+            min_promo_level = 10
+        if self.name == "Lara" and (self.promo_cls == "Dancer" or self.current_cls == "Thief Fighter"):
+            min_promo_level = 1
+        self.min_promo_level = min_promo_level
+
+    def promote(self, promo_cls) -> None:
+        """
+        Provides logic for promotion of Lara and other thieves in addition to usual units.
+        """
+        fail_conditions = (
+            # prevents non-Lara Thief Fighters from getting promoted to Dancers.
+            self.name != "Lara" and self.current_cls == "Thief Fighter",
+            # prevents Lara from getting promoting to a Dancer twice.
+            self.name == "Lara" and "Dancer" in map(lambda lvcls: lvcls[1], self.history),
+        )
+        if any(fail_conditions):
+            raise PromotionError(
+                f"{self.name} has no available promotions.",
+                reason=PromotionError.Reason.NO_PROMOTIONS,
+            )
+        super().promote(promo_cls)
+        self.current_stats.imax(self.Stats(**self.Stats.get_stat_dict(0)))
+        self.min_promo_level = None
+
+    def _apply_scroll_bonuses(self) -> None:
+        """
+        Updates `growth_rates` in accordance with currently equipped scrolls.
+        """
+        self.growth_rates = self._og_growth_rates.copy()
+        for bonus in self._miscellany["equipped_scrolls"].values():
+            self.growth_rates += bonus
+        self.growth_rates.imax(self.Stats(**self.Stats.get_stat_dict(0)))
+        self.growth_rates.has_been_augmented = bool(self._miscellany["equipped_scrolls"])
+
+    def set_scrolls(self, scrolls):
+        """
+        Enables user to equip scrolls en masse.
+        """
+        # validate scroll-set size.
+        if len(scrolls) >= self.inventory_size:
+            raise ScrollError(
+                "No inventory space!",
+                reason=ScrollError.Reason.NO_INVENTORY_SPACE,
+                equipped_scrolls=tuple(self._miscellany["equipped_scrolls"]),
+            )
+        # validate scrolls to equip
+        if not set(scrolls).issubset(set(self.scroll_dict)):
+            valid_scrolls = {scroll_name: (scroll_name in self._miscellany["equipped_scrolls"]) for scroll_name in self.scroll_dict}
+            raise ScrollError(
+                "A scroll in the selection was not found.",
+                reason=ScrollError.Reason.NOT_FOUND,
+                valid_scrolls=valid_scrolls,
+            )
+        self._miscellany["equipped_scrolls"] = {scroll_name: self.Stats(multiplier=1, **self.scroll_dict[scroll_name]) for scroll_name in scrolls}
+        self._apply_scroll_bonuses()
+
+    def unequip_scroll(self, scroll_name: str) -> None:
+        """
+        Removes `scroll_name` from list of equipped scrolls and updates
+        `growth_rates` accordingly. Throws error if scroll isn't equipped.
+        """
+        if scroll_name in self._miscellany["equipped_scrolls"]:
+            self._miscellany["equipped_scrolls"].pop(scroll_name)
+            self._apply_scroll_bonuses()
+        else:
+            scroll_list = {scroll: (scroll in self._miscellany["equipped_scrolls"]) for scroll in self.scroll_dict}
+            raise ScrollError(
+                f"'{scroll_name}' is not equipped. Equipped_scrolls: {tuple(self._miscellany['equipped_scrolls'].keys())}",
+                reason=ScrollError.Reason.NOT_EQUIPPED,
+                valid_scrolls=scroll_list,
+                invalid_scroll=scroll_name,
+            )
+
+    @classmethod
+    def SCROLL_DICT(cls):
+        """
+        Returns a list of valid scrolls and their corresponding bonuses.
+        """
+        # get scroll list
+        path_to_db = cls.path_to("cleaned_stats.db")
+        table = "scroll_bonuses"
+        stat_list = list(cls.STATS().STAT_LIST())
+        resultset = cls.query_db(
+            path_to_db,
+            table,
+            fields=["Name"] + stat_list,
+            filters={},
+        ).fetchall()
+        scroll_dict = {result["Name"]: {stat: result[stat] for stat in stat_list} for result in resultset}
+        return scroll_dict
+
+    def equip_scroll(self, scroll_name: str) -> None:
+        """
+        Appends `scroll_name` to list of equipped scrolls and updates
+        `growth_rates` accordingly. Throws error if scroll DNE or is already on.
+        """
+        # get scroll list
+        scroll_list = self.scroll_dict
+        if scroll_name not in scroll_list:
+            # raise error
+            valid_scrolls = {scroll: (scroll not in self._miscellany["equipped_scrolls"]) for scroll in scroll_list}
+            raise ScrollError(
+                f"'{scroll_name}' is not a valid scroll. List of valid scrolls: {scroll_list}.",
+                reason=ScrollError.Reason.NOT_FOUND,
+                valid_scrolls=valid_scrolls,
+            )
+        # https://serenesforest.net/thracia-776/inventory/crusader-scrolls/
+        if scroll_name in self._miscellany["equipped_scrolls"]:
+            valid_scrolls = {scroll: (scroll not in self._miscellany["equipped_scrolls"]) for scroll in scroll_list}
+            raise ScrollError(
+                f"'{scroll_name}' is already equipped. Equipped scrolls: {tuple(self._miscellany["equipped_scrolls"].keys())}.",
+                reason=ScrollError.Reason.ALREADY_EQUIPPED,
+                valid_scrolls=valid_scrolls,
+                invalid_scroll=scroll_name,
+            )
+        if len(self._miscellany["equipped_scrolls"]) >= self.inventory_size:
+            valid_scrolls = {scroll: (scroll in self._miscellany["equipped_scrolls"]) for scroll in scroll_list}
+            raise ScrollError(
+                f"You can equip at most {self.inventory_size} scrolls at once.",
+                reason=ScrollError.Reason.NO_INVENTORY_SPACE,
+                valid_scrolls=valid_scrolls,
+            )
+        stat_dict = scroll_list[scroll_name]
+        self._miscellany["equipped_scrolls"][scroll_name] = self.Stats(multiplier=1, **stat_dict)
+        self._apply_scroll_bonuses()
+
+class Morph6(Morph):
+    """
+    Sword of Seals
+    """
+    game_no = 6
+    #character_list_filter = lambda name: True
+    stat_boosters = {
+        "Angelic Robe": ("HP", 7),
+        "Energy Ring": ("Pow", 2),
+        "Secret Book": ("Skl", 2),
+        "Speedwings": ("Spd", 2),
+        "Goddess Icon": ("Lck", 2),
+        "Dragonshield": ("Def", 2),
+        "Talisman": ("Res", 2),
+        "Boots": ("Mov", 2),
+        "Body Ring": ("Con", 3),
+    }
+
+    @staticmethod
+    def CHARACTERS():
+        """
+        """
+        return (
+            'Roy',
+            'Marcus',
+            'Allen',
+            'Lance',
+            'Wolt',
+            'Bors',
+            'Merlinus',
+            'Ellen',
+            'Dieck',
+            'Wade',
+            'Lott',
+            'Thany',
+            'Chad',
+            'Lugh',
+            'Clarine',
+            'Rutger',
+            #'Rutger (HM)',
+            'Saul',
+            'Dorothy',
+            'Sue',
+            'Zealot',
+            'Treck',
+            'Noah',
+            'Astohl',
+            'Lilina',
+            'Wendy',
+            'Barth',
+            'Oujay',
+            'Fir',
+            #'Fir (HM)',
+            'Shin',
+            #'Shin (HM)',
+            'Gonzales',
+            #'Gonzales (HM)',
+            'Geese',
+            'Klein',
+            #'Klein (HM)',
+            'Tate',
+            #'Tate (HM)',
+            'Lalum',
+            'Echidna',
+            'Elphin',
+            'Bartre',
+            'Ray',
+            'Cath',
+            #'Cath (HM)',
+            'Miredy',
+            #'Miredy (HM)',
+            'Percival',
+            #'Percival (HM)',
+            'Cecilia',
+            'Sofiya',
+            'Igrene',
+            'Garret',
+            #'Garret (HM)',
+            'Fa',
+            'Hugh',
+            'Zeis',
+            #'Zeis (HM)',
+            'Douglas',
+            'Niime',
+            'Dayan',
+            'Juno',
+            'Yodel',
+            'Karel',
+            #'Narshen',
+            #'Gale',
+            #'Hector',
+            #'Brunya',
+            #'Eliwood',
+            #'Murdoch',
+            #'Zephiel',
+            #'Guinevere',
+        )
+
+    @staticmethod
+    def HARD_MODE_UNITS():
+        """
+        """
+        return (
+            'Rutger',
+            'Fir',
+            'Shin',
+            'Gonzales',
+            'Klein',
+            'Tate',
+            'Cath',
+            'Miredy',
+            'Percival',
+            'Garret',
+            'Zeis',
+        )
+
+    def __init__(self, name: str, *, hard_mode: bool | None = None, number_of_declines: int | None = None, chapter: str | None = None):
+        """
+        New parameters: Hard Mode, Hugh-Declines; validates if character has a hard-mode version of their stats.
+        """
+        if name == "Gonzales":
+            valid_chapters = ("10A", "10B")
+            valid_hm_values = (False, True)
+            if (chapter not in valid_chapters) or (hard_mode not in valid_hm_values):
+                hm_params = {'hard_mode': valid_hm_values}
+                chapter_params = {'chapter': valid_chapters}
+                if (chapter not in valid_chapters) and (hard_mode not in valid_hm_values):
+                    hm_params.update(chapter_params)
+                    raise InitError(
+                        "Specify `chapter` and `hard_mode` values.",
+                        missing_value=InitError.MissingValue.HARD_MODE_AND_CHAPTER,
+                        init_params=hm_params,
+                    )
+                elif (chapter not in valid_chapters):
+                    raise InitError(
+                        "Specify `chapter` value.",
+                        missing_value=InitError.MissingValue.ROUTE,
+                        init_params=chapter_params,
+                    )
+                elif (hard_mode not in valid_hm_values):
+                    raise InitError(
+                        "Specify `hard_mode` value.",
+                        missing_value=InitError.MissingValue.HARD_MODE,
+                        init_params=hm_params,
+                    )
+        else:
+            #if chapter is not None:
+                #logger.warning("`chapter` value of %s will have no effect.", chapter)
+            if name in self.HARD_MODE_UNITS():
+                if hard_mode is None:
+                    init_params = {'hard_mode': (False, True)}
+                    statdicts = self._get_hard_mode_stats()
+                    chapter_list = tuple(
+                        map(
+                            lambda name_chapter: name_chapter[1],
+                            filter(lambda name_chapter: name_chapter[0] == name and name_chapter[1] is not None, statdicts.keys()),
+                        )
+                    )
+                    if chapter_list:
+                        init_params.update({"chapter": chapter_list})
+                    raise InitError(
+                        f"Specify a `hard_mode` boolean value for {name}.",
+                        missing_value=InitError.MissingValue.HARD_MODE,
+                        init_params=init_params,
+                    )
+            else:
+                if hard_mode is True:
+                    logger.warning("'%s' cannot be recruited as an enemy on hard mode. Setting `hard_mode` to None.", name)
+                hard_mode = None
+        super().__init__(name, which_bases=0, which_growths=0)
+        self._name = name
+        if self._name == "Gonzales":
+            self.current_lv = {
+                "10A": 5,
+                "10B": 11,
+            }[chapter]
+        # Hugh exception
+        if number_of_declines is not None and self.name != "Hugh":
+            logger.warning("`number_of_declines=%s`, and unit is not Hugh. Ignoring.", number_of_declines)
+            number_of_declines = None
+        elif self.name == "Hugh":
+            if number_of_declines not in range(4):
+                raise InitError(
+                    "Specify the number of times Hugh has been declined. Valid values: (0, 1, 2, 3)",
+                    missing_value=InitError.MissingValue.NUMBER_OF_DECLINES,
+                    init_params={"number_of_declines": (0, 1, 2, 3)},
+                )
+            stat_dict = self.Stats.get_stat_dict(-1 * number_of_declines)
+            stat_dict["Mov"] = 0
+            stat_dict["Con"] = 0
+            decrement = self.Stats(**stat_dict)
+            self.current_stats += decrement
+        # set instance attributes
+        self._init_options["hard_mode"] = hard_mode
+        self._init_options["number_of_declines"] = number_of_declines
+        self._init_options["chapter"] = chapter
+        if hard_mode is True:
+            self._apply_hard_mode_bonus()
+
+    @staticmethod
+    def _get_hard_mode_stats():
+        """
+        Returns a dict-object containing stats to override with hard-mode values.
+        """
+        return {
+            ("Rutger", None): {
+                "HP": 25_50,
+                "Pow": 8_75,
+                "Skl": 14_00,
+                "Spd": 15_00,
+                "Lck": 3_50,
+                "Def": 5_75,
+                "Res": 85,
+            },
+            ("Fir", None): {
+                "HP": 24_60,
+                "Pow": 8_80,
+                "Skl": 12_20,
+                "Spd": 13_20,
+                "Lck": 5_40,
+                "Def": 4_20,
+                "Res": 2_36,
+            },
+            ("Shin", None): {
+                "HP": 29_20,
+                "Pow": 9_40,
+                "Skl": 11_20,
+                "Spd": 13_60,
+                "Lck": 8_40,
+                "Def": 7_96,
+                "Res": 1_20,
+            },
+            ("Gonzales", "10A"): {
+                "HP": 42_56,
+                "Pow": 16_00,
+                "Skl": 7_40,
+                "Spd": 10_60,
+                "Lck": 6_20,
+                "Def": 6_80,
+                "Res": 80,
+            },
+            ("Gonzales", "10B"): {
+                "HP": 42_56,
+                "Pow": 16_00,
+                "Skl": 7_40,
+                "Spd": 10_60,
+                "Lck": 6_20,
+                "Def": 6_80,
+                "Res": 80,
+            },
+            # NOTE: Klein has two sets of HM bonuses
+            ("Klein", "10B"): {
+                # 10B
+                "HP": 32_20,
+                "Pow": 15_40,
+                "Skl": 15_40,
+                "Spd": 12_60,
+                "Lck": 12_40,
+                "Def": 9_20,
+                "Res": 7_20,
+            },
+            ("Klein", "11A"): {
+                # 11A
+                "HP": 32_85,
+                "Pow": 15_70,
+                "Skl": 15_70,
+                "Spd": 12_80,
+                "Lck": 12_70,
+                "Def": 9_35,
+                "Res": 7_35,
+            },
+            # NOTE: Tate has two sets of HM bonuses
+            ("Tate", "10B"): {
+                # 10B
+                "HP": 27_20,
+                "Pow": 8_80,
+                "Skl": 11_20,
+                "Spd": 14_20,
+                "Lck": 5_80,
+                "Def": 7_96,
+                "Res": 8_00,
+            },
+            ("Tate", "11A"): {
+                # 11A
+                "HP": 27_85,
+                "Pow": 9_15,
+                "Skl": 11_60,
+                "Spd": 14_60,
+                "Lck": 6_15,
+                "Def": 8_08,
+                "Res": 8_25,
+            },
+            # NOTE: Cath has four sets of HM bonuses
+            ("Cath", "12"): {
+                # 12
+                "HP": 20_05,
+                "Pow": 3_45,
+                "Skl": 11_05,
+                "Spd": 14_60,
+                "Lck": 11_60,
+                "Def": 2_45,
+                "Res": 2_80,
+            },
+            ("Cath", "16"): {
+                # 16
+                "HP": 20_95,
+                "Pow": 3_55,
+                "Skl": 11_95,
+                "Spd": 15_40,
+                "Lck": 12_40,
+                "Def": 2_55,
+                "Res": 3_20,
+            },
+            ("Cath", "20"): {
+                # 20
+                "HP": 21_85,
+                "Pow": 3_65,
+                "Skl": 12_85,
+                "Spd": 16_20,
+                "Lck": 13_20,
+                "Def": 2_65,
+                "Res": 3_60,
+            },
+            ("Cath", "22"): {
+                # 22
+                "HP": 22_30,
+                "Pow": 3_70,
+                "Skl": 13_30,
+                "Spd": 16_60,
+                "Lck": 13_60,
+                "Def": 2_70,
+                "Res": 3_80,
+            },
+            ("Miredy", None): {
+                "HP": 38_00,
+                "Pow": 16_50,
+                "Skl": 14_50,
+                "Spd": 13_00,
+                "Lck": 7_50,
+                "Def": 15_50,
+                "Res": 4_00,
+            },
+            ("Percival", "13"): {
+                "HP": 43_00,
+                "Pow": 17_00,
+                "Skl": 13_00,
+                "Spd": 18_00,
+                "Lck": 12_00,
+                "Def": 14_00,
+                "Res": 11_00,
+            },
+            ("Percival", "15"): {
+                "HP": 50_70,
+                "Pow": 19_75,
+                "Skl": 16_30,
+                "Spd": 19_98,
+                "Lck": 14_75,
+                "Def": 15_32,
+                "Res": 12_87,
+            },
+            ("Garret", None): {
+                "HP": 55_38,
+                "Pow": 20_85,
+                "Skl": 15_75,
+                "Spd": 11_32,
+                "Lck": 13_65,
+                "Def": 10_10,
+                "Res": 5_10,
+            },
+            ("Zeis", None): {
+                "HP": 36_80,
+                "Pow": 18_95,
+                "Skl": 12_85,
+                "Spd": 11_30,
+                "Lck": 8_75,
+                "Def": 14_75,
+                "Res": 3_10,
+            },
+        }
+
+    def _apply_hard_mode_bonus(self):
+        """
+        Updates `current_stats` with Hard Mode stats.
+        """
+        statdicts = self._get_hard_mode_stats()
+        name = self.name
+        chapter = self._init_options["chapter"]
+        try:
+            stat_bonus = statdicts[(name, chapter)]
+        except KeyError:
+            init_params = {"hard_mode": (False, True)}
+            chapter_list = map(
+                lambda name_chapter: name_chapter[1],
+                filter(lambda name_chapter: name_chapter[0] == name and name_chapter[1] is not None, statdicts.keys()),
+            )
+            raise InitError(
+                f"Please select a chapter for {name}.",
+                missing_value=InitError.MissingValue.CHAPTER,
+                init_params={"hard_mode": (False, True), "chapter": tuple(chapter_list)},
+            )
+        stat_dict = self.current_stats.as_dict()
+        stat_dict.update(stat_bonus)
+        self.current_stats = self.Stats(**stat_dict, multiplier=1)
+
+    @property
+    def inventory_size(self) -> int:
+        """
+        The number of growths-enhancing items one can carry.
+        """
+        return 0
+
+    def get_promotion_item(self) -> str | None:
+        """
+        Returns name of item used to promote, if applicable.
+        """
+        promotion_item: str | None
+        if (self.name, self.current_clstype) == ("Roy", "characters__base_stats"):
+            promotion_item = "*Chapter 22 - Start*"
+        else:
+            promotion_item = super().get_promotion_item()
+        return promotion_item
+
+    def _set_min_promo_level(self) -> None:
+        """
+        Declares that Roy can promote at any level.
+        """
+        if self.name == "Roy":
+            min_promo_level = 1
+        else:
+            min_promo_level = 10
+        self.min_promo_level = min_promo_level
+
+class Morph7(Morph):
+    """
+    Blazing Sword
+    """
+    game_no = 7
+    #character_list_filter = lambda name: True
+    stat_boosters = {
+        "Angelic Robe": ("HP", 7),
+        "Energy Ring": ("Pow", 2),
+        "Secret Book": ("Skl", 2),
+        "Speedwings": ("Spd", 2),
+        "Goddess Icon": ("Lck", 2),
+        "Dragonshield": ("Def", 2),
+        "Talisman": ("Res", 2),
+        "Boots": ("Mov", 2),
+        "Body Ring": ("Con", 3),
+    }
+
+    @staticmethod
+    def CHARACTERS():
+        """
+        """
+        return (
+            'Lyn',
+            'Sain',
+            'Kent',
+            'Florina',
+            'Wil',
+            'Dorcas',
+            'Serra',
+            'Erk',
+            'Rath',
+            'Matthew',
+            'Nils',
+            'Lucius',
+            'Wallace',
+            'Eliwood',
+            'Lowen',
+            'Marcus',
+            'Rebecca',
+            'Bartre',
+            'Hector',
+            'Oswin',
+            'Guy',
+            #'Guy (HM)',
+            'Merlinus',
+            'Priscilla',
+            'Raven',
+            #'Raven (HM)',
+            'Canas',
+            'Dart',
+            'Fiora',
+            'Legault',
+            #'Legault (HM)',
+            'Ninian',
+            'Isadora',
+            'Heath',
+            #'Heath (HM)',
+            'Hawkeye',
+            'Geitz',
+            #'Geitz (HM)',
+            'Farina',
+            'Pent',
+            'Louise',
+            'Karel',
+            'Harken',
+            #'Harken (HM)',
+            'Nino',
+            'Jaffar',
+            'Vaida',
+            #'Vaida (HM)',
+            'Karla',
+            'Renault',
+            'Athos',
+        )
+
+    @staticmethod
+    def HARD_MODE_UNITS():
+        """
+        """
+        return (
+            'Guy',
+            'Raven',
+            'Legault',
+            'Heath',
+            'Geitz',
+            'Harken',
+            'Vaida',
+        )
+
+    @staticmethod
+    def LYNDIS_LEAGUE():
+        """
+        """
+        return (
+            "Lyn",
+            "Sain",
+            "Kent",
+            "Florina",
+            "Wil",
+            "Dorcas",
+            "Serra",
+            "Erk",
+            "Rath",
+            "Matthew",
+            "Nils",
+            "Lucius",
+            "Wallace",
+        )
+
+    def __init__(self, name: str, *, lyn_mode: bool | None = None, hard_mode: bool | None = None):
+        """
+        Validates that character is in Lyn Mode or Hard Mode, then throws error if appropriate parameter is not specified.
+        Support for growths item present.
+        """
+        # check if unit is available in lyn-mode
+        lyndis_league = self.LYNDIS_LEAGUE()
+        if name in lyndis_league:
+            if lyn_mode is None:
+                raise InitError(
+                    f"Please specify a `lyn_mode` boolean value for {name}.",
+                    missing_value=InitError.MissingValue.LYN_MODE,
+                    init_params={"lyn_mode": (False, True)},
+                )
+            which_bases = {
+                True: 0,
+                False: 1,
+            }[lyn_mode]
+        else:
+            if lyn_mode is True:
+                logger.warning("'lyn_mode' = True when '%s' not in Lyn Mode. Ignoring.", name)
+                if name == "Ninian":
+                    raise UnitNotFoundError(
+                        "Ninian is not in the Lyndis League.",
+                        unit_list=lyndis_league,
+                    )
+                #name = "Nils"
+            which_bases = 1
+            lyn_mode = None
+        # check if unit can be recruited on hard-mode
+        if name in self.HARD_MODE_UNITS():
+            if hard_mode is None:
+                raise InitError(
+                    f"Please specify a `hard_mode` boolean value for {name}.",
+                    missing_value=InitError.MissingValue.HARD_MODE,
+                    init_params={"hard_mode": (False, True)},
+                )
+        else:
+            if hard_mode is True:
+                logger.warning("'%s' cannot be recruited as an enemy on hard mode.")
+            hard_mode = None
+        # initialize as usual
+        super().__init__(name, which_bases=which_bases, which_growths=0)
+        if lyn_mode is False and name == "Wallace":
+            # directs lookup-function to max stats for the General class
+            current_clstype = "classes__promotion_gains"
+        else:
+            current_clstype = self.current_clstype
+        # set instance attributes
+        self.current_clstype = current_clstype
+        self._name = name
+        self._init_options["lyn_mode"] = lyn_mode
+        self._init_options["hard_mode"] = hard_mode
+        self._miscellany["Afa's Drops"] = None
+        #self._og_growth_rates = None
+        self._og_growth_rates = self.growth_rates.copy()
+        if hard_mode is True:
+            self._apply_hard_mode_bonus()
+
+    @property
+    def inventory_size(self) -> int:
+        """
+        The number of growths-enhancing items one can carry.
+        """
+        return 0
+
+    @staticmethod
+    def _get_hard_mode_bonus():
+        """
+        Returns a dict-object containing stats to override with hard-mode values.
+        """
+        return {
+            "Guy": {
+                "HP": 70,
+                "Pow": 35,
+                "Skl": 40,
+                "Spd": 40,
+                "Lck": 30,
+                "Def": 15,
+                "Res": 20,
+            },
+            "Raven": {
+                "HP": 80,
+                "Pow": 40,
+                "Skl": 40,
+                "Spd": 32,
+                "Lck": 30,
+                "Def": 18,
+                "Res": 20,
+            },
+            "Legault": {
+                "HP": 50,
+                "Pow": 5,
+                "Skl": 45,
+                "Spd": 40,
+                "Lck": 40,
+                "Def": 5,
+                "Res": 20,
+            },
+            "Heath": {
+                "HP": 80,
+                "Pow": 45,
+                "Skl": 35,
+                "Spd": 30,
+                "Lck": 25,
+                "Def": 25,
+                "Res": 15,
+            },
+            "Geitz": {
+                "HP": 80,
+                "Pow": 45,
+                "Skl": 25,
+                "Spd": 20,
+                "Lck": 15,
+                "Def": 16,
+                "Res": 17,
+            },
+            "Harken": {
+                "HP": 75,
+                "Pow": 30,
+                "Skl": 30,
+                "Spd": 20,
+                "Lck": 25,
+                "Def": 20,
+                "Res": 20,
+            },
+            "Vaida": {
+                "HP": 75,
+                "Pow": 40,
+                "Skl": 30,
+                "Spd": 20,
+                "Lck": 20,
+                "Def": 20,
+                "Res": 17,
+            },
+        }
+
+    def _apply_hard_mode_bonus(self):
+        """
+        Updates `current_stats` with Hard Mode stats.
+        """
+        hard_mode_bonuses = self._get_hard_mode_bonus()
+        hard_mode_bonus = hard_mode_bonuses[self.name]
+        stat_dict = self.current_stats.as_dict()
+        num_levels = 5
+        for stat, value in hard_mode_bonus.items():
+            stat_dict[stat] += value * num_levels
+        self.current_stats = self.Stats(**stat_dict, multiplier=1)
+
+    def _set_min_promo_level(self) -> None:
+        """
+        Sets minimum promo-level of main lords to 1; sets minimum promo-level of other units to usual.
+        """
+        # exceptions:
+        # FE4: 20
+        # FE5: for Lara if promo_cls == 'Dancer': 1
+        # FE5: Leif, Linoan: 1
+        # FE6: Roy: 1
+        # FE7: Hector, Eliwood: 1
+        if self.name in ("Hector", "Eliwood"):
+            min_promo_level = 1
+        else:
+            min_promo_level = 10
+        self.min_promo_level = min_promo_level
+
+    def use_afas_drops(self) -> None:
+        """
+        Increases `growth_rates` by 5; throws error if this was already invokedd.
+        """
+        if self._miscellany["Afa's Drops"] is not None:
+            raise GrowthsItemError(
+                f"{self.name} already used Afa's Drops.",
+                reason=GrowthsItemError.Reason.ALREADY_CONSUMED,
+                consumption_date=self._miscellany["Afa's Drops"],
+            )
+        # save copy of original stats.
+        #self._og_growth_rates = self.growth_rates.copy()
+        # increment
+        growths_increment = self.Stats(multiplier=1, **self.Stats.get_stat_dict(5))
+        growths_increment.Mov = 0
+        growths_increment.Con = 0
+        self.growth_rates += growths_increment
+        self.growth_rates.has_been_augmented = True
+        self._miscellany["Afa's Drops"] = (self.current_lv, self.current_cls)
+
+
+class Morph8(Morph):
+    """
+    The Sacred Stones
+    """
+    game_no = 8
+    stat_boosters = {
+        "Angelic Robe": ("HP", 7),
+        "Energy Ring": ("Pow", 2),
+        "Secret Book": ("Skl", 2),
+        "Speedwings": ("Spd", 2),
+        "Goddess Icon": ("Lck", 2),
+        "Dragonshield": ("Def", 2),
+        "Talisman": ("Res", 2),
+        "Boots": ("Mov", 2),
+        "Body Ring": ("Con", 3),
+    }
+
+    @staticmethod
+    def CHARACTERS():
+        """
+        """
+        return (
+            'Eirika',
+            'Seth',
+            'Franz',
+            'Gilliam',
+            'Vanessa',
+            'Moulder',
+            'Ross',
+            'Garcia',
+            'Neimi',
+            'Colm',
+            'Artur',
+            'Lute',
+            'Natasha',
+            'Joshua',
+            'Ephraim',
+            'Forde',
+            'Kyle',
+            'Orson',
+            'Tana',
+            'Amelia',
+            'Innes',
+            'Gerik',
+            'Tethys',
+            'Marisa',
+            "L'Arachel",
+            'Dozla',
+            'Saleh',
+            'Ewan',
+            'Cormag',
+            'Rennac',
+            'Duessel',
+            'Knoll',
+            'Myrrh',
+            'Syrene',
+            'Caellach',
+            'Riev',
+            'Ismaire',
+            'Selena',
+            'Glen',
+            'Hayden',
+            'Valter',
+            'Fado',
+            'Lyon',
+        )
+
+    @property
+    def inventory_size(self) -> int:
+        """
+        Declares that nobody can hold any growths-enhancing items.
+        """
+        return 0
+
+    def get_promotion_item(self) -> str | None:
+        """
+        Returns name of item used to promote, if applicable.
+        """
+        promotion_item: str | None
+        if self.current_clstype == "characters__base_stats" and self.name in ("Ross", "Amelia", "Ewan"):
+            promotion_item = "*Reach Level 10*"
+        else:
+            promotion_item = super().get_promotion_item()
+        return promotion_item
+
+    def _set_min_promo_level(self) -> None:
+        """
+        Declares that lords can promote whenever.
+        """
+        if self.name in ("Eirika", "Ephraim"):
+            min_promo_level = 1
+        else:
+            min_promo_level = 10
+        self.min_promo_level = min_promo_level
+
+    def __init__(self, name: str):
+        """
+        Declares growths item: "Metis' Tome"
+        """
+        super().__init__(name, which_bases=0, which_growths=0)
+        # set instance attributes
+        self._miscellany["Metis's Tome"] = None
+        #self._og_growth_rates = None
+        self._og_growth_rates = self.growth_rates.copy()
+
+    def _set_max_level(self) -> None:
+        """
+        Declares that max level for trainees at starting class is 10; 20 o.w.
+        """
+        # exceptions:
+        # FE4: 30 for promoted, 20 for unpromoted
+        # FE8: unpromoted trainees are capped at 10
+        if self.name in ("Ross", "Amelia", "Ewan") and self.current_clstype == "characters__base_stats":
+            self.max_level = 10
+        else:
+            self.max_level = 20
+
+    def promote(self, promo_cls) -> None:
+        """
+        Promotes, then sets max_level to None so that it may be recalculated.
+        """
+        super().promote(promo_cls)
+        self.max_level = None
+
+    def use_metiss_tome(self) -> None:
+        """
+        Increases growths by 5
+        """
+        if self._miscellany["Metis's Tome"] is not None:
+            raise GrowthsItemError(
+                f"{self.name} already used Metis's Tome.",
+                reason=GrowthsItemError.Reason.ALREADY_CONSUMED,
+                consumption_date=self._miscellany["Metis's Tome"],
+            )
+        # save copy of original stats.
+        self._og_growth_rates = self.growth_rates.copy()
+        # increment
+        growths_increment = self.Stats(multiplier=1, **self.Stats.get_stat_dict(5))
+        growths_increment.Mov = 0
+        growths_increment.Con = 0
+        self.growth_rates += growths_increment
+        self.growth_rates.has_been_augmented = True
+        self._miscellany["Metis's Tome"] = (self.current_lv, self.current_cls)
+
+class Morph9(Morph):
+    """
+    Path of Radiance
+    """
+    game_no = 9
+    stat_boosters = {
+        "Seraph Robe": ("HP", 7),
+        "Energy Drop": ("Str", 2),
+        "Spirit Dust": ("Mag", 2),
+        "Secret Book": ("Skl", 2),
+        "Speedwing": ("Spd", 2),
+        "Ashera Icon": ("Lck", 2),
+        "Dracoshield": ("Def", 2),
+        "Talisman": ("Res", 2),
+        "Boots": ("Mov", 2),
+        "Body Ring": ("Con", 3),
+    }
+
+    @staticmethod
+    def CHARACTERS():
+        """
+        """
+        return (
+            'Ike',
+            'Titania',
+            'Oscar',
+            'Boyd',
+            'Rhys',
+            'Shinon',
+            'Gatrie',
+            'Soren',
+            'Mia',
+            'Ilyana',
+            'Marcia',
+            'Mist',
+            'Rolf',
+            'Lethe',
+            'Mordecai',
+            'Volke',
+            'Kieran',
+            'Brom',
+            'Nephenee',
+            'Zihark',
+            'Jill',
+            'Sothe',
+            'Astrid',
+            'Makalov',
+            'Stefan',
+            'Muarim',
+            'Tormod',
+            'Devdan',
+            'Tanith',
+            'Reyson',
+            'Janaff',
+            'Ulki',
+            'Calill',
+            'Tauroneo',
+            'Ranulf',
+            'Haar',
+            'Lucia',
+            'Bastian',
+            'Geoffrey',
+            'Largo',
+            'Elincia',
+            'Ena',
+            'Nasir',
+            'Tibarn',
+            'Naesala',
+            'Giffca',
+            #'Sephiran',
+            #'Leanne',
+        )
+
+    @staticmethod
+    def KNIGHTS():
+        """
+        """
+        return (
+            #'Ike',
+            'Titania',
+            'Oscar',
+            #'Boyd',
+            #'Rhys',
+            #'Shinon',
+            'Gatrie',
+            #'Soren',
+            #'Mia',
+            #'Ilyana',
+            #'Marcia',
+            #'Mist',
+            #'Rolf',
+            #'Lethe',
+            #'Mordecai',
+            #'Volke',
+            'Kieran',
+            'Brom',
+            'Nephenee',
+            #'Zihark',
+            #'Jill',
+            #'Sothe',
+            'Astrid',
+            'Makalov',
+            #'Stefan',
+            #'Muarim',
+            #'Tormod',
+            'Devdan',
+            #'Tanith',
+            #'Reyson',
+            #'Janaff',
+            #'Ulki',
+            #'Calill',
+            'Tauroneo',
+            #'Ranulf',
+            #'Haar',
+            #'Lucia',
+            #'Bastian',
+            'Geoffrey',
+            #'Largo',
+            #'Elincia',
+            #'Ena',
+            #'Nasir',
+            #'Tibarn',
+            #'Naesala',
+            #'Giffca',
+            #'Sephiran',
+            #'Leanne',
+        )
+
+    @staticmethod
+    def LAGUZ():
+        """
+        """
+        return (
+            #'Ike',
+            #'Titania',
+            #'Oscar',
+            #'Boyd',
+            #'Rhys',
+            #'Shinon',
+            #'Gatrie',
+            #'Soren',
+            #'Mia',
+            #'Ilyana',
+            #'Marcia',
+            #'Mist',
+            #'Rolf',
+            'Lethe',
+            'Mordecai',
+            #'Volke',
+            #'Kieran',
+            #'Brom',
+            #'Nephenee',
+            #'Zihark',
+            #'Jill',
+            #'Sothe',
+            #'Astrid',
+            #'Makalov',
+            #'Stefan',
+            'Muarim',
+            #'Tormod',
+            #'Devdan',
+            #'Tanith',
+            'Reyson',
+            'Janaff',
+            'Ulki',
+            #'Calill',
+            #'Tauroneo',
+            'Ranulf',
+            #'Haar',
+            #'Lucia',
+            #'Bastian',
+            #'Geoffrey',
+            #'Largo',
+            #'Elincia',
+            'Ena',
+            'Nasir',
+            'Tibarn',
+            'Naesala',
+            'Giffca',
+            #'Sephiran',
+            #'Leanne',
+        )
+
+    @property
+    def inventory_size(self) -> int:
+        """
+        Declares the maximum number of bands that can be held.
+        """
+        return 8
+
+    def get_promotion_item(self) -> str | None:
+        """
+        Returns name of item used to promote, if applicable.
+        """
+        promotion_item: str | None
+        if self.current_clstype == "characters__base_stats":
+            if self.name == "Ike":
+                promotion_item = "*Chapter 18 - Start*"
+            elif self.name == "Volke":
+                promotion_item = "*Chapter 19 - Pay Volke*"
+            else:
+                promotion_item = ("Master Seal" if super().get_promotion_item() else None)
+        else:
+            promotion_item = None
+        return promotion_item
+
+    def __init__(self, name: str):
+        """
+        Provides usual initialization plus extra attributes for band equipment and Knight Ward.
+        """
+        super().__init__(name, which_bases=0, which_growths=0)
+        self._og_growth_rates = self.growth_rates.copy()
+        self.band_dict = self.BAND_DICT()
+        self._is_knight = name in self.KNIGHTS()
+        self._is_laguz = name in self.LAGUZ()
+        self._miscellany['equipped_bands']: dict[str, self.Stats] = {}
+        # for laguz units.
+        if self._is_laguz is True:
+            self._miscellany['is_transformed'] = False
+            self._miscellany['cls_to_transform_to'] = {
+                "Lethe": "Cat (F)",
+                "Mordecai": "Tiger",
+                "Muarim": "Tiger",
+                "Reyson": "Heron (M)",
+                "Janaff": "Hawk",
+                "Ulki": "Hawk",
+                "Ranulf": "Cat (M)",
+                "Ena": "Red Dragon (F)",
+                "Nasir": "White Dragon",
+                "Tibarn": "Hawk (Tibarn)",
+                "Naesala": "Raven (Naesala)",
+                "Giffca": "Lion",
+            }[self._name]
+            self.current_cls = {
+                "Lethe": "Beast tribe (Cat F)",
+                "Mordecai": "Beast tribe (Tiger)",
+                "Muarim": "Beast tribe (Tiger)",
+                "Reyson": "Bird tribe (Heron M)",
+                "Janaff": "Bird tribe (Hawk)",
+                "Ulki": "Bird tribe (Hawk)",
+                "Ranulf": "Beast tribe (Cat M)",
+                "Ena": "Dragon tribe (Red F)",
+                "Nasir": "Dragon tribe (White)",
+                "Tibarn": "Bird tribe (Tibarn)",
+                "Naesala": "Bird tribe (Naesala)",
+                "Giffca": "Beast tribe (Lion)",
+            }[self._name]
+        else:
+            self._miscellany['is_transformed'] = None
+            self._miscellany['cls_to_transform_to'] = None
+
+    @property
+    def is_knight(self):
+        """
+        """
+        return self._is_knight
+
+    @property
+    def is_laguz(self):
+        """
+        """
+        return self._is_laguz
+
+    def _set_min_promo_level(self) -> None:
+        """
+        Sets the minimum level for a unit; for most, this is 10.
+        """
+        if self.name in ("Ike", "Volke"):
+            min_promo_level = 1
+        else:
+            min_promo_level = 10
+        self.min_promo_level = min_promo_level
+
+    def _apply_band_bonuses(self) -> None:
+        """
+        Updates growth rates in accordance with currently equipped bands.
+        """
+        self.growth_rates = self._og_growth_rates.copy()
+        for bonus in self._miscellany['equipped_bands'].values():
+            self.growth_rates += bonus
+        self.growth_rates.has_been_augmented = bool(self._miscellany['equipped_bands'])
+
+    @classmethod
+    def BAND_DICT(cls):
+        """
+        Returns a list of valid scrolls.
+        """
+        path_to_db = cls.path_to("cleaned_stats.db")
+        table = "band_growths"
+        stat_list = list(cls.STATS().STAT_LIST())
+        resultset = cls.query_db(
+            path_to_db,
+            table,
+            fields=["Name"] + stat_list,
+            filters={},
+        ).fetchall()
+        band_dict = {result["Name"]: {stat: result[stat] for stat in stat_list} for result in resultset}
+        return band_dict
+
+    def equip_band(self, band_name: str) -> None:
+        """
+        Simulates equipping of growth band specified by `band_name`.
+        Throws error if band is already equipped or DNE.
+        """
+        band_list = self.band_dict
+        if band_name not in band_list:
+            valid_bands = {band: (band not in self._miscellany['equipped_bands']) for band in band_list}
+            raise BandError(
+                f"'{band_name}' is not a valid band. List of valid bands: {band_list}.",
+                reason=BandError.Reason.NOT_FOUND,
+                valid_bands=valid_bands,
+            )
+        if band_name in self._miscellany['equipped_bands']:
+            valid_bands = {band: (band not in self._miscellany['equipped_bands']) for band in band_list}
+            raise BandError(
+                f"{band_name} is already equipped. Equipped bands: {tuple(self._miscellany['equipped_bands'].keys())}.",
+                reason=BandError.Reason.ALREADY_EQUIPPED,
+                valid_bands=valid_bands,
+                invalid_band=band_name,
+            )
+        if len(self._miscellany['equipped_bands']) >= self.inventory_size:
+            valid_bands = {band: (band in self._miscellany['equipped_bands']) for band in band_list}
+            raise BandError(
+                f"You can equip at most {self.inventory_size} scrolls at once.",
+                reason=BandError.Reason.NO_INVENTORY_SPACE,
+                valid_bands=valid_bands,
+            )
+        stat_dict = band_list[band_name]
+        self._miscellany['equipped_bands'][band_name] = self.Stats(multiplier=1, **stat_dict)
+        self._apply_band_bonuses()
+
+    def unequip_band(self, band_name: str) -> None:
+        """
+        Simulates removal of band; throws error if band isn't equipped.
+        """
+        if band_name in self._miscellany['equipped_bands']:
+            self._miscellany['equipped_bands'].pop(band_name)
+            self._apply_band_bonuses()
+        else:
+            valid_bands = {band: (band in self._miscellany['equipped_bands']) for band in self.band_dict}
+            raise BandError(
+                f"{band_name} is not equipped. Equipped_bands: {tuple(self._miscellany['equipped_bands'].keys())}",
+                reason=BandError.Reason.NOT_EQUIPPED,
+                valid_bands=valid_bands,
+                invalid_band=band_name,
+            )
+
+    def _stage_knight_ward_bonus(self):
+        """
+        Appends 'Knight Ward' to `equipped_bands`.
+        """
+        band_name = "Knight Ward"
+        stat_dict = self.Stats.get_stat_dict(0)
+        stat_dict['Spd'] = 30
+        # set to list of bands
+        self._miscellany['equipped_bands'][band_name] = self.Stats(multiplier=1, **stat_dict)
+
+    def equip_knight_ward(self) -> None:
+        """
+        Simulates equipping of Knight Ward.
+        Throws error if it is already equipped or unit is not a knight.
+        """
+        if self.is_knight is False:
+            raise KnightWardError(
+                f"{self.name} is not a knight; cannot equip Knight Ward.",
+                reason=KnightWardError.Reason.NOT_A_KNIGHT,
+                knights=self.KNIGHTS(),
+            )
+        if len(self._miscellany['equipped_bands']) >= self.inventory_size:
+            valid_bands = {band_name: (band_name in self._miscellany['equipped_bands']) for band_name in self.band_dict}
+            raise KnightWardError(
+                f"Your inventory is full at: {self.inventory_size} items. Knight Band has not equipped.",
+                reason=KnightWardError.Reason.NO_INVENTORY_SPACE,
+                valid_bands=valid_bands,
+            )
+        if "Knight Ward" in self._miscellany['equipped_bands']:
+            #valid_bands = {band_name: (band_name in self._miscellany['equipped_bands']) for band_name in self.band_dict}
+            raise KnightWardError(
+                f"{self.name} already has the Knight Ward equipped.",
+                reason=KnightWardError.Reason.ALREADY_EQUIPPED,
+                #valid_bands=valid_bands,
+            )
+        # look up knight band
+        self._stage_knight_ward_bonus()
+        self._apply_band_bonuses()
+        # set the thing
+
+    def unequip_knight_ward(self) -> None:
+        """
+        Simulates removal of Knight Ward; throws error if band isn't equipped or if unit is not a knight.
+        """
+        if self.is_knight is False:
+            raise KnightWardError(
+                f"{self.name} is not a knight; cannot unequip Knight Ward.",
+                reason=KnightWardError.Reason.NOT_A_KNIGHT,
+                knights=self.KNIGHTS(),
+            )
+        if "Knight Ward" not in self._miscellany['equipped_bands']:
+            valid_bands = {band_name: (band_name in self._miscellany['equipped_bands']) for band_name in self.band_dict}
+            raise KnightWardError(
+                f"{self.name} does not have the Knight Ward equipped.",
+                reason=KnightWardError.Reason.NOT_EQUIPPED,
+                valid_bands=valid_bands,
+            )
+        band_name = "Knight Ward"
+        self._miscellany['equipped_bands'].pop(band_name)
+        self._apply_band_bonuses()
+
+    def set_knight_ward(self, equip: bool):
+        """
+        Idempotent version of 'equip/unequip_knight_ward' methods.
+        """
+        # (is_equipped): set_knight_ward(True) -> pass
+        # (not is_equipped): set_knight_ward(True) -> equip (is_equipped)
+        # (is_equipped): set_knight_ward(False) -> unequip (not is_equipped)
+        # (not is_equipped): set_knight_ward(False) -> pass
+        knight_ward_is_equipped = "Knight Ward" in self._miscellany['equipped_bands']
+        if self.is_knight is False:
+            raise KnightWardError(
+                f"{self.name} is not a knight; cannot unequip Knight Ward.",
+                reason=KnightWardError.Reason.NOT_A_KNIGHT,
+                knights=self.KNIGHTS,
+            )
+        elif equip is True and not knight_ward_is_equipped:
+            try:
+                self.equip_knight_ward()
+            except KnightWardError as err:
+                raise err
+        elif equip is False and knight_ward_is_equipped:
+            try:
+                self.unequip_knight_ward()
+            except KnightWardError as err:
+                raise err
+
+    def set_bands(self, bands):
+        """
+        Enables user to equip bands en masse.
+        """
+        bands = list(bands)
+        if len(bands) > self.inventory_size:
+            raise BandError(
+                "No inventory space!",
+                reason=BandError.Reason.NO_INVENTORY_SPACE,
+                equipped_bands=tuple(self._miscellany['equipped_bands']),
+            )
+        # validate bands to equip
+        if not set(bands).issubset(set(self.band_dict).union(["Knight Ward", "Demi Band"])):
+            valid_bands = {band_name: (band_name in self._miscellany['equipped_bands']) for band_name in self.band_dict}
+            valid_bands['Knight Ward'] = (None if self.is_knight is False else "Knight Ward" in self._miscellany['equipped_bands'])
+            valid_bands['Demi Band'] = (None if self.is_laguz is False else "Demi Band" in self._miscellany['equipped_bands'])
+            raise BandError(
+                "A band in the selection was not found.",
+                reason=BandError.Reason.NOT_FOUND,
+                valid_bands=valid_bands,
+            )
+        # simulate equipping
+        equipped_bands = self._miscellany['equipped_bands'].copy()
+        self._miscellany['equipped_bands'].clear()
+        try:
+            bands.pop(bands.index("Knight Ward"))
+            self.equip_knight_ward()
+        except ValueError:
+            pass
+        except KnightWardError as err:
+            self._miscellany['equipped_bands'] = equipped_bands
+            raise err
+        try:
+            bands.pop(bands.index("Demi Band"))
+            self.equip_demi_band()
+        except ValueError:
+            pass
+        except DemiBandError as err:
+            self._miscellany['equipped_bands'] = equipped_bands
+            raise err
+        self._miscellany['equipped_bands'].update({band_name: self.Stats(multiplier=1, **self.band_dict[band_name]) for band_name in bands})
+        self._apply_band_bonuses()
+
+    def transform(self):
+        """
+        Simulates transformation for laguz units.
+        """
+        # check to see if operation is valid
+        if self.is_laguz is False:
+            raise TransformationError(
+                f"{self.name} is not a laguz and cannot transform.",
+                reason=TransformationError.Reason.NOT_A_LAGUZ,
+            )
+        if self._miscellany['is_transformed'] is True:
+            raise TransformationError(
+                f"{self.name} is already transformed.",
+                reason=TransformationError.Reason.ALREADY_TRANSFORMED,
+            )
+        # execute operation
+        path_to_db = self.path_to("cleaned_stats.db")
+        stat_list = (
+            "HP",
+            "Str",
+            "Mag",
+            "Skl",
+            "Spd",
+            "Def",
+            "Res",
+            "Con",
+            "Mov",
+            "Wt",
+        )
+        statdict0 = self.Stats.get_stat_dict(0)
+        # get bonus
+        table = "transformation_bonus"
+        resultset = self.query_db(
+            path_to_db,
+            table,
+            fields=stat_list,
+            filters={"Class": self._miscellany['cls_to_transform_to']},
+        ).fetchone()
+        bonus = dict(resultset)
+        # get maxes
+        stat_list2 = (
+            "HP",
+            "Str",
+            "Mag",
+            "Skl",
+            "Spd",
+            "Lck",
+            "Def",
+            "Res",
+        )
+        table = "transformation_maxes"
+        resultset = self.query_db(
+            path_to_db,
+            table,
+            fields=stat_list2,
+            filters={"Class": self._miscellany['cls_to_transform_to']},
+        ).fetchone()
+        maxes = dict(resultset)
+        max_statdict = statdict0.copy()
+        max_statdict.update(maxes)
+        # update attributes
+        self.max_stats = self.Stats(multiplier=100, **max_statdict)
+        bonus_statdict = statdict0.copy()
+        bonus_statdict.update(bonus)
+        self.current_stats += self.Stats(multiplier=100, **bonus_statdict)
+        self._miscellany['cls_to_transform_to'], self.current_cls = self.current_cls, self._miscellany['cls_to_transform_to']
+        self._miscellany['is_transformed'] = True
+
+    def revert(self):
+        """
+        Simulates reversions for laguz units.
+        """
+        #raise NotImplementedError
+        # check to see if operation is valid
+        if self.is_laguz is False:
+            raise TransformationError(
+                f"{self.name} is not a laguz and cannot transform.",
+                reason=TransformationError.Reason.NOT_A_LAGUZ,
+            )
+        if self._miscellany['is_transformed'] is False:
+            raise TransformationError(
+                f"{self.name} is already transformed.",
+                reason=TransformationError.Reason.ALREADY_TRANSFORMED,
+            )
+        if "Demi Band" in self._miscellany['equipped_bands']:
+            raise DemiBandError(
+                f"f{self.name} cannot revert with the Demi Band equipped. Try the 'unequip_demi_band' function.",
+                reason=DemiBandError.Reason.ALREADY_EQUIPPED,
+            )
+        # execute operation
+        path_to_db = self.path_to("cleaned_stats.db")
+        stat_list = (
+            "HP",
+            "Str",
+            "Mag",
+            "Skl",
+            "Spd",
+            "Def",
+            "Res",
+            "Con",
+            "Mov",
+            "Wt",
+        )
+        statdict0 = self.Stats.get_stat_dict(0)
+        # get bonus
+        logger.debug("current_cls: %r", self.current_cls)
+        logger.debug("cls_to_transform_to: %r", self._miscellany['cls_to_transform_to'])
+        table = "transformation_bonus"
+        resultset = self.query_db(
+            path_to_db,
+            table,
+            fields=stat_list,
+            filters={"Class": self.current_cls},
+        ).fetchone()
+        bonus = dict(resultset)
+        # get maxes
+        stat_list2 = (
+            "HP",
+            "Str",
+            "Mag",
+            "Skl",
+            "Spd",
+            "Lck",
+            "Def",
+            "Res",
+        )
+        table = "classes__maximum_stats0"
+        resultset = self.query_db(
+            path_to_db,
+            table,
+            fields=stat_list2,
+            filters={"Class": self._miscellany['cls_to_transform_to']},
+        ).fetchone()
+        maxes = dict(resultset)
+        max_statdict = statdict0.copy()
+        max_statdict.update(maxes)
+        # update attributes
+        self.max_stats = self.Stats(multiplier=100, **max_statdict)
+        bonus_statdict = statdict0.copy()
+        bonus_statdict.update(bonus)
+        self.current_stats += self.Stats(multiplier=-100, **bonus_statdict)
+        self._miscellany['cls_to_transform_to'], self.current_cls = self.current_cls, self._miscellany['cls_to_transform_to']
+        self._miscellany['is_transformed'] = False
+
+    @staticmethod
+    def roundup_stats(dictlike: dict[str, int]):
+        """
+        Rounds up stat-values of a given dict-like object.
+        """
+        for stat, value in dictlike.items():
+            if value % 2 == 0:
+                new_value = int(value / 2)
+            else:
+                new_value = int(value / 2) + 1
+            dictlike[stat] = new_value
+
+    def equip_demi_band(self):
+        """
+        Simulates transformation via Demi Band.
+        """
+        # check to see if operation is valid
+        if self.is_laguz is False:
+            raise DemiBandError(
+                f"{self.name} is not a laguz and cannot transform.",
+                reason=DemiBandError.Reason.NOT_A_LAGUZ,
+            )
+        if "Demi Band" in self._miscellany['equipped_bands']:
+            raise DemiBandError(
+                f"The Demi Band is already equipped.",
+                reason=DemiBandError.Reason.ALREADY_EQUIPPED,
+            )
+        if self._miscellany['is_transformed'] is True:
+            raise TransformationError(
+                f"{self.name} cannot transform again.",
+                reason=TransformationError.Reason.ALREADY_TRANSFORMED,
+            )
+        if len(self._miscellany['equipped_bands']) + 1 > self.inventory_size:
+            raise DemiBandError(
+                f"{self.name} has no inventory space for a Demi Band.",
+                reason=DemiBandError.Reason.NO_INVENTORY_SPACE,
+            )
+        # execute operation
+        path_to_db = self.path_to("cleaned_stats.db")
+        stat_list = (
+            "HP",
+            "Str",
+            "Mag",
+            "Skl",
+            "Spd",
+            "Def",
+            "Res",
+            "Con",
+            "Mov",
+            "Wt",
+        )
+        statdict0 = self.Stats.get_stat_dict(0)
+        # get bonus
+        table = "transformation_bonus"
+        resultset = self.query_db(
+            path_to_db,
+            table,
+            fields=stat_list,
+            filters={"Class": self._miscellany['cls_to_transform_to']},
+        ).fetchone()
+        bonus = dict(resultset)
+        self.roundup_stats(bonus)
+        # get maxes
+        stat_list2 = (
+            "HP",
+            "Str",
+            "Mag",
+            "Skl",
+            "Spd",
+            "Lck",
+            "Def",
+            "Res",
+        )
+        table = "transformation_maxes"
+        resultset = self.query_db(
+            path_to_db,
+            table,
+            fields=stat_list2,
+            filters={"Class": self._miscellany['cls_to_transform_to']},
+        ).fetchone()
+        maxes = dict(resultset)
+        max_statdict = statdict0.copy()
+        max_statdict.update(maxes)
+        # update attributes
+        self.max_stats = self.Stats(multiplier=100, **max_statdict)
+        bonus_statdict = statdict0.copy()
+        bonus_statdict.update(bonus)
+        self.current_stats += self.Stats(multiplier=100, **bonus_statdict)
+        self._miscellany['cls_to_transform_to'], self.current_cls = self.current_cls, self._miscellany['cls_to_transform_to']
+        self._miscellany['is_transformed'] = True
+        self._miscellany['equipped_bands']["Demi Band"] = self.Stats(**self.Stats.get_stat_dict(0))
+
+    def unequip_demi_band(self):
+        """
+        Simulates reversion via Demi Band.
+        """
+        #raise NotImplementedError
+        # check to see if operation is valid
+        if self.is_laguz is False:
+            raise DemiBandError(
+                f"{self.name} is not a laguz and cannot transform.",
+                reason=DemiBandError.Reason.NOT_A_LAGUZ,
+            )
+        if "Demi Band" not in self._miscellany['equipped_bands']:
+            raise DemiBandError(
+                f"The Demi Band is already unequipped.",
+                reason=DemiBandError.Reason.NOT_EQUIPPED,
+            )
+        if self._miscellany['is_transformed'] is False:
+            raise TransformationError(
+                f"{self.name} is already reverted.",
+                reason=TransformationError.Reason.NOT_TRANSFORMED,
+            )
+        # execute operation
+        path_to_db = self.path_to("cleaned_stats.db")
+        stat_list = (
+            "HP",
+            "Str",
+            "Mag",
+            "Skl",
+            "Spd",
+            "Def",
+            "Res",
+            "Con",
+            "Mov",
+            "Wt",
+        )
+        statdict0 = self.Stats.get_stat_dict(0)
+        # get bonus
+        table = "transformation_bonus"
+        resultset = self.query_db(
+            path_to_db,
+            table,
+            fields=stat_list,
+            filters={"Class": self.current_cls},
+        ).fetchone()
+        bonus = dict(resultset)
+        self.roundup_stats(bonus)
+        # get maxes
+        stat_list2 = (
+            "HP",
+            "Str",
+            "Mag",
+            "Skl",
+            "Spd",
+            "Lck",
+            "Def",
+            "Res",
+        )
+        table = "classes__maximum_stats0"
+        resultset = self.query_db(
+            path_to_db,
+            table,
+            fields=stat_list2,
+            filters={"Class": self._miscellany['cls_to_transform_to']},
+        ).fetchone()
+        maxes = dict(resultset)
+        max_statdict = statdict0.copy()
+        max_statdict.update(maxes)
+        # update attributes
+        self.max_stats = self.Stats(multiplier=100, **max_statdict)
+        bonus_statdict = statdict0.copy()
+        bonus_statdict.update(bonus)
+        self.current_stats += self.Stats(multiplier=-100, **bonus_statdict)
+        self._miscellany['cls_to_transform_to'], self.current_cls = self.current_cls, self._miscellany['cls_to_transform_to']
+        self._miscellany['is_transformed'] = False
+        self._miscellany['equipped_bands'].pop("Demi Band")
+
+def get_morph(game_no: int, name: str, **kwargs) -> Morph:
+    """
+    Ergonomic means whereby one may instantiate a Morph.
+    """
+    try:
+        morph_cls = {
+            4: Morph4,
+            5: Morph5,
+            6: Morph6,
+            7: Morph7,
+            8: Morph8,
+            9: Morph9,
+        }[game_no]
+    except KeyError:
+        raise NotImplementedError("Stat comparison for FE%r has not been implemented." % game_no)
+    morph = morph_cls(name, **kwargs)
+    return morph
+
+def get_morph_class(game_no: int):
+    """
+    Ergonomic means whereby one may access all Morph classes.
+    """
+    try:
+        morph_cls = {
+            4: Morph4,
+            5: Morph5,
+            6: Morph6,
+            7: Morph7,
+            8: Morph8,
+            9: Morph9,
+        }[game_no]
+        return morph_cls
+    except KeyError:
+        raise NotImplementedError("Stat comparison for FE%r has not been implemented." % game_no)
+
+# Web Interface
+# TODO: Make sure that confirm-button remains disabled when trying and failing to boost stats via item.
+# TODO: Build front-end first next time
+# TODO: Make bare stat components.
+# TODO: Introduce typing to frontend.
+# TODO: Make backend return values that are more consistent.
+# TODO: Fix backend tests.
+# TODO: Write interfaces to boost growths
+# TODO: Allow users to register.
+# TODO: Fix naming of values.
+# TODO: Print cumulative difference.
+# TODO: Insert footer containing all meta info.
+# TODO: Test for all Laguz.
