@@ -136,7 +136,7 @@ class VirtualMorph(models.Model):
         #max_value=9,
     )
     unit = models.CharField(
-        #max_length=9,
+        max_length=9,
     )
     init_options = models.JSONField(
         default=dict,
