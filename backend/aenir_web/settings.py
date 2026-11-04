@@ -29,8 +29,8 @@ import decouple
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-# TODO: Must populate this.
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["https://aenirweb-production.up.railway.app/", "127.0.0.1"]
+CSRF_TRUSTED_ORIGINS = ["https://aenirweb-production.up.railway.app/"]
 
 
 # Application definition
