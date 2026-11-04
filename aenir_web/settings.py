@@ -31,7 +31,7 @@ DEBUG = True
 #DEBUG = True
 
 ALLOWED_HOSTS = ["aenirweb-production.up.railway.app", "127.0.0.1"]
-CSRF_TRUSTED_ORIGINS = ["aenirweb-production.up.railway.app"]
+CSRF_TRUSTED_ORIGINS = ["https://aenirweb-production.up.railway.app"]
 
 
 # Application definition
