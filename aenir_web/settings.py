@@ -30,8 +30,8 @@ import decouple
 DEBUG = False
 #DEBUG = True
 
-ALLOWED_HOSTS = ["aenirweb-production.up.railway.app", "127.0.0.1"]
-CSRF_TRUSTED_ORIGINS = ["https://aenirweb-production.up.railway.app"]
+ALLOWED_HOSTS = ["aenir.up.railway.app", "127.0.0.1"]
+CSRF_TRUSTED_ORIGINS = ["https://aenir.up.railway.app"]
 
 
 # Application definition
