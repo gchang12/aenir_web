@@ -27,7 +27,8 @@ from decouple import config; SECRET_KEY = config("SECRET_KEY")
 import decouple
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+#DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["https://aenirweb-production.up.railway.app/", "127.0.0.1"]
 CSRF_TRUSTED_ORIGINS = ["https://aenirweb-production.up.railway.app/"]
@@ -185,15 +186,18 @@ LOGGING = {
 
 ACCOUNT_ACTIVATION_DAYS = 1
 
+DATABASE_URL = None
 try:
-    config("DATABASE_URL")
+    DATABASE_URL = config("DATABASE_URL")
 #if "DATABASE_URL" in os.environ:
     DATABASES['default'] = dj_database_url.config(
         conn_max_age=500,
         conn_health_checks=True,
     )
 except decouple.UndefinedValueError:
+    DATABASE_URL = None
     pass
+#print("DATABASE_URL", DATABASE_URL)
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = "/static/"
