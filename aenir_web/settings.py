@@ -27,7 +27,7 @@ from decouple import config; SECRET_KEY = config("SECRET_KEY")
 import decouple
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 #DEBUG = True
 
 ALLOWED_HOSTS = ["aenirweb-production.up.railway.app", "127.0.0.1"]
@@ -183,16 +183,16 @@ LOGGING = {
             "class": "logging.StreamHandler",
             "formatter": "simple",
         },
-        "file": {
-            "class": "logging.FileHandler",
-            "formatter": "simple",
-            "filename": ".aenir_web.log",
-            "mode": "w",
-        },
+        #"file": {
+        #"class": "logging.FileHandler",
+        #"formatter": "simple",
+        #"filename": ".aenir_web.log",
+        #"mode": "w",
+        #},
     },
     "loggers": {
         "aenir_web": {
-            "handlers": ["file"],
+            #"handlers": ["file"],
             "level": "DEBUG",
         },
         "aenir": {
