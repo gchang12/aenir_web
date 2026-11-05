@@ -93,12 +93,12 @@ os.environ.setdefault("PGPASSWORD", "")
 os.environ.setdefault("PGHOST", "localhost")
 os.environ.setdefault("PGPORT", "5432")
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+#DATABASES = {
+    #'default': {
+        #'ENGINE': 'django.db.backends.postgresql',
         #'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+    #}
+#}
 
 
 DATABASES = {
@@ -211,6 +211,16 @@ try:
     DATABASES['default'] = dj_database_url.config(
         conn_max_age=500,
         conn_health_checks=True,
+    )
+    DATABASES["default"].update(
+        {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ["PGDATABASE"],
+            'USER': os.environ["PGUSER"],
+            'PASSWORD': os.environ["PGPASSWORD"],
+            'HOST': os.environ["PGHOST"],
+            'PORT': os.environ["PGPORT"],
+        }
     )
 except decouple.UndefinedValueError:
     DATABASE_URL = None
