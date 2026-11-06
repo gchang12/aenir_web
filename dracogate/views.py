@@ -826,7 +826,7 @@ class SetDemiBandView(MorphActionView):
     action = {
         "title": "Equip Demi Band",
         "name": "set_demiband",
-        "stat_type": "growths",
+        "stat_type": "bases",
     }
 
     def get_context_data(self, **kwds):
