@@ -161,24 +161,25 @@ LOGGING = {
             "class": "logging.StreamHandler",
             "formatter": "simple",
         },
-        #"file": {
-        #"class": "logging.FileHandler",
-        #"formatter": "simple",
-        #"filename": ".aenir_web.log",
-        #"mode": "w",
-        #},
     },
     "loggers": {
         "aenir_web": {
-            #"handlers": ["file"],
-            "level": "DEBUG",
+            "level": "NOTSET",
         },
         "aenir": {
-            #"handlers": ["file"],
             "level": "NOTSET",
         }
     }
 }
+if DEBUG is True:
+    LOGGING["handlers"]["file"] = {
+        "class": "logging.FileHandler",
+        "formatter": "simple",
+        "filename": ".aenir_web.log",
+        "mode": "w",
+    }
+    LOGGING["loggers"]["aenir_web"]["handlers"] = ["file"]
+    LOGGING["loggers"]["aenir"]["handlers"] = ["file"]
 
 ACCOUNT_ACTIVATION_DAYS = 1
 

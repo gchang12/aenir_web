@@ -705,7 +705,13 @@ class ShapeshiftView(MorphActionView):
         """
         """
         context = super().get_context_data(**kwds)
-        is_success: bool = self.object.morph.is_laguz is True
+        if self.object.morph.is_laguz is False:
+            is_success = False
+        else:
+            if "Demi Band" in self.object.morph._miscellany["equipped_bands"]:
+                is_success = False
+            else:
+                is_success = True
         context['is_success'] = is_success
         return context
 
@@ -824,7 +830,7 @@ class SetDemiBandView(MorphActionView):
     """
     """
     action = {
-        "title": "Equip Demi Band",
+        "title": "Set Demi Band",
         "name": "set_demiband",
         "stat_type": "bases",
     }
@@ -833,7 +839,19 @@ class SetDemiBandView(MorphActionView):
         """
         """
         context = super().get_context_data(**kwds)
-        is_success: bool = self.object.morph.is_laguz is True
+        if self.object.morph.is_laguz is False:
+            is_success = False
+        else:
+            if (
+                self.object.morph._miscellany["is_transformed"] is True
+                and "Demi Band" not in self.object.morph._miscellany["equipped_bands"]
+                ):
+                # if the morph transformed without a demi-band
+                is_success = False
+            elif self.object.morph._miscellany["is_transformed"] is False:
+                is_success = True
+            elif "Demi Band" in self.object.morph._miscellany["equipped_bands"]:
+                is_success = True
         context['is_success'] = is_success
         return context
 

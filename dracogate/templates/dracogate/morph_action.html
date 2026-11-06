@@ -10,20 +10,24 @@ Evolve Morph: FE{{object.game_no}} {{object.unit}} - {{action.title}}
   <h1>{{ object.name }}</h1>
   <h2>{{action.title}}</h2>
   <img src="{% get_static_prefix %}dracogate/images/fe{{object.game_no}}/characters/{{object.unit}}.{% if object.game_no == 8 %}gif{% else %}png{% endif %}" />
+  {% if is_success %}
   <form
     method="post"
     class="MorphActionForm border"
     id="morph_action_form">
     {% csrf_token %}
     {{ form }}
-    <button class="ConfirmButton" {% if not is_success %} disabled{% endif %} type="button"
+    <button class="ConfirmButton"{% if not is_success %} disabled{% endif %} type="button"
       hx-get="{% url 'dracogate:action_forecast' object.id %}?action={{action.name}}&stat_type={{action.stat_type}}"
       hx-target="#action_forecast"
       hx-trigger="click"
       hx-include="#morph_action_form"
       >Preview</button>
-    <button class="ConfirmButton" {% if not is_success %} disabled{% endif %}>Confirm</button>
+    <button class="ConfirmButton"{% if not is_success %} disabled{% endif %}>Confirm</button>
   </form>
+  {% else %}
+  <p>This unit cannot <code>{{action.name}}</code>.</p>
+  {% endif %}
   <article>
     <h3>{% if action.stat_type == "bases" %}Bases{% else %}Growths{% endif %}</h3>
     <div id="action_forecast"

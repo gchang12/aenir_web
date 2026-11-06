@@ -1595,6 +1595,7 @@ class UseAfasDropsTests(TestCase):
             with self.assertRaises(AssertionError):
                 self.assertContains(response, value)
 
+    @unittest.skip("After removing form.")
     def test_use_afas_drops__view_post__fail(self):
         """
         Already used Afa's Drops.
@@ -2328,6 +2329,7 @@ class ShapeshiftTests2(TestCase):
         query_params = {"action": "shapeshift", field: value, "stat_type": "bases"}
         self.client.get(url, query_params=query_params)
 
+    @unittest.skip("After removing form.")
     def test_shapeshift__view_post(self):
         """
         """
@@ -2343,6 +2345,7 @@ class ShapeshiftTests2(TestCase):
             self.assertContains(response, value)
         self.assertListEqual(morph.history, [])
 
+    @unittest.skip("After removing form.")
     def test_shapeshift__view_post2(self):
         """
         """
@@ -2491,6 +2494,7 @@ class UseMetissTomeTests(TestCase):
             with self.assertRaises(AssertionError):
                 self.assertContains(response, value)
 
+    @unittest.skip("After removing form.")
     def test_use_metiss_tome__view_post__fail(self):
         """
         Already used Metis's Tome.
@@ -3461,6 +3465,7 @@ class SetDemiBandTests2(TestCase):
         query_params = {"action": "set_demiband", field: value, "stat_type": "bases"}
         self.client.get(url, query_params=query_params)
 
+    @unittest.skip("After removing form.")
     def test_set_demiband__view_post(self):
         """
         """
@@ -3476,6 +3481,7 @@ class SetDemiBandTests2(TestCase):
             self.assertContains(response, value)
         self.assertListEqual(morph.history, [])
 
+    @unittest.skip("After removing form.")
     def test_set_demiband__view_post2(self):
         """
         """

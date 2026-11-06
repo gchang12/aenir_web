@@ -70,6 +70,15 @@ main > article {
   }
 }
 
+button.ConfirmButton[disabled] {
+  color: grey;
+  &:hover {
+    cursor: initial;
+    text-decoration: none;
+    background-color: initial;
+  }
+}
+
 .StatName {
   text-align: left;
 }
