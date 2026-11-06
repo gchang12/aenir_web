@@ -28,7 +28,6 @@ import decouple
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
-#DEBUG = True
 
 ALLOWED_HOSTS = ["aenir.up.railway.app", "127.0.0.1"]
 CSRF_TRUSTED_ORIGINS = ["https://aenir.up.railway.app"]
@@ -93,25 +92,6 @@ os.environ.setdefault("PGPASSWORD", "")
 os.environ.setdefault("PGHOST", "localhost")
 os.environ.setdefault("PGPORT", "5432")
 
-#DATABASES = {
-    #'default': {
-        #'ENGINE': 'django.db.backends.postgresql',
-        #'NAME': BASE_DIR / 'db.sqlite3',
-    #}
-#}
-
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ["PGDATABASE"],
-        'USER': os.environ["PGUSER"],
-        'PASSWORD': os.environ["PGPASSWORD"],
-        'HOST': os.environ["PGHOST"],
-        'PORT': os.environ["PGPORT"],
-    }
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
@@ -147,12 +127,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
-#STATIC_URL = 'static/'
 
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
-#https://docs.djangoproject.com/en/6.1/topics/email/#multiple-mailers
 MAILERS = {
     'default': {
         'BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
@@ -204,10 +182,9 @@ LOGGING = {
 
 ACCOUNT_ACTIVATION_DAYS = 1
 
-#DATABASE_URL = None
+DATABASES = {"default": None}
 try:
     DATABASE_URL = config("DATABASE_URL")
-#if "DATABASE_URL" in os.environ:
     DATABASES['default'] = dj_database_url.config(
         conn_max_age=500,
         conn_health_checks=True,
@@ -225,7 +202,12 @@ try:
 except decouple.UndefinedValueError:
     DATABASE_URL = None
     pass
-#print("DATABASE_URL", DATABASE_URL)
+
+if DEBUG is True:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = "/static/"
