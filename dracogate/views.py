@@ -218,7 +218,7 @@ class MorphDetailView(DetailView, DeleteView):
         "set_scrolls": "Equip Scrolls",
         "set_bands": "Equip Bands",
         "shapeshift": "Shapeshift", # transform/revert
-        "set_demiband": "Toggle Demi Band",
+        "set_demiband": "Set Demi Band",
     }
     actions_by_game = {
         4: (
