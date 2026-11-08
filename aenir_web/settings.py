@@ -10,6 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+# TODO: https://docs.celeryq.dev/en/stable/django/first-steps-with-django.html
+# TODO: Create super user
+
 import os
 from pathlib import Path
 from django.urls import reverse_lazy

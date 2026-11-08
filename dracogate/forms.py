@@ -544,7 +544,7 @@ class ComparisonFormBuilder:
         zero_growth_stats = vmorph.morph.Stats.ZERO_GROWTH_STAT_LIST()
         #initial = 0
         for stat in vmorph.morph.Stats.STAT_LIST():
-            initial = (-1 if stat in zero_growth_stats else getattr(vmorph.morph.current_stats, stat) / 100)
+            initial = (None if stat in zero_growth_stats else getattr(vmorph.morph.current_stats, stat) / 100)
             InputComparisonForm.declared_fields[stat] = forms.IntegerField(
                 initial=initial,
                 min_value=0,
