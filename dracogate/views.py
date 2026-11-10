@@ -1,6 +1,9 @@
 """
 """
 
+# TODO: Implement pagination
+# https://docs.djangoproject.com/en/6.1/topics/pagination/#paginating-a-listview
+
 from django.http import Http404
 from django.views import defaults
 from django.views.generic.edit import (
@@ -178,6 +181,7 @@ class MorphListView(ListView):
     """
     template_name = "dracogate/morph_list.html"
     model = VirtualMorph
+    paginate_by = 20
 
     def get_context_data(self, **kwargs):
         """
@@ -901,6 +905,7 @@ class CompareMorphsView(ListView):
     """
     model = VirtualMorph
     template_name = "dracogate/compare_morphs.html"
+    paginate_by = 20
 
     def get_queryset(self, **kwds):
         """
@@ -994,6 +999,7 @@ class CompareMorphsToInputView(ListView):
     """
     model = VirtualMorph
     template_name = "dracogate/compare_morphs_to_input.html"
+    paginate_by = 20
 
     def get_queryset(self, **kwds):
         """
